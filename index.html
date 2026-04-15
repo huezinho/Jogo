@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RPG por Turnos</title>
+<style>
+body{font-family:Arial,sans-serif;background:#1e1e1e;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.container{width:1180px;max-width:calc(100vw - 24px);background:#2b2b2b;padding:20px;border-radius:16px;box-shadow:0 0 20px rgba(0,0,0,.4)}
+button{padding:10px 16px;margin:6px;border:none;border-radius:10px;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.6}
+.button-row{display:flex;gap:10px;flex-wrap:wrap}
+.panel{margin:15px 0;padding:15px;background:#3a3a3a;border-radius:12px}
+.game-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 260px;gap:18px;align-items:start}
+.side-column .panel,.main-column .panel{margin-top:0}
+.main-column{display:flex;flex-direction:column;gap:15px}
+.player-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.coin-badge{padding:8px 14px;border-radius:999px;background:#f6c445;color:#2b2100;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+.class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.class-card{padding:18px;border:none;border-radius:16px;background:linear-gradient(160deg,#4d4d4d,#2f2f2f);color:#fff;text-align:left;box-shadow:0 10px 20px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease}
+.class-card:hover{transform:translateY(-3px);box-shadow:0 14px 24px rgba(0,0,0,.24)}
+.class-card .class-icon{font-size:38px;display:block;margin-bottom:8px}
+.class-card h4{margin:0 0 10px 0;font-size:20px}
+.class-card p{margin:6px 0;font-size:14px}
+.class-card small{display:block;margin-top:10px;color:#d6d6d6;line-height:1.45}
+.stat-hp{color:#89f07d}
+.stat-mp{color:#7bc9ff}
+.stat-atk{color:#ffd36a}
+.class-warrior{background:linear-gradient(160deg,#68533a,#32261b)}
+.class-archer{background:linear-gradient(160deg,#45644b,#1e3022)}
+.class-mage{background:linear-gradient(160deg,#35506c,#1d263b)}
+.saved-campaign{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.death-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.inventory-list,.trophy-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.inventory-item,.trophy-item{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.trophy-item.locked{opacity:.55}
+.status-on{color:#89f07d;font-weight:700}
+.status-off{color:#ffd36a;font-weight:700}
+.camp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
+.camp-stat{padding:12px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.camp-stat strong{display:block;font-size:12px;color:#d7d7d7;text-transform:uppercase;letter-spacing:.04em}
+.camp-stat span{display:block;margin-top:6px;font-size:22px;font-weight:700}
+.equipment-layout{display:grid;grid-template-columns:126px minmax(0,1fr);gap:12px;align-items:center;margin-top:12px}
+.equipment-body{position:relative;min-height:320px;padding:18px 14px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03))}
+.equipment-stack{position:relative;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-height:320px}
+.hero-silhouette{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:78px;opacity:.18}
+.equip-slot{width:126px;min-height:74px;padding:8px 10px;border-radius:12px;font-size:12px;line-height:1.35;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-sizing:border-box;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.equip-slot strong{display:block;color:#d7d7d7;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.equip-slot.empty{background:rgba(17,17,17,.42);border:1px dashed rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.equip-slot.filled{background:rgba(17,17,17,.86);border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 18px rgba(0,0,0,.18)}
+.slot-empty{color:#909090;font-style:italic}
+.equip-weapon{align-self:center}
+.rarity-comum{color:#f0f0f0}
+.rarity-incomum{color:#7ee787}
+.rarity-rara{color:#62b0ff}
+.rarity-ultra-rara{color:#d394ff}
+.rarity-lendaria{color:#ffbf47}
+.boss-btn{background:#8b2f2f;color:#fff}
+.lock-note{font-size:13px;color:#d1d1d1}
+.bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0}
+.fill{height:100%;transition:width .28s ease}
+.hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
+#log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
+.action-btn{position:relative}
+.action-btn[data-tooltip]:hover::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 8px);
+  transform:translateX(-50%);
+  min-width:220px;
+  max-width:280px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#101010;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  font-size:13px;
+  line-height:1.4;
+  white-space:normal;
+  z-index:10
+}
+.action-btn[data-tooltip]:hover::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:100%;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top:none;
+  border-bottom-color:#101010;
+  z-index:11
+}
+.levelup-panel{border:1px solid #ffc107;background:#4a3c10}
+.attribute-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0;padding:10px;border-radius:10px;background:rgba(255,255,255,.06)}
+.attribute-controls{display:flex;align-items:center;gap:8px}
+.attribute-controls button{padding:6px 12px;margin:0}
+.attribute-value{min-width:32px;text-align:center;font-weight:700}
+.tabs{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+.tab-btn{background:#505050;color:#fff}
+.tab-btn.active{background:#1565c0}
+.region-chip{padding:8px 14px;border-radius:999px;background:#505050;color:#fff}
+.region-chip.active{background:#2e7d32}
+.sprite-box{display:flex;justify-content:center;align-items:center;min-height:140px;font-size:76px;background:rgba(255,255,255,.05);border-radius:14px;margin-top:10px}
+.enemy-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.enemy-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.enemy-title h3{margin:0 0 6px 0}
+.enemy-subtitle{margin:0;color:#d0d0d0;font-size:13px}
+.enemy-badges{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.enemy-badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;font-weight:700}
+.enemy-drop-box{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.enemy-drop-box strong{display:block;margin-bottom:4px}
+.enemy-drop-box span{color:#d7d7d7}
+@media (max-width:640px){
+  .attribute-row{flex-direction:column;align-items:flex-start}
+  .action-btn[data-tooltip]:hover::after{left:0;transform:none}
+  .action-btn[data-tooltip]:hover::before{left:18px;transform:none}
+  .enemy-top{flex-direction:column}
+}
+@media (max-width:980px){
+  .game-layout{grid-template-columns:1fr}
+  .class-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div id="classSelect" class="panel">
+<h3>Escolha sua classe</h3>
+<div class="class-grid">
+<button class="class-card class-warrior" onclick="selectClass('Guerreiro')">
+<span class="class-icon">🛡️</span>
+<h4>Guerreiro</h4>
+<p><span class="stat-hp">Vida 140</span></p>
+<p><span class="stat-mp">Mana 40</span></p>
+<p><span class="stat-atk">Dano basico 20</span></p>
+<small>Alta resistencia, pouca mana e o ataque basico mais forte entre as tres classes.</small>
+</button>
+<button class="class-card class-archer" onclick="selectClass('Arqueiro')">
+<span class="class-icon">🏹</span>
+<h4>Arqueiro</h4>
+<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-mp">Mana 60</span></p>
+<p><span class="stat-atk">Dano basico 17</span></p>
+<small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
+</button>
+<button class="class-card class-mage" onclick="selectClass('Mago')">
+<span class="class-icon">🔮</span>
+<h4>Mago</h4>
+<p><span class="stat-hp">Vida 80</span></p>
+<p><span class="stat-mp">Mana 100</span></p>
+<p><span class="stat-atk">Dano basico 14</span></p>
+<small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes.</small>
+</button>
+</div>
+<div id="savedCampaign" class="saved-campaign" style="display:none;"></div>
+</div>
+<div id="game" style="display:none;">
+<div class="game-layout">
+<div class="side-column">
+<div class="panel">
+<h3>Locais</h3>
+<div class="tabs" id="modeTabs"></div>
+</div>
+</div>
+<div class="main-column">
+<div class="panel" id="playerInfo"></div>
+<div class="button-row" id="actions"></div>
+<div class="panel" id="enemyInfo"></div>
+<div id="levelUpPanel" class="panel levelup-panel" style="display:none;"></div>
+<div class="panel" id="logPanel">
+<div class="panel-header">
+<strong>Log de batalha</strong>
+<button onclick="toggleLog()">Ocultar</button>
+</div>
+<div id="log"></div>
+</div>
+</div>
+<div class="side-column">
+<div class="panel" id="regionInfo"></div>
+<div class="panel" id="inventoryInfo"></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const SAVE_KEY = "rpg_turnos_campaign_v1";
+let player, enemy;
+let pendingLevelUps = 0;
+let levelUpPoints = 0;
+let allocation = { hp: 0, mp: 0, attack: 0 };
+let isProcessingTurn = false;
+let currentRegion = "Floresta";
+let needsNewEnemy = false;
+let currentMode = "battle";
+let enemiesSpawned = 0;
+let isDead = false;
+let deadUntil = null;
+let isLogHidden = false;
+let playerEffects = createDefaultPlayerEffects();
+let displayState = {
+  playerHp: null,
+  playerMp: null,
+  playerXp: null,
+  enemyHp: null
+};
+
+const rarityOrder = ["comum", "incomum", "rara", "ultra_rara", "lendaria"];
+const rarityData = {
+  comum: { label: "Comum", cssClass: "rarity-comum", weight: 62 },
+  incomum: { label: "Incomum", cssClass: "rarity-incomum", weight: 20 },
+  rara: { label: "Rara", cssClass: "rarity-rara", weight: 10 },
+  ultra_rara: { label: "Ultra rara", cssClass: "rarity-ultra-rara", weight: 5 },
+  lendaria: { label: "Lendaria", cssClass: "rarity-lendaria", weight: 3 }
+};
+const rarityStats = {
+  hp: { comum: 8, incomum: 14, rara: 22, ultra_rara: 32, lendaria: 46 },
+  mp: { comum: 6, incomum: 10, rara: 16, ultra_rara: 24, lendaria: 34 },
+  attack: { comum: 2, incomum: 4, rara: 6, ultra_rara: 9, lendaria: 13 },
+  skill: { comum: 3, incomum: 5, rara: 8, ultra_rara: 12, lendaria: 17 }
+};
+const equipmentSlots = ["head", "chest", "weapon", "legs", "feet"];
+const slotLabels = { head: "Cabeca", chest: "Peito", weapon: "Arma", legs: "Pernas", feet: "Pes" };
+const classIcons = { Guerreiro: "⚔", Arqueiro: "🏹", Mago: "✦" };
+const enemyDrops = {
+  "Lobo Sombrio": { id: "sandalia_mago", name: "Sandalia de Mago", slot: "feet", classRestriction: "Mago", stats: { bonusHp: "hp" } },
+  Goblin: { id: "calca_esfarrapada", name: "Calca Esfarrapada", slot: "legs", classRestriction: "Arqueiro", stats: { bonusHp: "hp" } },
+  "Aranha Gigante": { id: "colete_de_presas", name: "Colete de Presas", slot: "chest", classRestriction: "Guerreiro", stats: { bonusHp: "hp" } },
+  "Morcego de Pedra": { id: "botas_petricas", name: "Botas Petricas", slot: "feet", classRestriction: "Guerreiro", stats: { bonusHp: "hp" } },
+  "Esqueleto Mineiro": { id: "arco_de_ossos", name: "Arco de Ossos", slot: "weapon", classRestriction: "Arqueiro", stats: { bonusAttack: "attack", skillPower: "skill" } },
+  "Slime Toxico": { id: "coroa_de_slime", name: "Coroa de Slime", slot: "head", classRestriction: "Mago", stats: { bonusHp: "hp", bonusMp: "mp" } },
+  "Sentinela Quebrada": { id: "sapatos_focados", name: "Sapatos Focados", slot: "feet", classRestriction: "Arqueiro", stats: { bonusMp: "mp" } },
+  "Cultista Perdido": { id: "manto_do_culto", name: "Manto do Culto", slot: "chest", classRestriction: "Mago", stats: { bonusMp: "mp" } },
+  "Fantasma Antigo": { id: "calca_do_espectro", name: "Calca do Espectro", slot: "legs", classRestriction: "Mago", stats: { bonusHp: "hp", bonusMp: "mp" } },
+  "Sapo Colossal": { id: "calca_viscosa", name: "Calca Viscosa", slot: "legs", classRestriction: "Guerreiro", stats: { bonusHp: "hp" } },
+  "Bruxa do Brejo": { id: "varinha_da_bruxa", name: "Varinha da Bruxa", slot: "weapon", classRestriction: "Mago", stats: { skillPower: "skill", bonusMp: "mp" } },
+  "Serpente do Lodo": { id: "capuz_de_escamas", name: "Capuz de Escamas", slot: "head", classRestriction: "Arqueiro", stats: { bonusHp: "hp" } },
+  "Salamandra Rubra": { id: "casaco_escarlate", name: "Casaco Escarlate", slot: "chest", classRestriction: "Arqueiro", stats: { bonusHp: "hp", bonusMp: "mp" } },
+  "Golem de Brasa": { id: "capacete_em_brasa", name: "Capacete em Brasa", slot: "head", classRestriction: "Guerreiro", stats: { bonusHp: "hp" } },
+  "Fenix Sombria": { id: "espada_flamejante", name: "Espada Flamejante", slot: "weapon", classRestriction: "Guerreiro", stats: { bonusAttack: "attack", skillPower: "skill" } }
+};
+
+function createDefaultPlayerEffects(){
+  return {
+    attackBuffTurns: 0,
+    attackBuffAmount: 0,
+    skillBuffTurns: 0,
+    skillBuffAmount: 0,
+    precisionTurns: 0,
+    precisionBonus: 0,
+    shieldValue: 0,
+    shieldTurns: 0,
+    flatReduction: 0,
+    reflectPercent: 0
+  };
+}
+
+const enemySprites = {
+  "Lobo Sombrio": "🐺",
+  Goblin: "👺",
+  "Aranha Gigante": "🕷️",
+  "Morcego de Pedra": "🦇",
+  "Esqueleto Mineiro": "💀",
+  "Slime Toxico": "🟢",
+  "Sentinela Quebrada": "🗿",
+  "Cultista Perdido": "🧙",
+  "Fantasma Antigo": "👻",
+  "Ent Ancestral": "🌳",
+  "Troll das Profundezas": "👹",
+  "Rei Espectral": "👑",
+  "Sapo Colossal": "🐸",
+  "Bruxa do Brejo": "🧪",
+  "Serpente do Lodo": "🐍",
+  "Hidra do Lodo": "🐉",
+  "Salamandra Rubra": "🦎",
+  "Golem de Brasa": "🪨",
+  "Fenix Sombria": "🦅",
+  "Draco Magmatico": "🔥"
+};
+
+const classes = {
+  Guerreiro: {
+    hp: 140,
+    mp: 40,
+    attack: 20,
+    growth: { hp: 18, mp: 4, attack: 2 },
+    activeSkills: [
+      { level: 1, name: "Recuperar Folego", type: "heal_percent", value: 0.22, cost: 20, description: "Recupera parte da vida maxima." },
+      { level: 10, name: "Postura de Ferro", type: "shield", stat: "hp", value: 0.26, cost: 24, description: "Cria um escudo baseado na vida maxima ate ser destruido." },
+      { level: 20, name: "Ruptura Titanica", type: "damage_maxhp_percent", value: 0.34, cost: 32, description: "Ataca usando sua propria vida maxima como referencia." },
+      { level: 30, name: "Grito de Guerra", type: "battle_cry", turns: 3, cost: 40, description: "Aumenta o dano de ataque e habilidade com base no nivel." }
+    ],
+    passiveSkills: [
+      { level: 5, name: "Corpo de Aco", type: "flat_reduction_scale", base: 1, scale: 0.25, description: "Reduz dano recebido em valor fixo conforme seu nivel." },
+      { level: 15, name: "Folego de Guerra", type: "turn_heal_percent", value: 0.03, description: "Recupera vida ao final de cada turno seu." },
+      { level: 25, name: "Pele de Ferro", type: "reflect_percent", value: 0.1, description: "Reflete parte do dano recebido de volta ao inimigo." }
+    ],
+    subclasses: [
+      { id: "guardiao", name: "Guardiao", description: "Mais resistencia e postura defensiva.", hp: 40, mp: 0, attack: 2, manaRegen: 0, skillPower: 0, damageReduction: 0.12 },
+      { id: "berserker", name: "Berserker", description: "Mais dano e habilidades agressivas.", hp: 10, mp: 0, attack: 8, manaRegen: 0, skillPower: 8, damageReduction: 0 }
+    ]
+  },
+  Arqueiro: {
+    hp: 100,
+    mp: 60,
+    attack: 17,
+    growth: { hp: 10, mp: 6, attack: 3 },
+    activeSkills: [
+      { level: 1, name: "Mirar", type: "aim_buff", turns: 3, cost: 18, description: "Aumenta a precisao e reforca seus disparos." },
+      { level: 10, name: "Passo Leve", type: "mana_percent_free", value: 0.18, cost: 12, description: "Recupera mana sem encerrar seu turno." },
+      { level: 20, name: "Rajada de Flechas", type: "triple_shot", hits: 3, cost: 34, description: "Dispara tres flechas usando seu ataque basico." },
+      { level: 30, name: "Olho do Eclipse", type: "damage", value: 82, cost: 42, description: "Disparo maximo de alta precisao." }
+    ],
+    passiveSkills: [
+      { level: 5, name: "Bolsa do Cacador", type: "coin_bonus", value: 0.1, description: "Aumenta as moedas obtidas em batalha." },
+      { level: 15, name: "Olhos Agucados", type: "bonus_attack_scale", base: 2, scale: 0.2, description: "Aumenta seu dano base com o nivel." },
+      { level: 25, name: "Passos Silenciosos", type: "mana_regen_percent", value: 0.05, description: "Aumenta a regeneracao total de mana para 15%." }
+    ],
+    subclasses: [
+      { id: "cacador", name: "Cacador", description: "Mais dano e mais saque nas batalhas.", hp: 15, mp: 0, attack: 6, manaRegen: 0, skillPower: 4, coinBonus: 0.2 },
+      { id: "atirador_arcano", name: "Atirador Arcano", description: "Mais mana e habilidades mais frequentes.", hp: 0, mp: 30, attack: 3, manaRegen: 4, skillPower: 8, skillCostReduction: 0.18 }
+    ]
+  },
+  Mago: {
+    hp: 80,
+    mp: 100,
+    attack: 14,
+    growth: { hp: 8, mp: 14, attack: 2 },
+    activeSkills: [
+      { level: 1, name: "Bola de Fogo", type: "fireball", value: 35, cost: 30, description: "Lanca uma esfera de fogo destrutiva." },
+      { level: 10, name: "Concentracao", type: "mana_percent", value: 0.3, cost: 18, description: "Recupera mana com base no maximo atual." },
+      { level: 20, name: "Barreira Mistica", type: "shield", stat: "mp", value: 0.32, turns: 2, cost: 28, description: "Ergue um escudo magico por dois turnos." },
+      { level: 30, name: "Nova Celestial", type: "damage_and_drain_mana", value: 112, manaDrainPercent: 0.1, cost: 50, description: "Causa grande dano e drena mana do inimigo." }
+    ],
+    passiveSkills: [
+      { level: 5, name: "Fluxo Arcano", type: "mana_regen_percent", value: 0.05, description: "Aumenta a regeneracao total de mana para 15%." },
+      { level: 15, name: "Transbordamento", type: "skill_power_scale", base: 4, scale: 0.35, extra: { skillCostIncrease: 0.12 }, description: "Aumenta o dano das habilidades e tambem seus custos." },
+      { level: 25, name: "Mana e Vida", type: "mana_to_life_percent", value: 0.1, description: "Converte parte da mana maxima em vida maxima." }
+    ],
+    subclasses: [
+      { id: "feiticeiro", name: "Feiticeiro", description: "Mais dano magico e mana maxima.", hp: 0, mp: 35, attack: 2, manaRegen: 3, skillPower: 14 },
+      { id: "invocador", name: "Invocador", description: "Mais sobrevivencia e regeneracao arcana.", hp: 28, mp: 18, attack: 1, manaRegen: 6, skillPower: 6 }
+    ]
+  }
+};
+
+const regions = {
+  Floresta: {
+    minLevel: 1,
+    description: "Criaturas selvagens e emboscadas leves.",
+    boss: { name: "Ent Ancestral", level: 10, hp: 170, attack: 15, mp: 60, skillName: "Raizes Esmagadoras", skillDamage: 36, skillCost: 18 },
+    enemies: [
+      { name: "Lobo Sombrio", level: 1, weight: 60, hp: 70, attack: 8 },
+      { name: "Goblin", level: 3, weight: 28, hp: 82, attack: 9 },
+      { name: "Aranha Gigante", level: 8, weight: 12, hp: 96, attack: 11 }
+    ]
+  },
+  Caverna: {
+    minLevel: 8,
+    description: "Passagens estreitas cheias de monstros resistentes.",
+    boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
+    enemies: [
+      { name: "Morcego de Pedra", level: 11, weight: 58, hp: 90, attack: 10 },
+      { name: "Esqueleto Mineiro", level: 13, weight: 28, hp: 102, attack: 11 },
+      { name: "Slime Toxico", level: 18, weight: 14, hp: 120, attack: 12 }
+    ]
+  },
+  Ruinas: {
+    minLevel: 15,
+    description: "Restos antigos guardados por inimigos mais agressivos.",
+    boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
+    enemies: [
+      { name: "Sentinela Quebrada", level: 21, weight: 58, hp: 128, attack: 13 },
+      { name: "Cultista Perdido", level: 23, weight: 27, hp: 140, attack: 15 },
+      { name: "Fantasma Antigo", level: 28, weight: 15, hp: 165, attack: 16 }
+    ]
+  },
+  Pantano: {
+    minLevel: 22,
+    description: "Neblina espessa, criaturas venenosas e terreno traiçoeiro.",
+    boss: { name: "Hidra do Lodo", level: 36, hp: 420, attack: 34, mp: 110, skillName: "Sopro Corrosivo", skillDamage: 88, skillCost: 30 },
+    enemies: [
+      { name: "Sapo Colossal", level: 24, weight: 56, hp: 150, attack: 16 },
+      { name: "Bruxa do Brejo", level: 27, weight: 29, hp: 165, attack: 18 },
+      { name: "Serpente do Lodo", level: 32, weight: 15, hp: 188, attack: 21 }
+    ]
+  },
+  Vulcao: {
+    minLevel: 28,
+    description: "Um reino de cinzas, magma e monstros forjados no fogo.",
+    boss: { name: "Draco Magmatico", level: 45, hp: 520, attack: 42, mp: 140, skillName: "Explosao Vulcanica", skillDamage: 112, skillCost: 36 },
+    enemies: [
+      { name: "Salamandra Rubra", level: 30, weight: 56, hp: 180, attack: 20 },
+      { name: "Golem de Brasa", level: 34, weight: 28, hp: 205, attack: 23 },
+      { name: "Fenix Sombria", level: 39, weight: 16, hp: 236, attack: 26 }
+    ]
+  }
+};
+
+function selectClass(name){
+  const base = classes[name];
+  player = {
+    class: name,
+    level: 1,
+    xp: 0,
+    coins: 0,
+    maxHp: base.hp,
+    hp: base.hp,
+    maxMp: base.mp,
+    mp: base.mp,
+    attack: base.attack,
+    baseAttack: base.attack,
+    growth: base.growth,
+    activeSkills: base.activeSkills,
+    passiveSkills: base.passiveSkills,
+    inventory: [],
+    stats: {
+      enemiesDefeated: 0,
+      bossesDefeated: 0,
+      coinsEarned: 0,
+      deaths: 0
+    }
+  };
+  normalizePlayerState();
+  playerEffects = createDefaultPlayerEffects();
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  needsNewEnemy = true;
+  spawnEnemy();
+  updateUI();
+}
+
+function chooseWeightedEnemy(enemyList){
+  const totalWeight = enemyList.reduce((sum, enemyData) => sum + enemyData.weight, 0);
+  let roll = Math.random() * totalWeight;
+  for(const enemyData of enemyList){
+    roll -= enemyData.weight;
+    if(roll <= 0){
+      return enemyData;
+    }
+  }
+  return enemyList[enemyList.length - 1];
+}
+
+function getEnemyStats(template){
+  return {
+    maxHp: template.hp + template.level * 18,
+    attack: template.attack + template.level * 2
+  };
+}
+
+function getRegionAverageLevel(region){
+  const regionData = regions[region];
+  const totalWeight = regionData.enemies.reduce((sum, enemyData) => sum + enemyData.weight, 0);
+  const weightedLevels = regionData.enemies.reduce((sum, enemyData) => sum + enemyData.level * enemyData.weight, 0);
+  return Math.ceil(weightedLevels / totalWeight);
+}
+
+function normalizePlayerState(){
+  player.inventory = (Array.isArray(player.inventory) ? player.inventory : []).map((item, index) => ({
+    ...item,
+    uid: item.uid || `${item.id || "item"}_${Date.now()}_${index}`
+  }));
+  const oldEquipment = player.equipment || {};
+  player.equipment = {
+    head: oldEquipment.head || null,
+    chest: oldEquipment.chest || null,
+    weapon: oldEquipment.weapon || null,
+    legs: oldEquipment.legs || null,
+    feet: oldEquipment.feet || oldEquipment.boots || null
+  };
+  player.stats = player.stats || {
+    enemiesDefeated: 0,
+    bossesDefeated: 0,
+    coinsEarned: 0,
+    deaths: 0
+  };
+  player.subclass = player.subclass || null;
+  player.activeSkills = getCurrentClassData().activeSkills;
+  player.passiveSkills = getCurrentClassData().passiveSkills;
+  playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
+}
+
+function getPreviewStats(){
+  const passives = getPassiveModifiers();
+  return {
+    maxHp: player.maxHp + passives.bonusHp + allocation.hp * player.growth.hp,
+    maxMp: player.maxMp + passives.bonusMp + allocation.mp * player.growth.mp,
+    attack: player.attack + passives.bonusAttack + allocation.attack * player.growth.attack
+  };
+}
+
+function getCurrentCaps(){
+  const previewStats = getPreviewStats();
+  return {
+    maxHp: previewStats.maxHp,
+    maxMp: previewStats.maxMp
+  };
+}
+
+function getXpToNextLevel(){
+  return 100 + (player.level - 1) * 25;
+}
+
+function getCurrentClassData(){
+  return classes[player.class];
+}
+
+function getSubclassChoices(){
+  return getCurrentClassData().subclasses || [];
+}
+
+function getUnlockedActiveSkills(){
+  return (player.activeSkills || []).filter(skill => player.level >= skill.level);
+}
+
+function getUnlockedPassiveSkills(){
+  return (player.passiveSkills || []).filter(skill => player.level >= skill.level);
+}
+
+function getPassiveModifiers(){
+  const base = {
+    bonusHp: 0,
+    bonusMp: 0,
+    bonusAttack: 0,
+    manaRegen: 0,
+    manaRegenPercent: 0,
+    damageReduction: 0,
+    coinBonus: 0,
+    skillPower: 0,
+    flatReduction: 0,
+    reflectPercent: 0,
+    turnHealPercent: 0,
+    skillCostIncrease: 0
+  };
+  for(const passive of getUnlockedPassiveSkills()){
+    if(passive.type === "bonus_hp"){ base.bonusHp += passive.value; }
+    if(passive.type === "bonus_mp"){ base.bonusMp += passive.value; }
+    if(passive.type === "bonus_attack"){ base.bonusAttack += passive.value; }
+    if(passive.type === "mana_regen"){ base.manaRegen += passive.value; }
+    if(passive.type === "mana_regen_percent"){ base.manaRegenPercent += passive.value; }
+    if(passive.type === "damage_reduction"){ base.damageReduction += passive.value; }
+    if(passive.type === "coin_bonus"){ base.coinBonus += passive.value; }
+    if(passive.type === "skill_power"){ base.skillPower += passive.value; }
+    if(passive.type === "flat_reduction_scale"){ base.flatReduction += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0)); }
+    if(passive.type === "reflect_percent"){ base.reflectPercent += passive.value; }
+    if(passive.type === "turn_heal_percent"){ base.turnHealPercent += passive.value; }
+    if(passive.type === "bonus_attack_scale"){ base.bonusAttack += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0)); }
+    if(passive.type === "skill_power_scale"){
+      base.skillPower += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0));
+      base.skillCostIncrease += passive.extra?.skillCostIncrease || 0;
+    }
+  }
+  if(player.subclass){
+    base.bonusHp += player.subclass.hp || 0;
+    base.bonusMp += player.subclass.mp || 0;
+    base.bonusAttack += player.subclass.attack || 0;
+    base.manaRegen += player.subclass.manaRegen || 0;
+    base.damageReduction += player.subclass.damageReduction || 0;
+    base.coinBonus += player.subclass.coinBonus || 0;
+    base.skillPower += player.subclass.skillPower || 0;
+  }
+  for(const slot of equipmentSlots){
+    const item = player.equipment?.[slot];
+    if(!item){ continue; }
+    base.bonusHp += item.bonusHp || 0;
+    base.bonusMp += item.bonusMp || 0;
+    base.bonusAttack += item.bonusAttack || 0;
+    base.skillPower += item.skillPower || 0;
+  }
+  for(const passive of getUnlockedPassiveSkills()){
+    if(passive.type === "mana_to_life_percent"){
+      base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * passive.value);
+    }
+  }
+  return base;
+}
+
+function needsSubclassChoice(){
+  return player.level >= 30 && !player.subclass;
+}
+
+function getTrophyCompletion(){
+  const trophies = getTrophies();
+  const done = trophies.filter(trophy => trophy.done).length;
+  return Math.floor(done / trophies.length * 100);
+}
+
+function getTrophies(){
+  return [
+    { name: "Primeiro Sangue", done: player.stats.enemiesDefeated >= 1, description: "Derrote 1 inimigo." },
+    { name: "Cacador Experiente", done: player.stats.enemiesDefeated >= 25, description: "Derrote 25 inimigos." },
+    { name: "Matador de Chefes", done: player.stats.bossesDefeated >= 1, description: "Derrote 1 chefao." },
+    { name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
+    { name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
+    { name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
+    { name: "Mestre Supremo", done: player.level >= 30, description: "Alcance o nivel maximo." }
+  ];
+}
+
+function getRegionRequirement(region){
+  return regions[region].minLevel || 1;
+}
+
+function getActiveAttack(){
+  return getPreviewStats().attack + (playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffAmount : 0);
+}
+
+function getSkillPowerBonus(){
+  return getPassiveModifiers().skillPower + (playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffAmount : 0);
+}
+
+function getAccuracyBonus(){
+  return playerEffects.precisionTurns > 0 ? playerEffects.precisionBonus : 0;
+}
+
+function getHitChance(mode = "basic"){
+  if(player.class !== "Arqueiro"){ return 1; }
+  const baseChance = mode === "multi" ? 0.82 : mode === "precise" ? 0.95 : 0.86;
+  return Math.min(1, baseChance + getAccuracyBonus());
+}
+
+function rollHit(mode = "basic"){
+  return Math.random() < getHitChance(mode);
+}
+
+function decayPlayerBuffs(){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "precisionTurns"]){
+    if(playerEffects[buffName] > 0){
+      playerEffects[buffName]--;
+    }
+  }
+  if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffAmount = 0; }
+  if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffAmount = 0; }
+  if(playerEffects.precisionTurns <= 0){ playerEffects.precisionBonus = 0; }
+}
+
+function getTurnHealing(){
+  return Math.floor(getCurrentCaps().maxHp * getPassiveModifiers().turnHealPercent);
+}
+
+function getSkillInfo(){
+  return getUnlockedActiveSkills().map(skill => {
+    const passiveModifiers = getPassiveModifiers();
+    const subclassCostReduction = player.subclass?.skillCostReduction || 0;
+    const attackBonus = getActiveAttack() - player.baseAttack;
+    const skillBonus = getSkillPowerBonus();
+    const costIncrease = passiveModifiers.skillCostIncrease || 0;
+    let cost = Math.max(8, Math.ceil(skill.cost * (1 - subclassCostReduction + costIncrease)));
+    if(skill.type === "damage"){
+      const damage = skill.value + attackBonus + skillBonus;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
+    }
+    if(skill.type === "fireball"){
+      cost += Math.floor(skillBonus / 12);
+      const damage = skill.value + attackBonus + skillBonus;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
+    }
+    if(skill.type === "heal_percent"){
+      const heal = Math.ceil(getPreviewStats().maxHp * skill.value);
+      return { ...skill, cost, heal, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.` };
+    }
+    if(skill.type === "mana_percent"){
+      const mana = Math.ceil(getPreviewStats().maxMp * skill.value);
+      return { ...skill, cost, mana, description: `${skill.name}: consome ${cost} MP e recupera ${mana} de mana.` };
+    }
+    if(skill.type === "mana_percent_free"){
+      const mana = Math.ceil(getPreviewStats().maxMp * skill.value);
+      return { ...skill, cost, mana, description: `${skill.name}: consome ${cost} MP, recupera ${mana} de mana e nao encerra seu turno.` };
+    }
+    if(skill.type === "shield"){
+      const baseStat = skill.stat === "mp" ? getPreviewStats().maxMp : getPreviewStats().maxHp;
+      const shield = Math.ceil(baseStat * skill.value);
+      const durationText = skill.turns ? ` por ${skill.turns} turno(s)` : "";
+      return { ...skill, cost, shield, description: `${skill.name}: consome ${cost} MP e cria um escudo de ${shield}${durationText}.` };
+    }
+    if(skill.type === "damage_maxhp_percent"){
+      const damage = Math.ceil(getPreviewStats().maxHp * skill.value) + Math.floor(skillBonus / 2);
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano com base na vida maxima.` };
+    }
+    if(skill.type === "battle_cry"){
+      const attackBuff = 5 + Math.floor(player.level * 0.4);
+      const skillBuff = 7 + Math.floor(player.level * 0.45);
+      return { ...skill, cost, attackBuff, skillBuff, description: `${skill.name}: consome ${cost} MP e aumenta ataque em ${attackBuff} e habilidades em ${skillBuff} por ${skill.turns} turnos.` };
+    }
+    if(skill.type === "aim_buff"){
+      const attackBuff = 4 + Math.floor(player.level * 0.3);
+      const skillBuff = 4 + Math.floor(player.level * 0.3);
+      const precision = 0.18;
+      return { ...skill, cost, attackBuff, skillBuff, precision, description: `${skill.name}: consome ${cost} MP, aumenta a precisao e adiciona ${attackBuff} ao ataque e ${skillBuff} as habilidades por ${skill.turns} turnos.` };
+    }
+    if(skill.type === "triple_shot"){
+      const perHit = getActiveAttack();
+      return { ...skill, cost, perHit, description: `${skill.name}: consome ${cost} MP e dispara ${skill.hits} ataques com seu dano basico.` };
+    }
+    if(skill.type === "damage_and_drain_mana"){
+      const damage = skill.value + attackBonus + skillBonus;
+      return { ...skill, cost, damage, manaDrain: skill.manaDrainPercent, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e drena 10% da mana do alvo.` };
+    }
+    return { ...skill, cost, description: skill.description || skill.name };
+  });
+}
+
+function getCampEntries(){
+  const unlockedActiveNames = new Set(getUnlockedActiveSkills().map(skill => skill.name));
+  const activeDetails = new Map(getSkillInfo().map(skill => [skill.name, skill]));
+  const activeEntries = (player.activeSkills || []).map(skill => {
+    const activeDetail = activeDetails.get(skill.name);
+    const unlocked = unlockedActiveNames.has(skill.name);
+    return {
+      name: skill.name,
+      status: unlocked ? "Disponivel" : `Desbloqueia no nivel ${skill.level}`,
+      statusClass: unlocked ? "status-on" : "status-off",
+      description: activeDetail?.description || skill.description
+    };
+  });
+  const passiveEntries = (player.passiveSkills || []).map(skill => {
+    const unlocked = player.level >= skill.level;
+    return {
+      name: skill.name,
+      status: unlocked ? "Sempre ativa" : `Desbloqueia no nivel ${skill.level}`,
+      statusClass: unlocked ? "status-on" : "status-off",
+      description: unlocked ? getPassiveStatusDescription(skill) : skill.description
+    };
+  });
+  return { activeEntries, passiveEntries };
+}
+
+function getPassiveStatusDescription(skill){
+  if(skill.type === "coin_bonus"){
+    return `${skill.name}: aumenta as moedas obtidas em ${Math.floor(skill.value * 100)}%.`;
+  }
+  if(skill.type === "bonus_attack_scale"){
+    const bonus = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
+    return `${skill.name}: concede ${bonus} de dano base extra no nivel atual.`;
+  }
+  if(skill.type === "mana_regen_percent"){
+    const totalPercent = Math.floor((0.1 + skill.value) * 100);
+    return `${skill.name}: sua regeneracao total de mana por turno esta em ${totalPercent}%.`;
+  }
+  if(skill.type === "flat_reduction_scale"){
+    const reduction = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
+    return `${skill.name}: reduz ${reduction} de dano fixo por ataque recebido no nivel atual.`;
+  }
+  if(skill.type === "turn_heal_percent"){
+    const heal = Math.floor(getCurrentCaps().maxHp * skill.value);
+    return `${skill.name}: recupera ${heal} de vida ao final de cada turno seu.`;
+  }
+  if(skill.type === "reflect_percent"){
+    return `${skill.name}: devolve ${Math.floor(skill.value * 100)}% do dano recebido ao inimigo.`;
+  }
+  if(skill.type === "skill_power_scale"){
+    const bonus = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
+    const extraCost = Math.floor((skill.extra?.skillCostIncrease || 0) * 100);
+    return `${skill.name}: concede ${bonus} de dano de habilidade e aumenta os custos em ${extraCost}%.`;
+  }
+  if(skill.type === "mana_to_life_percent"){
+    const converted = Math.floor(getPreviewStats().maxMp * skill.value);
+    return `${skill.name}: converte 10% da mana maxima em vida maxima. Bonus atual: ${converted} de vida.`;
+  }
+  return skill.description;
+}
+
+function getRarityStat(statKey, rarity){
+  return rarityStats[statKey]?.[rarity] || 0;
+}
+
+function buildEquipmentDescription(item){
+  const lines = [];
+  if(item.bonusHp){ lines.push(`+${item.bonusHp} vida maxima`); }
+  if(item.bonusMp){ lines.push(`+${item.bonusMp} mana maxima`); }
+  if(item.bonusAttack){ lines.push(`+${item.bonusAttack} dano de ataque`); }
+  if(item.skillPower){ lines.push(`+${item.skillPower} dano de habilidade`); }
+  lines.push(`Equipavel apenas por ${item.classRestriction}.`);
+  return lines.join(". ");
+}
+
+function createEquipmentItem(dropTemplate, rarity){
+  const rarityInfo = getRarityInfo(rarity);
+  const item = {
+    id: `${dropTemplate.id}_${rarity}`,
+    name: `${dropTemplate.name} ${rarityInfo.label}`,
+    type: "equipment",
+    slot: dropTemplate.slot,
+    classRestriction: dropTemplate.classRestriction,
+    rarity,
+    rarityLabel: rarityInfo.label
+  };
+  for(const [bonusKey, statScale] of Object.entries(dropTemplate.stats)){
+    item[bonusKey] = getRarityStat(statScale, rarity);
+  }
+  item.description = buildEquipmentDescription(item);
+  return item;
+}
+
+function getSellPrice(item){
+  if(item.id === "mana_potion"){
+    return 20;
+  }
+  if(item.type === "chest"){
+    return 35;
+  }
+  if(item.type === "equipment"){
+    return Math.max(
+      18,
+      Math.floor(
+        10
+        + (item.bonusHp || 0) * 0.8
+        + (item.bonusMp || 0) * 1
+        + (item.bonusAttack || 0) * 7
+        + (item.skillPower || 0) * 6
+      )
+    );
+  }
+  return 8;
+}
+
+function getEquipmentDisplayName(item){
+  if(!item){
+    return `<span class="slot-empty">Espaco vazio</span>`;
+  }
+  const rarityInfo = getRarityInfo(item.rarity);
+  return `<span class="${rarityInfo.cssClass}">${item.name}</span>`;
+}
+
+function getEquipmentSlotClass(item){
+  return item ? "filled" : "empty";
+}
+
+function renderEquipmentShowcase(){
+  return `
+    <div class="equipment-layout">
+      <div class="equipment-stack">
+        <div class="equip-slot equip-weapon ${getEquipmentSlotClass(player.equipment.weapon)}"><strong>${slotLabels.weapon}</strong>${getEquipmentDisplayName(player.equipment.weapon)}</div>
+      </div>
+      <div class="equipment-body">
+        <div class="hero-silhouette">${classIcons[player.class] || "✦"}</div>
+        <div class="equipment-stack">
+          <div class="equip-slot equip-head ${getEquipmentSlotClass(player.equipment.head)}"><strong>${slotLabels.head}</strong>${getEquipmentDisplayName(player.equipment.head)}</div>
+          <div class="equip-slot equip-chest ${getEquipmentSlotClass(player.equipment.chest)}"><strong>${slotLabels.chest}</strong>${getEquipmentDisplayName(player.equipment.chest)}</div>
+          <div class="equip-slot equip-legs ${getEquipmentSlotClass(player.equipment.legs)}"><strong>${slotLabels.legs}</strong>${getEquipmentDisplayName(player.equipment.legs)}</div>
+          <div class="equip-slot equip-feet ${getEquipmentSlotClass(player.equipment.feet)}"><strong>${slotLabels.feet}</strong>${getEquipmentDisplayName(player.equipment.feet)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getBaseEnemyName(enemyName){
+  return enemyName.replace(/ Lv\.\d+$/, "");
+}
+
+function getRarityInfo(rarity){
+  return rarityData[rarity] || rarityData.comum;
+}
+
+function getRarityRank(rarity){
+  return rarityOrder.indexOf(rarity);
+}
+
+function getEnemyRarity(region, enemyName, isBoss = false){
+  if(isBoss){
+    return { key: "ultra_rara", label: "Chefao", cssClass: "rarity-ultra-rara" };
+  }
+  const regionData = regions[region];
+  if(!regionData){
+    return { key: "comum", label: "Comum", cssClass: "rarity-comum" };
+  }
+  const orderedEnemies = [...regionData.enemies].sort((a, b) => b.weight - a.weight);
+  const index = orderedEnemies.findIndex(enemyData => enemyData.name === enemyName);
+  const rarityByIndex = ["comum", "incomum", "rara"];
+  const rarityKey = rarityByIndex[index] || "comum";
+  const rarityInfo = getRarityInfo(rarityKey);
+  return { key: rarityKey, label: rarityInfo.label, cssClass: rarityInfo.cssClass };
+}
+
+function getEnemyPossibleDrop(enemyName, region, isBoss = false){
+  if(isBoss){
+    return `Bau da ${region}`;
+  }
+  const dropTemplate = enemyDrops[enemyName];
+  return dropTemplate ? dropTemplate.name : "Sem drop conhecido";
+}
+
+function rollWeightedRarity(){
+  const total = rarityOrder.reduce((sum, rarity) => sum + getRarityInfo(rarity).weight, 0);
+  let roll = Math.random() * total;
+  for(const rarity of rarityOrder){
+    roll -= getRarityInfo(rarity).weight;
+    if(roll <= 0){
+      return rarity;
+    }
+  }
+  return "comum";
+}
+
+function addInventoryItem(item){
+  player.inventory.push({ ...item, uid: item.uid || `${item.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}` });
+}
+
+function tryEnemyDrop(defeatedEnemy){
+  const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
+  const dropTemplate = enemyDrops[enemyBaseName];
+  if(!dropTemplate){ return; }
+  if(Math.random() > 0.1){ return; }
+  const rarity = rollWeightedRarity();
+  const item = createEquipmentItem(dropTemplate, rarity);
+  addInventoryItem(item);
+  log(`O ${enemyBaseName} deixou ${item.name}!`);
+}
+
+function getBossChestItem(region){
+  const regionData = regions[region];
+  if(!regionData){ return null; }
+  const possibleDrops = regionData.enemies.filter(enemyData => enemyDrops[enemyData.name]);
+  if(!possibleDrops.length){ return null; }
+  const chosenEnemy = chooseWeightedEnemy(possibleDrops);
+  const dropTemplate = enemyDrops[chosenEnemy.name];
+  return createEquipmentItem(dropTemplate, rollWeightedRarity());
+}
+
+function createRegionChest(region){
+  return {
+    id: `bau_${region.toLowerCase()}`,
+    name: `Bau da ${region}`,
+    type: "chest",
+    region,
+    description: `Contem 1 equipamento aleatorio da regiao ${region}.`
+  };
+}
+
+function grantBossChest(region){
+  addInventoryItem(createRegionChest(region));
+  log(`Voce recebeu um Bau da ${region}!`);
+}
+
+function openChest(itemUid){
+  const itemIndex = player.inventory.findIndex(entry => entry.uid === itemUid && entry.type === "chest");
+  if(itemIndex < 0){ return; }
+  const chest = player.inventory[itemIndex];
+  const chestItem = getBossChestItem(chest.region);
+  player.inventory.splice(itemIndex, 1);
+  if(!chestItem){
+    log("O bau estava vazio.");
+    updateUI();
+    return;
+  }
+  addInventoryItem(chestItem);
+  log(`Voce abriu ${chest.name} e encontrou ${chestItem.name}.`);
+  updateUI();
+}
+
+async function useManaPotion(){
+  if(isDead || currentMode === "trophies" || isProcessingTurn){ return; }
+  const item = player.inventory.find(entry => entry.id === "mana_potion" && entry.qty > 0);
+  if(!item){
+    log("Voce nao tem Pocao de Mana no inventario.");
+    return;
+  }
+  item.qty--;
+  player.mp = Math.min(getPreviewStats().maxMp, player.mp + 60);
+  if(item.qty <= 0){
+    player.inventory = player.inventory.filter(entry => entry.uid !== item.uid);
+  }
+  displayState.playerMp = player.mp;
+  if(currentMode === "battle" && enemy){
+    isProcessingTurn = true;
+  }
+  log("Voce usou uma Pocao de Mana e recuperou 60 de mana.");
+  updateUI();
+  if(currentMode === "battle" && enemy){
+    await wait(220);
+    await enemyTurn();
+  }
+}
+
+function equipItem(itemUid){
+  const itemIndex = player.inventory.findIndex(entry => entry.uid === itemUid);
+  if(itemIndex < 0){ return; }
+  const item = player.inventory[itemIndex];
+  if(item.type !== "equipment"){ return; }
+  if(player.class !== item.classRestriction){
+    log(`Somente a classe ${item.classRestriction} pode equipar ${item.name}.`);
+    return;
+  }
+  const equipped = player.equipment?.[item.slot] || null;
+  if(equipped && getRarityRank(item.rarity) <= getRarityRank(equipped.rarity)){
+    log("Voce so pode trocar o item atual por outro de raridade maior.");
+    return;
+  }
+  player.inventory.splice(itemIndex, 1);
+  if(equipped){
+    addInventoryItem(equipped);
+  }
+  player.equipment[item.slot] = item;
+  player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  log(`${item.name} foi equipada.`);
+  updateUI();
+}
+
+function sellItem(itemUid){
+  if(currentMode !== "village"){ return; }
+  const itemIndex = player.inventory.findIndex(entry => entry.uid === itemUid);
+  if(itemIndex < 0){ return; }
+  const item = player.inventory[itemIndex];
+  const value = getSellPrice(item);
+  if(item.qty && item.qty > 1){
+    item.qty--;
+  }else{
+    player.inventory.splice(itemIndex, 1);
+  }
+  player.coins += value;
+  log(`Voce vendeu ${item.name} por ${value} moedas.`);
+  updateUI();
+}
+
+function getFleeCost(){
+  return 2 + 3 * player.level;
+}
+
+function fleeBattle(){
+  if(currentMode !== "battle" || !enemy || isProcessingTurn || levelUpPoints > 0 || isDead){ return; }
+  const cost = getFleeCost();
+  if(player.coins < cost){
+    log(`Voce precisa de ${cost} moedas para fugir.`);
+    return;
+  }
+  player.coins -= cost;
+  enemy = null;
+  needsNewEnemy = true;
+  displayState.enemyHp = null;
+  isProcessingTurn = false;
+  log(`Voce fugiu da batalha e pagou ${cost} moedas.`);
+  updateUI();
+}
+
+function createEnemyFromTemplate(template, isBoss = false){
+  const stats = getEnemyStats(template);
+  const rarity = getEnemyRarity(currentRegion, template.name, isBoss);
+  return {
+    name: template.name + " Lv." + template.level,
+    baseName: template.name,
+    region: currentRegion,
+    level: template.level,
+    maxHp: stats.maxHp,
+    hp: stats.maxHp,
+    attack: stats.attack,
+    isBoss,
+    rarityKey: rarity.key,
+    rarityLabel: rarity.label,
+    rarityClass: rarity.cssClass,
+    possibleDrop: getEnemyPossibleDrop(template.name, currentRegion, isBoss),
+    maxMp: isBoss ? template.mp : 0,
+    mp: isBoss ? template.mp : 0,
+    skillName: isBoss ? template.skillName : "",
+    skillDamage: isBoss ? template.skillDamage : 0,
+    skillCost: isBoss ? template.skillCost : 0
+  };
+}
+
+function spawnEnemy(isBoss = false){
+  const regionData = regions[currentRegion];
+  const template = isBoss
+    ? regionData.boss
+    : enemiesSpawned < 3
+      ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") || chooseWeightedEnemy(regionData.enemies)
+      : chooseWeightedEnemy(regionData.enemies);
+  enemy = createEnemyFromTemplate(template, isBoss);
+  if(!isBoss){
+    enemiesSpawned++;
+  }
+  needsNewEnemy = false;
+  displayState.enemyHp = enemy.hp;
+  log(isBoss ? `O chefao ${enemy.name} surgiu na ${currentRegion}!` : `Um ${enemy.name} apareceu na ${currentRegion}!`);
+  saveCampaign();
+}
+
+function ensureEnemy(){
+  if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  if(!enemy || needsNewEnemy){
+    spawnEnemy();
+    updateUI();
+  }
+}
+
+function challengeBoss(){
+  if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  if(player.level < getRegionRequirement(currentRegion)){
+    log(`Voce precisa estar no nivel ${getRegionRequirement(currentRegion)} para desafiar esta area.`);
+    return;
+  }
+  enemy = null;
+  needsNewEnemy = false;
+  spawnEnemy(true);
+  updateUI();
+}
+
+function setMode(mode){
+  if(isProcessingTurn || isDead || !["battle", "village", "trophies", "camp"].includes(mode)){ return; }
+  if((levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
+    log("Finalize sua evolucao antes de sair da batalha.");
+    updateUI();
+    return;
+  }
+  if((mode === "village" || mode === "trophies" || mode === "camp") && enemy){
+    log(mode === "village" ? "Voce so pode ir ao vilarejo fora de combate." : mode === "trophies" ? "A sala de trofeus so pode ser acessada fora de combate." : "O acampamento so pode ser acessado fora de combate.");
+    updateUI();
+    return;
+  }
+  currentMode = mode;
+  updateUI();
+}
+
+function getHealCost(){
+  return Math.max(3, Math.ceil((getPreviewStats().maxHp - player.hp) / 7));
+}
+
+function healAtVillage(){
+  if(currentMode !== "village"){ return; }
+  const { maxHp } = getCurrentCaps();
+  if(player.hp >= maxHp){
+    log("Voce ja esta com a vida cheia.");
+    return;
+  }
+  const cost = getHealCost();
+  if(player.coins < cost){
+    log(`Moedas insuficientes. Cura custa ${cost} moedas.`);
+    return;
+  }
+  player.coins -= cost;
+  player.hp = maxHp;
+  displayState.playerHp = player.hp;
+  log(`Voce descansou no vilarejo e recuperou toda a vida por ${cost} moedas.`);
+  updateUI();
+}
+
+function buyManaPotion(){
+  if(currentMode !== "village"){ return; }
+  const cost = 40;
+  if(player.coins < cost){
+    log("Voce nao tem moedas suficientes para comprar uma pocao de mana.");
+    return;
+  }
+  player.coins -= cost;
+  const existing = player.inventory.find(item => item.id === "mana_potion");
+  if(existing){
+    existing.qty++;
+  }else{
+    addInventoryItem({ id: "mana_potion", name: "Pocao de Mana", qty: 1, type: "consumable", description: "Recupera 60 de mana." });
+  }
+  log("Voce comprou uma Pocao de Mana.");
+  updateUI();
+}
+
+function getRespawnSeconds(){
+  return 6 + player.level * 2;
+}
+
+function handleDeath(){
+  isProcessingTurn = false;
+  isDead = true;
+  deadUntil = Date.now() + getRespawnSeconds() * 1000;
+  player.stats.deaths++;
+  enemy = null;
+  needsNewEnemy = true;
+  currentMode = "battle";
+  log("Voce caiu em batalha.");
+  updateUI();
+}
+
+function respawnPlayer(){
+  if(!isDead || (deadUntil && Date.now() < deadUntil)){ return; }
+  const { maxHp, maxMp } = getCurrentCaps();
+  isDead = false;
+  deadUntil = null;
+  player.hp = maxHp;
+  player.mp = maxMp;
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  log("Voce renasceu e retornou a aventura.");
+  updateUI();
+}
+
+function resetAdventure(){
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+function saveCampaign(){
+  if(!player){
+    localStorage.removeItem(SAVE_KEY);
+    renderSavedCampaign();
+    return;
+  }
+  const state = {
+    player,
+    enemy,
+    pendingLevelUps,
+    levelUpPoints,
+    allocation,
+    isProcessingTurn: false,
+    currentRegion,
+    needsNewEnemy,
+    currentMode,
+    enemiesSpawned,
+    isDead,
+    deadUntil,
+    isLogHidden,
+    playerEffects
+  };
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  renderSavedCampaign();
+}
+
+function continueCampaign(){
+  const raw = localStorage.getItem(SAVE_KEY);
+  if(!raw){ return; }
+  const state = JSON.parse(raw);
+  player = state.player;
+  enemy = state.enemy;
+  pendingLevelUps = state.pendingLevelUps;
+  levelUpPoints = state.levelUpPoints;
+  allocation = state.allocation;
+  currentRegion = state.currentRegion;
+  needsNewEnemy = state.needsNewEnemy;
+  currentMode = state.currentMode;
+  enemiesSpawned = state.enemiesSpawned;
+  isDead = state.isDead;
+  deadUntil = state.deadUntil;
+  isLogHidden = !!state.isLogHidden;
+  playerEffects = { ...createDefaultPlayerEffects(), ...(state.playerEffects || {}) };
+  if(!["battle", "village", "trophies", "camp"].includes(currentMode)){
+    currentMode = "battle";
+  }
+  isProcessingTurn = false;
+  normalizePlayerState();
+  displayState = { playerHp: player.hp, playerMp: player.mp, playerXp: player.xp, enemyHp: enemy ? enemy.hp : null };
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  if(isDead && deadUntil && Date.now() >= deadUntil){
+    deadUntil = Date.now();
+  }
+  log("Campanha retomada.");
+  updateUI();
+}
+
+function renderSavedCampaign(){
+  const saved = document.getElementById("savedCampaign");
+  if(localStorage.getItem(SAVE_KEY)){
+    saved.style.display = "block";
+    saved.innerHTML = `
+      <h3>Campanha em andamento</h3>
+      <div class="button-row">
+        <button onclick="continueCampaign()">Continuar campanha</button>
+        <button onclick="resetAdventure()">Reiniciar aventura</button>
+      </div>`;
+  }else{
+    saved.style.display = "none";
+    saved.innerHTML = "";
+  }
+}
+
+function changeRegion(region){
+  if(isProcessingTurn || isDead || levelUpPoints > 0 || !regions[region] || currentRegion === region){ return; }
+  if(player.level < getRegionRequirement(region)){
+    log(`A regiao ${region} exige nivel ${getRegionRequirement(region)}.`);
+    return;
+  }
+  currentRegion = region;
+  log(`Voce viajou para a ${region}.`);
+  needsNewEnemy = true;
+  enemy = null;
+  updateUI();
+}
+
+function updateUI(){
+  const pointsLabel = levelUpPoints > 0
+    ? `<p><strong>Pontos para distribuir:</strong> ${levelUpPoints}</p>`
+    : "";
+  const previewStats = getPreviewStats();
+  const shownPlayerHp = displayState.playerHp ?? player.hp;
+  const shownPlayerMp = displayState.playerMp ?? player.mp;
+  const shownPlayerXp = displayState.playerXp ?? player.xp;
+  const shownEnemyHp = enemy ? (displayState.enemyHp ?? enemy.hp) : 0;
+  const xpToNextLevel = getXpToNextLevel();
+  const trophyCompletion = getTrophyCompletion();
+
+  const campEntries = getCampEntries();
+  document.getElementById("playerInfo").innerHTML = `
+    <div class="player-header">
+      <h3>${player.class} - Nivel ${player.level}</h3>
+      <div class="coin-badge">${player.coins} moedas</div>
+    </div>
+    Vida: ${player.hp}/${previewStats.maxHp}
+    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    Mana: ${player.mp}/${previewStats.maxMp}
+    <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
+    XP: ${player.level >= 30 ? "MAX" : `${player.xp}/${xpToNextLevel}`}
+    <div class="bar"><div id="playerXpFill" class="fill xp" style="width:${player.level >= 30 ? 100 : shownPlayerXp / xpToNextLevel * 100}%"></div></div>
+    ${pointsLabel}`;
+
+  document.getElementById("modeTabs").innerHTML = `
+    <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
+    <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo</button>
+    <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
+    <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>`;
+
+  document.getElementById("enemyInfo").innerHTML = currentMode === "battle" && enemy
+    ? `
+    <div class="enemy-card">
+      <div class="enemy-top">
+        <div class="enemy-title">
+          <h3>${enemy.name}</h3>
+          <p class="enemy-subtitle">${enemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} na ${enemy.region}</p>
+        </div>
+        <div class="sprite-box">${enemySprites[enemy.baseName] || "⚔️"}</div>
+      </div>
+      <div class="enemy-badges">
+        <span class="enemy-badge">Nivel ${enemy.level}</span>
+        <span class="enemy-badge ${enemy.rarityClass}">${enemy.rarityLabel}</span>
+        <span class="enemy-badge">${enemy.region}</span>
+      </div>
+      <strong>Vida</strong>: ${Math.max(0, enemy.hp)}/${enemy.maxHp}
+      <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%"></div></div>
+      ${enemy.isBoss ? `<strong>Mana</strong>: ${enemy.mp}/${enemy.maxMp}<div class="bar"><div class="fill mp" style="width:${enemy.mp / enemy.maxMp * 100}%"></div></div>` : ""}
+      <div class="enemy-drop-box">
+        <strong>${enemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
+        <span>${enemy.possibleDrop}</span>
+      </div>
+    </div>`
+    : currentMode === "battle" ? `
+    <h3>${isDead ? "Voce foi derrotado" : "Proximo inimigo"}</h3>
+    <p>${isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
+    : currentMode === "trophies" ? `
+    <h3>Sala de trofeus</h3>
+    <div class="trophy-list">
+      ${getTrophies().map(trophy => `<div class="trophy-item ${trophy.done ? "" : "locked"}"><strong>${trophy.name}</strong><br><span class="lock-note">${trophy.description}</span></div>`).join("")}
+    </div>`
+    : currentMode === "camp" ? `
+    <h3>Acampamento</h3>
+    <div class="camp-stats">
+      <div class="camp-stat"><strong>Vida</strong><span>${player.hp}/${previewStats.maxHp}</span></div>
+      <div class="camp-stat"><strong>Mana</strong><span>${player.mp}/${previewStats.maxMp}</span></div>
+      <div class="camp-stat"><strong>Ataque base</strong><span>${getActiveAttack()}</span></div>
+      <div class="camp-stat"><strong>XP</strong><span>${player.level >= 30 ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
+    </div>
+    <div class="inventory-item">
+      <strong>Equipamentos</strong>
+      ${renderEquipmentShowcase()}
+    </div>
+    <div class="inventory-list">
+      <div class="inventory-item">
+        <strong>Habilidades ativas</strong>
+        <div class="inventory-list">
+          ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+        </div>
+      </div>
+      <div class="inventory-item">
+        <strong>Habilidades passivas</strong>
+        <div class="inventory-list">
+          ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+        </div>
+      </div>
+      ${player.subclass ? `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">${player.subclass.name}: ${player.subclass.description}</span></div>` : ""}
+    </div>`
+    : `
+    <h3>Vilarejo</h3>
+    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>`;
+
+  const regionButtons = Object.keys(regions).map(region => `
+    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer nivel ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || player.level < getRegionRequirement(region) ? "disabled" : ""}>${region}</button>
+  `).join("");
+  document.getElementById("regionInfo").innerHTML = `
+    <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : "Servicos do Vilarejo"}</h3>
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa os atributos atuais, as habilidades ativas e as passivas da sua classe." : "Voce pode gastar moedas para recuperar a vida e comprar suprimentos."}</p>
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Loja</strong><br><span class="lock-note">Pocao de Mana: recupera 60 de mana. Voce tambem pode vender itens no inventario.</span><div class="button-row"><button onclick="buyManaPotion()">Comprar Pocao de Mana (40 moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+
+  document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
+    ? ""
+    : `
+    <h3>Inventario</h3>
+    ${player.inventory.length ? `<div class="inventory-list">${player.inventory.map(item => {
+      const rarityInfo = item.rarity ? getRarityInfo(item.rarity) : null;
+      const quantityLine = item.qty ? `<span class="lock-note">Quantidade: ${item.qty}</span><br>` : "";
+      const rarityLine = rarityInfo ? `<span class="${rarityInfo.cssClass}">${rarityInfo.label}</span><br>` : "";
+      const useButton = item.id === "mana_potion"
+        ? `<button onclick="useManaPotion()">Usar</button>`
+        : "";
+      const equipButton = item.type === "equipment"
+        ? `<button onclick="equipItem('${item.uid}')" ${player.class !== item.classRestriction ? "disabled" : ""}>Equipar</button>`
+        : "";
+      const openButton = item.type === "chest"
+        ? `<button onclick="openChest('${item.uid}')">Abrir</button>`
+        : "";
+      const sellButton = currentMode === "village"
+        ? `<button onclick="sellItem('${item.uid}')">Vender (${getSellPrice(item)} moedas)</button>`
+        : "";
+      const actionButton = (useButton || equipButton || openButton || sellButton)
+        ? `<div class="button-row">${useButton}${equipButton}${openButton}${sellButton}</div>`
+        : "";
+      return `<div class="inventory-item"><strong>${item.name}</strong><br>${rarityLine}${quantityLine}<span class="lock-note">${item.description || ""}</span>${actionButton}</div>`;
+    }).join("")}</div>` : `<p class="lock-note">Sua mochila esta vazia por enquanto.</p>`}`;
+
+  renderActions();
+  renderLevelUpPanel();
+  animateBars();
+  const logBox = document.getElementById("log");
+  const logToggle = document.querySelector(".panel-header button");
+  const logPanel = document.getElementById("logPanel");
+  const playerPanel = document.getElementById("playerInfo");
+  const enemyPanel = document.getElementById("enemyInfo");
+  const actionsRow = document.getElementById("actions");
+  const levelPanel = document.getElementById("levelUpPanel");
+  const inventoryPanel = document.getElementById("inventoryInfo");
+  if(logBox){
+    logBox.style.display = isLogHidden ? "none" : "block";
+  }
+  if(logToggle){
+    logToggle.textContent = isLogHidden ? "Mostrar" : "Ocultar";
+  }
+  if(logPanel){
+    logPanel.style.display = currentMode === "battle" ? "block" : "none";
+  }
+  if(playerPanel){
+    playerPanel.style.display = currentMode === "trophies" ? "none" : "block";
+    playerPanel.style.order = currentMode === "battle" ? "4" : "1";
+  }
+  if(enemyPanel){
+    enemyPanel.style.order = currentMode === "battle" ? "1" : "2";
+  }
+  if(actionsRow){
+    actionsRow.style.order = currentMode === "battle" ? "3" : "3";
+  }
+  if(levelPanel){
+    levelPanel.style.order = "5";
+  }
+  if(logPanel){
+    logPanel.style.order = currentMode === "battle" ? "2" : "4";
+  }
+  if(playerPanel && currentMode === "battle"){
+    playerPanel.style.order = "4";
+  }
+  if(inventoryPanel){
+    inventoryPanel.style.display = currentMode === "trophies" ? "none" : "block";
+  }
+  saveCampaign();
+}
+
+function animateBars(){
+  requestAnimationFrame(() => {
+    const playerHpFill = document.getElementById("playerHpFill");
+    const playerMpFill = document.getElementById("playerMpFill");
+    const playerXpFill = document.getElementById("playerXpFill");
+    const enemyHpFill = document.getElementById("enemyHpFill");
+
+    if(playerHpFill){
+      playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
+    }
+    if(playerMpFill){
+      playerMpFill.style.width = `${player.mp / getPreviewStats().maxMp * 100}%`;
+    }
+    if(playerXpFill){
+      playerXpFill.style.width = `${player.level >= 30 ? 100 : player.xp / getXpToNextLevel() * 100}%`;
+    }
+    if(enemy && enemyHpFill){
+      enemyHpFill.style.width = `${Math.max(0, enemy.hp) / enemy.maxHp * 100}%`;
+    }
+
+    displayState.playerHp = player.hp;
+    displayState.playerMp = player.mp;
+    displayState.playerXp = player.xp;
+    displayState.enemyHp = enemy ? enemy.hp : null;
+  });
+}
+
+function renderActions(){
+  const actions = document.getElementById("actions");
+  const skillInfo = getSkillInfo();
+  if(isDead){
+    const remaining = Math.max(0, Math.ceil((deadUntil - Date.now()) / 1000));
+    actions.innerHTML = `
+      <div class="death-actions">
+        <button onclick="resetAdventure()">Reiniciar aventura</button>
+        <button onclick="respawnPlayer()" ${remaining > 0 ? "disabled" : ""}>${remaining > 0 ? `Renascer em ${remaining}s` : "Renascer"}</button>
+      </div>`;
+    return;
+  }
+  if(currentMode === "trophies"){
+    actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
+    return;
+  }
+  if(currentMode === "village"){
+    actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
+    return;
+  }
+  if(currentMode === "camp"){
+    actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
+    return;
+  }
+  if(levelUpPoints > 0){
+    actions.innerHTML = `<button disabled>Distribua seus atributos para continuar</button>`;
+    return;
+  }
+  if(needsSubclassChoice()){
+    actions.innerHTML = `<button disabled>Escolha sua subclasse para continuar</button>`;
+    return;
+  }
+  if(isProcessingTurn){
+    actions.innerHTML = `<button disabled>Aguarde o fim do turno...</button>`;
+    return;
+  }
+
+  const attackMin = getActiveAttack();
+  const attackMax = getActiveAttack() + 5;
+  const attackTooltip = player.class === "Arqueiro"
+    ? `Ataque basico. Dano entre ${attackMin} e ${attackMax}. Chance de acerto: ${Math.round(getHitChance("basic") * 100)}%.`
+    : `Ataque basico. Dano entre ${attackMin} e ${attackMax}.`;
+  if(!enemy){
+    actions.innerHTML = `<button onclick="ensureEnemy()">Procurar inimigo</button>`;
+    return;
+  }
+  const skillButtons = skillInfo.length
+    ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="useSkill(${index})">${skill.name}</button>`).join("")
+    : `<button disabled>Nova habilidade no nivel 1</button>`;
+  actions.innerHTML = `
+    <button class="action-btn" data-tooltip="${attackTooltip}" onclick="attack()">Atacar</button>
+    ${skillButtons}
+    <button class="action-btn" data-tooltip="Foge da batalha atual sem receber recompensas. Custa ${getFleeCost()} moedas." onclick="fleeBattle()">Fugir</button>`;
+}
+
+function toggleLog(){
+  isLogHidden = !isLogHidden;
+  updateUI();
+}
+
+function renderLevelUpPanel(){
+  const panel = document.getElementById("levelUpPanel");
+  if(needsSubclassChoice()){
+    panel.style.display = "block";
+    panel.innerHTML = `
+      <h3>Escolha sua subclasse</h3>
+      <p>Ao atingir o nivel 30, ${player.class} deve escolher uma nova vertente.</p>
+      <div class="button-row">
+        ${getSubclassChoices().map(subclass => `<button class="action-btn" data-tooltip="${subclass.description}" onclick="chooseSubclass('${subclass.id}')">${subclass.name}</button>`).join("")}
+      </div>`;
+    return;
+  }
+  if(levelUpPoints <= 0){
+    panel.style.display = "none";
+    panel.innerHTML = "";
+    return;
+  }
+
+  panel.style.display = "block";
+  panel.innerHTML = `
+    <h3>Subiu de nivel!</h3>
+    <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
+    <div class="attribute-row">
+      <div><strong>Vida maxima</strong><br><small>+${player.growth.hp} HP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('hp', -1)" ${allocation.hp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.hp}</span>
+        <button onclick="adjustAttribute('hp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Mana maxima</strong><br><small>+${player.growth.mp} MP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('mp', -1)" ${allocation.mp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.mp}</span>
+        <button onclick="adjustAttribute('mp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Ataque</strong><br><small>+${player.growth.attack} ATQ no ataque basico e na habilidade</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('attack', -1)" ${allocation.attack === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.attack}</span>
+        <button onclick="adjustAttribute('attack', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
+}
+
+function getManaRegen(){
+  const modifiers = getPassiveModifiers();
+  return Math.max(1, Math.floor(getPreviewStats().maxMp * (0.1 + modifiers.manaRegenPercent)) + modifiers.manaRegen);
+}
+
+function regenMana(){
+  const manaBefore = player.mp;
+  const regen = getManaRegen();
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp + regen);
+  return player.mp - manaBefore;
+}
+
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function attack(){
+  if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  isProcessingTurn = true;
+  if(player.class === "Arqueiro" && !rollHit("basic")){
+    log("Seu ataque passou raspando pelo alvo.");
+  }else{
+    const dmg = getActiveAttack() + Math.floor(Math.random() * 6);
+    enemy.hp -= dmg;
+    log(`Voce causou ${dmg} de dano.`);
+  }
+  decayPlayerBuffs();
+  updateUI();
+  await wait(320);
+  await afterTurn();
+}
+
+async function useSkill(index){
+  if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  const skills = getSkillInfo();
+  const skillInfo = skills[index];
+  if(!skillInfo){
+    log("Voce ainda nao desbloqueou uma habilidade.");
+    return;
+  }
+  if(player.mp < skillInfo.cost){
+    log("Mana insuficiente!");
+    return;
+  }
+  isProcessingTurn = true;
+  player.mp -= skillInfo.cost;
+  let freeTurn = false;
+  if(skillInfo.type === "damage"){
+    enemy.hp -= skillInfo.damage;
+    log(`${skillInfo.name} causou ${skillInfo.damage} de dano!`);
+  }
+  if(skillInfo.type === "fireball"){
+    enemy.hp -= skillInfo.damage;
+    log(`${skillInfo.name} explodiu causando ${skillInfo.damage} de dano!`);
+  }
+  if(skillInfo.type === "heal_percent"){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + skillInfo.heal);
+    log(`${skillInfo.name} recuperou ${skillInfo.heal} de vida.`);
+  }
+  if(skillInfo.type === "mana_percent"){
+    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
+    log(`${skillInfo.name} recuperou ${skillInfo.mana} de mana.`);
+  }
+  if(skillInfo.type === "mana_percent_free"){
+    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
+    log(`${skillInfo.name} recuperou ${skillInfo.mana} de mana sem encerrar seu turno.`);
+    freeTurn = true;
+  }
+  if(skillInfo.type === "shield"){
+    playerEffects.shieldValue = skillInfo.shield;
+    playerEffects.shieldTurns = skillInfo.turns || -1;
+    log(`${skillInfo.name} criou um escudo de ${skillInfo.shield}.`);
+  }
+  if(skillInfo.type === "damage_maxhp_percent"){
+    enemy.hp -= skillInfo.damage;
+    log(`${skillInfo.name} esmagou o alvo com ${skillInfo.damage} de dano!`);
+  }
+  if(skillInfo.type === "battle_cry"){
+    playerEffects.attackBuffTurns = skillInfo.turns;
+    playerEffects.attackBuffAmount = skillInfo.attackBuff;
+    playerEffects.skillBuffTurns = skillInfo.turns;
+    playerEffects.skillBuffAmount = skillInfo.skillBuff;
+    log(`${skillInfo.name} elevou seu ataque em ${skillInfo.attackBuff} e suas habilidades em ${skillInfo.skillBuff}.`);
+  }
+  if(skillInfo.type === "aim_buff"){
+    playerEffects.attackBuffTurns = skillInfo.turns;
+    playerEffects.attackBuffAmount = skillInfo.attackBuff;
+    playerEffects.skillBuffTurns = skillInfo.turns;
+    playerEffects.skillBuffAmount = skillInfo.skillBuff;
+    playerEffects.precisionTurns = skillInfo.turns;
+    playerEffects.precisionBonus = skillInfo.precision;
+    log(`${skillInfo.name} deixou seus proximos disparos muito mais precisos.`);
+  }
+  if(skillInfo.type === "triple_shot"){
+    let totalDamage = 0;
+    let hitsLanded = 0;
+    for(let hit = 0; hit < skillInfo.hits; hit++){
+      if(rollHit("multi")){
+        const arrowDamage = getActiveAttack() + Math.floor(Math.random() * 4);
+        totalDamage += arrowDamage;
+        enemy.hp -= arrowDamage;
+        hitsLanded++;
+      }
+    }
+    log(hitsLanded ? `${skillInfo.name} acertou ${hitsLanded} flecha(s) e causou ${totalDamage} de dano.` : `${skillInfo.name} falhou em encontrar o alvo.`);
+  }
+  if(skillInfo.type === "damage_and_drain_mana"){
+    enemy.hp -= skillInfo.damage;
+    let drained = 0;
+    if(enemy.maxMp > 0){
+      drained = Math.floor(enemy.maxMp * skillInfo.manaDrain);
+      enemy.mp = Math.max(0, enemy.mp - drained);
+    }
+    log(`${skillInfo.name} causou ${skillInfo.damage} de dano${drained ? ` e drenou ${drained} de mana` : ""}.`);
+  }
+  if(!freeTurn && !["battle_cry", "aim_buff"].includes(skillInfo.type)){
+    decayPlayerBuffs();
+  }
+  updateUI();
+  if(freeTurn){
+    isProcessingTurn = false;
+    updateUI();
+    return;
+  }
+  await wait(320);
+  await afterTurn();
+}
+
+function handleEnemyDefeat(){
+  const defeatedRegion = enemy?.region;
+  const wasBoss = !!enemy?.isBoss;
+  log("Inimigo derrotado!");
+  tryEnemyDrop(enemy);
+  const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
+  const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
+  const xpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
+  player.coins += coinsEarned;
+  player.stats.coinsEarned += coinsEarned;
+  if(enemy.isBoss){
+    player.stats.bossesDefeated++;
+  }else{
+    player.stats.enemiesDefeated++;
+  }
+  log(`Voce encontrou ${coinsEarned} moedas.`);
+  log(`Voce ganhou ${xpEarned} de XP.`);
+  if(wasBoss && defeatedRegion){
+    grantBossChest(defeatedRegion);
+  }
+  gainXP(xpEarned);
+  enemy = null;
+  needsNewEnemy = true;
+  displayState.enemyHp = null;
+  isProcessingTurn = false;
+  updateUI();
+}
+
+async function afterTurn(){
+  if(enemy.hp <= 0){
+    handleEnemyDefeat();
+    return;
+  }
+  await enemyTurn();
+}
+
+async function enemyTurn(){
+  log(`${enemy.name} prepara um ataque!`);
+  await wait(220);
+  let dmg;
+  if(enemy.isBoss && enemy.mp >= enemy.skillCost && Math.random() < 0.45){
+    enemy.mp -= enemy.skillCost;
+    dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
+    log(`${enemy.skillName} atingiu voce com ${dmg} de dano.`);
+  }else{
+    dmg = enemy.attack + Math.floor(Math.random() * 5);
+    log(`O inimigo atacou e causou ${dmg} de dano.`);
+  }
+  if(enemy.isBoss && enemy.mp < enemy.maxMp){
+    enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
+  }
+  const passiveReduction = getPassiveModifiers().damageReduction;
+  const flatReduction = getPassiveModifiers().flatReduction;
+  dmg = Math.max(0, dmg - flatReduction);
+  if(flatReduction > 0){
+    log(`Sua resistencia reduziu ${flatReduction} de dano.`);
+  }
+  const totalReduction = 1 - Math.min(0.75, passiveReduction);
+  dmg = Math.max(0, Math.floor(dmg * totalReduction));
+  if(playerEffects.shieldValue > 0 && dmg > 0){
+    const absorbed = Math.min(dmg, playerEffects.shieldValue);
+    playerEffects.shieldValue -= absorbed;
+    dmg -= absorbed;
+    log(`Seu escudo absorveu ${absorbed} de dano.`);
+    if(playerEffects.shieldValue <= 0){
+      playerEffects.shieldValue = 0;
+      playerEffects.shieldTurns = 0;
+      log("Seu escudo foi destruido.");
+    }
+  }
+  player.hp -= dmg;
+  const reflectPercent = getPassiveModifiers().reflectPercent;
+  if(reflectPercent > 0 && dmg > 0){
+    const reflected = Math.max(1, Math.floor(dmg * reflectPercent));
+    enemy.hp -= reflected;
+    log(`Pele de Ferro devolveu ${reflected} de dano ao inimigo.`);
+  }
+  if(playerEffects.shieldTurns > 0){
+    playerEffects.shieldTurns--;
+    if(playerEffects.shieldTurns <= 0){
+      playerEffects.shieldValue = 0;
+      log("Seu escudo se desfez.");
+    }
+  }
+  updateUI();
+  await wait(320);
+  if(player.hp <= 0){
+    handleDeath();
+    return;
+  }
+  if(enemy.hp <= 0){
+    handleEnemyDefeat();
+    return;
+  }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
+  }
+  const healed = getTurnHealing();
+  if(healed > 0){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
+    log(`Voce recuperou ${healed} de vida.`);
+  }
+  isProcessingTurn = false;
+  updateUI();
+}
+
+function gainXP(amount){
+  if(player.level >= 30){
+    player.xp = getXpToNextLevel();
+    return;
+  }
+  player.xp += amount;
+  while(player.level < 30 && player.xp >= getXpToNextLevel()){
+    player.xp -= getXpToNextLevel();
+    player.level++;
+    pendingLevelUps++;
+    levelUpPoints++;
+    log("Voce subiu de nivel! Distribua 1 ponto de atributo.");
+  }
+  if(player.level >= 30){
+    player.level = 30;
+    player.xp = getXpToNextLevel();
+    log("Voce alcancou o nivel maximo!");
+  }
+}
+
+function adjustAttribute(attribute, amount){
+  if(amount > 0 && levelUpPoints <= 0){ return; }
+  if(amount < 0 && allocation[attribute] <= 0){ return; }
+
+  allocation[attribute] += amount;
+  levelUpPoints -= amount;
+  updateUI();
+}
+
+function finishLevelUp(){
+  if(levelUpPoints > 0){ return; }
+
+  const spentHp = Number(allocation.hp) || 0;
+  const spentMp = Number(allocation.mp) || 0;
+  const spentAttack = Number(allocation.attack) || 0;
+  const hpGain = spentHp * player.growth.hp;
+  const mpGain = spentMp * player.growth.mp;
+  const attackGain = spentAttack * player.growth.attack;
+  player.maxHp += hpGain;
+  player.maxMp += mpGain;
+  player.attack += attackGain;
+  player.hp = Math.min(getCurrentCaps().maxHp, player.hp + hpGain);
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp + mpGain);
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  displayState.playerXp = player.xp;
+  pendingLevelUps = 0;
+  allocation = { hp: 0, mp: 0, attack: 0 };
+  isProcessingTurn = false;
+  log(`Atributos atualizados: +${hpGain} HP max, +${mpGain} MP max, +${attackGain} ATQ.`);
+  enemy = null;
+  needsNewEnemy = true;
+  currentMode = "battle";
+  updateUI();
+}
+
+function chooseSubclass(subclassId){
+  if(!needsSubclassChoice()){ return; }
+  const subclass = getSubclassChoices().find(option => option.id === subclassId);
+  if(!subclass){ return; }
+  player.subclass = subclass;
+  player.hp = Math.min(getPreviewStats().maxHp, player.hp + (subclass.hp || 0));
+  player.mp = Math.min(getPreviewStats().maxMp, player.mp + (subclass.mp || 0));
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  log(`Voce escolheu a subclasse ${subclass.name}.`);
+  updateUI();
+}
+
+function log(msg){
+  const logBox = document.getElementById("log");
+  logBox.innerHTML += `<p>${msg}</p>`;
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+renderSavedCampaign();
+setInterval(() => {
+  if(isDead){
+    updateUI();
+  }
+}, 1000);
+</script>
+</body>
+</html>
