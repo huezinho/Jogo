@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RPG por Turnos</title>
+<style>
+body{font-family:Arial,sans-serif;background:#1e1e1e;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.container{width:1180px;max-width:calc(100vw - 24px);background:#2b2b2b;padding:20px;border-radius:16px;box-shadow:0 0 20px rgba(0,0,0,.4)}
+button{padding:10px 16px;margin:6px;border:none;border-radius:10px;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.6}
+.button-row{display:flex;gap:10px;flex-wrap:wrap}
+.panel{margin:15px 0;padding:15px;background:#3a3a3a;border-radius:12px}
+.game-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 260px;gap:18px;align-items:start}
+.side-column .panel,.main-column .panel{margin-top:0}
+.main-column{display:flex;flex-direction:column;gap:15px}
+.player-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.coin-badge{padding:8px 14px;border-radius:999px;background:#f6c445;color:#2b2100;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+.class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.class-card{padding:18px;border:none;border-radius:16px;background:linear-gradient(160deg,#4d4d4d,#2f2f2f);color:#fff;text-align:left;box-shadow:0 10px 20px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease}
+.class-card:hover{transform:translateY(-3px);box-shadow:0 14px 24px rgba(0,0,0,.24)}
+.class-card .class-icon{font-size:38px;display:block;margin-bottom:8px}
+.class-card h4{margin:0 0 10px 0;font-size:20px}
+.class-card p{margin:6px 0;font-size:14px}
+.class-card small{display:block;margin-top:10px;color:#d6d6d6;line-height:1.45}
+.stat-hp{color:#89f07d}
+.stat-mp{color:#7bc9ff}
+.stat-atk{color:#ffd36a}
+.class-warrior{background:linear-gradient(160deg,#68533a,#32261b)}
+.class-archer{background:linear-gradient(160deg,#45644b,#1e3022)}
+.class-mage{background:linear-gradient(160deg,#35506c,#1d263b)}
+.saved-campaign{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.death-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0}
+.fill{height:100%;transition:width .28s ease}
+.hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
+#log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
+.action-btn{position:relative}
+.action-btn[data-tooltip]:hover::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 8px);
+  transform:translateX(-50%);
+  min-width:220px;
+  max-width:280px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#101010;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  font-size:13px;
+  line-height:1.4;
+  white-space:normal;
+  z-index:10
+}
+.action-btn[data-tooltip]:hover::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:100%;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top:none;
+  border-bottom-color:#101010;
+  z-index:11
+}
+.levelup-panel{border:1px solid #ffc107;background:#4a3c10}
+.attribute-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0;padding:10px;border-radius:10px;background:rgba(255,255,255,.06)}
+.attribute-controls{display:flex;align-items:center;gap:8px}
+.attribute-controls button{padding:6px 12px;margin:0}
+.attribute-value{min-width:32px;text-align:center;font-weight:700}
+.tabs{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+.tab-btn{background:#505050;color:#fff}
+.tab-btn.active{background:#1565c0}
+.region-chip{padding:8px 14px;border-radius:999px;background:#505050;color:#fff}
+.region-chip.active{background:#2e7d32}
+.sprite-box{display:flex;justify-content:center;align-items:center;min-height:140px;font-size:76px;background:rgba(255,255,255,.05);border-radius:14px;margin-top:10px}
+@media (max-width:640px){
+  .attribute-row{flex-direction:column;align-items:flex-start}
+  .action-btn[data-tooltip]:hover::after{left:0;transform:none}
+  .action-btn[data-tooltip]:hover::before{left:18px;transform:none}
+}
+@media (max-width:980px){
+  .game-layout{grid-template-columns:1fr}
+  .class-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>RPG de Batalha por Turnos</h1>
+<div id="classSelect" class="panel">
+<h3>Escolha sua classe</h3>
+<div class="class-grid">
+<button class="class-card class-warrior" onclick="selectClass('Guerreiro')">
+<span class="class-icon">🛡️</span>
+<h4>Guerreiro</h4>
+<p><span class="stat-hp">Vida 140</span></p>
+<p><span class="stat-mp">Mana 40</span></p>
+<p><span class="stat-atk">Dano basico 20</span></p>
+<small>Alta resistencia, pouca mana e o ataque basico mais forte entre as tres classes.</small>
+</button>
+<button class="class-card class-archer" onclick="selectClass('Arqueiro')">
+<span class="class-icon">🏹</span>
+<h4>Arqueiro</h4>
+<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-mp">Mana 60</span></p>
+<p><span class="stat-atk">Dano basico 17</span></p>
+<small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
+</button>
+<button class="class-card class-mage" onclick="selectClass('Mago')">
+<span class="class-icon">🔮</span>
+<h4>Mago</h4>
+<p><span class="stat-hp">Vida 80</span></p>
+<p><span class="stat-mp">Mana 100</span></p>
+<p><span class="stat-atk">Dano basico 14</span></p>
+<small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes.</small>
+</button>
+</div>
+<div id="savedCampaign" class="saved-campaign" style="display:none;"></div>
+</div>
+<div id="game" style="display:none;">
+<div class="game-layout">
+<div class="side-column">
+<div class="panel">
+<h3>Locais</h3>
+<div class="tabs" id="modeTabs"></div>
+</div>
+</div>
+<div class="main-column">
+<div class="panel" id="playerInfo"></div>
+<div class="button-row" id="actions"></div>
+<div class="panel" id="enemyInfo"></div>
+<div id="levelUpPanel" class="panel levelup-panel" style="display:none;"></div>
+<div class="panel"><strong>Log de batalha</strong><div id="log"></div></div>
+</div>
+<div class="side-column">
+<div class="panel" id="regionInfo"></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const SAVE_KEY = "rpg_turnos_campaign_v1";
+let player, enemy;
+let pendingLevelUps = 0;
+let levelUpPoints = 0;
+let allocation = { hp: 0, mp: 0, attack: 0 };
+let isProcessingTurn = false;
+let currentRegion = "Floresta";
+let needsNewEnemy = false;
+let currentMode = "battle";
+let enemiesSpawned = 0;
+let isDead = false;
+let deadUntil = null;
+let displayState = {
+  playerHp: null,
+  playerMp: null,
+  playerXp: null,
+  enemyHp: null
+};
+
+const enemySprites = {
+  "Lobo Sombrio": "🐺",
+  Goblin: "👺",
+  "Aranha Gigante": "🕷️",
+  "Morcego de Pedra": "🦇",
+  "Esqueleto Mineiro": "💀",
+  "Slime Toxico": "🟢",
+  "Sentinela Quebrada": "🗿",
+  "Cultista Perdido": "🧙",
+  "Fantasma Antigo": "👻",
+  "Ent Ancestral": "🌳",
+  "Troll das Profundezas": "👹",
+  "Rei Espectral": "👑"
+};
+
+const classes = {
+  Guerreiro: {
+    hp: 140,
+    mp: 40,
+    attack: 20,
+    growth: { hp: 18, mp: 4, attack: 2 },
+    skills: [
+      { level: 5, name: "Golpe Brutal", damage: 24, cost: 18 },
+      { level: 10, name: "Corte Giratorio", damage: 34, cost: 24 },
+      { level: 15, name: "Investida de Ferro", damage: 46, cost: 28 },
+      { level: 20, name: "Furia de Guerra", damage: 58, cost: 34 },
+      { level: 25, name: "Lamina do Colosso", damage: 72, cost: 40 },
+      { level: 30, name: "Ruptura Titanica", damage: 88, cost: 46 }
+    ]
+  },
+  Arqueiro: {
+    hp: 100,
+    mp: 60,
+    attack: 17,
+    growth: { hp: 10, mp: 6, attack: 3 },
+    skills: [
+      { level: 5, name: "Chuva de Flechas", damage: 26, cost: 20 },
+      { level: 10, name: "Flecha Perfurante", damage: 38, cost: 24 },
+      { level: 15, name: "Disparo Duplo", damage: 50, cost: 28 },
+      { level: 20, name: "Rajada Selvagem", damage: 62, cost: 34 },
+      { level: 25, name: "Tempestade de Setas", damage: 76, cost: 40 },
+      { level: 30, name: "Olho do Eclipse", damage: 92, cost: 46 }
+    ]
+  },
+  Mago: {
+    hp: 80,
+    mp: 100,
+    attack: 14,
+    growth: { hp: 8, mp: 14, attack: 2 },
+    skills: [
+      { level: 5, name: "Bola de Fogo", damage: 35, cost: 20 },
+      { level: 10, name: "Raio Arcano", damage: 48, cost: 26 },
+      { level: 15, name: "Lanca de Gelo", damage: 60, cost: 30 },
+      { level: 20, name: "Explosao Mistica", damage: 74, cost: 36 },
+      { level: 25, name: "Cometa Astral", damage: 90, cost: 44 },
+      { level: 30, name: "Nova Celestial", damage: 110, cost: 52 }
+    ]
+  }
+};
+
+const regions = {
+  Floresta: {
+    description: "Criaturas selvagens e emboscadas leves.",
+    boss: { name: "Ent Ancestral", level: 10, hp: 170, attack: 15, mp: 60, skillName: "Raizes Esmagadoras", skillDamage: 36, skillCost: 18 },
+    enemies: [
+      { name: "Lobo Sombrio", level: 1, weight: 60, hp: 70, attack: 8 },
+      { name: "Goblin", level: 3, weight: 28, hp: 82, attack: 9 },
+      { name: "Aranha Gigante", level: 8, weight: 12, hp: 96, attack: 11 }
+    ]
+  },
+  Caverna: {
+    description: "Passagens estreitas cheias de monstros resistentes.",
+    boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
+    enemies: [
+      { name: "Morcego de Pedra", level: 11, weight: 58, hp: 90, attack: 10 },
+      { name: "Esqueleto Mineiro", level: 13, weight: 28, hp: 102, attack: 11 },
+      { name: "Slime Toxico", level: 18, weight: 14, hp: 120, attack: 12 }
+    ]
+  },
+  Ruinas: {
+    description: "Restos antigos guardados por inimigos mais agressivos.",
+    boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
+    enemies: [
+      { name: "Sentinela Quebrada", level: 21, weight: 58, hp: 128, attack: 13 },
+      { name: "Cultista Perdido", level: 23, weight: 27, hp: 140, attack: 15 },
+      { name: "Fantasma Antigo", level: 28, weight: 15, hp: 165, attack: 16 }
+    ]
+  }
+};
+
+function selectClass(name){
+  const base = classes[name];
+  player = {
+    class: name,
+    level: 1,
+    xp: 0,
+    coins: 0,
+    maxHp: base.hp,
+    hp: base.hp,
+    maxMp: base.mp,
+    mp: base.mp,
+    attack: base.attack,
+    baseAttack: base.attack,
+    growth: base.growth,
+    skills: base.skills
+  };
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  needsNewEnemy = true;
+  spawnEnemy();
+  updateUI();
+}
+
+function chooseWeightedEnemy(enemyList){
+  const totalWeight = enemyList.reduce((sum, enemyData) => sum + enemyData.weight, 0);
+  let roll = Math.random() * totalWeight;
+  for(const enemyData of enemyList){
+    roll -= enemyData.weight;
+    if(roll <= 0){
+      return enemyData;
+    }
+  }
+  return enemyList[enemyList.length - 1];
+}
+
+function getEnemyStats(template){
+  return {
+    maxHp: template.hp + template.level * 18,
+    attack: template.attack + template.level * 2
+  };
+}
+
+function getRegionAverageLevel(region){
+  const regionData = regions[region];
+  const totalWeight = regionData.enemies.reduce((sum, enemyData) => sum + enemyData.weight, 0);
+  const weightedLevels = regionData.enemies.reduce((sum, enemyData) => sum + enemyData.level * enemyData.weight, 0);
+  return Math.ceil(weightedLevels / totalWeight);
+}
+
+function getUnlockedSkills(){
+  return player.skills.filter(skill => player.level >= skill.level);
+}
+
+function getPreviewStats(){
+  return {
+    maxHp: player.maxHp + allocation.hp * player.growth.hp,
+    maxMp: player.maxMp + allocation.mp * player.growth.mp,
+    attack: player.attack + allocation.attack * player.growth.attack
+  };
+}
+
+function getXpToNextLevel(){
+  return 100 + (player.level - 1) * 25;
+}
+
+function createEnemyFromTemplate(template, isBoss = false){
+  const stats = getEnemyStats(template);
+  return {
+    name: template.name + " Lv." + template.level,
+    region: currentRegion,
+    level: template.level,
+    maxHp: stats.maxHp,
+    hp: stats.maxHp,
+    attack: stats.attack,
+    isBoss,
+    maxMp: isBoss ? template.mp : 0,
+    mp: isBoss ? template.mp : 0,
+    skillName: isBoss ? template.skillName : "",
+    skillDamage: isBoss ? template.skillDamage : 0,
+    skillCost: isBoss ? template.skillCost : 0
+  };
+}
+
+function spawnEnemy(isBoss = false){
+  const regionData = regions[currentRegion];
+  const template = isBoss
+    ? regionData.boss
+    : enemiesSpawned < 3
+      ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") || chooseWeightedEnemy(regionData.enemies)
+      : chooseWeightedEnemy(regionData.enemies);
+  enemy = createEnemyFromTemplate(template, isBoss);
+  enemiesSpawned++;
+  needsNewEnemy = false;
+  displayState.enemyHp = enemy.hp;
+  log(isBoss ? `O chefao ${enemy.name} surgiu na ${currentRegion}!` : `Um ${enemy.name} apareceu na ${currentRegion}!`);
+  saveCampaign();
+}
+
+function ensureEnemy(){
+  if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  if(!enemy || needsNewEnemy){
+    spawnEnemy();
+    updateUI();
+  }
+}
+
+function challengeBoss(){
+  if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  enemy = null;
+  needsNewEnemy = false;
+  spawnEnemy(true);
+  updateUI();
+}
+
+function setMode(mode){
+  if(isProcessingTurn || isDead || !["battle", "village"].includes(mode)){ return; }
+  if(mode === "village" && enemy){
+    log("Voce so pode ir ao vilarejo fora de combate.");
+    updateUI();
+    return;
+  }
+  currentMode = mode;
+  updateUI();
+}
+
+function getHealCost(){
+  return Math.max(3, Math.ceil((player.maxHp - player.hp) / 7));
+}
+
+function healAtVillage(){
+  if(currentMode !== "village"){ return; }
+  if(player.hp >= player.maxHp){
+    log("Voce ja esta com a vida cheia.");
+    return;
+  }
+  const cost = getHealCost();
+  if(player.coins < cost){
+    log(`Moedas insuficientes. Cura custa ${cost} moedas.`);
+    return;
+  }
+  player.coins -= cost;
+  player.hp = player.maxHp;
+  log(`Voce descansou no vilarejo e recuperou toda a vida por ${cost} moedas.`);
+  updateUI();
+}
+
+function getRespawnSeconds(){
+  return 6 + player.level * 2;
+}
+
+function handleDeath(){
+  isProcessingTurn = false;
+  isDead = true;
+  deadUntil = Date.now() + getRespawnSeconds() * 1000;
+  enemy = null;
+  needsNewEnemy = true;
+  currentMode = "battle";
+  log("Voce caiu em batalha.");
+  updateUI();
+}
+
+function respawnPlayer(){
+  if(!isDead || (deadUntil && Date.now() < deadUntil)){ return; }
+  isDead = false;
+  deadUntil = null;
+  player.hp = player.maxHp;
+  displayState.playerHp = player.hp;
+  log("Voce renasceu e retornou a aventura.");
+  updateUI();
+}
+
+function resetAdventure(){
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+function saveCampaign(){
+  if(!player){
+    localStorage.removeItem(SAVE_KEY);
+    renderSavedCampaign();
+    return;
+  }
+  const state = {
+    player,
+    enemy,
+    pendingLevelUps,
+    levelUpPoints,
+    allocation,
+    isProcessingTurn: false,
+    currentRegion,
+    needsNewEnemy,
+    currentMode,
+    enemiesSpawned,
+    isDead,
+    deadUntil
+  };
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  renderSavedCampaign();
+}
+
+function continueCampaign(){
+  const raw = localStorage.getItem(SAVE_KEY);
+  if(!raw){ return; }
+  const state = JSON.parse(raw);
+  player = state.player;
+  enemy = state.enemy;
+  pendingLevelUps = state.pendingLevelUps;
+  levelUpPoints = state.levelUpPoints;
+  allocation = state.allocation;
+  currentRegion = state.currentRegion;
+  needsNewEnemy = state.needsNewEnemy;
+  currentMode = state.currentMode;
+  enemiesSpawned = state.enemiesSpawned;
+  isDead = state.isDead;
+  deadUntil = state.deadUntil;
+  isProcessingTurn = false;
+  displayState = { playerHp: player.hp, playerMp: player.mp, playerXp: player.xp, enemyHp: enemy ? enemy.hp : null };
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  if(isDead && deadUntil && Date.now() >= deadUntil){
+    deadUntil = Date.now();
+  }
+  log("Campanha retomada.");
+  updateUI();
+}
+
+function renderSavedCampaign(){
+  const saved = document.getElementById("savedCampaign");
+  if(localStorage.getItem(SAVE_KEY)){
+    saved.style.display = "block";
+    saved.innerHTML = `
+      <h3>Campanha em andamento</h3>
+      <div class="button-row">
+        <button onclick="continueCampaign()">Continuar campanha</button>
+        <button onclick="resetAdventure()">Reiniciar aventura</button>
+      </div>`;
+  }else{
+    saved.style.display = "none";
+    saved.innerHTML = "";
+  }
+}
+
+function changeRegion(region){
+  if(isProcessingTurn || isDead || levelUpPoints > 0 || !regions[region] || currentRegion === region){ return; }
+  currentRegion = region;
+  log(`Voce viajou para a ${region}.`);
+  needsNewEnemy = true;
+  spawnEnemy();
+  updateUI();
+}
+
+function updateUI(){
+  const pointsLabel = levelUpPoints > 0
+    ? `<p><strong>Pontos para distribuir:</strong> ${levelUpPoints}</p>`
+    : "";
+  const previewStats = getPreviewStats();
+  const shownPlayerHp = displayState.playerHp ?? player.hp;
+  const shownPlayerMp = displayState.playerMp ?? player.mp;
+  const shownPlayerXp = displayState.playerXp ?? player.xp;
+  const shownEnemyHp = enemy ? (displayState.enemyHp ?? enemy.hp) : 0;
+  const xpToNextLevel = getXpToNextLevel();
+
+  document.getElementById("playerInfo").innerHTML = `
+    <div class="player-header">
+      <h3>${player.class} - Nivel ${player.level}</h3>
+      <div class="coin-badge">${player.coins} moedas</div>
+    </div>
+    Vida: ${player.hp}/${previewStats.maxHp}
+    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    Mana: ${player.mp}/${previewStats.maxMp}
+    <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
+    XP: ${player.level >= 30 ? "MAX" : `${player.xp}/${xpToNextLevel}`}
+    <div class="bar"><div id="playerXpFill" class="fill xp" style="width:${player.level >= 30 ? 100 : shownPlayerXp / xpToNextLevel * 100}%"></div></div>
+    ${pointsLabel}`;
+
+  document.getElementById("modeTabs").innerHTML = `
+    <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
+    <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy ? "disabled" : ""}>Vilarejo</button>`;
+
+  document.getElementById("enemyInfo").innerHTML = currentMode === "battle" && enemy
+    ? `
+    <h3>${enemy.name}</h3>
+    <p><strong>Regiao:</strong> ${enemy.region}</p>
+    <p><strong>Nivel do inimigo:</strong> ${enemy.level}</p>
+    Vida: ${Math.max(0, enemy.hp)}/${enemy.maxHp}
+    <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%"></div></div>
+    ${enemy.isBoss ? `Mana: ${enemy.mp}/${enemy.maxMp}<div class="bar"><div class="fill mp" style="width:${enemy.mp / enemy.maxMp * 100}%"></div></div>` : ""}
+    <div class="sprite-box">${enemySprites[enemy.name.replace(/ Lv\.\d+$/, "")] || "⚔️"}</div>`
+    : currentMode === "battle" ? `
+    <h3>${isDead ? "Voce foi derrotado" : "Proximo inimigo"}</h3>
+    <p>${isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
+    : `
+    <h3>Vilarejo</h3>
+    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>`;
+
+  const regionButtons = Object.keys(regions).map(region => `
+    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 ? "disabled" : ""}>${region}</button>
+  `).join("");
+  document.getElementById("regionInfo").innerHTML = `
+    <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : "Servicos do Vilarejo"}</h3>
+    <p>${currentMode === "battle" ? regions[currentRegion].description : "Voce pode gastar moedas para recuperar a vida."}</p>
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead ? "disabled" : ""}>Enfrentar chefao</button></div>` : `<div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div>`}`;
+
+  renderActions();
+  renderLevelUpPanel();
+  animateBars();
+  saveCampaign();
+}
+
+function animateBars(){
+  requestAnimationFrame(() => {
+    const playerHpFill = document.getElementById("playerHpFill");
+    const playerMpFill = document.getElementById("playerMpFill");
+    const playerXpFill = document.getElementById("playerXpFill");
+    const enemyHpFill = document.getElementById("enemyHpFill");
+
+    if(playerHpFill){
+      playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
+    }
+    if(playerMpFill){
+      playerMpFill.style.width = `${player.mp / getPreviewStats().maxMp * 100}%`;
+    }
+    if(playerXpFill){
+      playerXpFill.style.width = `${player.level >= 30 ? 100 : player.xp / getXpToNextLevel() * 100}%`;
+    }
+    if(enemy && enemyHpFill){
+      enemyHpFill.style.width = `${Math.max(0, enemy.hp) / enemy.maxHp * 100}%`;
+    }
+
+    displayState.playerHp = player.hp;
+    displayState.playerMp = player.mp;
+    displayState.playerXp = player.xp;
+    displayState.enemyHp = enemy ? enemy.hp : null;
+  });
+}
+
+function renderActions(){
+  const actions = document.getElementById("actions");
+  const skillInfo = getSkillInfo();
+  if(isDead){
+    const remaining = Math.max(0, Math.ceil((deadUntil - Date.now()) / 1000));
+    actions.innerHTML = `
+      <div class="death-actions">
+        <button onclick="resetAdventure()">Reiniciar aventura</button>
+        <button onclick="respawnPlayer()" ${remaining > 0 ? "disabled" : ""}>${remaining > 0 ? `Renascer em ${remaining}s` : "Renascer"}</button>
+      </div>`;
+    return;
+  }
+  if(currentMode === "village"){
+    actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
+    return;
+  }
+  if(levelUpPoints > 0){
+    actions.innerHTML = `<button disabled>Distribua seus atributos para continuar</button>`;
+    return;
+  }
+  if(isProcessingTurn){
+    actions.innerHTML = `<button disabled>Aguarde o fim do turno...</button>`;
+    return;
+  }
+
+  const previewStats = getPreviewStats();
+  const attackMin = previewStats.attack;
+  const attackMax = previewStats.attack + 5;
+  if(!enemy){
+    actions.innerHTML = `<button onclick="ensureEnemy()">Procurar inimigo</button>`;
+    return;
+  }
+  const skillButton = skillInfo
+    ? `<button class="action-btn" data-tooltip="${skillInfo.description}" onclick="useSkill()">${skillInfo.name}</button>`
+    : `<button disabled>Nova habilidade no nivel 5</button>`;
+  actions.innerHTML = `
+    <button class="action-btn" data-tooltip="Ataque basico. Dano entre ${attackMin} e ${attackMax}." onclick="attack()">Atacar</button>
+    ${skillButton}`;
+}
+
+function renderLevelUpPanel(){
+  const panel = document.getElementById("levelUpPanel");
+  if(levelUpPoints <= 0){
+    panel.style.display = "none";
+    panel.innerHTML = "";
+    return;
+  }
+
+  panel.style.display = "block";
+  panel.innerHTML = `
+    <h3>Subiu de nivel!</h3>
+    <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
+    <div class="attribute-row">
+      <div><strong>Vida maxima</strong><br><small>+${player.growth.hp} HP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('hp', -1)" ${allocation.hp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.hp}</span>
+        <button onclick="adjustAttribute('hp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Mana maxima</strong><br><small>+${player.growth.mp} MP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('mp', -1)" ${allocation.mp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.mp}</span>
+        <button onclick="adjustAttribute('mp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Ataque</strong><br><small>+${player.growth.attack} ATQ no ataque basico e na habilidade</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('attack', -1)" ${allocation.attack === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.attack}</span>
+        <button onclick="adjustAttribute('attack', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
+}
+
+function getSkillInfo(){
+  const unlockedSkills = getUnlockedSkills();
+  const skill = unlockedSkills[unlockedSkills.length - 1];
+  if(!skill){
+    return null;
+  }
+  const previewStats = getPreviewStats();
+  const bonusDamage = previewStats.attack - player.baseAttack;
+  const damage = skill.damage + bonusDamage;
+  return {
+    name: skill.name,
+    cost: skill.cost,
+    damage,
+    description: `${skill.name}: consome ${skill.cost} MP e causa ${damage} de dano.`
+  };
+}
+
+function getManaRegen(){
+  return Math.max(1, Math.floor(player.maxMp / 10));
+}
+
+function regenMana(){
+  const manaBefore = player.mp;
+  const regen = getManaRegen();
+  player.mp = Math.min(player.maxMp, player.mp + regen);
+  return player.mp - manaBefore;
+}
+
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function attack(){
+  if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  isProcessingTurn = true;
+  const dmg = player.attack + Math.floor(Math.random() * 6);
+  enemy.hp -= dmg;
+  log(`Voce causou ${dmg} de dano.`);
+  updateUI();
+  await wait(320);
+  await afterTurn();
+}
+
+async function useSkill(){
+  if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  const skillInfo = getSkillInfo();
+  if(!skillInfo){
+    log("Voce ainda nao desbloqueou uma habilidade.");
+    return;
+  }
+  if(player.mp < skillInfo.cost){
+    log("Mana insuficiente!");
+    return;
+  }
+  isProcessingTurn = true;
+  player.mp -= skillInfo.cost;
+  enemy.hp -= skillInfo.damage;
+  log(`${skillInfo.name} causou ${skillInfo.damage} de dano!`);
+  updateUI();
+  await wait(320);
+  await afterTurn();
+}
+
+async function afterTurn(){
+  if(enemy.hp <= 0){
+    log("Inimigo derrotado!");
+    const coinsEarned = (enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4);
+    const xpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 6;
+    player.coins += coinsEarned;
+    log(`Voce encontrou ${coinsEarned} moedas.`);
+    log(`Voce ganhou ${xpEarned} de XP.`);
+    gainXP(xpEarned);
+    enemy = null;
+    needsNewEnemy = true;
+    displayState.enemyHp = null;
+    isProcessingTurn = false;
+    updateUI();
+    return;
+  }
+  await enemyTurn();
+}
+
+async function enemyTurn(){
+  log(`${enemy.name} prepara um ataque!`);
+  await wait(220);
+  let dmg;
+  if(enemy.isBoss && enemy.mp >= enemy.skillCost && Math.random() < 0.45){
+    enemy.mp -= enemy.skillCost;
+    dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
+    log(`${enemy.skillName} atingiu voce com ${dmg} de dano.`);
+  }else{
+    dmg = enemy.attack + Math.floor(Math.random() * 5);
+    log(`O inimigo atacou e causou ${dmg} de dano.`);
+  }
+  if(enemy.isBoss && enemy.mp < enemy.maxMp){
+    enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
+  }
+  player.hp -= dmg;
+  updateUI();
+  await wait(320);
+  if(player.hp <= 0){
+    handleDeath();
+    return;
+  }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
+  }
+  isProcessingTurn = false;
+  updateUI();
+}
+
+function gainXP(amount){
+  if(player.level >= 30){
+    player.xp = getXpToNextLevel();
+    return;
+  }
+  player.xp += amount;
+  while(player.level < 30 && player.xp >= getXpToNextLevel()){
+    player.xp -= getXpToNextLevel();
+    player.level++;
+    pendingLevelUps++;
+    levelUpPoints++;
+    log("Voce subiu de nivel! Distribua 1 ponto de atributo.");
+  }
+  if(player.level >= 30){
+    player.level = 30;
+    player.xp = getXpToNextLevel();
+    log("Voce alcancou o nivel maximo!");
+  }
+}
+
+function adjustAttribute(attribute, amount){
+  if(amount > 0 && levelUpPoints <= 0){ return; }
+  if(amount < 0 && allocation[attribute] <= 0){ return; }
+
+  allocation[attribute] += amount;
+  levelUpPoints -= amount;
+  updateUI();
+}
+
+function finishLevelUp(){
+  if(levelUpPoints > 0){ return; }
+
+  const spentHp = Number(allocation.hp) || 0;
+  const spentMp = Number(allocation.mp) || 0;
+  const spentAttack = Number(allocation.attack) || 0;
+  const hpGain = spentHp * player.growth.hp;
+  const mpGain = spentMp * player.growth.mp;
+  const attackGain = spentAttack * player.growth.attack;
+  player.maxHp += hpGain;
+  player.maxMp += mpGain;
+  player.attack += attackGain;
+  player.hp = Math.min(player.maxHp, player.hp + hpGain);
+  player.mp = Math.min(player.maxMp, player.mp + mpGain);
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  displayState.playerXp = player.xp;
+  pendingLevelUps = 0;
+  allocation = { hp: 0, mp: 0, attack: 0 };
+  isProcessingTurn = false;
+  log(`Atributos atualizados: +${hpGain} HP max, +${mpGain} MP max, +${attackGain} ATQ.`);
+  enemy = null;
+  needsNewEnemy = true;
+  currentMode = "battle";
+  updateUI();
+}
+
+function log(msg){
+  const logBox = document.getElementById("log");
+  logBox.innerHTML += `<p>${msg}</p>`;
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+renderSavedCampaign();
+setInterval(() => {
+  if(isDead){
+    updateUI();
+  }
+}, 1000);
+</script>
+</body>
+</html>

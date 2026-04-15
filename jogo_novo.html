@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RPG por Turnos</title>
+<style>
+body{font-family:Arial,sans-serif;background:#1e1e1e;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.container{width:800px;max-width:calc(100vw - 24px);background:#2b2b2b;padding:20px;border-radius:16px;box-shadow:0 0 20px rgba(0,0,0,.4)}
+button{padding:10px 16px;margin:6px;border:none;border-radius:10px;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.6}
+.button-row{display:flex;gap:10px;flex-wrap:wrap}
+.panel{margin:15px 0;padding:15px;background:#3a3a3a;border-radius:12px}
+.bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0}
+.fill{height:100%}
+.hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
+#log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
+.action-btn{position:relative}
+.action-btn[data-tooltip]:hover::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 8px);
+  transform:translateX(-50%);
+  min-width:220px;
+  max-width:280px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#101010;
+  color:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  font-size:13px;
+  line-height:1.4;
+  white-space:normal;
+  z-index:10
+}
+.action-btn[data-tooltip]:hover::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:100%;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top:none;
+  border-bottom-color:#101010;
+  z-index:11
+}
+.levelup-panel{border:1px solid #ffc107;background:#4a3c10}
+.attribute-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0;padding:10px;border-radius:10px;background:rgba(255,255,255,.06)}
+.attribute-controls{display:flex;align-items:center;gap:8px}
+.attribute-controls button{padding:6px 12px;margin:0}
+.attribute-value{min-width:32px;text-align:center;font-weight:700}
+@media (max-width:640px){
+  .attribute-row{flex-direction:column;align-items:flex-start}
+  .action-btn[data-tooltip]:hover::after{left:0;transform:none}
+  .action-btn[data-tooltip]:hover::before{left:18px;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>RPG de Batalha por Turnos</h1>
+<div id="classSelect" class="panel">
+<h3>Escolha sua classe</h3>
+<div class="button-row">
+<button onclick="selectClass('Guerreiro')">Guerreiro</button>
+<button onclick="selectClass('Arqueiro')">Arqueiro</button>
+<button onclick="selectClass('Mago')">Mago</button>
+</div>
+</div>
+<div id="game" style="display:none;">
+<div class="panel" id="playerInfo"></div>
+<div class="panel" id="enemyInfo"></div>
+<div id="levelUpPanel" class="panel levelup-panel" style="display:none;"></div>
+<div class="button-row" id="actions"></div>
+<div class="panel"><strong>Log de batalha</strong><div id="log"></div></div>
+</div>
+</div>
+<script>
+let player, enemy;
+let pendingLevelUps = 0;
+let levelUpPoints = 0;
+let allocation = { hp: 0, mp: 0, attack: 0 };
+
+const classes = {
+  Guerreiro: { hp: 140, mp: 40, attack: 18, skill: "Golpe Brutal" },
+  Arqueiro: { hp: 100, mp: 60, attack: 16, skill: "Chuva de Flechas" },
+  Mago: { hp: 80, mp: 100, attack: 14, skill: "Bola de Fogo" }
+};
+
+function selectClass(name){
+  const base = classes[name];
+  player = {
+    class: name,
+    level: 1,
+    xp: 0,
+    maxHp: base.hp,
+    hp: base.hp,
+    maxMp: base.mp,
+    mp: base.mp,
+    attack: base.attack,
+    skill: base.skill
+  };
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  spawnEnemy();
+  updateUI();
+}
+
+function spawnEnemy(){
+  const lvl = player.level;
+  enemy = {
+    name: "Goblin Lv." + lvl,
+    maxHp: 60 + lvl * 20,
+    hp: 60 + lvl * 20,
+    attack: 8 + lvl * 3
+  };
+  log("Um " + enemy.name + " apareceu!");
+}
+
+function updateUI(){
+  const pointsLabel = levelUpPoints > 0
+    ? `<p><strong>Pontos para distribuir:</strong> ${levelUpPoints}</p>`
+    : "";
+
+  document.getElementById("playerInfo").innerHTML = `
+    <h3>${player.class} - Nivel ${player.level}</h3>
+    Vida: ${player.hp}/${player.maxHp}
+    <div class="bar"><div class="fill hp" style="width:${player.hp / player.maxHp * 100}%"></div></div>
+    Mana: ${player.mp}/${player.maxMp}
+    <div class="bar"><div class="fill mp" style="width:${player.mp / player.maxMp * 100}%"></div></div>
+    XP: ${player.xp}/100
+    <div class="bar"><div class="fill xp" style="width:${player.xp}%"></div></div>
+    ${pointsLabel}`;
+
+  document.getElementById("enemyInfo").innerHTML = `
+    <h3>${enemy.name}</h3>
+    Vida: ${Math.max(0, enemy.hp)}/${enemy.maxHp}
+    <div class="bar"><div class="fill hp" style="width:${Math.max(0, enemy.hp) / enemy.maxHp * 100}%"></div></div>`;
+
+  renderActions();
+  renderLevelUpPanel();
+}
+
+function renderActions(){
+  const actions = document.getElementById("actions");
+  if(levelUpPoints > 0){
+    actions.innerHTML = `<button disabled>Distribua seus atributos para continuar</button>`;
+    return;
+  }
+
+  const attackMin = player.attack;
+  const attackMax = player.attack + 5;
+  const skillInfo = getSkillInfo();
+  actions.innerHTML = `
+    <button class="action-btn" data-tooltip="Ataque basico. Dano entre ${attackMin} e ${attackMax}." onclick="attack()">Atacar</button>
+    <button class="action-btn" data-tooltip="${skillInfo.description}" onclick="useSkill()">${player.skill}</button>`;
+}
+
+function renderLevelUpPanel(){
+  const panel = document.getElementById("levelUpPanel");
+  if(levelUpPoints <= 0){
+    panel.style.display = "none";
+    panel.innerHTML = "";
+    return;
+  }
+
+  panel.style.display = "block";
+  panel.innerHTML = `
+    <h3>Subiu de nivel!</h3>
+    <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
+    <div class="attribute-row">
+      <div><strong>Vida maxima</strong><br><small>+12 HP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('hp', -1)" ${allocation.hp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.hp}</span>
+        <button onclick="adjustAttribute('hp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Mana maxima</strong><br><small>+8 MP por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('mp', -1)" ${allocation.mp === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.mp}</span>
+        <button onclick="adjustAttribute('mp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <div class="attribute-row">
+      <div><strong>Ataque</strong><br><small>+3 ATQ por ponto</small></div>
+      <div class="attribute-controls">
+        <button onclick="adjustAttribute('attack', -1)" ${allocation.attack === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.attack}</span>
+        <button onclick="adjustAttribute('attack', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      </div>
+    </div>
+    <button onclick="confirmLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Confirmar atributos</button>`;
+}
+
+function getSkillInfo(){
+  if(player.class === "Guerreiro"){
+    return {
+      damage: 30,
+      description: "Golpe Brutal: consome 20 MP e causa 30 de dano fixo."
+    };
+  }
+  if(player.class === "Arqueiro"){
+    return {
+      damage: 26,
+      description: "Chuva de Flechas: consome 20 MP e causa 26 de dano fixo."
+    };
+  }
+  return {
+    damage: 35,
+    description: "Bola de Fogo: consome 20 MP e causa 35 de dano fixo."
+  };
+}
+
+function attack(){
+  if(levelUpPoints > 0){ return; }
+  const dmg = player.attack + Math.floor(Math.random() * 6);
+  enemy.hp -= dmg;
+  log(`Voce causou ${dmg} de dano.`);
+  afterTurn();
+}
+
+function useSkill(){
+  if(levelUpPoints > 0){ return; }
+  if(player.mp < 20){
+    log("Mana insuficiente!");
+    return;
+  }
+  player.mp -= 20;
+  const skillInfo = getSkillInfo();
+  enemy.hp -= skillInfo.damage;
+  log(`${player.skill} causou ${skillInfo.damage} de dano!`);
+  afterTurn();
+}
+
+function afterTurn(){
+  if(enemy.hp <= 0){
+    log("Inimigo derrotado!");
+    gainXP(50);
+    if(levelUpPoints <= 0){
+      spawnEnemy();
+    }
+    updateUI();
+    return;
+  }
+  enemyTurn();
+}
+
+function enemyTurn(){
+  const dmg = enemy.attack + Math.floor(Math.random() * 5);
+  player.hp -= dmg;
+  log(`O inimigo atacou e causou ${dmg} de dano.`);
+  if(player.hp <= 0){
+    alert("Game Over!");
+    location.reload();
+    return;
+  }
+  updateUI();
+}
+
+function gainXP(amount){
+  player.xp += amount;
+  while(player.xp >= 100){
+    player.xp -= 100;
+    player.level++;
+    pendingLevelUps++;
+    levelUpPoints += 3;
+    log("Voce subiu de nivel! Distribua 3 pontos de atributos.");
+  }
+}
+
+function adjustAttribute(attribute, amount){
+  if(amount > 0 && levelUpPoints <= 0){ return; }
+  if(amount < 0 && allocation[attribute] <= 0){ return; }
+
+  allocation[attribute] += amount;
+  levelUpPoints -= amount;
+  updateUI();
+}
+
+function confirmLevelUp(){
+  if(levelUpPoints > 0){ return; }
+
+  player.maxHp += allocation.hp * 12;
+  player.maxMp += allocation.mp * 8;
+  player.attack += allocation.attack * 3;
+  player.hp = player.maxHp;
+  player.mp = player.maxMp;
+  pendingLevelUps = Math.max(0, pendingLevelUps - 1);
+  allocation = { hp: 0, mp: 0, attack: 0 };
+  log("Atributos atualizados. Vida e mana foram restauradas.");
+
+  if(pendingLevelUps === 0){
+    spawnEnemy();
+  }
+  updateUI();
+}
+
+function log(msg){
+  const logBox = document.getElementById("log");
+  logBox.innerHTML += `<p>${msg}</p>`;
+  logBox.scrollTop = logBox.scrollHeight;
+}
+</script>
+</body>
+</html>
