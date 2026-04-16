@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
@@ -58,8 +58,9 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .rarity-lendaria{color:#ffbf47}
 .boss-btn{background:#8b2f2f;color:#fff}
 .lock-note{font-size:13px;color:#d1d1d1}
-.bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0}
-.fill{height:100%;transition:width .28s ease}
+.bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0;position:relative}
+.fill{height:100%;transition:width .28s ease;position:relative;z-index:2}
+.shield-fill{position:absolute;right:0;top:0;height:100%;background:#9e9e9e;opacity:.75;transition:width .28s ease;z-index:1}
 .hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
 #log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
 .action-btn{position:relative}
@@ -112,6 +113,10 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .enemy-drop-box{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
 .enemy-drop-box strong{display:block;margin-bottom:4px}
 .enemy-drop-box span{color:#d7d7d7}
+.text-input{width:100%;padding:10px 12px;border:none;border-radius:10px;background:#1b1b1b;color:#fff;box-sizing:border-box}
+.party-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.party-entry{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.room-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#1565c0;color:#fff;font-weight:700}
 @media (max-width:640px){
   .attribute-row{flex-direction:column;align-items:flex-start}
   .action-btn[data-tooltip]:hover::after{left:0;transform:none}
@@ -130,7 +135,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <h3>Escolha sua classe</h3>
 <div class="class-grid">
 <button class="class-card class-warrior" onclick="selectClass('Guerreiro')">
-<span class="class-icon">🛡️</span>
+<span class="class-icon">&#x1F6E1;&#xFE0F;</span>
 <h4>Guerreiro</h4>
 <p><span class="stat-hp">Vida 140</span></p>
 <p><span class="stat-mp">Mana 60</span></p>
@@ -138,7 +143,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <small>Alta resistencia, pouca mana e o ataque basico mais forte entre as tres classes.</small>
 </button>
 <button class="class-card class-archer" onclick="selectClass('Arqueiro')">
-<span class="class-icon">🏹</span>
+<span class="class-icon">&#x1F3F9;</span>
 <h4>Arqueiro</h4>
 <p><span class="stat-hp">Vida 120</span></p>
 <p><span class="stat-mp">Mana 80</span></p>
@@ -146,7 +151,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
 </button>
 <button class="class-card class-mage" onclick="selectClass('Mago')">
-<span class="class-icon">🔮</span>
+<span class="class-icon">&#x1F52E;</span>
 <h4>Mago</h4>
 <p><span class="stat-hp">Vida 100</span></p>
 <p><span class="stat-mp">Mana 100</span></p>
@@ -184,8 +189,10 @@ button:disabled{cursor:not-allowed;opacity:.6}
 </div>
 </div>
 </div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 const SAVE_KEY = "rpg_turnos_campaign_v1";
+const MAX_LEVEL = 100;
 let player, enemy;
 let pendingLevelUps = 0;
 let levelUpPoints = 0;
@@ -205,7 +212,7 @@ let displayState = {
   playerXp: null,
   enemyHp: null
 };
-
+let dungeonMultiplayer = createDungeonMultiplayerState();
 const rarityOrder = ["comum", "incomum", "rara", "ultra_rara", "lendaria"];
 const rarityData = {
   comum: { label: "Comum", cssClass: "rarity-comum", weight: 62 },
@@ -215,14 +222,18 @@ const rarityData = {
   lendaria: { label: "Lendaria", cssClass: "rarity-lendaria", weight: 3 }
 };
 const rarityStats = {
-  hp: { comum: 8, incomum: 14, rara: 22, ultra_rara: 32, lendaria: 46 },
-  mp: { comum: 6, incomum: 10, rara: 16, ultra_rara: 24, lendaria: 34 },
-  attack: { comum: 2, incomum: 4, rara: 6, ultra_rara: 9, lendaria: 13 },
-  skill: { comum: 3, incomum: 5, rara: 8, ultra_rara: 12, lendaria: 17 }
+  hp: { comum: 28, incomum: 48, rara: 74, ultra_rara: 108, lendaria: 156 },
+  mp: { comum: 20, incomum: 34, rara: 52, ultra_rara: 76, lendaria: 108 },
+  attack: { comum: 7, incomum: 12, rara: 18, ultra_rara: 26, lendaria: 38 },
+  skill: { comum: 8, incomum: 14, rara: 21, ultra_rara: 31, lendaria: 45 }
 };
 const equipmentSlots = ["head", "chest", "weapon", "legs", "feet"];
 const slotLabels = { head: "Cabeca", chest: "Peito", weapon: "Arma", legs: "Pernas", feet: "Pes" };
-const classIcons = { Guerreiro: "⚔", Arqueiro: "🏹", Mago: "✦" };
+const classIcons = {
+  Guerreiro: "&#x1F6E1;&#xFE0F;",
+  Arqueiro: "&#x1F3F9;",
+  Mago: "&#x1F52E;"
+};
 const enemyDrops = {
   "Lobo Sombrio": { id: "sandalia_mago", name: "Sandalia de Mago", slot: "feet", classRestriction: "Mago", stats: { bonusHp: "hp" } },
   Goblin: { id: "calca_esfarrapada", name: "Calca Esfarrapada", slot: "legs", classRestriction: "Arqueiro", stats: { bonusHp: "hp" } },
@@ -240,6 +251,12 @@ const enemyDrops = {
   "Golem de Brasa": { id: "capacete_em_brasa", name: "Capacete em Brasa", slot: "head", classRestriction: "Guerreiro", stats: { bonusHp: "hp" } },
   "Fenix Sombria": { id: "espada_flamejante", name: "Espada Flamejante", slot: "weapon", classRestriction: "Guerreiro", stats: { bonusAttack: "attack", skillPower: "skill" } }
 };
+const consumableCatalog = {
+  mana_potion: { name: "Pocao de Mana", price: 40, description: "Recupera 60 de mana.", useLabel: "Usar", effectType: "restore_mana", value: 60 },
+  health_potion: { name: "Pocao de Vida", price: 32, description: "Recupera 70 de vida.", useLabel: "Usar", effectType: "restore_hp", value: 70 },
+  skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 18, turns: 3 },
+  attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 14, turns: 3 }
+};
 
 function createDefaultPlayerEffects(){
   return {
@@ -256,27 +273,43 @@ function createDefaultPlayerEffects(){
   };
 }
 
+function createDungeonMultiplayerState(){
+  return {
+    peer: null,
+    isHost: false,
+    roomCode: "",
+    hostConnection: null,
+    connections: {},
+    party: {},
+    actionLockedUntil: 0,
+    enemyAttackTimer: null
+  };
+}
+
 const enemySprites = {
-  "Lobo Sombrio": "🐺",
-  Goblin: "👺",
-  "Aranha Gigante": "🕷️",
-  "Morcego de Pedra": "🦇",
-  "Esqueleto Mineiro": "💀",
-  "Slime Toxico": "🟢",
-  "Sentinela Quebrada": "🗿",
-  "Cultista Perdido": "🧙",
-  "Fantasma Antigo": "👻",
-  "Ent Ancestral": "🌳",
-  "Troll das Profundezas": "👹",
-  "Rei Espectral": "👑",
-  "Sapo Colossal": "🐸",
-  "Bruxa do Brejo": "🧪",
-  "Serpente do Lodo": "🐍",
-  "Hidra do Lodo": "🐉",
-  "Salamandra Rubra": "🦎",
-  "Golem de Brasa": "🪨",
-  "Fenix Sombria": "🦅",
-  "Draco Magmatico": "🔥"
+  "Lobo Sombrio": "&#x1F43A;",
+  Goblin: "&#x1F47A;",
+  "Aranha Gigante": "&#x1F577;&#xFE0F;",
+  "Morcego de Pedra": "&#x1F987;",
+  "Esqueleto Mineiro": "&#x1F480;",
+  "Slime Toxico": "&#x1F7E2;",
+  "Sentinela Quebrada": "&#x1F5FF;",
+  "Cultista Perdido": "&#x1F9D9;",
+  "Fantasma Antigo": "&#x1F47B;",
+  "Ent Ancestral": "&#x1F333;",
+  "Troll das Profundezas": "&#x1F479;",
+  "Rei Espectral": "&#x1F451;",
+  "Sapo Colossal": "&#x1F438;",
+  "Bruxa do Brejo": "&#x1F9EA;",
+  "Serpente do Lodo": "&#x1F40D;",
+  "Hidra do Lodo": "&#x1F409;",
+  "Salamandra Rubra": "&#x1F98E;",
+  "Golem de Brasa": "&#x1FAA8;",
+  "Fenix Sombria": "&#x1F985;",
+  "Draco Magmatico": "&#x1F525;",
+  "Carcereiro Abissal": "&#x26D3;&#xFE0F;",
+  "Aracnida Rainha": "&#x1F578;&#xFE0F;",
+  "Devorador do Eco": "&#x1F479;"
 };
 
 const classes = {
@@ -329,8 +362,8 @@ const classes = {
     growth: { hp: 10, mp: 26, attack: 3 },
     activeSkills: [
       { level: 1, name: "Bola de Fogo", type: "fireball", value: 35, cost: 30, description: "Lanca uma esfera de fogo destrutiva." },
-      { level: 10, name: "Barreira Mistica", type: "shield", stat: "mp", value: 0.32, turns: 2, cost: 28, description: "Ergue um escudo magico por dois turnos." },
-      { level: 20, name: "Concentracao", type: "mana_percent", value: 0.3, cost: 18, description: "Recupera mana com base no maximo atual." },
+      { level: 10, name: "Concentracao", type: "mana_percent", value: 0.3, cost: 18, description: "Recupera mana com base no maximo atual." },
+      { level: 20, name: "Barreira Mistica", type: "shield", stat: "mp", value: 0.32, turns: 2, cost: 28, description: "Ergue um escudo magico por dois turnos." },
       { level: 30, name: "Nova Celestial", type: "damage_and_drain_mana", value: 112, manaDrainPercent: 0.1, cost: 50, description: "Causa grande dano e drena mana do inimigo." }
     ],
     passiveSkills: [
@@ -351,9 +384,9 @@ const regions = {
     description: "Criaturas selvagens e emboscadas leves.",
     boss: { name: "Ent Ancestral", level: 10, hp: 170, attack: 15, mp: 60, skillName: "Raizes Esmagadoras", skillDamage: 36, skillCost: 18 },
     enemies: [
-      { name: "Lobo Sombrio", level: 1, weight: 60, hp: 70, attack: 8 },
-      { name: "Goblin", level: 3, weight: 28, hp: 82, attack: 9 },
-      { name: "Aranha Gigante", level: 8, weight: 12, hp: 96, attack: 11 }
+      { name: "Lobo Sombrio", level: 1, weight: 72, hp: 70, attack: 8 },
+      { name: "Goblin", level: 3, weight: 20, hp: 82, attack: 9 },
+      { name: "Aranha Gigante", level: 8, weight: 8, hp: 96, attack: 11 }
     ]
   },
   Caverna: {
@@ -361,9 +394,9 @@ const regions = {
     description: "Passagens estreitas cheias de monstros resistentes.",
     boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
     enemies: [
-      { name: "Morcego de Pedra", level: 11, weight: 58, hp: 90, attack: 10 },
-      { name: "Esqueleto Mineiro", level: 13, weight: 28, hp: 102, attack: 11 },
-      { name: "Slime Toxico", level: 18, weight: 14, hp: 120, attack: 12 }
+      { name: "Morcego de Pedra", level: 11, weight: 70, hp: 90, attack: 10 },
+      { name: "Esqueleto Mineiro", level: 13, weight: 20, hp: 102, attack: 11 },
+      { name: "Slime Toxico", level: 18, weight: 10, hp: 120, attack: 12 }
     ]
   },
   Ruinas: {
@@ -371,9 +404,9 @@ const regions = {
     description: "Restos antigos guardados por inimigos mais agressivos.",
     boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
     enemies: [
-      { name: "Sentinela Quebrada", level: 21, weight: 58, hp: 128, attack: 13 },
-      { name: "Cultista Perdido", level: 23, weight: 27, hp: 140, attack: 15 },
-      { name: "Fantasma Antigo", level: 28, weight: 15, hp: 165, attack: 16 }
+      { name: "Sentinela Quebrada", level: 21, weight: 70, hp: 128, attack: 13 },
+      { name: "Cultista Perdido", level: 23, weight: 20, hp: 140, attack: 15 },
+      { name: "Fantasma Antigo", level: 28, weight: 10, hp: 165, attack: 16 }
     ]
   },
   Pantano: {
@@ -381,9 +414,9 @@ const regions = {
     description: "Neblina espessa, criaturas venenosas e terreno traiçoeiro.",
     boss: { name: "Hidra do Lodo", level: 36, hp: 420, attack: 34, mp: 110, skillName: "Sopro Corrosivo", skillDamage: 88, skillCost: 30 },
     enemies: [
-      { name: "Sapo Colossal", level: 24, weight: 56, hp: 150, attack: 16 },
-      { name: "Bruxa do Brejo", level: 27, weight: 29, hp: 165, attack: 18 },
-      { name: "Serpente do Lodo", level: 32, weight: 15, hp: 188, attack: 21 }
+      { name: "Sapo Colossal", level: 24, weight: 70, hp: 150, attack: 16 },
+      { name: "Bruxa do Brejo", level: 27, weight: 20, hp: 165, attack: 18 },
+      { name: "Serpente do Lodo", level: 32, weight: 10, hp: 188, attack: 21 }
     ]
   },
   Vulcao: {
@@ -391,11 +424,21 @@ const regions = {
     description: "Um reino de cinzas, magma e monstros forjados no fogo.",
     boss: { name: "Draco Magmatico", level: 45, hp: 520, attack: 42, mp: 140, skillName: "Explosao Vulcanica", skillDamage: 112, skillCost: 36 },
     enemies: [
-      { name: "Salamandra Rubra", level: 30, weight: 56, hp: 180, attack: 20 },
-      { name: "Golem de Brasa", level: 34, weight: 28, hp: 205, attack: 23 },
-      { name: "Fenix Sombria", level: 39, weight: 16, hp: 236, attack: 26 }
+      { name: "Salamandra Rubra", level: 30, weight: 70, hp: 180, attack: 20 },
+      { name: "Golem de Brasa", level: 34, weight: 20, hp: 205, attack: 23 },
+      { name: "Fenix Sombria", level: 39, weight: 10, hp: 236, attack: 26 }
     ]
   }
+};
+
+const dungeonData = {
+  minLevel: 12,
+  description: "Uma investida em grupo com dois aliados contra monstros mais resistentes.",
+  enemies: [
+    { name: "Carcereiro Abissal", level: 18, weight: 58, hp: 190, attack: 18 },
+    { name: "Aracnida Rainha", level: 24, weight: 28, hp: 240, attack: 22 },
+    { name: "Devorador do Eco", level: 32, weight: 14, hp: 310, attack: 27 }
+  ]
 };
 
 function selectClass(name){
@@ -458,17 +501,27 @@ function getRegionAverageLevel(region){
 }
 
 function normalizePlayerState(){
+  function normalizeInventoryItem(item, index){
+    const normalized = {
+      ...item,
+      uid: item.uid || `${item.id || "item"}_${Date.now()}_${index}`
+    };
+    if(item.type === "consumable" && consumableCatalog[item.id]){
+      normalized.name = consumableCatalog[item.id].name;
+      normalized.description = consumableCatalog[item.id].description;
+    }
+    return normalizeEquipmentMetadata(normalized);
+  }
   player.inventory = (Array.isArray(player.inventory) ? player.inventory : []).map((item, index) => ({
-    ...item,
-    uid: item.uid || `${item.id || "item"}_${Date.now()}_${index}`
+    ...normalizeInventoryItem(item, index)
   }));
   const oldEquipment = player.equipment || {};
   player.equipment = {
-    head: oldEquipment.head || null,
-    chest: oldEquipment.chest || null,
-    weapon: oldEquipment.weapon || null,
-    legs: oldEquipment.legs || null,
-    feet: oldEquipment.feet || oldEquipment.boots || null
+    head: normalizeEquipmentMetadata(oldEquipment.head || null),
+    chest: normalizeEquipmentMetadata(oldEquipment.chest || null),
+    weapon: normalizeEquipmentMetadata(oldEquipment.weapon || null),
+    legs: normalizeEquipmentMetadata(oldEquipment.legs || null),
+    feet: normalizeEquipmentMetadata(oldEquipment.feet || oldEquipment.boots || null)
   };
   player.stats = player.stats || {
     enemiesDefeated: 0,
@@ -476,6 +529,7 @@ function normalizePlayerState(){
     coinsEarned: 0,
     deaths: 0
   };
+  player.stats.invested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
   player.subclass = player.subclass || null;
   player.activeSkills = getCurrentClassData().activeSkills;
   player.passiveSkills = getCurrentClassData().passiveSkills;
@@ -500,7 +554,7 @@ function getCurrentCaps(){
 }
 
 function getXpToNextLevel(){
-  return 100 + (player.level) * 25;
+  return 100 + player.level * 25 + Math.floor(player.level * player.level * 1.5);
 }
 
 function getCurrentClassData(){
@@ -595,8 +649,500 @@ function getTrophies(){
     { name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
     { name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
     { name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
-    { name: "Mestre Supremo", done: player.level >= 30, description: "Alcance o nivel maximo." }
+    { name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." }
   ];
+}
+
+function isDungeonMode(){
+  return currentMode === "dungeon";
+}
+
+function getDungeonRequirement(){
+  return dungeonData.minLevel;
+}
+
+function isDungeonConnected(){
+  return !!(dungeonMultiplayer.peer && (dungeonMultiplayer.isHost || dungeonMultiplayer.hostConnection?.open));
+}
+
+function isDungeonHost(){
+  return !!(dungeonMultiplayer.peer && dungeonMultiplayer.isHost);
+}
+
+function clearDungeonEnemyTimer(){
+  if(dungeonMultiplayer.enemyAttackTimer){
+    clearInterval(dungeonMultiplayer.enemyAttackTimer);
+    dungeonMultiplayer.enemyAttackTimer = null;
+  }
+}
+
+function getDungeonRoomMembers(){
+  return Object.values(dungeonMultiplayer.party);
+}
+
+function getDungeonPlayerProfile(){
+  return {
+    id: dungeonMultiplayer.peer?.id || "local",
+    name: `${player.class} Lv.${player.level}`,
+    class: player.class,
+    level: player.level,
+    icon: classIcons[player.class] || "&#x2694;&#xFE0F;"
+  };
+}
+
+function syncDungeonEnemyState(sharedEnemy){
+  if(currentMode !== "dungeon"){ return; }
+  enemy = sharedEnemy ? { ...sharedEnemy } : null;
+  displayState.enemyHp = enemy ? enemy.hp : null;
+  needsNewEnemy = !enemy;
+}
+
+function broadcastToDungeonPeers(payload){
+  Object.values(dungeonMultiplayer.connections).forEach(connection => {
+    if(connection?.open){
+      connection.send(payload);
+    }
+  });
+}
+
+function broadcastDungeonState(){
+  if(!isDungeonHost()){ return; }
+  dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = getDungeonPlayerProfile();
+  broadcastToDungeonPeers({
+    type: "state",
+    roomCode: dungeonMultiplayer.roomCode,
+    party: dungeonMultiplayer.party,
+    enemy: enemy ? { ...enemy } : null
+  });
+}
+
+function syncDungeonProfile(){
+  if(!isDungeonConnected()){ return; }
+  const profile = getDungeonPlayerProfile();
+  if(isDungeonHost()){
+    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = profile;
+    broadcastDungeonState();
+  }else if(dungeonMultiplayer.hostConnection?.open){
+    dungeonMultiplayer.hostConnection.send({ type: "profile_update", player: profile });
+  }
+}
+
+function handleDungeonPeerDisconnect(peerId){
+  delete dungeonMultiplayer.connections[peerId];
+  if(dungeonMultiplayer.party[peerId]){
+    log(`${dungeonMultiplayer.party[peerId].name} saiu da sala da dungeon.`);
+    delete dungeonMultiplayer.party[peerId];
+    broadcastDungeonState();
+    updateUI();
+  }
+}
+
+function leaveDungeonRoom(silent = false){
+  clearDungeonEnemyTimer();
+  Object.values(dungeonMultiplayer.connections).forEach(connection => {
+    try { connection.close(); } catch {}
+  });
+  if(dungeonMultiplayer.hostConnection){
+    try { dungeonMultiplayer.hostConnection.close(); } catch {}
+  }
+  if(dungeonMultiplayer.peer){
+    try { dungeonMultiplayer.peer.destroy(); } catch {}
+  }
+  dungeonMultiplayer = createDungeonMultiplayerState();
+  if(currentMode === "dungeon"){
+    enemy = null;
+    displayState.enemyHp = null;
+    needsNewEnemy = true;
+  }
+  if(!silent){
+    log("Voce saiu da sala da dungeon.");
+  }
+  updateUI();
+}
+
+function renderDungeonPartyList(){
+  const members = getDungeonRoomMembers();
+  if(!members.length){
+    return `<p class="lock-note">Nenhum aventureiro conectado ainda.</p>`;
+  }
+  return `<div class="party-list">${members.map(member => `<div class="party-entry"><strong>${member.icon} ${member.name}</strong><br><span class="lock-note">${member.class} | Nivel ${member.level}</span></div>`).join("")}</div>`;
+}
+
+function getDungeonStatusText(){
+  if(isDungeonHost()){
+    return `Sala criada. Compartilhe o codigo ${dungeonMultiplayer.roomCode} com seus amigos.`;
+  }
+  if(isDungeonConnected()){
+    return `Conectado a sala ${dungeonMultiplayer.roomCode}. Aguarde o host iniciar a incursao.`;
+  }
+  return "Crie uma sala ou entre com um codigo para jogar online com ate 2 amigos.";
+}
+
+function renderDungeonRoomControls(){
+  const canStart = isDungeonHost() && getDungeonRoomMembers().length >= 2 && !enemy;
+  return `
+    <div class="inventory-list">
+      <div class="inventory-item">
+        <strong>Sala online</strong><br>
+        <span class="lock-note">${getDungeonStatusText()}</span>
+        ${dungeonMultiplayer.roomCode ? `<div style="margin-top:10px;"><span class="room-pill">${dungeonMultiplayer.roomCode}</span></div>` : ""}
+        ${!isDungeonConnected() ? `<div style="margin-top:10px;"><input id="dungeonJoinCode" class="text-input" placeholder="Codigo da sala" maxlength="12" /></div>` : ""}
+        <div class="button-row">
+          <button onclick="hostDungeonRoom()" ${isDungeonConnected() ? "disabled" : ""}>Criar sala</button>
+          <button onclick="joinDungeonRoom()" ${isDungeonConnected() ? "disabled" : ""}>Entrar</button>
+          ${isDungeonConnected() ? `<button onclick="leaveDungeonRoom()">Sair da sala</button>` : ""}
+        </div>
+        ${isDungeonHost() ? `<div class="button-row"><button onclick="startDungeonRaid()" ${canStart ? "" : "disabled"}>Iniciar dungeon</button></div><span class="lock-note">${getDungeonRoomMembers().length < 2 ? "Conecte pelo menos mais 1 jogador para comecar." : "Sala pronta para a batalha."}</span>` : ""}
+      </div>
+      <div class="inventory-item">
+        <strong>Equipe</strong>
+        ${renderDungeonPartyList()}
+      </div>
+    </div>`;
+}
+
+function hostDungeonRoom(){
+  if(currentMode !== "dungeon" || !player){ return; }
+  if(typeof Peer === "undefined"){
+    log("Nao foi possivel carregar o sistema online da dungeon.");
+    return;
+  }
+  leaveDungeonRoom(true);
+  const roomCode = `DNG${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+  dungeonMultiplayer = createDungeonMultiplayerState();
+  dungeonMultiplayer.isHost = true;
+  dungeonMultiplayer.roomCode = roomCode;
+  dungeonMultiplayer.peer = new Peer(roomCode);
+  dungeonMultiplayer.peer.on("open", id => {
+    dungeonMultiplayer.roomCode = id;
+    dungeonMultiplayer.party[id] = getDungeonPlayerProfile();
+    log(`Sala da dungeon criada: ${id}.`);
+    updateUI();
+  });
+  dungeonMultiplayer.peer.on("connection", connection => {
+    if(getDungeonRoomMembers().length >= 3){
+      connection.on("open", () => {
+        connection.send({ type: "reject", reason: "A sala da dungeon ja esta cheia." });
+        connection.close();
+      });
+      return;
+    }
+    dungeonMultiplayer.connections[connection.peer] = connection;
+    connection.on("data", data => handleDungeonHostMessage(connection, data));
+    connection.on("close", () => handleDungeonPeerDisconnect(connection.peer));
+  });
+  dungeonMultiplayer.peer.on("error", error => {
+    log(`Erro na dungeon online: ${error.type || error.message}.`);
+    updateUI();
+  });
+}
+
+function joinDungeonRoom(){
+  if(currentMode !== "dungeon" || !player){ return; }
+  if(typeof Peer === "undefined"){
+    log("Nao foi possivel carregar o sistema online da dungeon.");
+    return;
+  }
+  const input = document.getElementById("dungeonJoinCode");
+  const roomCode = (input?.value || "").trim().toUpperCase();
+  if(!roomCode){
+    log("Informe o codigo da sala para entrar na dungeon.");
+    return;
+  }
+  leaveDungeonRoom(true);
+  dungeonMultiplayer = createDungeonMultiplayerState();
+  dungeonMultiplayer.isHost = false;
+  dungeonMultiplayer.roomCode = roomCode;
+  dungeonMultiplayer.peer = new Peer();
+  dungeonMultiplayer.peer.on("open", () => {
+    const connection = dungeonMultiplayer.peer.connect(roomCode, { reliable: true });
+    dungeonMultiplayer.hostConnection = connection;
+    connection.on("open", () => {
+      connection.send({ type: "join", player: getDungeonPlayerProfile() });
+      log(`Conectando a sala ${roomCode}...`);
+      updateUI();
+    });
+    connection.on("data", handleDungeonGuestMessage);
+    connection.on("close", () => {
+      log("A conexao com a dungeon foi encerrada.");
+      leaveDungeonRoom(true);
+    });
+  });
+  dungeonMultiplayer.peer.on("error", error => {
+    log(`Erro na conexao da dungeon: ${error.type || error.message}.`);
+    updateUI();
+  });
+}
+
+function handleDungeonHostMessage(connection, data){
+  if(!data || !isDungeonHost()){ return; }
+  if(data.type === "join"){
+    dungeonMultiplayer.party[connection.peer] = data.player;
+    connection.send({ type: "joined", roomCode: dungeonMultiplayer.roomCode });
+    log(`${data.player.name} entrou na sala da dungeon.`);
+    broadcastDungeonState();
+    updateUI();
+    return;
+  }
+  if(data.type === "profile_update"){
+    dungeonMultiplayer.party[connection.peer] = data.player;
+    broadcastDungeonState();
+    updateUI();
+    return;
+  }
+  if(data.type === "action"){
+    if(data.player){
+      dungeonMultiplayer.party[connection.peer] = data.player;
+    }
+    if(data.message){
+      log(data.message);
+      broadcastToDungeonPeers({ type: "log", message: data.message });
+    }
+    if(enemy && data.damage){
+      enemy.hp -= data.damage;
+      displayState.enemyHp = enemy.hp;
+    }
+    if(enemy && enemy.hp <= 0){
+      handleDungeonRaidVictory();
+      return;
+    }
+    broadcastDungeonState();
+    updateUI();
+  }
+}
+
+function handleDungeonGuestMessage(data){
+  if(!data){ return; }
+  if(data.type === "reject"){
+    log(data.reason);
+    leaveDungeonRoom(true);
+    return;
+  }
+  if(data.type === "joined"){
+    dungeonMultiplayer.roomCode = data.roomCode;
+    updateUI();
+    return;
+  }
+  if(data.type === "state"){
+    dungeonMultiplayer.roomCode = data.roomCode || dungeonMultiplayer.roomCode;
+    dungeonMultiplayer.party = data.party || {};
+    syncDungeonEnemyState(data.enemy || null);
+    updateUI();
+    return;
+  }
+  if(data.type === "log"){
+    log(data.message);
+    return;
+  }
+  if(data.type === "enemy_attack"){
+    processDungeonIncomingDamage(data.damage, data.message);
+    return;
+  }
+  if(data.type === "victory"){
+    syncDungeonEnemyState(null);
+    grantDungeonRaidRewards(data.rewards);
+    log(data.message);
+    updateUI();
+    return;
+  }
+  if(data.type === "room_closed"){
+    log("O host encerrou a sala da dungeon.");
+    leaveDungeonRoom(true);
+  }
+}
+
+function startDungeonRaid(){
+  if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || enemy){ return; }
+  const template = chooseWeightedEnemy(dungeonData.enemies);
+  enemy = createEnemyFromTemplate(template, false);
+  displayState.enemyHp = enemy.hp;
+  needsNewEnemy = false;
+  log(`A dungeon comecou contra ${enemy.name}!`);
+  broadcastToDungeonPeers({ type: "log", message: `A dungeon comecou contra ${enemy.name}!` });
+  broadcastDungeonState();
+  clearDungeonEnemyTimer();
+  dungeonMultiplayer.enemyAttackTimer = setInterval(() => {
+    if(!isDungeonHost() || currentMode !== "dungeon" || !enemy){ return; }
+    const damage = enemy.attack + Math.floor(Math.random() * 5);
+    const message = `${enemy.name} atingiu todo o grupo com ${damage} de dano.`;
+    processDungeonIncomingDamage(damage, message);
+    broadcastToDungeonPeers({ type: "enemy_attack", damage, message });
+  }, 3800);
+  updateUI();
+}
+
+function grantDungeonRaidRewards(rewards){
+  if(!rewards){ return; }
+  player.coins += rewards.coins;
+  player.stats.coinsEarned += rewards.coins;
+  player.stats.enemiesDefeated++;
+  gainXP(rewards.xp);
+}
+
+function handleDungeonRaidVictory(){
+  if(!enemy){ return; }
+  const rewards = {
+    xp: 40 + enemy.level * 9,
+    coins: 14 + enemy.level * 4
+  };
+  const enemyName = enemy.name;
+  clearDungeonEnemyTimer();
+  enemy = null;
+  displayState.enemyHp = null;
+  needsNewEnemy = true;
+  grantDungeonRaidRewards(rewards);
+  const message = `${enemyName} foi derrotado! Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas.`;
+  log(message);
+  broadcastToDungeonPeers({ type: "victory", rewards, message });
+  broadcastDungeonState();
+  updateUI();
+}
+
+function processDungeonIncomingDamage(baseDamage, message){
+  if(message){
+    log(message);
+  }
+  let dmg = baseDamage;
+  const hpBefore = player.hp;
+  const passiveReduction = getPassiveModifiers().damageReduction;
+  const flatReduction = getPassiveModifiers().flatReduction;
+  dmg = Math.max(0, dmg - flatReduction);
+  if(flatReduction > 0){
+    log(`Sua resistencia reduziu ${flatReduction} de dano.`);
+  }
+  dmg = Math.max(0, Math.floor(dmg * (1 - Math.min(0.75, passiveReduction))));
+  if(playerEffects.shieldValue > 0 && dmg > 0){
+    const absorbed = Math.min(dmg, playerEffects.shieldValue);
+    playerEffects.shieldValue -= absorbed;
+    dmg -= absorbed;
+    log(`Seu escudo absorveu ${absorbed} de dano.`);
+  }
+  if(dmg > 0){
+    player.hp = Math.max(1, player.hp - dmg);
+  }
+  if(hpBefore > 1 && player.hp === 1){
+    log("Voce ficou por um fio, mas o grupo ainda te manteve na batalha.");
+  }
+  displayState.playerHp = player.hp;
+  updateUI();
+}
+
+function sendDungeonActionPayload(payload){
+  if(!isDungeonConnected() || !enemy){ return; }
+  const actionPayload = { ...payload, player: getDungeonPlayerProfile() };
+  if(isDungeonHost()){
+    handleDungeonHostMessage({ peer: dungeonMultiplayer.peer.id }, { type: "action", ...actionPayload });
+  }else if(dungeonMultiplayer.hostConnection?.open){
+    dungeonMultiplayer.hostConnection.send({ type: "action", ...actionPayload });
+  }
+}
+
+function dungeonAttack(){
+  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead){ return; }
+  if(Date.now() < dungeonMultiplayer.actionLockedUntil){
+    updateUI();
+    return;
+  }
+  dungeonMultiplayer.actionLockedUntil = Date.now() + 900;
+  let damage = 0;
+  let message;
+  if(player.class === "Arqueiro" && !rollHit("basic")){
+    message = `${getDungeonPlayerProfile().name} errou o ataque.`;
+  }else{
+    damage = getActiveAttack() + Math.floor(Math.random() * 6);
+    message = `${getDungeonPlayerProfile().name} causou ${damage} de dano.`;
+  }
+  decayPlayerBuffs();
+  updateUI();
+  sendDungeonActionPayload({ damage, message });
+}
+
+function dungeonUseSkill(index){
+  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead){ return; }
+  if(Date.now() < dungeonMultiplayer.actionLockedUntil){
+    updateUI();
+    return;
+  }
+  const skillInfo = getSkillInfo()[index];
+  if(!skillInfo){
+    log("Voce ainda nao desbloqueou essa habilidade.");
+    return;
+  }
+  if(player.mp < skillInfo.cost){
+    log("Mana insuficiente!");
+    return;
+  }
+  player.mp -= skillInfo.cost;
+  displayState.playerMp = player.mp;
+  let damage = 0;
+  let message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name}.`;
+  let freeTurn = false;
+
+  if(skillInfo.type === "damage" || skillInfo.type === "fireball" || skillInfo.type === "damage_maxhp_percent"){
+    damage = skillInfo.damage;
+    message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "damage_and_drain_mana"){
+    damage = skillInfo.damage;
+    message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "triple_shot"){
+    let totalDamage = 0;
+    let hitsLanded = 0;
+    for(let hit = 0; hit < skillInfo.hits; hit++){
+      if(rollHit("multi")){
+        totalDamage += getActiveAttack() + Math.floor(Math.random() * 4);
+        hitsLanded++;
+      }
+    }
+    damage = totalDamage;
+    message = hitsLanded
+      ? `${getDungeonPlayerProfile().name} acertou ${hitsLanded} flecha(s) com ${skillInfo.name} e causou ${damage} de dano.`
+      : `${getDungeonPlayerProfile().name} falhou com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "heal_percent"){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + skillInfo.heal);
+    displayState.playerHp = player.hp;
+    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.heal} de vida com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "mana_percent"){
+    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
+    displayState.playerMp = player.mp;
+    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.mana} de mana com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "mana_percent_free"){
+    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
+    displayState.playerMp = player.mp;
+    freeTurn = true;
+    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.mana} de mana com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "shield"){
+    playerEffects.shieldValue = skillInfo.shield;
+    playerEffects.shieldTurns = skillInfo.turns || -1;
+    message = `${getDungeonPlayerProfile().name} ergueu um escudo de ${skillInfo.shield} com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "battle_cry"){
+    playerEffects.attackBuffTurns = skillInfo.turns;
+    playerEffects.attackBuffAmount = skillInfo.attackBuff;
+    playerEffects.skillBuffTurns = skillInfo.turns;
+    playerEffects.skillBuffAmount = skillInfo.skillBuff;
+    message = `${getDungeonPlayerProfile().name} fortaleceu o grupo com ${skillInfo.name}.`;
+  }
+  if(skillInfo.type === "aim_buff"){
+    playerEffects.attackBuffTurns = skillInfo.turns;
+    playerEffects.attackBuffAmount = skillInfo.attackBuff;
+    playerEffects.skillBuffTurns = skillInfo.turns;
+    playerEffects.skillBuffAmount = skillInfo.skillBuff;
+    playerEffects.precisionTurns = skillInfo.turns;
+    playerEffects.precisionBonus = skillInfo.precision;
+    message = `${getDungeonPlayerProfile().name} entrou em foco total com ${skillInfo.name}.`;
+  }
+  if(!freeTurn && !["battle_cry", "aim_buff"].includes(skillInfo.type)){
+    decayPlayerBuffs();
+  }
+  dungeonMultiplayer.actionLockedUntil = Date.now() + (freeTurn ? 250 : 900);
+  updateUI();
+  sendDungeonActionPayload({ damage, message });
 }
 
 function getRegionRequirement(region){
@@ -766,6 +1312,15 @@ function getRarityStat(statKey, rarity){
   return rarityStats[statKey]?.[rarity] || 0;
 }
 
+function normalizeEquipmentMetadata(item){
+  if(!item || item.type !== "equipment"){ return item; }
+  if(!item.baseItemId){
+    const raritySuffix = item.rarity ? `_${item.rarity}` : "";
+    item.baseItemId = item.id?.endsWith(raritySuffix) ? item.id.slice(0, -raritySuffix.length) : item.id;
+  }
+  return item;
+}
+
 function buildEquipmentDescription(item){
   const lines = [];
   if(item.bonusHp){ lines.push(`+${item.bonusHp} vida maxima`); }
@@ -780,6 +1335,7 @@ function createEquipmentItem(dropTemplate, rarity){
   const rarityInfo = getRarityInfo(rarity);
   const item = {
     id: `${dropTemplate.id}_${rarity}`,
+    baseItemId: dropTemplate.id,
     name: `${dropTemplate.name} ${rarityInfo.label}`,
     type: "equipment",
     slot: dropTemplate.slot,
@@ -795,8 +1351,9 @@ function createEquipmentItem(dropTemplate, rarity){
 }
 
 function getSellPrice(item){
-  if(item.id === "mana_potion"){
-    return 20;
+  if(item.type === "consumable"){
+    const price = consumableCatalog[item.id]?.price || 20;
+    return Math.max(8, Math.floor(price * 0.5));
   }
   if(item.type === "chest"){
     return 35;
@@ -814,6 +1371,39 @@ function getSellPrice(item){
     );
   }
   return 8;
+}
+
+function getForgeUpgradeCost(item){
+  const rarityRank = getRarityRank(item.rarity);
+  return 70 + rarityRank * 95;
+}
+
+function getForgeUpgradeChance(item){
+  const rarityRank = getRarityRank(item.rarity);
+  const chances = [0.8, 0.58, 0.36, 0.18];
+  return chances[rarityRank] || 0;
+}
+
+function createConsumableItem(id, qty = 1){
+  const data = consumableCatalog[id];
+  if(!data){ return null; }
+  return {
+    id,
+    name: data.name,
+    qty,
+    type: "consumable",
+    description: data.description
+  };
+}
+
+function removeInventoryUnit(itemIndex){
+  const item = player.inventory[itemIndex];
+  if(!item){ return; }
+  if((item.qty || 1) > 1){
+    item.qty--;
+  }else{
+    player.inventory.splice(itemIndex, 1);
+  }
 }
 
 function getEquipmentDisplayName(item){
@@ -835,7 +1425,7 @@ function renderEquipmentShowcase(){
         <div class="equip-slot equip-weapon ${getEquipmentSlotClass(player.equipment.weapon)}"><strong>${slotLabels.weapon}</strong>${getEquipmentDisplayName(player.equipment.weapon)}</div>
       </div>
       <div class="equipment-body">
-        <div class="hero-silhouette">${classIcons[player.class] || "✦"}</div>
+        <div class="hero-silhouette">${classIcons[player.class] || "&#x2726;"}</div>
         <div class="equipment-stack">
           <div class="equip-slot equip-head ${getEquipmentSlotClass(player.equipment.head)}"><strong>${slotLabels.head}</strong>${getEquipmentDisplayName(player.equipment.head)}</div>
           <div class="equip-slot equip-chest ${getEquipmentSlotClass(player.equipment.chest)}"><strong>${slotLabels.chest}</strong>${getEquipmentDisplayName(player.equipment.chest)}</div>
@@ -844,6 +1434,25 @@ function renderEquipmentShowcase(){
         </div>
       </div>
     </div>`;
+}
+
+function renderForgePanel(){
+  const equippedItems = equipmentSlots
+    .map(slot => ({ slot, label: slotLabels[slot], item: normalizeEquipmentMetadata(player.equipment?.[slot]) }))
+    .filter(entry => entry.item);
+  if(!equippedItems.length){
+    return `<div class="inventory-item"><strong>Ferreiro</strong><br><span class="lock-note">Equipe um item no acampamento para tentar aprimora-lo aqui.</span></div>`;
+  }
+  return `<div class="inventory-item"><strong>Ferreiro</strong><br><span class="lock-note">Tente elevar a raridade dos seus equipamentos equipados. Cada novo grau fica mais caro e mais dificil.</span><div class="inventory-list">${equippedItems.map(entry => {
+    const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
+    const cost = getForgeUpgradeCost(entry.item);
+    const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
+    return `<div class="inventory-item"><strong>${entry.label}: ${entry.item.name}</strong><br><span class="lock-note">${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}</span><div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div></div>`;
+  }).join("")}</div></div>`;
+}
+
+function renderAlchemistPanel(){
+  return `<div class="inventory-item"><strong>Alquimista</strong><br><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => `<div class="inventory-item"><strong>${item.name}</strong><br><span class="lock-note">${item.description}</span><div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div></div>`).join("")}</div></div>`;
 }
 
 function getBaseEnemyName(enemyName){
@@ -862,8 +1471,8 @@ function getEnemyRarity(region, enemyName, isBoss = false){
   if(isBoss){
     return { key: "ultra_rara", label: "Chefao", cssClass: "rarity-ultra-rara" };
   }
-  const regionData = regions[region];
-  if(!regionData){
+  const regionData = region === "Dungeon" ? dungeonData : regions[region];
+  if(!regionData || !regionData.enemies){
     return { key: "comum", label: "Comum", cssClass: "rarity-comum" };
   }
   const orderedEnemies = [...regionData.enemies].sort((a, b) => b.weight - a.weight);
@@ -877,6 +1486,9 @@ function getEnemyRarity(region, enemyName, isBoss = false){
 function getEnemyPossibleDrop(enemyName, region, isBoss = false){
   if(isBoss){
     return `Bau da ${region}`;
+  }
+  if(region === "Dungeon"){
+    return "Tesouros da expedicao ainda nao catalogados";
   }
   const dropTemplate = enemyDrops[enemyName];
   return dropTemplate ? dropTemplate.name : "Sem drop conhecido";
@@ -895,7 +1507,25 @@ function rollWeightedRarity(){
 }
 
 function addInventoryItem(item){
-  player.inventory.push({ ...item, uid: item.uid || `${item.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}` });
+  const normalizedItem = normalizeEquipmentMetadata({ ...item, uid: item.uid || `${item.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}` });
+  const stackable = ["equipment", "consumable", "chest"].includes(normalizedItem.type);
+  if(stackable){
+    const existing = player.inventory.find(entry =>
+      entry.type === normalizedItem.type
+      && entry.id === normalizedItem.id
+      && (entry.rarity || "") === (normalizedItem.rarity || "")
+      && (entry.region || "") === (normalizedItem.region || "")
+      && (entry.baseItemId || "") === (normalizedItem.baseItemId || "")
+    );
+    if(existing){
+      existing.qty = (existing.qty || 1) + (normalizedItem.qty || 1);
+      return;
+    }
+  }
+  if(stackable && !normalizedItem.qty){
+    normalizedItem.qty = 1;
+  }
+  player.inventory.push(normalizedItem);
 }
 
 function tryEnemyDrop(defeatedEnemy){
@@ -939,7 +1569,7 @@ function openChest(itemUid){
   if(itemIndex < 0){ return; }
   const chest = player.inventory[itemIndex];
   const chestItem = getBossChestItem(chest.region);
-  player.inventory.splice(itemIndex, 1);
+  removeInventoryUnit(itemIndex);
   if(!chestItem){
     log("O bau estava vazio.");
     updateUI();
@@ -957,18 +1587,64 @@ async function useManaPotion(){
     log("Voce nao tem Pocao de Mana no inventario.");
     return;
   }
-  item.qty--;
+  const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
+  removeInventoryUnit(itemIndex);
   player.mp = Math.min(getPreviewStats().maxMp, player.mp + 60);
-  if(item.qty <= 0){
-    player.inventory = player.inventory.filter(entry => entry.uid !== item.uid);
-  }
   displayState.playerMp = player.mp;
   if(currentMode === "battle" && enemy){
     isProcessingTurn = true;
   }
   log("Voce usou uma Pocao de Mana e recuperou 60 de mana.");
   updateUI();
+  if(currentMode === "dungeon" && isDungeonConnected()){
+    syncDungeonProfile();
+    return;
+  }
   if(currentMode === "battle" && enemy){
+    await wait(220);
+    await enemyTurn();
+  }
+}
+
+async function useConsumable(itemId){
+  if(itemId === "mana_potion"){
+    await useManaPotion();
+    return;
+  }
+  if(isDead || currentMode === "trophies" || isProcessingTurn){ return; }
+  const item = player.inventory.find(entry => entry.id === itemId && entry.qty > 0);
+  const config = consumableCatalog[itemId];
+  if(!item || !config){
+    log("Esse consumivel nao esta disponivel.");
+    return;
+  }
+  const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
+  removeInventoryUnit(itemIndex);
+
+  if(config.effectType === "restore_hp"){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + config.value);
+    displayState.playerHp = player.hp;
+    log(`Voce usou ${config.name} e recuperou ${config.value} de vida.`);
+  }
+  if(config.effectType === "buff_skill"){
+    playerEffects.skillBuffTurns = Math.max(playerEffects.skillBuffTurns, config.turns);
+    playerEffects.skillBuffAmount = Math.max(playerEffects.skillBuffAmount, config.value);
+    log(`Voce usou ${config.name} e ganhou +${config.value} de dano de habilidade por ${config.turns} turnos.`);
+  }
+  if(config.effectType === "buff_attack"){
+    playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, config.turns);
+    playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, config.value);
+    log(`Voce usou ${config.name} e ganhou +${config.value} de dano de ataque por ${config.turns} turnos.`);
+  }
+
+  updateUI();
+  if(currentMode === "dungeon" && isDungeonConnected()){
+    syncDungeonProfile();
+    return;
+  }
+  if(currentMode === "battle" && enemy){
+    isProcessingTurn = true;
+    updateUI();
     await wait(220);
     await enemyTurn();
   }
@@ -988,7 +1664,7 @@ function equipItem(itemUid){
     log("Voce so pode trocar o item atual por outro de raridade maior.");
     return;
   }
-  player.inventory.splice(itemIndex, 1);
+  removeInventoryUnit(itemIndex);
   if(equipped){
     addInventoryItem(equipped);
   }
@@ -1037,13 +1713,23 @@ function fleeBattle(){
   updateUI();
 }
 
+function grantNextLevelXPCommand(){
+  if(!player || player.level >= MAX_LEVEL){ return; }
+  const xpNeeded = Math.max(0, getXpToNextLevel() - player.xp);
+  if(xpNeeded <= 0){ return; }
+  gainXP(xpNeeded);
+  log("Comando de teste: XP do proximo nivel concedido.");
+  updateUI();
+}
+
 function createEnemyFromTemplate(template, isBoss = false){
   const stats = getEnemyStats(template);
-  const rarity = getEnemyRarity(currentRegion, template.name, isBoss);
+  const origin = isDungeonMode() ? "Dungeon" : currentRegion;
+  const rarity = getEnemyRarity(origin, template.name, isBoss);
   return {
     name: template.name + " Lv." + template.level,
     baseName: template.name,
-    region: currentRegion,
+    region: origin,
     level: template.level,
     maxHp: stats.maxHp,
     hp: stats.maxHp,
@@ -1052,7 +1738,7 @@ function createEnemyFromTemplate(template, isBoss = false){
     rarityKey: rarity.key,
     rarityLabel: rarity.label,
     rarityClass: rarity.cssClass,
-    possibleDrop: getEnemyPossibleDrop(template.name, currentRegion, isBoss),
+    possibleDrop: getEnemyPossibleDrop(template.name, origin, isBoss),
     maxMp: isBoss ? template.mp : 0,
     mp: isBoss ? template.mp : 0,
     skillName: isBoss ? template.skillName : "",
@@ -1062,11 +1748,11 @@ function createEnemyFromTemplate(template, isBoss = false){
 }
 
 function spawnEnemy(isBoss = false){
-  const regionData = regions[currentRegion];
+  const regionData = isDungeonMode() ? dungeonData : regions[currentRegion];
   const template = isBoss
     ? regionData.boss
     : enemiesSpawned < 3
-      ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") || chooseWeightedEnemy(regionData.enemies)
+      ? (!isDungeonMode() ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") : null) || chooseWeightedEnemy(regionData.enemies)
       : chooseWeightedEnemy(regionData.enemies);
   enemy = createEnemyFromTemplate(template, isBoss);
   if(!isBoss){
@@ -1074,12 +1760,18 @@ function spawnEnemy(isBoss = false){
   }
   needsNewEnemy = false;
   displayState.enemyHp = enemy.hp;
-  log(isBoss ? `O chefao ${enemy.name} surgiu na ${currentRegion}!` : `Um ${enemy.name} apareceu na ${currentRegion}!`);
+  log(
+    isDungeonMode()
+      ? `Um ${enemy.name} surgiu nas profundezas da Dungeon!`
+      : isBoss
+        ? `O chefao ${enemy.name} surgiu na ${currentRegion}!`
+        : `Um ${enemy.name} apareceu na ${currentRegion}!`
+  );
   saveCampaign();
 }
 
 function ensureEnemy(){
-  if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  if(!["battle", "dungeon"].includes(currentMode) || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
   if(!enemy || needsNewEnemy){
     spawnEnemy();
     updateUI();
@@ -1099,16 +1791,29 @@ function challengeBoss(){
 }
 
 function setMode(mode){
-  if(isProcessingTurn || isDead || !["battle", "village", "trophies", "camp"].includes(mode)){ return; }
+  if(isProcessingTurn || isDead || !["battle", "village", "trophies", "camp", "dungeon"].includes(mode)){ return; }
   if((levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
     log("Finalize sua evolucao antes de sair da batalha.");
     updateUI();
     return;
   }
-  if((mode === "village" || mode === "trophies" || mode === "camp") && enemy){
-    log(mode === "village" ? "Voce so pode ir ao vilarejo fora de combate." : mode === "trophies" ? "A sala de trofeus so pode ser acessada fora de combate." : "O acampamento so pode ser acessado fora de combate.");
+  if((mode === "village" || mode === "trophies" || mode === "camp" || mode === "dungeon") && enemy){
+    log(
+      mode === "village" ? "Voce so pode ir ao vilarejo fora de combate."
+      : mode === "trophies" ? "A sala de trofeus so pode ser acessada fora de combate."
+      : mode === "camp" ? "O acampamento so pode ser acessado fora de combate."
+      : "A dungeon so pode ser acessada fora de combate."
+    );
     updateUI();
     return;
+  }
+  if(mode === "dungeon" && player.level < getDungeonRequirement()){
+    log(`A dungeon exige nivel ${getDungeonRequirement()}.`);
+    updateUI();
+    return;
+  }
+  if(currentMode === "dungeon" && mode !== "dungeon" && isDungeonConnected()){
+    leaveDungeonRoom(true);
   }
   currentMode = mode;
   updateUI();
@@ -1137,21 +1842,65 @@ function healAtVillage(){
   updateUI();
 }
 
-function buyManaPotion(){
+function buyConsumable(itemId){
   if(currentMode !== "village"){ return; }
-  const cost = 40;
+  const data = consumableCatalog[itemId];
+  if(!data){ return; }
+  const cost = data.price;
   if(player.coins < cost){
-    log("Voce nao tem moedas suficientes para comprar uma pocao de mana.");
+    log(`Voce nao tem moedas suficientes para comprar ${data.name}.`);
     return;
   }
   player.coins -= cost;
-  const existing = player.inventory.find(item => item.id === "mana_potion");
+  const existing = player.inventory.find(item => item.id === itemId);
   if(existing){
     existing.qty++;
   }else{
-    addInventoryItem({ id: "mana_potion", name: "Pocao de Mana", qty: 1, type: "consumable", description: "Recupera 60 de mana." });
+    addInventoryItem(createConsumableItem(itemId));
   }
-  log("Voce comprou uma Pocao de Mana.");
+  log(`Voce comprou ${data.name}.`);
+  updateUI();
+}
+
+function tryUpgradeEquippedItem(slot){
+  if(currentMode !== "village"){ return; }
+  const item = normalizeEquipmentMetadata(player.equipment?.[slot]);
+  if(!item){
+    log("Nao ha item equipado nesse espaco.");
+    return;
+  }
+  const currentRank = getRarityRank(item.rarity);
+  if(currentRank >= rarityOrder.length - 1){
+    log("Esse item ja esta na raridade maxima.");
+    return;
+  }
+  const cost = getForgeUpgradeCost(item);
+  if(player.coins < cost){
+    log(`Moedas insuficientes. O ferreiro cobra ${cost} moedas nessa tentativa.`);
+    return;
+  }
+  player.coins -= cost;
+  const chance = getForgeUpgradeChance(item);
+  if(Math.random() > chance){
+    log(`O ferreiro falhou em aprimorar ${item.name}. Chance da tentativa: ${Math.floor(chance * 100)}%.`);
+    updateUI();
+    return;
+  }
+  const nextRarity = rarityOrder[currentRank + 1];
+  const baseDrop = Object.values(enemyDrops).find(drop => drop.id === item.baseItemId);
+  if(!baseDrop){
+    log("O ferreiro nao conseguiu identificar a origem do equipamento.");
+    updateUI();
+    return;
+  }
+  const upgradedItem = createEquipmentItem(baseDrop, nextRarity);
+  upgradedItem.uid = item.uid;
+  player.equipment[slot] = upgradedItem;
+  player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  log(`O ferreiro aprimorou ${item.name} para ${upgradedItem.name}!`);
   updateUI();
 }
 
@@ -1197,14 +1946,14 @@ function saveCampaign(){
   }
   const state = {
     player,
-    enemy,
+    enemy: currentMode === "dungeon" ? null : enemy,
     pendingLevelUps,
     levelUpPoints,
     allocation,
     isProcessingTurn: false,
     currentRegion,
-    needsNewEnemy,
-    currentMode,
+    needsNewEnemy: currentMode === "dungeon" ? true : needsNewEnemy,
+    currentMode: currentMode === "dungeon" ? "battle" : currentMode,
     enemiesSpawned,
     isDead,
     deadUntil,
@@ -1265,6 +2014,10 @@ function renderSavedCampaign(){
 
 function changeRegion(region){
   if(isProcessingTurn || isDead || levelUpPoints > 0 || !regions[region] || currentRegion === region){ return; }
+  if(enemy){
+    log("Voce nao pode trocar de regiao durante um combate.");
+    return;
+  }
   if(player.level < getRegionRequirement(region)){
     log(`A regiao ${region} exige nivel ${getRegionRequirement(region)}.`);
     return;
@@ -1285,6 +2038,7 @@ function updateUI(){
   const shownPlayerMp = displayState.playerMp ?? player.mp;
   const shownPlayerXp = displayState.playerXp ?? player.xp;
   const shownEnemyHp = enemy ? (displayState.enemyHp ?? enemy.hp) : 0;
+  const shieldWidth = Math.min(100, (playerEffects.shieldValue || 0) / previewStats.maxHp * 100);
   const xpToNextLevel = getXpToNextLevel();
   const trophyCompletion = getTrophyCompletion();
 
@@ -1295,20 +2049,22 @@ function updateUI(){
       <div class="coin-badge">${player.coins} moedas</div>
     </div>
     Vida: ${player.hp}/${previewStats.maxHp}
-    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    <div class="bar"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    ${playerEffects.shieldValue > 0 ? `<div class="lock-note">Escudo: ${playerEffects.shieldValue}</div>` : ""}
     Mana: ${player.mp}/${previewStats.maxMp}
     <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
-    XP: ${player.level >= 30 ? "MAX" : `${player.xp}/${xpToNextLevel}`}
-    <div class="bar"><div id="playerXpFill" class="fill xp" style="width:${player.level >= 30 ? 100 : shownPlayerXp / xpToNextLevel * 100}%"></div></div>
+    XP: ${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}
+    <div class="bar"><div id="playerXpFill" class="fill xp" style="width:${player.level >= MAX_LEVEL ? 100 : shownPlayerXp / xpToNextLevel * 100}%"></div></div>
     ${pointsLabel}`;
 
   document.getElementById("modeTabs").innerHTML = `
     <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
     <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo</button>
     <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
-    <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>`;
+    <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>
+    <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() || player.level < getDungeonRequirement() ? "disabled" : ""}>Dungeon</button>`;
 
-  document.getElementById("enemyInfo").innerHTML = currentMode === "battle" && enemy
+  document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon"].includes(currentMode) && enemy
     ? `
     <div class="enemy-card">
       <div class="enemy-top">
@@ -1316,7 +2072,7 @@ function updateUI(){
           <h3>${enemy.name}</h3>
           <p class="enemy-subtitle">${enemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} na ${enemy.region}</p>
         </div>
-        <div class="sprite-box">${enemySprites[enemy.baseName] || "⚔️"}</div>
+        <div class="sprite-box">${enemySprites[enemy.baseName] || "&#x2694;&#xFE0F;"}</div>
       </div>
       <div class="enemy-badges">
         <span class="enemy-badge">Nivel ${enemy.level}</span>
@@ -1331,9 +2087,9 @@ function updateUI(){
         <span>${enemy.possibleDrop}</span>
       </div>
     </div>`
-    : currentMode === "battle" ? `
-    <h3>${isDead ? "Voce foi derrotado" : "Proximo inimigo"}</h3>
-    <p>${isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
+    : ["battle", "dungeon"].includes(currentMode) ? `
+    <h3>${currentMode === "dungeon" ? "Dungeon Online" : isDead ? "Voce foi derrotado" : "Proximo inimigo"}</h3>
+    <p>${currentMode === "dungeon" ? (isDungeonConnected() ? "Sala conectada. Aguarde o host iniciar ou enfrente o inimigo atual com o grupo." : "Crie uma sala ou entre com um codigo para jogar online.") : isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
     : currentMode === "trophies" ? `
     <h3>Sala de trofeus</h3>
     <div class="trophy-list">
@@ -1345,11 +2101,14 @@ function updateUI(){
       <div class="camp-stat"><strong>Vida</strong><span>${player.hp}/${previewStats.maxHp}</span></div>
       <div class="camp-stat"><strong>Mana</strong><span>${player.mp}/${previewStats.maxMp}</span></div>
       <div class="camp-stat"><strong>Ataque base</strong><span>${getActiveAttack()}</span></div>
-      <div class="camp-stat"><strong>XP</strong><span>${player.level >= 30 ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
+      <div class="camp-stat"><strong>XP</strong><span>${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
     </div>
     <div class="inventory-item">
       <strong>Equipamentos</strong>
       ${renderEquipmentShowcase()}
+    </div>
+    <div class="button-row">
+      <button onclick="grantNextLevelXPCommand()">Teste: Proximo nivel</button>
     </div>
     <div class="inventory-list">
       <div class="inventory-item">
@@ -1366,17 +2125,23 @@ function updateUI(){
       </div>
       ${player.subclass ? `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">${player.subclass.name}: ${player.subclass.description}</span></div>` : ""}
     </div>`
+    : currentMode === "dungeon" ? `
+    <h3>Dungeon</h3>
+    <div class="inventory-list">
+      <div class="inventory-item"><strong>Regras</strong><br><span class="lock-note">A dungeon e uma sala online para ate 3 jogadores. O host cria a partida, compartilha o codigo e inicia o combate.</span></div>
+    </div>`
     : `
     <h3>Vilarejo</h3>
-    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>`;
+    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>
+    ${renderAlchemistPanel()}`;
 
   const regionButtons = Object.keys(regions).map(region => `
-    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer nivel ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || player.level < getRegionRequirement(region) ? "disabled" : ""}>${region}</button>
+    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer nivel ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || player.level < getRegionRequirement(region) || !!enemy ? "disabled" : ""}>${region}</button>
   `).join("");
   document.getElementById("regionInfo").innerHTML = `
-    <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa os atributos atuais, as habilidades ativas e as passivas da sua classe." : "Voce pode gastar moedas para recuperar a vida e comprar suprimentos."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Loja</strong><br><span class="lock-note">Pocao de Mana: recupera 60 de mana. Voce tambem pode vender itens no inventario.</span><div class="button-row"><button onclick="buyManaPotion()">Comprar Pocao de Mana (40 moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa os atributos atuais, as habilidades ativas e as passivas da sua classe." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Voce pode gastar moedas para recuperar a vida e comprar suprimentos."}</p>
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div>${renderForgePanel()}</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? renderDungeonRoomControls() : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -1386,8 +2151,8 @@ function updateUI(){
       const rarityInfo = item.rarity ? getRarityInfo(item.rarity) : null;
       const quantityLine = item.qty ? `<span class="lock-note">Quantidade: ${item.qty}</span><br>` : "";
       const rarityLine = rarityInfo ? `<span class="${rarityInfo.cssClass}">${rarityInfo.label}</span><br>` : "";
-      const useButton = item.id === "mana_potion"
-        ? `<button onclick="useManaPotion()">Usar</button>`
+      const useButton = item.type === "consumable"
+        ? `<button onclick="useConsumable('${item.id}')">Usar</button>`
         : "";
       const equipButton = item.type === "equipment"
         ? `<button onclick="equipItem('${item.uid}')" ${player.class !== item.classRestriction ? "disabled" : ""}>Equipar</button>`
@@ -1422,14 +2187,14 @@ function updateUI(){
     logToggle.textContent = isLogHidden ? "Mostrar" : "Ocultar";
   }
   if(logPanel){
-    logPanel.style.display = currentMode === "battle" ? "block" : "none";
+    logPanel.style.display = ["battle", "dungeon"].includes(currentMode) ? "block" : "none";
   }
   if(playerPanel){
     playerPanel.style.display = currentMode === "trophies" ? "none" : "block";
-    playerPanel.style.order = currentMode === "battle" ? "4" : "1";
+    playerPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "4" : "1";
   }
   if(enemyPanel){
-    enemyPanel.style.order = currentMode === "battle" ? "1" : "2";
+    enemyPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "1" : "2";
   }
   if(actionsRow){
     actionsRow.style.order = currentMode === "battle" ? "3" : "3";
@@ -1438,9 +2203,9 @@ function updateUI(){
     levelPanel.style.order = "5";
   }
   if(logPanel){
-    logPanel.style.order = currentMode === "battle" ? "2" : "4";
+    logPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "2" : "4";
   }
-  if(playerPanel && currentMode === "battle"){
+  if(playerPanel && ["battle", "dungeon"].includes(currentMode)){
     playerPanel.style.order = "4";
   }
   if(inventoryPanel){
@@ -1452,6 +2217,7 @@ function updateUI(){
 function animateBars(){
   requestAnimationFrame(() => {
     const playerHpFill = document.getElementById("playerHpFill");
+    const playerShieldFill = document.getElementById("playerShieldFill");
     const playerMpFill = document.getElementById("playerMpFill");
     const playerXpFill = document.getElementById("playerXpFill");
     const enemyHpFill = document.getElementById("enemyHpFill");
@@ -1459,11 +2225,14 @@ function animateBars(){
     if(playerHpFill){
       playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
     }
+    if(playerShieldFill){
+      playerShieldFill.style.width = `${Math.min(100, (playerEffects.shieldValue || 0) / getPreviewStats().maxHp * 100)}%`;
+    }
     if(playerMpFill){
       playerMpFill.style.width = `${player.mp / getPreviewStats().maxMp * 100}%`;
     }
     if(playerXpFill){
-      playerXpFill.style.width = `${player.level >= 30 ? 100 : player.xp / getXpToNextLevel() * 100}%`;
+    playerXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : player.xp / getXpToNextLevel() * 100}%`;
     }
     if(enemy && enemyHpFill){
       enemyHpFill.style.width = `${Math.max(0, enemy.hp) / enemy.maxHp * 100}%`;
@@ -1498,6 +2267,29 @@ function renderActions(){
   }
   if(currentMode === "camp"){
     actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
+    return;
+  }
+  if(currentMode === "dungeon"){
+    if(levelUpPoints > 0 || needsSubclassChoice()){
+      actions.innerHTML = `<button disabled>Finalize sua evolucao antes de continuar a dungeon</button><button onclick="setMode('battle')">Voltar para a batalha</button>`;
+      return;
+    }
+    if(!isDungeonConnected()){
+      actions.innerHTML = `<button onclick="hostDungeonRoom()">Criar sala</button><button onclick="joinDungeonRoom()">Entrar na sala</button><button onclick="setMode('battle')">Voltar para a batalha</button>`;
+      return;
+    }
+    if(!enemy){
+      actions.innerHTML = `${isDungeonHost() ? `<button onclick="startDungeonRaid()" ${getDungeonRoomMembers().length >= 2 ? "" : "disabled"}>Iniciar dungeon</button>` : `<button disabled>Aguardando o host iniciar</button>`}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
+      return;
+    }
+    if(Date.now() < dungeonMultiplayer.actionLockedUntil){
+      actions.innerHTML = `<button disabled>Recuperando folego...</button>`;
+      return;
+    }
+    const dungeonSkillButtons = skillInfo.length
+      ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`).join("")
+      : `<button disabled>Nova habilidade no nivel 1</button>`;
+    actions.innerHTML = `<button class="action-btn" data-tooltip="${player.class === "Arqueiro" ? `Ataque basico. Dano entre ${getActiveAttack()} e ${getActiveAttack() + 5}. Chance de acerto: ${Math.round(getHitChance("basic") * 100)}%.` : `Ataque basico. Dano entre ${getActiveAttack()} e ${getActiveAttack() + 5}.`}" onclick="dungeonAttack()">Atacar</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
     return;
   }
   if(levelUpPoints > 0){
@@ -1821,20 +2613,20 @@ async function enemyTurn(){
 }
 
 function gainXP(amount){
-  if(player.level >= 30){
+  if(player.level >= MAX_LEVEL){
     player.xp = getXpToNextLevel();
     return;
   }
   player.xp += amount;
-  while(player.level < 30 && player.xp >= getXpToNextLevel()){
+  while(player.level < MAX_LEVEL && player.xp >= getXpToNextLevel()){
     player.xp -= getXpToNextLevel();
     player.level++;
     pendingLevelUps++;
     levelUpPoints++;
     log("Voce subiu de nivel! Distribua 1 ponto de atributo.");
   }
-  if(player.level >= 30){
-    player.level = 30;
+  if(player.level >= MAX_LEVEL){
+    player.level = MAX_LEVEL;
     player.xp = getXpToNextLevel();
     log("Voce alcancou o nivel maximo!");
   }
@@ -1858,6 +2650,9 @@ function finishLevelUp(){
   const hpGain = spentHp * player.growth.hp;
   const mpGain = spentMp * player.growth.mp;
   const attackGain = spentAttack * player.growth.attack;
+  player.stats.invested.hp += spentHp;
+  player.stats.invested.mp += spentMp;
+  player.stats.invested.attack += spentAttack;
   player.maxHp += hpGain;
   player.maxMp += mpGain;
   player.attack += attackGain;
@@ -1901,6 +2696,8 @@ setInterval(() => {
     updateUI();
   }
 }, 1000);
+window.comandoProximoNivel = grantNextLevelXPCommand;
 </script>
 </body>
 </html>
+
