@@ -279,7 +279,9 @@ const regionArticleMap = {
   Abismo: "do Abismo",
   Fortaleza: "da Fortaleza",
   Necropole: "da Necropole",
-  Citadela: "da Citadela"
+  Citadela: "da Citadela",
+  Panteao: "do Panteao",
+  Cataclismo: "do Cataclismo"
 };
 const rarityMultipliers = {
   comum: 1,
@@ -303,7 +305,9 @@ const regionSetItemPower = {
   Abismo: 20,
   Fortaleza: 26,
   Necropole: 33,
-  Citadela: 41
+  Citadela: 41,
+  Panteao: 50,
+  Cataclismo: 60
 };
 const regionArmorPieceNames = {
   head: "Capuz",
@@ -336,7 +340,22 @@ const regionSetBonusProfiles = {
   Abismo: { bonusHp: 158, bonusMp: 56, bonusAttack: 18, skillPower: 21 },
   Fortaleza: { bonusHp: 210, bonusMp: 72, bonusAttack: 23, skillPower: 27 },
   Necropole: { bonusHp: 272, bonusMp: 90, bonusAttack: 29, skillPower: 34 },
-  Citadela: { bonusHp: 340, bonusMp: 112, bonusAttack: 36, skillPower: 42 }
+  Citadela: { bonusHp: 340, bonusMp: 112, bonusAttack: 36, skillPower: 42 },
+  Panteao: { bonusHp: 424, bonusMp: 138, bonusAttack: 44, skillPower: 51 },
+  Cataclismo: { bonusHp: 520, bonusMp: 170, bonusAttack: 54, skillPower: 63 }
+};
+const regionCombatProfiles = {
+  Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0 },
+  Caverna: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0 },
+  Ruinas: { armorScale: 0.12, armorFlat: 0, maxHpStrikePercent: 0 },
+  Pantano: { armorScale: 0.14, armorFlat: 1, maxHpStrikePercent: 0 },
+  Vulcao: { armorScale: 0.16, armorFlat: 2, maxHpStrikePercent: 0 },
+  Abismo: { armorScale: 0.18, armorFlat: 3, maxHpStrikePercent: 0.02 },
+  Fortaleza: { armorScale: 0.21, armorFlat: 4, maxHpStrikePercent: 0.025 },
+  Necropole: { armorScale: 0.24, armorFlat: 6, maxHpStrikePercent: 0.03 },
+  Citadela: { armorScale: 0.28, armorFlat: 8, maxHpStrikePercent: 0.035 },
+  Panteao: { armorScale: 0.32, armorFlat: 10, maxHpStrikePercent: 0.04 },
+  Cataclismo: { armorScale: 0.36, armorFlat: 12, maxHpStrikePercent: 0.05 }
 };
 const enemyDropSlotGroups = [
   ["feet", "chest"],
@@ -480,6 +499,14 @@ const enemySprites = {
   "Drake Celeste": "&#x1F409;",
   "Executor Astral": "&#x2728;",
   "Imperador do Eclipse": "&#x1F311;",
+  "Guardiao Aureo": "&#x1F6E1;&#xFE0F;",
+  "Oraculo Radiante": "&#x1F52D;",
+  "Quimera Solar": "&#x1F981;",
+  "Avatar do Zenith": "&#x2600;&#xFE0F;",
+  "Arauto do Cataclismo": "&#x1F4A5;",
+  "Titan Rachado": "&#x1FAA8;",
+  "Serafim do Fim": "&#x1F525;",
+  "Deus da Ruina": "&#x2620;&#xFE0F;",
   "Carcereiro Abissal": "&#x26D3;&#xFE0F;",
   "Aracnida Rainha": "&#x1F578;&#xFE0F;",
   "Devorador do Eco": "&#x1F479;"
@@ -595,6 +622,26 @@ const regions = {
       { name: "Anjo Caido", level: 81, weight: 78, hp: 620, attack: 69 },
       { name: "Drake Celeste", level: 83, weight: 16, hp: 655, attack: 72 },
       { name: "Executor Astral", level: 88, weight: 6, hp: 735, attack: 79 }
+    ]
+  },
+  Panteao: {
+    minLevel: 68,
+    description: "Templos celestes onde criaturas solares guardam reliquias do auge do mundo.",
+    boss: { name: "Avatar do Zenith", level: 100, hp: 1540, attack: 108, mp: 320, skillName: "Julgamento Solar", skillDamage: 305, skillCost: 66 },
+    enemies: [
+      { name: "Guardiao Aureo", level: 91, weight: 78, hp: 760, attack: 84 },
+      { name: "Oraculo Radiante", level: 93, weight: 16, hp: 805, attack: 88 },
+      { name: "Quimera Solar", level: 98, weight: 6, hp: 900, attack: 95 }
+    ]
+  },
+  Cataclismo: {
+    minLevel: 76,
+    description: "A fronteira do fim do mundo, com monstros que esmagam ate os herois mais resistentes.",
+    boss: { name: "Deus da Ruina", level: 110, hp: 1820, attack: 130, mp: 360, skillName: "Colapso Final", skillDamage: 360, skillCost: 74 },
+    enemies: [
+      { name: "Arauto do Cataclismo", level: 101, weight: 78, hp: 930, attack: 102 },
+      { name: "Titan Rachado", level: 103, weight: 16, hp: 980, attack: 107 },
+      { name: "Serafim do Fim", level: 108, weight: 6, hp: 1090, attack: 116 }
     ]
   }
 };
@@ -806,13 +853,19 @@ function chooseWeightedEnemy(enemyList){
   return enemyList[enemyList.length - 1];
 }
 
-function getEnemyStats(template, regionOverride = null){
+function getEnemyStats(template, regionOverride = null, isBoss = false){
   const regionName = regionOverride || currentRegion;
-  const regionHasArmor = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela"].includes(regionName);
+  const combatProfile = regionCombatProfiles[regionName] || regionCombatProfiles.Floresta;
+  const hasArmor = combatProfile.armorScale > 0 || combatProfile.armorFlat > 0;
+  const armor = hasArmor
+    ? Math.max(1, Math.floor(template.level * combatProfile.armorScale) + combatProfile.armorFlat + (isBoss ? Math.max(2, Math.floor(template.level / 30)) : 0))
+    : 0;
+  const maxHpStrikePercent = combatProfile.maxHpStrikePercent + (isBoss && combatProfile.maxHpStrikePercent > 0 ? 0.01 : 0);
   return {
     maxHp: template.hp + template.level * 18,
     attack: template.attack + template.level * 2,
-    armor: regionHasArmor ? Math.max(1, Math.floor(template.level / 10)) : 0
+    armor,
+    maxHpStrikePercent
   };
 }
 
@@ -1689,6 +1742,23 @@ function getRegionRequirement(region){
   return regions[region].minLevel || 1;
 }
 
+function grantNextLevelForTest(){
+  if(!player){
+    return;
+  }
+  if(player.level >= MAX_LEVEL){
+    log("Voce ja alcancou o nivel maximo.");
+    updateUI();
+    return;
+  }
+  const xpNeeded = Math.max(1, getXpToNextLevel() - player.xp);
+  gainXP(xpNeeded);
+  log("Teste: voce recebeu XP suficiente para o proximo nivel.");
+  updateUI();
+}
+
+window.comandoProximoNivel = grantNextLevelForTest;
+
 function getActiveAttack(){
   const baseAttack = getPreviewStats().attack + (playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffAmount : 0);
   const percent = playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffPercent : 0;
@@ -2418,12 +2488,12 @@ function getEnemyPossibleDrop(enemyName, region, isBoss = false){
 function renderBestiary(){
   return Object.entries(regions).map(([regionName, regionData]) => {
     const enemyCards = regionData.enemies.map(template => {
-      const stats = getEnemyStats(template, regionName);
+      const stats = getEnemyStats(template, regionName, false);
       const rarity = getEnemyRarity(regionName, template.name, false);
-      return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">${getRegionSetLabel(regionName)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(regionName))}</span></div>`;
+      return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">${getRegionSetLabel(regionName)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(regionName))}</span></div>`;
     }).join("");
-    const bossStats = getEnemyStats(regionData.boss, regionName);
-    return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}</span><br><span class="lock-note">Mana: ${regionData.boss.mp} | Habilidade: ${regionData.boss.skillName} (${regionData.boss.skillDamage} de dano)</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)}</span></div></div></div>`;
+    const bossStats = getEnemyStats(regionData.boss, regionName, true);
+    return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Mana: ${regionData.boss.mp} | Habilidade: ${regionData.boss.skillName} (${regionData.boss.skillDamage} de dano)</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)}</span></div></div></div>`;
   }).join("");
 }
 
@@ -2677,8 +2747,8 @@ function fleeBattle(){
 }
 
 function createEnemyFromTemplate(template, isBoss = false){
-  const stats = getEnemyStats(template);
   const origin = isDungeonMode() ? "Dungeon" : currentRegion;
+  const stats = getEnemyStats(template, origin, isBoss);
   const rarity = getEnemyRarity(origin, template.name, isBoss);
   return {
     name: template.name + " Lv." + template.level,
@@ -2688,7 +2758,8 @@ function createEnemyFromTemplate(template, isBoss = false){
     maxHp: stats.maxHp,
     hp: stats.maxHp,
     attack: stats.attack,
-    armor: isDungeonMode() ? 0 : stats.armor + (isBoss ? 2 : 0),
+    armor: isDungeonMode() ? 0 : stats.armor,
+    maxHpStrikePercent: isDungeonMode() ? 0 : stats.maxHpStrikePercent,
     isBoss,
     rarityKey: rarity.key,
     rarityLabel: rarity.label,
@@ -2943,6 +3014,16 @@ function continueCampaign(){
   }
   isProcessingTurn = false;
   normalizePlayerState();
+  if(enemy){
+    const enemyTemplate = getEnemyTemplateByName(enemy.baseName || getBaseEnemyName(enemy.name));
+    if(enemyTemplate){
+      const rebuiltEnemy = createEnemyFromTemplate(enemyTemplate, !!enemyTemplate.isBoss);
+      rebuiltEnemy.hp = Math.min(rebuiltEnemy.maxHp, enemy.hp);
+      rebuiltEnemy.mp = rebuiltEnemy.maxMp ? Math.min(rebuiltEnemy.maxMp, enemy.mp ?? rebuiltEnemy.maxMp) : 0;
+      rebuiltEnemy.skipNextAttack = !!enemy.skipNextAttack;
+      enemy = rebuiltEnemy;
+    }
+  }
   displayState = { playerHp: player.hp, playerMp: player.mp, playerXp: player.xp, enemyHp: enemy ? enemy.hp : null };
   document.getElementById("classSelect").style.display = "none";
   document.getElementById("game").style.display = "block";
@@ -3043,6 +3124,7 @@ function updateUI(){
       <strong>Vida</strong>: ${Math.max(0, enemy.hp)}/${enemy.maxHp}
       <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%"></div></div>
       ${enemy.armor > 0 ? `<span class="lock-note">Armadura: ${enemy.armor}</span><br>` : ""}
+      ${enemy.maxHpStrikePercent > 0 ? `<span class="lock-note">Impacto brutal: +${Math.floor(enemy.maxHpStrikePercent * 100)}% da sua vida maxima por golpe</span><br>` : ""}
       ${enemy.isBoss ? `<strong>Mana</strong>: ${enemy.mp}/${enemy.maxMp}<div class="bar"><div class="fill mp" style="width:${enemy.mp / enemy.maxMp * 100}%"></div></div>` : ""}
       <div class="enemy-drop-box">
         <strong>${enemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
@@ -3106,7 +3188,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa seus atributos atuais, habilidades ativas, passivas, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -3585,6 +3667,7 @@ async function enemyTurn(){
   log(`${enemy.name} prepara um ataque!`);
   await wait(220);
   let dmg;
+  let maxHpImpactDamage = 0;
   if(enemy.isBoss && enemy.mp >= enemy.skillCost && Math.random() < 0.45){
     enemy.mp -= enemy.skillCost;
     dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
@@ -3601,11 +3684,18 @@ async function enemyTurn(){
     log(`${enemy.name} perdeu o ataque desta rodada.`);
     dmg = 0;
   }else{
+    if(enemy.maxHpStrikePercent > 0){
+      maxHpImpactDamage = Math.floor(getCurrentCaps().maxHp * enemy.maxHpStrikePercent);
+      dmg += maxHpImpactDamage;
+    }
     const result = applyIncomingDamage(dmg);
     if(result.missed){
       log("O inimigo errou o ataque.");
       dmg = 0;
     }else{
+      if(maxHpImpactDamage > 0){
+        log(`${enemy.baseName} adicionou ${maxHpImpactDamage} de dano com um impacto brutal.`);
+      }
       if(result.absorbed > 0){
         log(`Seu escudo absorveu ${result.absorbed} de dano.`);
       }
