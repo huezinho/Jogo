@@ -1078,7 +1078,9 @@ function getPassiveModifiers(){
       base.manaRegenPercentSet = 0.16;
     }
     if(passive.type === "archer_attack_level_bonus"){
-      base.bonusAttack += Math.floor(0.9 * player.level);
+      const pulseBonus = Math.floor(1.1 * player.level);
+      base.bonusAttack += pulseBonus;
+      base.skillPower += pulseBonus;
     }
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
@@ -1801,10 +1803,11 @@ function getSkillInfo(){
       return { ...skill, cost: 28, damage, ignoreArmor: true, description: `${skill.name}: consome 28 MP e causa ${damage} de dano ignorando a armadura.` };
     }
     if(skill.type === "mage_mana_burst"){
+      const manaBurstCost = 30 + Math.floor(0.1 * maxMp) + arcanistExtraCost;
       const damage = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 54
-        ? 30 + Math.floor(1.2 * (skillPower + attack))
-        : 30 + Math.floor(1.2 * skillPower);
-      return { ...skill, cost: 30 + arcanistExtraCost, damage, description: `${skill.name}: consome ${30 + arcanistExtraCost} MP e causa ${damage} de dano.` };
+        ? 30 + Math.floor(1.1 * (skillPower + attack)) + Math.floor(0.4 * maxMp)
+        : 30 + Math.floor(1.1 * skillPower) + Math.floor(0.4 * maxMp);
+      return { ...skill, cost: manaBurstCost, damage, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_fireball"){
       const damage = 30 + Math.floor(0.6 * skillPower);
@@ -1907,7 +1910,8 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: sua regeneracao total de mana por turno passa a ser 16% da mana maxima.`;
   }
   if(skill.type === "archer_attack_level_bonus"){
-    let description = `${skill.name}: concede ${Math.floor(0.9 * player.level)} de dano de ataque basico no nivel atual.`;
+    const pulseBonus = Math.floor(1.1 * player.level);
+    let description = `${skill.name}: concede ${pulseBonus} de dano de ataque basico e ${pulseBonus} de dano de habilidade no nivel atual.`;
     if(subclassState.tier30 === "atirador" && player.level >= 54){
       description += " Alem disso, ataques e habilidades ganham 10% de chance de dano dobrado.";
     }
@@ -1962,9 +1966,10 @@ function getBasicAttackLabel(){
 function getBasicAttackTooltip(){
   if(player.class === "Mago"){
     const missiles = Math.floor(3 + 0.2 * player.level);
+    const manaCost = missiles * 5;
     const minPerMissile = Math.floor(getActiveAttack() * 0.3);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
-    return `Missel Magico: consome 10 MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
+    return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
   const attackMin = getActiveAttack();
   const attackMax = getActiveAttack() + 5;
@@ -2031,11 +2036,12 @@ function applyIncomingDamage(baseDamage){
 
 function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
   if(player.class === "Mago"){
-    if(player.mp < 10){
+    const missiles = Math.floor(3 + 0.2 * player.level);
+    const manaCost = missiles * 5;
+    if(player.mp < manaCost){
       return { blocked: true, message: "Mana insuficiente para usar Missel Magico." };
     }
-    player.mp -= 10;
-    const missiles = Math.floor(3 + 0.2 * player.level);
+    player.mp -= manaCost;
     const minPerMissile = Math.floor(getActiveAttack() * 0.3);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
     const hitDamages = [];
