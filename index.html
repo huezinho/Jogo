@@ -60,10 +60,12 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .lock-note{font-size:13px;color:#d1d1d1}
 .bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0;position:relative}
 .bar.small{height:9px;background:#494949}
-.fill{height:100%;transition:width .28s ease;position:relative;z-index:2}
-.shield-fill{height:100%;background:#aeb5bd;transition:width .28s ease}
+.fill{height:100%;transition:width .7s ease;position:relative;z-index:2}
+.shield-fill{height:100%;background:#aeb5bd;transition:width .7s ease}
 .shield-row{margin-bottom:6px}
 .shield-label{font-size:12px;color:#d9d9d9}
+.buff-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.buff-pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;color:#f3f3f3}
 .hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
 #log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
 .action-btn{position:relative}
@@ -150,7 +152,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <h4>Arqueiro</h4>
 <p><span class="stat-hp">Vida 120</span></p>
 <p><span class="stat-mp">Mana 80</span></p>
-<p><span class="stat-atk">Dano basico 18</span></p>
+<p><span class="stat-atk">Dano basico 21</span></p>
 <small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
 </button>
 <button class="class-card class-mage" onclick="selectClass('Mago')">
@@ -337,21 +339,21 @@ const enemySprites = {
 
 const classes = {
   Guerreiro: {
-    hp: 160,
+    hp: 140,
     mp: 60,
-    attack: 24,
+    attack: 20,
     growth: { hp: 40, mp: 10, attack: 4 }
   },
   Arqueiro: {
-    hp: 150,
+    hp: 120,
     mp: 80,
-    attack: 22,
+    attack: 21,
     growth: { hp: 26, mp: 18, attack: 6 }
   },
   Mago: {
-    hp: 140,
+    hp: 100,
     mp: 100,
-    attack: 20,
+    attack: 16,
     growth: { hp: 10, mp: 26, attack: 3 }
   }
 };
@@ -1335,9 +1337,11 @@ function dungeonAttack(){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
+  if(player.class !== "Mago"){
+    const manaRecovered = regenMana();
+    if(manaRecovered > 0){
+      log(`Voce recuperou ${manaRecovered} de mana.`);
+    }
   }
   updateUI();
   sendDungeonActionPayload({ damage: result.damage, message: result.message });
@@ -1362,9 +1366,11 @@ function dungeonUseSkill(index){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
+  if(player.class !== "Mago"){
+    const manaRecovered = regenMana();
+    if(manaRecovered > 0){
+      log(`Voce recuperou ${manaRecovered} de mana.`);
+    }
   }
   updateUI();
   sendDungeonActionPayload({ damage: result.damage, message: result.message, ignoreArmor: !!skillInfo.ignoreArmor, freezeNext: !!result.freezeApplied });
@@ -1508,7 +1514,7 @@ function getSkillInfo(){
     if(skill.type === "archer_focus"){
       const bonus = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0.05;
       const doubleChance = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0;
-      return { ...skill, cost: 20, turns: 3, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 3 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
+      return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
       const damage = 30 + Math.floor((subclassState.tier30 === "atirador" && player.level >= 36 ? 0.5 : 0.3) * skillPower);
@@ -1600,13 +1606,52 @@ function getPassiveStatusDescription(skill){
   return skill.description;
 }
 
+function getActiveBuffs(){
+  const buffs = [];
+  if(playerEffects.shieldValue > 0){
+    buffs.push(`Escudo ${playerEffects.shieldValue}${playerEffects.shieldTurns > 0 ? ` | ${playerEffects.shieldTurns} turno(s)` : ""}`);
+  }
+  if(playerEffects.attackBuffTurns > 0){
+    if(playerEffects.attackBuffAmount > 0){
+      buffs.push(`Ataque +${playerEffects.attackBuffAmount} | ${playerEffects.attackBuffTurns} turno(s)`);
+    }
+    if(playerEffects.attackBuffPercent > 0){
+      buffs.push(`Ataque +${Math.floor(playerEffects.attackBuffPercent * 100)}% | ${playerEffects.attackBuffTurns} turno(s)`);
+    }
+  }
+  if(playerEffects.skillBuffTurns > 0){
+    if(playerEffects.skillBuffAmount > 0){
+      buffs.push(`Habilidade +${playerEffects.skillBuffAmount} | ${playerEffects.skillBuffTurns} turno(s)`);
+    }
+    if(playerEffects.skillBuffPercent > 0){
+      buffs.push(`Habilidade +${Math.floor(playerEffects.skillBuffPercent * 100)}% | ${playerEffects.skillBuffTurns} turno(s)`);
+    }
+  }
+  if(playerEffects.guaranteedHitTurns > 0){
+    buffs.push(`Acerto garantido | ${playerEffects.guaranteedHitTurns} turno(s)`);
+  }
+  if(playerEffects.enemyMissBonusTurns > 0 && playerEffects.enemyMissBonus > 0){
+    buffs.push(`Esquiva +${Math.floor(playerEffects.enemyMissBonus * 100)}% | ${playerEffects.enemyMissBonusTurns} turno(s)`);
+  }
+  if(playerEffects.regenTurns > 0 && playerEffects.regenPercent > 0){
+    buffs.push(`Regeneracao ${Math.floor(playerEffects.regenPercent * 100)}% | ${playerEffects.regenTurns} turno(s)`);
+  }
+  if(playerEffects.damageDoubleTurns > 0 && playerEffects.damageDoubleChanceBonus > 0){
+    buffs.push(`Dano dobrado +${Math.floor(playerEffects.damageDoubleChanceBonus * 100)}% | ${playerEffects.damageDoubleTurns} turno(s)`);
+  }
+  return buffs;
+}
+
 function getBasicAttackLabel(){
   return player.class === "Mago" ? "Missel Magico" : "Atacar";
 }
 
 function getBasicAttackTooltip(){
   if(player.class === "Mago"){
-    return `Missel Magico: consome 10 MP e causa ${getActiveAttack() + getSkillPowerBonus()} de dano.`;
+    const missiles = Math.floor(3 + 0.2 * player.level);
+    const perMissile = Math.floor(getActiveAttack() * 0.5);
+    const totalDamage = missiles * perMissile;
+    return `Missel Magico: consome 10 MP, dispara ${missiles} misseis de ${perMissile} de dano cada e causa ${totalDamage} de dano total.`;
   }
   const attackMin = getActiveAttack();
   const attackMax = getActiveAttack() + 5;
@@ -1677,9 +1722,20 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
       return { blocked: true, message: "Mana insuficiente para usar Missel Magico." };
     }
     player.mp -= 10;
-    const damage = getActiveAttack() + getSkillPowerBonus();
-    const finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
-    return { damage: finalDamage, message: `${namePrefix} lançou Missel Magico e causou ${finalDamage} de dano.` };
+    const missiles = Math.floor(3 + 0.2 * player.level);
+    const perMissile = Math.floor(getActiveAttack() * 0.5);
+    const hitDamages = [];
+    if(applyToTarget){
+      for(let missile = 0; missile < missiles; missile++){
+        hitDamages.push(applyDamageToEnemy(perMissile));
+      }
+    }else{
+      for(let missile = 0; missile < missiles; missile++){
+        hitDamages.push(perMissile);
+      }
+    }
+    const finalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
+    return { damage: finalDamage, missiles, perMissile, hitDamages, message: `${namePrefix} lançou ${missiles} misseis magicos e causou ${finalDamage} de dano.` };
   }
   if(player.class === "Arqueiro" && !rollHit("basic")){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
@@ -2515,6 +2571,7 @@ function updateUI(){
   const shieldWidth = Math.min(100, (playerEffects.shieldValue || 0) / previewStats.maxHp * 100);
   const xpToNextLevel = getXpToNextLevel();
   const trophyCompletion = getTrophyCompletion();
+  const activeBuffs = getActiveBuffs();
 
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
@@ -2529,6 +2586,7 @@ function updateUI(){
     <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
     XP: ${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}
     <div class="bar"><div id="playerXpFill" class="fill xp" style="width:${player.level >= MAX_LEVEL ? 100 : shownPlayerXp / xpToNextLevel * 100}%"></div></div>
+    ${activeBuffs.length ? `<div class="buff-list">${activeBuffs.map(buff => `<span class="buff-pill">${buff}</span>`).join("")}</div>` : ""}
     ${pointsLabel}`;
 
   document.getElementById("modeTabs").innerHTML = `
@@ -2706,13 +2764,13 @@ function animateBars(){
     playerXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : player.xp / getXpToNextLevel() * 100}%`;
     }
     if(enemy && enemyHpFill){
-      enemyHpFill.style.width = `${Math.max(0, enemy.hp) / enemy.maxHp * 100}%`;
+      const shownEnemyHp = displayState.enemyHp ?? enemy.hp;
+      enemyHpFill.style.width = `${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%`;
     }
 
     displayState.playerHp = player.hp;
     displayState.playerMp = player.mp;
     displayState.playerXp = player.xp;
-    displayState.enemyHp = enemy ? enemy.hp : null;
   });
 }
 
@@ -2862,6 +2920,27 @@ function wait(ms){
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function setEnemyBarWidth(hpValue){
+  const enemyHpFill = document.getElementById("enemyHpFill");
+  if(!enemyHpFill || !enemy){ return; }
+  enemyHpFill.style.width = `${Math.max(0, hpValue) / enemy.maxHp * 100}%`;
+}
+
+async function animateEnemyHitSequence(hitDamages){
+  if(!enemy || !Array.isArray(hitDamages) || !hitDamages.length){ return; }
+  const totalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
+  let shownHp = enemy.hp + totalDamage;
+  displayState.enemyHp = shownHp;
+  setEnemyBarWidth(shownHp);
+  await wait(140);
+  for(const damage of hitDamages){
+    shownHp = Math.max(0, shownHp - damage);
+    displayState.enemyHp = shownHp;
+    setEnemyBarWidth(shownHp);
+    await wait(220);
+  }
+}
+
 async function attack(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
   isProcessingTurn = true;
@@ -2873,15 +2952,20 @@ async function attack(){
     return;
   }
   log(result.message);
+  if(player.class === "Mago" && result.hitDamages?.length){
+    await animateEnemyHitSequence(result.hitDamages);
+  }
   decayPlayerBuffs();
   const healed = getTurnHealing();
   if(healed > 0){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
+  if(player.class !== "Mago"){
+    const manaRecovered = regenMana();
+    if(manaRecovered > 0){
+      log(`Voce recuperou ${manaRecovered} de mana.`);
+    }
   }
   updateUI();
   await wait(320);
@@ -2911,9 +2995,11 @@ async function useSkill(index){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
+  if(player.class !== "Mago"){
+    const manaRecovered = regenMana();
+    if(manaRecovered > 0){
+      log(`Voce recuperou ${manaRecovered} de mana.`);
+    }
   }
   updateUI();
   await wait(320);
