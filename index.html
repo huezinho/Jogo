@@ -122,11 +122,17 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .party-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .party-entry{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
 .room-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#1565c0;color:#fff;font-weight:700}
+.settings-fab{position:fixed;left:18px;bottom:18px;z-index:70;padding:12px 16px;border-radius:14px;background:#1f5f87;color:#fff;box-shadow:0 10px 22px rgba(0,0,0,.28)}
+.settings-panel{position:fixed;left:18px;bottom:78px;z-index:75;width:290px;margin:0;background:#2f2f2f;border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 28px rgba(0,0,0,.32)}
+.settings-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.settings-options button.active{background:#2e7d32;color:#fff}
+.settings-note{display:block;margin-top:10px;color:#d0d0d0;font-size:13px;line-height:1.45}
 @media (max-width:640px){
   .attribute-row{flex-direction:column;align-items:flex-start}
   .action-btn[data-tooltip]:hover::after{left:0;transform:none}
   .action-btn[data-tooltip]:hover::before{left:18px;transform:none}
   .enemy-top{flex-direction:column}
+  .settings-panel{width:calc(100vw - 36px)}
 }
 @media (max-width:980px){
   .game-layout{grid-template-columns:1fr}
@@ -194,9 +200,12 @@ button:disabled{cursor:not-allowed;opacity:.6}
 </div>
 </div>
 </div>
+<button id="settingsFab" class="settings-fab" onclick="toggleSettingsPanel()">Configuracao</button>
+<div id="settingsPanel" class="panel settings-panel" style="display:none;"></div>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 const SAVE_KEY = "rpg_turnos_campaign_v1";
+const UI_SETTINGS_KEY = "rpg_turnos_ui_settings_v1";
 const MAX_LEVEL = 100;
 let player, enemy;
 let pendingLevelUps = 0;
@@ -210,6 +219,7 @@ let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
 let isLogHidden = false;
+let isSettingsOpen = false;
 let playerEffects = createDefaultPlayerEffects();
 let displayState = {
   playerHp: null,
@@ -217,6 +227,7 @@ let displayState = {
   playerXp: null,
   enemyHp: null
 };
+let uiSettings = loadUiSettings();
 let dungeonMultiplayer = createDungeonMultiplayerState();
 const rarityOrder = ["comum", "incomum", "rara", "ultra_rara", "lendaria"];
 const rarityData = {
@@ -259,6 +270,15 @@ const legacyEnemyDrops = {
 const legacyDropByBaseId = Object.fromEntries(
   Object.entries(legacyEnemyDrops).map(([enemyName, drop]) => [drop.id, { enemyName, ...drop }])
 );
+const regionArticleMap = {
+  Floresta: "da Floresta",
+  Caverna: "da Caverna",
+  Ruinas: "das Ruinas",
+  Pantano: "do Pantano",
+  Vulcao: "do Vulcao",
+  Abismo: "do Abismo",
+  Fortaleza: "da Fortaleza"
+};
 const rarityMultipliers = {
   comum: 1,
   incomum: 1.35,
@@ -272,39 +292,51 @@ const equipmentBaseScaling = {
   bonusAttack: 1.2,
   skillPower: 1.28
 };
-const equipmentPieceNames = {
-  Guerreiro: { head: "Elmo", chest: "Couraca", weapon: "Lamina", legs: "Grevas", feet: "Botas" },
-  Arqueiro: { head: "Capuz", chest: "Colete", weapon: "Arco", legs: "Perneiras", feet: "Botas" },
-  Mago: { head: "Diadema", chest: "Manto", weapon: "Cajado", legs: "Calcas", feet: "Sandalias" }
+const regionSetItemPower = {
+  Floresta: 2,
+  Caverna: 4,
+  Ruinas: 7,
+  Pantano: 11,
+  Vulcao: 15,
+  Abismo: 20,
+  Fortaleza: 26
 };
-const equipmentStatProfiles = {
-  Guerreiro: {
-    head: { bonusHp: 1.08, bonusAttack: 0.18, skillPower: 0.12 },
-    chest: { bonusHp: 1.32, bonusAttack: 0.12, skillPower: 0.1 },
-    weapon: { bonusHp: 0.28, bonusAttack: 0.56, skillPower: 0.42 },
-    legs: { bonusHp: 0.98, bonusAttack: 0.15, skillPower: 0.1 },
-    feet: { bonusHp: 0.8, bonusAttack: 0.14, skillPower: 0.08 }
-  },
-  Arqueiro: {
-    head: { bonusHp: 0.7, bonusMp: 0.3, bonusAttack: 0.21, skillPower: 0.15 },
-    chest: { bonusHp: 0.82, bonusMp: 0.26, bonusAttack: 0.17, skillPower: 0.13 },
-    weapon: { bonusHp: 0.24, bonusMp: 0.22, bonusAttack: 0.58, skillPower: 0.42 },
-    legs: { bonusHp: 0.64, bonusMp: 0.18, bonusAttack: 0.2, skillPower: 0.12 },
-    feet: { bonusHp: 0.5, bonusMp: 0.16, bonusAttack: 0.15, skillPower: 0.08 }
-  },
-  Mago: {
-    head: { bonusHp: 0.44, bonusMp: 0.62, bonusAttack: 0.06, skillPower: 0.22 },
-    chest: { bonusHp: 0.62, bonusMp: 0.74, bonusAttack: 0.04, skillPower: 0.18 },
-    weapon: { bonusHp: 0.2, bonusMp: 0.48, bonusAttack: 0.12, skillPower: 0.68 },
-    legs: { bonusHp: 0.5, bonusMp: 0.54, bonusAttack: 0.04, skillPower: 0.15 },
-    feet: { bonusHp: 0.36, bonusMp: 0.42, bonusAttack: 0.04, skillPower: 0.1 }
-  }
+const regionArmorPieceNames = {
+  head: "Capuz",
+  chest: "Traje",
+  legs: "Perneiras",
+  feet: "Botas"
 };
-const setBonusProfiles = {
-  Guerreiro: { bonusHp: 18, bonusAttack: 1.4, skillPower: 1.05 },
-  Arqueiro: { bonusHp: 12, bonusMp: 8, bonusAttack: 1.5, skillPower: 1.15 },
-  Mago: { bonusHp: 10, bonusMp: 16, bonusAttack: 0.7, skillPower: 1.8 }
+const regionWeaponPieceNames = {
+  Guerreiro: "Espada",
+  Arqueiro: "Arco",
+  Mago: "Cajado"
 };
+const regionArmorStatProfiles = {
+  head: { bonusHp: 0.52, bonusMp: 0.26, bonusAttack: 0.04, skillPower: 0.04 },
+  chest: { bonusHp: 0.95, bonusMp: 0.18, bonusAttack: 0.03, skillPower: 0.03 },
+  legs: { bonusHp: 0.74, bonusMp: 0.22, bonusAttack: 0.03, skillPower: 0.03 },
+  feet: { bonusHp: 0.48, bonusMp: 0.16, bonusAttack: 0.02, skillPower: 0.02 }
+};
+const regionWeaponStatProfiles = {
+  Guerreiro: { bonusHp: 0.12, bonusAttack: 0.74, skillPower: 0.36 },
+  Arqueiro: { bonusMp: 0.12, bonusAttack: 0.62, skillPower: 0.44 },
+  Mago: { bonusMp: 0.34, bonusAttack: 0.16, skillPower: 0.82 }
+};
+const regionSetBonusProfiles = {
+  Floresta: { bonusHp: 20, bonusMp: 8, bonusAttack: 3, skillPower: 3 },
+  Caverna: { bonusHp: 36, bonusMp: 14, bonusAttack: 5, skillPower: 5 },
+  Ruinas: { bonusHp: 56, bonusMp: 22, bonusAttack: 7, skillPower: 8 },
+  Pantano: { bonusHp: 82, bonusMp: 30, bonusAttack: 10, skillPower: 12 },
+  Vulcao: { bonusHp: 118, bonusMp: 42, bonusAttack: 14, skillPower: 16 },
+  Abismo: { bonusHp: 158, bonusMp: 56, bonusAttack: 18, skillPower: 21 },
+  Fortaleza: { bonusHp: 210, bonusMp: 72, bonusAttack: 23, skillPower: 27 }
+};
+const enemyDropSlotGroups = [
+  ["feet", "chest"],
+  ["head", "legs"],
+  ["weapon"]
+];
 const consumableCatalog = {
   mana_potion: { name: "Pocao de Mana", price: 40, description: "Recupera 60 de mana.", useLabel: "Usar", effectType: "restore_mana", value: 60 },
   health_potion: { name: "Pocao de Vida", price: 32, description: "Recupera 70 de vida.", useLabel: "Usar", effectType: "restore_hp", value: 70 },
@@ -354,6 +386,55 @@ function createDungeonMultiplayerState(){
     enemySkipTurn: false,
     battleActive: false
   };
+}
+
+function loadUiSettings(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(UI_SETTINGS_KEY) || "{}");
+    return {
+      enemyBarSpeed: saved.enemyBarSpeed || "rapida"
+    };
+  }catch{
+    return { enemyBarSpeed: "rapida" };
+  }
+}
+
+function saveUiSettings(){
+  localStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(uiSettings));
+  renderSettingsPanel();
+}
+
+function toggleSettingsPanel(){
+  isSettingsOpen = !isSettingsOpen;
+  renderSettingsPanel();
+}
+
+function setEnemyBarSpeed(speed){
+  uiSettings.enemyBarSpeed = speed;
+  saveUiSettings();
+}
+
+function renderSettingsPanel(){
+  const panel = document.getElementById("settingsPanel");
+  if(!panel){ return; }
+  panel.style.display = isSettingsOpen ? "block" : "none";
+  if(!isSettingsOpen){
+    panel.innerHTML = "";
+    return;
+  }
+  const options = [
+    { id: "instantanea", label: "Instantanea" },
+    { id: "rapida", label: "Rapida" },
+    { id: "media", label: "Media" },
+    { id: "lenta", label: "Lenta" }
+  ];
+  panel.innerHTML = `
+    <h3>Configuracao</h3>
+    <span class="lock-note">Velocidade da barra de vida do inimigo</span>
+    <div class="settings-options">
+      ${options.map(option => `<button class="${uiSettings.enemyBarSpeed === option.id ? "active" : ""}" onclick="setEnemyBarSpeed('${option.id}')">${option.label}</button>`).join("")}
+    </div>
+    <span class="settings-note">Para Guerreiro e Arqueiro, as opcoes continuam mais rapidas que para o Mago para preservar o impacto do Missel Magico.</span>`;
 }
 
 const enemySprites = {
@@ -727,8 +808,8 @@ function getEnemyTemplateByName(enemyName){
   return null;
 }
 
-function getEnemySetLabel(enemyName){
-  return `Set de ${enemyName}`;
+function getRegionSetLabel(regionName){
+  return `Set ${regionArticleMap[regionName] || `de ${regionName}`}`;
 }
 
 function formatStatBonusList(source){
@@ -740,31 +821,49 @@ function formatStatBonusList(source){
   return parts.join(", ");
 }
 
-function getSetBonusValues(enemyLevel, className){
-  const profile = setBonusProfiles[className] || {};
-  const bonus = {};
-  for(const [bonusKey, factor] of Object.entries(profile)){
-    bonus[bonusKey] = Math.floor(enemyLevel * factor);
-  }
-  return bonus;
+function getRegionFromEnemy(enemyName){
+  return getEnemyTemplateByName(enemyName)?.region || null;
 }
 
-function getEnemySetTemplate(enemyName, className = player?.class || "Guerreiro", slot = null){
-  const enemyTemplate = getEnemyTemplateByName(enemyName);
-  if(!enemyTemplate){ return null; }
-  const chosenSlot = slot || equipmentSlots[Math.floor(Math.random() * equipmentSlots.length)];
-  const pieceName = equipmentPieceNames[className]?.[chosenSlot] || slotLabels[chosenSlot] || "Peca";
+function getSetBonusValues(regionName){
+  return regionSetBonusProfiles[regionName] || { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 };
+}
+
+function getRegionDropSlots(regionName, enemyName){
+  const regionData = regions[regionName];
+  if(!regionData){ return []; }
+  const orderedEnemies = [...regionData.enemies].sort((a, b) => b.weight - a.weight);
+  const enemyIndex = orderedEnemies.findIndex(enemyData => enemyData.name === enemyName);
+  return enemyDropSlotGroups[enemyIndex] ? [...enemyDropSlotGroups[enemyIndex]] : [];
+}
+
+function getRegionSetTemplate(regionName, slot, className = player?.class || "Guerreiro"){
+  if(!regionName || !slot){ return null; }
+  const itemName = slot === "weapon"
+    ? `${regionWeaponPieceNames[className] || "Arma"} ${regionArticleMap[regionName] || `de ${regionName}`}`
+    : `${regionArmorPieceNames[slot] || slotLabels[slot] || "Peca"} ${regionArticleMap[regionName] || `de ${regionName}`}`;
   return {
-    id: `${slugify(enemyName)}_${slugify(className)}_${chosenSlot}`,
-    name: `${pieceName} do ${enemyName}`,
-    slot: chosenSlot,
-    classRestriction: className,
-    enemyName,
-    enemyLevel: enemyTemplate.level,
-    setId: `${slugify(enemyName)}_${slugify(className)}_set`,
-    setName: getEnemySetLabel(enemyName),
-    statProfile: equipmentStatProfiles[className]?.[chosenSlot] || {}
+    id: `${slugify(regionName)}_${slot}${slot === "weapon" ? `_${slugify(className)}` : ""}`,
+    name: itemName,
+    slot,
+    classRestriction: slot === "weapon" ? className : null,
+    regionName,
+    setId: `${slugify(regionName)}_set`,
+    setName: getRegionSetLabel(regionName),
+    statProfile: slot === "weapon"
+      ? (regionWeaponStatProfiles[className] || regionWeaponStatProfiles.Guerreiro)
+      : (regionArmorStatProfiles[slot] || {}),
+    regionPower: regionSetItemPower[regionName] || 1
   };
+}
+
+function getEnemyDropTemplate(enemyName, regionName, className = player?.class || "Guerreiro", forcedSlot = null){
+  const availableSlots = getRegionDropSlots(regionName, enemyName);
+  if(!availableSlots.length){ return null; }
+  const chosenSlot = forcedSlot && availableSlots.includes(forcedSlot)
+    ? forcedSlot
+    : availableSlots[Math.floor(Math.random() * availableSlots.length)];
+  return getRegionSetTemplate(regionName, chosenSlot, className);
 }
 
 function getEquippedSetCount(setId){
@@ -790,13 +889,13 @@ function getActiveSetBonuses(){
   for(const entry of Object.values(sets)){
     if(entry.slots.size !== equipmentSlots.length){ continue; }
     const item = entry.item;
-    const setBonus = getSetBonusValues(item.enemyLevel || 1, item.classRestriction || player.class);
+    const setBonus = getSetBonusValues(item.regionName);
     total.bonusHp += setBonus.bonusHp || 0;
     total.bonusMp += setBonus.bonusMp || 0;
     total.bonusAttack += setBonus.bonusAttack || 0;
     total.skillPower += setBonus.skillPower || 0;
     activeSets.push({
-      setName: item.setName || getEnemySetLabel(item.enemyName || "desconhecido"),
+      setName: item.setName || getRegionSetLabel(item.regionName || "desconhecida"),
       text: formatStatBonusList(setBonus)
     });
   }
@@ -945,7 +1044,7 @@ function getPassiveModifiers(){
       base.manaRegenPercentSet = 0.16;
     }
     if(passive.type === "archer_attack_level_bonus"){
-      base.bonusAttack += Math.floor(0.4 * player.level);
+      base.bonusAttack += Math.floor(0.45 * player.level);
     }
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
@@ -1638,7 +1737,7 @@ function getSkillInfo(){
   const arcanistExtraCost = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 42 ? Math.floor(maxMp * 0.05) : 0;
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_brandish"){
-      const damage = Math.floor(attack * 1.5);
+      const damage = Math.floor(attack * 1.3);
       return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano.` };
     }
     if(skill.type === "warrior_smash"){
@@ -1697,7 +1796,7 @@ function getSkillInfo(){
       return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
-      const damage = 30 + Math.floor((subclassState.tier30 === "atirador" && player.level >= 36 ? 0.5 : 0.3) * skillPower);
+      const damage = 30 + Math.floor((subclassState.tier30 === "atirador" && player.level >= 36 ? 0.55 : 0.35) * skillPower);
       const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
       const critChance = subclassState.tier30 === "atirador" && player.level >= 36 ? 0.15 : 0.1;
       return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
@@ -1774,7 +1873,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: sua regeneracao total de mana por turno passa a ser 16% da mana maxima.`;
   }
   if(skill.type === "archer_attack_level_bonus"){
-    let description = `${skill.name}: concede ${Math.floor(0.4 * player.level)} de dano de ataque basico no nivel atual.`;
+    let description = `${skill.name}: concede ${Math.floor(0.45 * player.level)} de dano de ataque basico no nivel atual.`;
     if(subclassState.tier30 === "atirador" && player.level >= 54){
       description += " Alem disso, ataques e habilidades ganham 10% de chance de dano dobrado.";
     }
@@ -1829,7 +1928,7 @@ function getBasicAttackLabel(){
 function getBasicAttackTooltip(){
   if(player.class === "Mago"){
     const missiles = Math.floor(3 + 0.2 * player.level);
-    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
+    const minPerMissile = Math.floor(getActiveAttack() * 0.4);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
     return `Missel Magico: consome 10 MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
@@ -1903,7 +2002,7 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     }
     player.mp -= 10;
     const missiles = Math.floor(3 + 0.2 * player.level);
-    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
+    const minPerMissile = Math.floor(getActiveAttack() * 0.4);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
     const hitDamages = [];
     if(applyToTarget){
@@ -2041,15 +2140,19 @@ function normalizeEquipmentMetadata(item){
   const legacyDrop = legacyDropByBaseId[item.baseItemId];
   if(legacyDrop){
     item.enemyName = item.enemyName || legacyDrop.enemyName;
-    item.enemyLevel = item.enemyLevel || getEnemyTemplateByName(legacyDrop.enemyName)?.level || 1;
+    item.regionName = item.regionName || getRegionFromEnemy(legacyDrop.enemyName);
     item.slot = item.slot || legacyDrop.slot;
-    item.classRestriction = item.classRestriction || legacyDrop.classRestriction;
+    item.classRestriction = item.slot === "weapon" ? (item.classRestriction || legacyDrop.classRestriction) : null;
   }
-  if(item.enemyName && !item.setId){
-    item.setId = `${slugify(item.enemyName)}_${slugify(item.classRestriction || "classe")}_set`;
+  if(item.enemyName && !item.regionName){
+    item.regionName = getRegionFromEnemy(item.enemyName);
   }
-  if(item.enemyName && !item.setName){
-    item.setName = getEnemySetLabel(item.enemyName);
+  if(item.slot !== "weapon"){
+    item.classRestriction = null;
+  }
+  if(item.regionName){
+    item.setId = `${slugify(item.regionName)}_set`;
+    item.setName = getRegionSetLabel(item.regionName);
   }
   return item;
 }
@@ -2061,11 +2164,11 @@ function buildEquipmentDescription(item){
   if(statText){ lines.push(statText); }
   if(item.setId && item.setName){
     const setPieces = getEquippedSetCount(item.setId);
-    const setBonus = getSetBonusValues(item.enemyLevel || 1, item.classRestriction || player?.class || "Guerreiro");
+    const setBonus = getSetBonusValues(item.regionName);
     lines.push(`${item.setName} (${setPieces}/5)`);
     lines.push(`Bonus do set completo: ${formatStatBonusList(setBonus)}`);
   }
-  lines.push(`Equipavel apenas por ${item.classRestriction}.`);
+  lines.push(item.classRestriction ? `Equipavel apenas por ${item.classRestriction}.` : "Equipavel por qualquer classe.");
   return lines.join(". ");
 }
 
@@ -2088,16 +2191,15 @@ function createEquipmentItem(dropTemplate, rarity){
     classRestriction: dropTemplate.classRestriction,
     rarity,
     rarityLabel: rarityInfo.label,
-    enemyName: dropTemplate.enemyName || null,
-    enemyLevel: dropTemplate.enemyLevel || 1,
+    regionName: dropTemplate.regionName || null,
     setId: dropTemplate.setId || null,
     setName: dropTemplate.setName || null
   };
-  if(dropTemplate.enemyLevel){
+  if(dropTemplate.regionPower){
     const rarityMultiplier = rarityMultipliers[rarity] || 1;
     for(const [bonusKey, weight] of Object.entries(statProfile)){
       const baseScale = equipmentBaseScaling[bonusKey] || 0;
-      const value = Math.floor(dropTemplate.enemyLevel * baseScale * weight * rarityMultiplier);
+      const value = Math.floor(dropTemplate.regionPower * baseScale * weight * rarityMultiplier);
       if(value > 0){
         item[bonusKey] = value;
       }
@@ -2113,14 +2215,19 @@ function createEquipmentItem(dropTemplate, rarity){
 
 function getDropTemplateFromItem(item){
   item = normalizeEquipmentMetadata(item);
-  if(item?.enemyName){
-    return getEnemySetTemplate(item.enemyName, item.classRestriction, item.slot);
+  if(item?.regionName){
+    return getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
   }
   const legacyDrop = legacyDropByBaseId[item?.baseItemId];
   if(legacyDrop){
-    return getEnemySetTemplate(legacyDrop.enemyName, item.classRestriction || legacyDrop.classRestriction, item.slot || legacyDrop.slot);
+    return getRegionSetTemplate(getRegionFromEnemy(legacyDrop.enemyName), item.slot || legacyDrop.slot, item.classRestriction || legacyDrop.classRestriction || player?.class || "Guerreiro");
   }
   return null;
+}
+
+function canEquipItem(item){
+  item = normalizeEquipmentMetadata(item);
+  return !item.classRestriction || item.classRestriction === player.class;
 }
 
 function getSellPrice(item){
@@ -2263,7 +2370,9 @@ function getEnemyPossibleDrop(enemyName, region, isBoss = false){
   if(region === "Dungeon"){
     return "Tesouros da expedicao ainda nao catalogados";
   }
-  return `Peca do ${getEnemySetLabel(enemyName)} da sua classe`;
+  const slots = getRegionDropSlots(region, enemyName);
+  if(!slots.length){ return "Sem drop conhecido"; }
+  return slots.map(slot => getRegionSetTemplate(region, slot, player?.class || "Guerreiro")?.name).join(" ou ");
 }
 
 function renderBestiary(){
@@ -2271,7 +2380,7 @@ function renderBestiary(){
     const enemyCards = regionData.enemies.map(template => {
       const stats = getEnemyStats(template, regionName);
       const rarity = getEnemyRarity(regionName, template.name, false);
-      return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">Conjuntos disponiveis para Guerreiro, Arqueiro e Mago. O bonus do set completo escala com o nivel do inimigo.</span></div>`;
+      return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">${getRegionSetLabel(regionName)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(regionName))}</span></div>`;
     }).join("");
     const bossStats = getEnemyStats(regionData.boss, regionName);
     return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}</span><br><span class="lock-note">Mana: ${regionData.boss.mp} | Habilidade: ${regionData.boss.skillName} (${regionData.boss.skillDamage} de dano)</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)}</span></div></div></div>`;
@@ -2314,7 +2423,7 @@ function addInventoryItem(item){
 
 function tryEnemyDrop(defeatedEnemy){
   const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
-  const dropTemplate = getEnemySetTemplate(enemyBaseName, player.class);
+  const dropTemplate = getEnemyDropTemplate(enemyBaseName, defeatedEnemy.region, player.class);
   if(!dropTemplate){ return; }
   if(Math.random() > 0.1){ return; }
   const rarity = rollWeightedRarity();
@@ -2326,10 +2435,10 @@ function tryEnemyDrop(defeatedEnemy){
 function getBossChestItem(region){
   const regionData = regions[region];
   if(!regionData){ return null; }
-  const possibleDrops = regionData.enemies.filter(enemyData => !!getEnemySetTemplate(enemyData.name, player.class));
+  const possibleDrops = regionData.enemies.filter(enemyData => !!getEnemyDropTemplate(enemyData.name, region, player.class));
   if(!possibleDrops.length){ return null; }
   const chosenEnemy = chooseWeightedEnemy(possibleDrops);
-  const dropTemplate = getEnemySetTemplate(chosenEnemy.name, player.class);
+  const dropTemplate = getEnemyDropTemplate(chosenEnemy.name, region, player.class);
   return createEquipmentItem(dropTemplate, rollWeightedRarity());
 }
 
@@ -2339,7 +2448,7 @@ function createRegionChest(region){
     name: `Bau da ${region}`,
     type: "chest",
     region,
-    description: `Contem 1 peca aleatoria de set da regiao ${region} para a sua classe atual.`
+    description: `Contem 1 peca aleatoria do ${getRegionSetLabel(region)}.`
   };
 }
 
@@ -2439,7 +2548,7 @@ function equipItem(itemUid){
   if(itemIndex < 0){ return; }
   const item = player.inventory[itemIndex];
   if(item.type !== "equipment"){ return; }
-  if(player.class !== item.classRestriction){
+  if(!canEquipItem(item)){
     log(`Somente a classe ${item.classRestriction} pode equipar ${item.name}.`);
     return;
   }
@@ -2949,7 +3058,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa seus atributos atuais, habilidades ativas, passivas, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada inimigo comum possui um set proprio para Guerreiro, Arqueiro e Mago. O bonus do set completo escala com o nivel da criatura.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -2963,7 +3072,7 @@ function updateUI(){
         ? `<button onclick="useConsumable('${item.id}')">Usar</button>`
         : "";
       const equipButton = item.type === "equipment"
-        ? `<button onclick="equipItem('${item.uid}')" ${player.class !== item.classRestriction ? "disabled" : ""}>Equipar</button>`
+        ? `<button onclick="equipItem('${item.uid}')" ${canEquipItem(item) ? "" : "disabled"}>Equipar</button>`
         : "";
       const openButton = item.type === "chest"
         ? `<button onclick="openChest('${item.uid}')">Abrir</button>`
@@ -3204,6 +3313,31 @@ function wait(ms){
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function getEnemyBarAnimationConfig(isMissileSequence = false){
+  const speed = uiSettings.enemyBarSpeed || "rapida";
+  const nonMageProfiles = {
+    instantanea: { stepDelay: 2, minFrames: 1, frameDivisor: 120, startDelay: 0 },
+    rapida: { stepDelay: 4, minFrames: 2, frameDivisor: 40, startDelay: 0 },
+    media: { stepDelay: 8, minFrames: 4, frameDivisor: 18, startDelay: 4 },
+    lenta: { stepDelay: 12, minFrames: 6, frameDivisor: 12, startDelay: 8 }
+  };
+  const mageProfiles = {
+    instantanea: { stepDelay: 7, minFrames: 2, frameDivisor: 22, startDelay: 0, missileStartDelay: 30, missileHitDelay: 70 },
+    rapida: { stepDelay: 11, minFrames: 4, frameDivisor: 14, startDelay: 6, missileStartDelay: 55, missileHitDelay: 100 },
+    media: { stepDelay: 15, minFrames: 6, frameDivisor: 9, startDelay: 10, missileStartDelay: 80, missileHitDelay: 140 },
+    lenta: { stepDelay: 19, minFrames: 8, frameDivisor: 6, startDelay: 14, missileStartDelay: 110, missileHitDelay: 180 }
+  };
+  const profiles = player?.class === "Mago" ? mageProfiles : nonMageProfiles;
+  const config = profiles[speed] || profiles.rapida;
+  if(!isMissileSequence){
+    return config;
+  }
+  return {
+    missileStartDelay: config.missileStartDelay ?? config.startDelay ?? 0,
+    missileHitDelay: config.missileHitDelay ?? config.stepDelay ?? 80
+  };
+}
+
 function setEnemyBarWidth(hpValue){
   const enemyHpFill = document.getElementById("enemyHpFill");
   if(!enemyHpFill || !enemy){ return; }
@@ -3240,16 +3374,17 @@ async function animateEnemyBarTo(targetHp, startHp = null, stepDelay = 16, minFr
 
 async function animateEnemyHitSequence(hitDamages){
   if(!enemy || !Array.isArray(hitDamages) || !hitDamages.length){ return; }
+  const animationConfig = getEnemyBarAnimationConfig(true);
   const totalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
   let shownHp = enemy.hp + totalDamage;
   displayState.enemyHp = shownHp;
   setEnemyBarWidth(shownHp);
-  await wait(70);
+  await wait(animationConfig.missileStartDelay);
   for(const damage of hitDamages){
     shownHp = Math.max(0, shownHp - damage);
     displayState.enemyHp = shownHp;
     setEnemyBarWidth(shownHp);
-    await wait(120);
+    await wait(animationConfig.missileHitDelay);
   }
 }
 
@@ -3268,13 +3403,14 @@ async function attack(){
   if(player.class === "Mago" && result.hitDamages?.length){
     await animateEnemyHitSequence(result.hitDamages);
   }else{
+    const animationConfig = getEnemyBarAnimationConfig(false);
     await animateEnemyBarTo(
       enemy.hp,
       enemyHpBeforeAttack,
-      player.class === "Mago" ? 16 : 4,
-      player.class === "Mago" ? 8 : 2,
-      player.class === "Mago" ? 3 : 25,
-      player.class === "Mago" ? 12 : 0
+      animationConfig.stepDelay,
+      animationConfig.minFrames,
+      animationConfig.frameDivisor,
+      animationConfig.startDelay
     );
   }
   decayPlayerBuffs();
@@ -3311,13 +3447,14 @@ async function useSkill(index){
   }
   log(result.message);
   if(result.damage > 0){
+    const animationConfig = getEnemyBarAnimationConfig(false);
     await animateEnemyBarTo(
       enemy.hp,
       enemyHpBeforeSkill,
-      player.class === "Mago" ? 16 : 4,
-      player.class === "Mago" ? 8 : 2,
-      player.class === "Mago" ? 3 : 25,
-      player.class === "Mago" ? 12 : 0
+      animationConfig.stepDelay,
+      animationConfig.minFrames,
+      animationConfig.frameDivisor,
+      animationConfig.startDelay
     );
   }
   decayPlayerBuffs();
@@ -3536,6 +3673,7 @@ function log(msg){
 }
 
 renderSavedCampaign();
+renderSettingsPanel();
 setInterval(() => {
   if(isDead){
     updateUI();
