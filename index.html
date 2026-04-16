@@ -277,7 +277,9 @@ const regionArticleMap = {
   Pantano: "do Pantano",
   Vulcao: "do Vulcao",
   Abismo: "do Abismo",
-  Fortaleza: "da Fortaleza"
+  Fortaleza: "da Fortaleza",
+  Necropole: "da Necropole",
+  Citadela: "da Citadela"
 };
 const rarityMultipliers = {
   comum: 1,
@@ -299,7 +301,9 @@ const regionSetItemPower = {
   Pantano: 11,
   Vulcao: 15,
   Abismo: 20,
-  Fortaleza: 26
+  Fortaleza: 26,
+  Necropole: 33,
+  Citadela: 41
 };
 const regionArmorPieceNames = {
   head: "Capuz",
@@ -330,7 +334,9 @@ const regionSetBonusProfiles = {
   Pantano: { bonusHp: 82, bonusMp: 30, bonusAttack: 10, skillPower: 12 },
   Vulcao: { bonusHp: 118, bonusMp: 42, bonusAttack: 14, skillPower: 16 },
   Abismo: { bonusHp: 158, bonusMp: 56, bonusAttack: 18, skillPower: 21 },
-  Fortaleza: { bonusHp: 210, bonusMp: 72, bonusAttack: 23, skillPower: 27 }
+  Fortaleza: { bonusHp: 210, bonusMp: 72, bonusAttack: 23, skillPower: 27 },
+  Necropole: { bonusHp: 272, bonusMp: 90, bonusAttack: 29, skillPower: 34 },
+  Citadela: { bonusHp: 340, bonusMp: 112, bonusAttack: 36, skillPower: 42 }
 };
 const enemyDropSlotGroups = [
   ["feet", "chest"],
@@ -466,6 +472,14 @@ const enemySprites = {
   "Maga da Muralha": "&#x1FA84;",
   "Carrasco de Guerra": "&#x2692;&#xFE0F;",
   "General de Aco": "&#x1F5E1;&#xFE0F;",
+  "Guardiao Funebre": "&#x26B0;&#xFE0F;",
+  "Feiticeira Morta": "&#x1F9D9;",
+  "Ceifador de Ossos": "&#x1F480;",
+  "Lorde da Cripta": "&#x1F451;",
+  "Anjo Caido": "&#x1F47C;",
+  "Drake Celeste": "&#x1F409;",
+  "Executor Astral": "&#x2728;",
+  "Imperador do Eclipse": "&#x1F311;",
   "Carcereiro Abissal": "&#x26D3;&#xFE0F;",
   "Aracnida Rainha": "&#x1F578;&#xFE0F;",
   "Devorador do Eco": "&#x1F479;"
@@ -561,6 +575,26 @@ const regions = {
       { name: "Escudeiro de Ferro", level: 61, weight: 78, hp: 390, attack: 45 },
       { name: "Maga da Muralha", level: 63, weight: 16, hp: 410, attack: 48 },
       { name: "Carrasco de Guerra", level: 68, weight: 6, hp: 470, attack: 54 }
+    ]
+  },
+  Necropole: {
+    minLevel: 52,
+    description: "Criptas antigas, magia necrotica e guerreiros que se recusam a descansar.",
+    boss: { name: "Lorde da Cripta", level: 80, hp: 1100, attack: 79, mp: 240, skillName: "Sentenca Funebre", skillDamage: 220, skillCost: 52 },
+    enemies: [
+      { name: "Guardiao Funebre", level: 71, weight: 78, hp: 490, attack: 56 },
+      { name: "Feiticeira Morta", level: 73, weight: 16, hp: 520, attack: 59 },
+      { name: "Ceifador de Ossos", level: 78, weight: 6, hp: 590, attack: 65 }
+    ]
+  },
+  Citadela: {
+    minLevel: 60,
+    description: "Torres elevadas acima das nuvens, feras celestes e juizes do eclipse.",
+    boss: { name: "Imperador do Eclipse", level: 90, hp: 1320, attack: 92, mp: 280, skillName: "Ruptura Estelar", skillDamage: 260, skillCost: 60 },
+    enemies: [
+      { name: "Anjo Caido", level: 81, weight: 78, hp: 620, attack: 69 },
+      { name: "Drake Celeste", level: 83, weight: 16, hp: 655, attack: 72 },
+      { name: "Executor Astral", level: 88, weight: 6, hp: 735, attack: 79 }
     ]
   }
 };
@@ -774,7 +808,7 @@ function chooseWeightedEnemy(enemyList){
 
 function getEnemyStats(template, regionOverride = null){
   const regionName = regionOverride || currentRegion;
-  const regionHasArmor = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza"].includes(regionName);
+  const regionHasArmor = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela"].includes(regionName);
   return {
     maxHp: template.hp + template.level * 18,
     attack: template.attack + template.level * 2,
@@ -1044,7 +1078,7 @@ function getPassiveModifiers(){
       base.manaRegenPercentSet = 0.16;
     }
     if(passive.type === "archer_attack_level_bonus"){
-      base.bonusAttack += Math.floor(0.45 * player.level);
+      base.bonusAttack += Math.floor(0.9 * player.level);
     }
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
@@ -1768,8 +1802,8 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const damage = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 54
-        ? 30 + Math.floor(0.4 * (skillPower + attack))
-        : 30 + Math.floor(0.4 * skillPower);
+        ? 30 + Math.floor(1.1 * (skillPower + attack))
+        : 30 + Math.floor(1.1 * skillPower);
       return { ...skill, cost: 30 + arcanistExtraCost, damage, description: `${skill.name}: consome ${30 + arcanistExtraCost} MP e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_fireball"){
@@ -1796,9 +1830,9 @@ function getSkillInfo(){
       return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
-      const damage = 30 + Math.floor((subclassState.tier30 === "atirador" && player.level >= 36 ? 0.55 : 0.35) * skillPower);
+      const damage = Math.floor(1.1 * skillPower);
       const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
-      const critChance = subclassState.tier30 === "atirador" && player.level >= 36 ? 0.15 : 0.1;
+      const critChance = 0.1;
       return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
     }
     if(skill.type === "archer_hide"){
@@ -1873,7 +1907,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: sua regeneracao total de mana por turno passa a ser 16% da mana maxima.`;
   }
   if(skill.type === "archer_attack_level_bonus"){
-    let description = `${skill.name}: concede ${Math.floor(0.45 * player.level)} de dano de ataque basico no nivel atual.`;
+    let description = `${skill.name}: concede ${Math.floor(0.9 * player.level)} de dano de ataque basico no nivel atual.`;
     if(subclassState.tier30 === "atirador" && player.level >= 54){
       description += " Alem disso, ataques e habilidades ganham 10% de chance de dano dobrado.";
     }
@@ -1928,7 +1962,7 @@ function getBasicAttackLabel(){
 function getBasicAttackTooltip(){
   if(player.class === "Mago"){
     const missiles = Math.floor(3 + 0.2 * player.level);
-    const minPerMissile = Math.floor(getActiveAttack() * 0.4);
+    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
     return `Missel Magico: consome 10 MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
@@ -2002,7 +2036,7 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     }
     player.mp -= 10;
     const missiles = Math.floor(3 + 0.2 * player.level);
-    const minPerMissile = Math.floor(getActiveAttack() * 0.4);
+    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
     const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
     const hitDamages = [];
     if(applyToTarget){
