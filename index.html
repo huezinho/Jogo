@@ -345,7 +345,7 @@ const enemyDropSlotGroups = [
 ];
 const consumableCatalog = {
   mana_potion: { name: "Pocao de Mana", price: 40, description: "Recupera 60 de mana.", useLabel: "Usar", effectType: "restore_mana", value: 60 },
-  health_potion: { name: "Pocao de Vida", price: 32, description: "Recupera 70 de vida.", useLabel: "Usar", effectType: "restore_hp", value: 70 },
+  health_potion: { name: "Pocao de Vida", price: 42, description: "Recupera 60% da vida maxima.", useLabel: "Usar", effectType: "restore_hp_percent", value: 0.6 },
   skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 18, turns: 3 },
   attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 14, turns: 3 }
 };
@@ -1830,7 +1830,7 @@ function getSkillInfo(){
       return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
-      const damage = Math.floor(1.3 * skillPower);
+      const damage = Math.floor(1.5 * skillPower);
       const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
       const critChance = 0.1;
       return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
@@ -2355,9 +2355,9 @@ function renderForgePanel(){
     .map(slot => ({ slot, label: slotLabels[slot], item: normalizeEquipmentMetadata(player.equipment?.[slot]) }))
     .filter(entry => entry.item);
   if(!equippedItems.length){
-    return `<div class="inventory-item"><strong>Ferreiro</strong><br><span class="lock-note">Equipe um item no acampamento para tentar aprimora-lo aqui.</span></div>`;
+    return `<div class="inventory-item"><div class="panel-header"><strong>Ferreiro</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Equipe um item no acampamento para tentar aprimora-lo aqui.</span></div>`;
   }
-  return `<div class="inventory-item"><strong>Ferreiro</strong><br><span class="lock-note">Tente elevar a raridade dos seus equipamentos equipados. Cada novo grau fica mais caro e mais dificil.</span><div class="inventory-list">${equippedItems.map(entry => {
+  return `<div class="inventory-item"><div class="panel-header"><strong>Ferreiro</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Tente elevar a raridade dos seus equipamentos equipados. Cada novo grau fica mais caro e mais dificil.</span><div class="inventory-list">${equippedItems.map(entry => {
     const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
@@ -2366,7 +2366,7 @@ function renderForgePanel(){
 }
 
 function renderAlchemistPanel(){
-  return `<div class="inventory-item"><strong>Alquimista</strong><br><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => `<div class="inventory-item"><strong>${item.name}</strong><br><span class="lock-note">${item.description}</span><div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div></div>`).join("")}</div></div>`;
+  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => `<div class="inventory-item"><strong>${item.name}</strong><br><span class="lock-note">${item.description}</span><div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div></div>`).join("")}</div></div>`;
 }
 
 function getBaseEnemyName(enemyName){
@@ -2552,6 +2552,14 @@ async function useConsumable(itemId){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + config.value);
     displayState.playerHp = player.hp;
     log(`Voce usou ${config.name} e recuperou ${config.value} de vida.`);
+  }
+  if(config.effectType === "restore_hp_percent"){
+    const maxHp = getCurrentCaps().maxHp;
+    const hpBefore = player.hp;
+    const healAmount = Math.floor(maxHp * config.value);
+    player.hp = Math.min(maxHp, player.hp + healAmount);
+    displayState.playerHp = player.hp;
+    log(`Voce usou ${config.name} e recuperou ${player.hp - hpBefore} de vida.`);
   }
   if(config.effectType === "buff_skill"){
     playerEffects.skillBuffTurns = Math.max(playerEffects.skillBuffTurns, config.turns);
