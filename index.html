@@ -923,7 +923,7 @@ function getPassiveModifiers(){
   const tier30 = subclassState.tier30;
   for(const passive of getUnlockedPassiveSkills()){
     if(passive.type === "warrior_flat_reduction"){
-      base.flatReduction += Math.floor(1.2 * player.level);
+      base.flatReduction += Math.floor(1 * player.level);
     }
     if(passive.type === "warrior_enemy_miss"){
       base.enemyMissChance += 0.05;
@@ -1515,11 +1515,9 @@ function dungeonAttack(){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  if(player.class !== "Mago"){
-    const manaRecovered = regenMana();
-    if(manaRecovered > 0){
-      log(`Voce recuperou ${manaRecovered} de mana.`);
-    }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
   updateUI();
   sendDungeonActionPayload({ damage: result.damage, message: result.message });
@@ -1544,11 +1542,9 @@ function dungeonUseSkill(index){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  if(player.class !== "Mago"){
-    const manaRecovered = regenMana();
-    if(manaRecovered > 0){
-      log(`Voce recuperou ${manaRecovered} de mana.`);
-    }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
   updateUI();
   sendDungeonActionPayload({ damage: result.damage, message: result.message, ignoreArmor: !!skillInfo.ignoreArmor, freezeNext: !!result.freezeApplied });
@@ -1746,7 +1742,7 @@ function getCampEntries(){
 function getPassiveStatusDescription(skill){
   const subclassState = getPlayerSubclassState();
   if(skill.type === "warrior_flat_reduction"){
-    return `${skill.name}: reduz ${Math.floor(1.2 * player.level)} de dano por ataque recebido.`;
+    return `${skill.name}: reduz ${Math.floor(1 * player.level)} de dano por ataque recebido.`;
   }
   if(skill.type === "warrior_enemy_miss"){
     return `${skill.name}: concede 5% de chance do inimigo errar ao atacar voce.`;
@@ -3287,11 +3283,9 @@ async function attack(){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  if(player.class !== "Mago"){
-    const manaRecovered = regenMana();
-    if(manaRecovered > 0){
-      log(`Voce recuperou ${manaRecovered} de mana.`);
-    }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
   updateUI();
   await wait(320);
@@ -3332,11 +3326,9 @@ async function useSkill(index){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  if(player.class !== "Mago"){
-    const manaRecovered = regenMana();
-    if(manaRecovered > 0){
-      log(`Voce recuperou ${manaRecovered} de mana.`);
-    }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
   updateUI();
   await wait(320);
@@ -3353,11 +3345,9 @@ async function passTurn(){
     player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
     log(`Voce recuperou ${healed} de vida.`);
   }
-  if(player.class !== "Mago"){
-    const manaRecovered = regenMana();
-    if(manaRecovered > 0){
-      log(`Voce recuperou ${manaRecovered} de mana.`);
-    }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
   updateUI();
   await wait(320);
