@@ -1059,7 +1059,7 @@ function getPassiveModifiers(){
       base.flatReduction += Math.floor(1 * player.level);
     }
     if(passive.type === "warrior_enemy_miss"){
-      base.enemyMissChance += 0.05;
+      base.enemyMissChance += 0.15;
     }
     if(passive.type === "bonus_xp"){
       base.xpBonus += 0.1;
@@ -1802,8 +1802,8 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const damage = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 54
-        ? 30 + Math.floor(1.1 * (skillPower + attack))
-        : 30 + Math.floor(1.1 * skillPower);
+        ? 30 + Math.floor(1.2 * (skillPower + attack))
+        : 30 + Math.floor(1.2 * skillPower);
       return { ...skill, cost: 30 + arcanistExtraCost, damage, description: `${skill.name}: consome ${30 + arcanistExtraCost} MP e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_fireball"){
@@ -1830,7 +1830,7 @@ function getSkillInfo(){
       return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
-      const damage = Math.floor(1.1 * skillPower);
+      const damage = Math.floor(1.3 * skillPower);
       const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
       const critChance = 0.1;
       return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
@@ -1878,7 +1878,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: reduz ${Math.floor(1 * player.level)} de dano por ataque recebido.`;
   }
   if(skill.type === "warrior_enemy_miss"){
-    return `${skill.name}: concede 5% de chance do inimigo errar ao atacar voce.`;
+    return `${skill.name}: concede 15% de chance do inimigo errar ao atacar voce.`;
   }
   if(skill.type === "warrior_first_skill_free"){
     return `${skill.name}: a primeira habilidade usada em cada combate nao custa mana.`;
