@@ -1779,8 +1779,8 @@ function getSkillInfo(){
       return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano usando sua vida maxima.` };
     }
     if(skill.type === "warrior_swift_strikes"){
-      const damage = attack * 2 + skillPower;
-      return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano em cortes sucessivos.` };
+      const damage = Math.floor(attack * 1.5) + skillPower;
+      return { ...skill, cost: 20, damage, description: `${skill.name}: consome 20 MP e causa ${damage} de dano em cortes sucessivos.` };
     }
     if(skill.type === "warrior_regen"){
       const turns = subclassState.tier30 === "brutamontes" && player.level >= 48 ? 5 : 3;
@@ -3098,7 +3098,12 @@ function updateUI(){
     ? ""
     : `
     <h3>Inventario</h3>
-    ${player.inventory.length ? `<div class="inventory-list">${player.inventory.map(item => {
+    ${player.inventory.length ? `<div class="inventory-list">${[...player.inventory].sort((a, b) => {
+      const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : 2;
+      const priorityDiff = getInventoryPriority(a) - getInventoryPriority(b);
+      if(priorityDiff !== 0){ return priorityDiff; }
+      return a.name.localeCompare(b.name, "pt-BR");
+    }).map(item => {
       const rarityInfo = item.rarity ? getRarityInfo(item.rarity) : null;
       const quantityLine = item.qty ? `<span class="lock-note">Quantidade: ${item.qty}</span><br>` : "";
       const rarityLine = rarityInfo ? `<span class="${rarityInfo.cssClass}">${rarityInfo.label}</span><br>` : "";
