@@ -59,8 +59,11 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .boss-btn{background:#8b2f2f;color:#fff}
 .lock-note{font-size:13px;color:#d1d1d1}
 .bar{height:20px;background:#555;border-radius:10px;overflow:hidden;margin:5px 0;position:relative}
+.bar.small{height:9px;background:#494949}
 .fill{height:100%;transition:width .28s ease;position:relative;z-index:2}
-.shield-fill{position:absolute;right:0;top:0;height:100%;background:#9e9e9e;opacity:.75;transition:width .28s ease;z-index:1}
+.shield-fill{height:100%;background:#aeb5bd;transition:width .28s ease}
+.shield-row{margin-bottom:6px}
+.shield-label{font-size:12px;color:#d9d9d9}
 .hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
 #log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
 .action-btn{position:relative}
@@ -262,10 +265,21 @@ function createDefaultPlayerEffects(){
   return {
     attackBuffTurns: 0,
     attackBuffAmount: 0,
+    attackBuffPercent: 0,
     skillBuffTurns: 0,
     skillBuffAmount: 0,
+    skillBuffPercent: 0,
     precisionTurns: 0,
     precisionBonus: 0,
+    guaranteedHitTurns: 0,
+    enemyMissBonusTurns: 0,
+    enemyMissBonus: 0,
+    regenTurns: 0,
+    regenPercent: 0,
+    firstSkillFreeAvailable: false,
+    firstDamageSkillBoostAvailable: false,
+    damageDoubleTurns: 0,
+    damageDoubleChanceBonus: 0,
     shieldValue: 0,
     shieldTurns: 0,
     flatReduction: 0,
@@ -282,7 +296,12 @@ function createDungeonMultiplayerState(){
     connections: {},
     party: {},
     actionLockedUntil: 0,
-    enemyAttackTimer: null
+    enemyAttackTimer: null,
+    turnOrder: [],
+    turnIndex: 0,
+    round: 1,
+    enemySkipTurn: false,
+    battleActive: false
   };
 }
 
@@ -307,6 +326,10 @@ const enemySprites = {
   "Golem de Brasa": "&#x1FAA8;",
   "Fenix Sombria": "&#x1F985;",
   "Draco Magmatico": "&#x1F525;",
+  "Cavaleiro Abissal": "&#x1F5E1;&#xFE0F;",
+  "Lamia do Eclipse": "&#x1F9DC;",
+  "Colosso do Vazio": "&#x1F47E;",
+  "Arauto do Vazio": "&#x1F608;",
   "Carcereiro Abissal": "&#x26D3;&#xFE0F;",
   "Aracnida Rainha": "&#x1F578;&#xFE0F;",
   "Devorador do Eco": "&#x1F479;"
@@ -317,64 +340,19 @@ const classes = {
     hp: 140,
     mp: 60,
     attack: 20,
-    growth: { hp: 40, mp: 10, attack: 4 },
-    activeSkills: [
-      { level: 1, name: "Recuperar Folego", type: "heal_percent", value: 0.22, cost: 20, description: "Recupera parte da vida maxima." },
-      { level: 10, name: "Postura de Ferro", type: "shield", stat: "hp", value: 0.26, cost: 24, description: "Cria um escudo baseado na vida maxima ate ser destruido." },
-      { level: 20, name: "Ruptura Titanica", type: "damage_maxhp_percent", value: 0.34, cost: 32, description: "Ataca usando sua propria vida maxima como referencia." },
-      { level: 30, name: "Grito de Guerra", type: "battle_cry", turns: 5, cost: 40, description: "Aumenta o dano de ataque e habilidade com base no nivel." }
-    ],
-    passiveSkills: [
-      { level: 5, name: "Corpo de Aco", type: "flat_reduction_scale", base: 1, scale: 0.25, description: "Reduz dano recebido em valor fixo conforme seu nivel." },
-      { level: 15, name: "Folego de Guerra", type: "turn_heal_percent", value: 0.03, description: "Recupera vida ao final de cada turno seu." },
-      { level: 25, name: "Pele de Ferro", type: "reflect_percent", value: 0.1, description: "Reflete parte do dano recebido de volta ao inimigo." }
-    ],
-    subclasses: [
-      { id: "guardiao", name: "Guardiao", description: "Mais resistencia e postura defensiva.", hp: 400, mp: 20, attack: 4, manaRegen: 0, skillPower: 4, damageReduction: 0.5 },
-      { id: "berserker", name: "Berserker", description: "Mais dano e habilidades agressivas.", hp: 40, mp: 0, attack: 40, manaRegen: 0, skillPower: 40, damageReduction: 0 }
-    ]
+    growth: { hp: 40, mp: 10, attack: 4 }
   },
   Arqueiro: {
     hp: 120,
     mp: 80,
     attack: 18,
-    growth: { hp: 26, mp: 18, attack: 6 },
-    activeSkills: [
-      { level: 1, name: "Mirar", type: "aim_buff", turns: 3, cost: 18, description: "Aumenta a precisao e reforca seus disparos." },
-      { level: 10, name: "Passo Leve", type: "mana_percent_free", value: 0.18, cost: 12, description: "Recupera mana sem encerrar seu turno." },
-      { level: 20, name: "Rajada de Flechas", type: "triple_shot", hits: 3, cost: 34, description: "Dispara tres flechas usando seu ataque basico." },
-      { level: 30, name: "Olho do Eclipse", type: "damage", value: 82, cost: 42, description: "Disparo maximo de alta precisao." }
-    ],
-    passiveSkills: [
-      { level: 5, name: "Bolsa do Cacador", type: "coin_bonus", value: 0.1, description: "Aumenta as moedas obtidas em batalha." },
-      { level: 15, name: "Olhos Agucados", type: "bonus_attack_scale", base: 2, scale: 0.2, description: "Aumenta seu dano base com o nivel." },
-      { level: 25, name: "Passos Silenciosos", type: "mana_regen_percent", value: 0.05, description: "Aumenta a regeneracao total de mana para 15%." }
-    ],
-    subclasses: [
-      { id: "cacador", name: "Cacador", description: "Mais dano e mais saque nas batalhas.", hp: 50, mp: 0, attack: 60, manaRegen: 0, skillPower: 40, coinBonus: 0.2 },
-      { id: "atirador_arcano", name: "Atirador Arcano", description: "Mais mana e habilidades mais frequentes.", hp: 0, mp: 60, attack: 30, manaRegen: 4, skillPower: 60, skillCostReduction: 0.18 }
-    ]
+    growth: { hp: 26, mp: 18, attack: 6 }
   },
   Mago: {
     hp: 100,
     mp: 100,
     attack: 16,
-    growth: { hp: 10, mp: 26, attack: 3 },
-    activeSkills: [
-      { level: 1, name: "Bola de Fogo", type: "fireball", value: 35, cost: 30, description: "Lanca uma esfera de fogo destrutiva." },
-      { level: 10, name: "Concentracao", type: "mana_percent", value: 0.3, cost: 18, description: "Recupera mana com base no maximo atual." },
-      { level: 20, name: "Barreira Mistica", type: "shield", stat: "mp", value: 0.32, turns: 2, cost: 28, description: "Ergue um escudo magico por dois turnos." },
-      { level: 30, name: "Nova Celestial", type: "damage_and_drain_mana", value: 112, manaDrainPercent: 0.1, cost: 50, description: "Causa grande dano e drena mana do inimigo." }
-    ],
-    passiveSkills: [
-      { level: 5, name: "Fluxo Arcano", type: "mana_regen_percent", value: 0.05, description: "Aumenta a regeneracao total de mana para 15%." },
-      { level: 15, name: "Transbordamento", type: "skill_power_scale", base: 4, scale: 0.35, extra: { skillCostIncrease: 0.12 }, description: "Aumenta o dano das habilidades e tambem seus custos." },
-      { level: 25, name: "Mana e Vida", type: "mana_to_life_percent", value: 0.1, description: "Converte parte da mana maxima em vida maxima." }
-    ],
-    subclasses: [
-      { id: "feiticeiro", name: "Feiticeiro", description: "Mais dano magico e mana maxima.", hp: 0, mp: 100, attack: 10, manaRegen: 30, skillPower: 100 },
-      { id: "invocador", name: "Invocador", description: "Mais sobrevivencia e regeneracao arcana.", hp: 100, mp: 180, attack: 5, manaRegen: 60, skillPower: 60 }
-    ]
+    growth: { hp: 10, mp: 26, attack: 3 }
   }
 };
 
@@ -384,9 +362,9 @@ const regions = {
     description: "Criaturas selvagens e emboscadas leves.",
     boss: { name: "Ent Ancestral", level: 10, hp: 170, attack: 15, mp: 60, skillName: "Raizes Esmagadoras", skillDamage: 36, skillCost: 18 },
     enemies: [
-      { name: "Lobo Sombrio", level: 1, weight: 72, hp: 70, attack: 8 },
-      { name: "Goblin", level: 3, weight: 20, hp: 82, attack: 9 },
-      { name: "Aranha Gigante", level: 8, weight: 8, hp: 96, attack: 11 }
+      { name: "Lobo Sombrio", level: 1, weight: 78, hp: 70, attack: 8 },
+      { name: "Goblin", level: 3, weight: 16, hp: 82, attack: 9 },
+      { name: "Aranha Gigante", level: 8, weight: 6, hp: 96, attack: 11 }
     ]
   },
   Caverna: {
@@ -394,9 +372,9 @@ const regions = {
     description: "Passagens estreitas cheias de monstros resistentes.",
     boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
     enemies: [
-      { name: "Morcego de Pedra", level: 11, weight: 70, hp: 90, attack: 10 },
-      { name: "Esqueleto Mineiro", level: 13, weight: 20, hp: 102, attack: 11 },
-      { name: "Slime Toxico", level: 18, weight: 10, hp: 120, attack: 12 }
+      { name: "Morcego de Pedra", level: 11, weight: 78, hp: 90, attack: 10 },
+      { name: "Esqueleto Mineiro", level: 13, weight: 16, hp: 102, attack: 11 },
+      { name: "Slime Toxico", level: 18, weight: 6, hp: 120, attack: 12 }
     ]
   },
   Ruinas: {
@@ -404,42 +382,204 @@ const regions = {
     description: "Restos antigos guardados por inimigos mais agressivos.",
     boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
     enemies: [
-      { name: "Sentinela Quebrada", level: 21, weight: 70, hp: 128, attack: 13 },
-      { name: "Cultista Perdido", level: 23, weight: 20, hp: 140, attack: 15 },
-      { name: "Fantasma Antigo", level: 28, weight: 10, hp: 165, attack: 16 }
+      { name: "Sentinela Quebrada", level: 21, weight: 78, hp: 128, attack: 13 },
+      { name: "Cultista Perdido", level: 23, weight: 16, hp: 140, attack: 15 },
+      { name: "Fantasma Antigo", level: 28, weight: 6, hp: 165, attack: 16 }
     ]
   },
   Pantano: {
     minLevel: 22,
     description: "Neblina espessa, criaturas venenosas e terreno traiçoeiro.",
-    boss: { name: "Hidra do Lodo", level: 36, hp: 420, attack: 34, mp: 110, skillName: "Sopro Corrosivo", skillDamage: 88, skillCost: 30 },
+    boss: { name: "Hidra do Lodo", level: 40, hp: 470, attack: 36, mp: 120, skillName: "Sopro Corrosivo", skillDamage: 96, skillCost: 32 },
     enemies: [
-      { name: "Sapo Colossal", level: 24, weight: 70, hp: 150, attack: 16 },
-      { name: "Bruxa do Brejo", level: 27, weight: 20, hp: 165, attack: 18 },
-      { name: "Serpente do Lodo", level: 32, weight: 10, hp: 188, attack: 21 }
+      { name: "Sapo Colossal", level: 31, weight: 78, hp: 176, attack: 19 },
+      { name: "Bruxa do Brejo", level: 33, weight: 16, hp: 190, attack: 21 },
+      { name: "Serpente do Lodo", level: 38, weight: 6, hp: 228, attack: 25 }
     ]
   },
   Vulcao: {
     minLevel: 28,
     description: "Um reino de cinzas, magma e monstros forjados no fogo.",
-    boss: { name: "Draco Magmatico", level: 45, hp: 520, attack: 42, mp: 140, skillName: "Explosao Vulcanica", skillDamage: 112, skillCost: 36 },
+    boss: { name: "Draco Magmatico", level: 50, hp: 610, attack: 48, mp: 150, skillName: "Explosao Vulcanica", skillDamage: 124, skillCost: 38 },
     enemies: [
-      { name: "Salamandra Rubra", level: 30, weight: 70, hp: 180, attack: 20 },
-      { name: "Golem de Brasa", level: 34, weight: 20, hp: 205, attack: 23 },
-      { name: "Fenix Sombria", level: 39, weight: 10, hp: 236, attack: 26 }
+      { name: "Salamandra Rubra", level: 41, weight: 78, hp: 236, attack: 27 },
+      { name: "Golem de Brasa", level: 43, weight: 16, hp: 255, attack: 30 },
+      { name: "Fenix Sombria", level: 48, weight: 6, hp: 300, attack: 34 }
+    ]
+  },
+  Abismo: {
+    minLevel: 36,
+    description: "Um dominio de ecos sombrios, aco amaldiçoado e criaturas do vazio.",
+    boss: { name: "Arauto do Vazio", level: 60, hp: 760, attack: 58, mp: 180, skillName: "Dilacerar Realidade", skillDamage: 156, skillCost: 44 },
+    enemies: [
+      { name: "Cavaleiro Abissal", level: 51, weight: 78, hp: 312, attack: 35 },
+      { name: "Lamia do Eclipse", level: 53, weight: 16, hp: 330, attack: 38 },
+      { name: "Colosso do Vazio", level: 58, weight: 6, hp: 388, attack: 42 }
     ]
   }
 };
 
 const dungeonData = {
   minLevel: 12,
-  description: "Uma investida em grupo com dois aliados contra monstros mais resistentes.",
+  description: "Uma investida online para ate 3 jogadores, com turnos em ordem e derrota se qualquer aliado cair.",
   enemies: [
     { name: "Carcereiro Abissal", level: 18, weight: 58, hp: 190, attack: 18 },
     { name: "Aracnida Rainha", level: 24, weight: 28, hp: 240, attack: 22 },
     { name: "Devorador do Eco", level: 32, weight: 14, hp: 310, attack: 27 }
   ]
 };
+
+const subclassChoicesByClass = {
+  Guerreiro: {
+    tier30: [
+      { id: "brutamontes", name: "Brutamontes", description: "Troca tecnica por massa bruta e resistencia esmagadora.", bonusHp: 200, bonusAttack: 0, skillPower: 0 },
+      { id: "espadachim", name: "Espadachim", description: "Refina tecnica e acelera seus golpes com a espada.", bonusHp: 0, bonusAttack: 20, skillPower: 20 }
+    ],
+    tier60: {
+      brutamontes: [
+        { id: "paladino", name: "Paladino", description: "Uma muralha sagrada de vida maxima.", bonusHp: 600, bonusAttack: 0, skillPower: 0 },
+        { id: "berserker", name: "Berserker", description: "Resistencia brutal com furia ofensiva.", bonusHp: 200, bonusAttack: 35, skillPower: 35 }
+      ],
+      espadachim: [
+        { id: "samurai", name: "Samurai", description: "Equilibrio entre disciplina, vida e cortes letais.", bonusHp: 200, bonusAttack: 25, skillPower: 25 },
+        { id: "ninja", name: "Ninja", description: "Golpes rapidos e precisos focados em dano puro.", bonusHp: 0, bonusAttack: 40, skillPower: 40 }
+      ]
+    }
+  },
+  Mago: {
+    tier30: [
+      { id: "elementalista", name: "Elementalista", description: "Domina os elementos e reforca o poder bruto das magias.", bonusHp: 0, bonusMp: 100, bonusAttack: 0, skillPower: 20 },
+      { id: "arcanista", name: "Arcanista", description: "Amplia os reservatorios arcanos e mistura tecnica com mana.", bonusHp: 0, bonusMp: 300, bonusAttack: 10, skillPower: 10 }
+    ],
+    tier60: {
+      elementalista: [
+        { id: "mago_incendiario", name: "Mago Incendiario", description: "Canaliza fogo puro em cada feitiço.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 60 },
+        { id: "mago_frigido", name: "Mago Frigido", description: "Frio absoluto com grande reserva arcana.", bonusHp: 0, bonusMp: 300, bonusAttack: 0, skillPower: 35 }
+      ],
+      arcanista: [
+        { id: "arquimago", name: "Arquimago", description: "Mestria equilibrada entre mana, ataque e poder de habilidade.", bonusHp: 0, bonusMp: 200, bonusAttack: 30, skillPower: 40 },
+        { id: "corrompido", name: "Corrompido", description: "Mana absurda alimentando um estilo arcano instavel.", bonusHp: 0, bonusMp: 600, bonusAttack: 15, skillPower: 25 }
+      ]
+    }
+  },
+  Arqueiro: {
+    tier30: [
+      { id: "atirador", name: "Atirador", description: "Precisao refinada com mais mana para tecnicas de longa distancia.", bonusHp: 0, bonusMp: 40, bonusAttack: 10, skillPower: 10 },
+      { id: "cacador", name: "Cacador", description: "Sobrevivencia em campo e golpes mais pesados.", bonusHp: 100, bonusMp: 0, bonusAttack: 15, skillPower: 0 }
+    ],
+    tier60: {
+      atirador: [
+        { id: "atirador_arcano", name: "Atirador Arcano", description: "Une flechas e magia em disparos tecnicos.", bonusHp: 0, bonusMp: 120, bonusAttack: 0, skillPower: 40 },
+        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em dano puro e letal.", bonusHp: 0, bonusMp: 0, bonusAttack: 30, skillPower: 30 }
+      ],
+      cacador: [
+        { id: "espreitador", name: "Espreitador", description: "Caçador agil com bom equilibrio entre mana e dano.", bonusHp: 0, bonusMp: 40, bonusAttack: 30, skillPower: 15 },
+        { id: "guarda_florestal", name: "Guarda Florestal", description: "Resistente, preciso e acostumado a longas jornadas.", bonusHp: 200, bonusMp: 0, bonusAttack: 25, skillPower: 20 }
+      ]
+    }
+  }
+};
+
+function getPlayerSubclassState(targetPlayer = player){
+  if(!targetPlayer.subclassChoices){
+    targetPlayer.subclassChoices = { tier30: null, tier60: null };
+  }
+  return targetPlayer.subclassChoices;
+}
+
+function getTier30ChoiceDef(className, choiceId){
+  return (subclassChoicesByClass[className]?.tier30 || []).find(option => option.id === choiceId) || null;
+}
+
+function getTier60ChoiceDef(className, tier30Id, choiceId){
+  return (subclassChoicesByClass[className]?.tier60?.[tier30Id] || []).find(option => option.id === choiceId) || null;
+}
+
+function getChosenSubclassDefs(targetPlayer = player){
+  const subclassState = getPlayerSubclassState(targetPlayer);
+  const tier30 = subclassState.tier30 ? getTier30ChoiceDef(targetPlayer.class, subclassState.tier30) : null;
+  const tier60 = tier30 && subclassState.tier60 ? getTier60ChoiceDef(targetPlayer.class, tier30.id, subclassState.tier60) : null;
+  return [tier30, tier60].filter(Boolean);
+}
+
+function buildWarriorTrees(){
+  const subclassState = getPlayerSubclassState();
+  const tier30 = subclassState.tier30;
+  const replacementUnlocked = player.level >= 36;
+  const activeSkills = [
+    { level: tier30 === "brutamontes" && replacementUnlocked ? 36 : tier30 === "espadachim" && replacementUnlocked ? 36 : 1, id: tier30 === "brutamontes" && replacementUnlocked ? "esmurrar" : tier30 === "espadachim" && replacementUnlocked ? "golpes_velozes" : "brandir_espada", name: tier30 === "brutamontes" && replacementUnlocked ? "Esmurrar" : tier30 === "espadachim" && replacementUnlocked ? "Golpes Velozes" : "Brandir Espada", type: tier30 === "brutamontes" && replacementUnlocked ? "warrior_smash" : tier30 === "espadachim" && replacementUnlocked ? "warrior_swift_strikes" : "warrior_brandish" },
+    { level: 12, id: "estamina_inabalavel", name: "Estamina Inabalavel", type: "warrior_regen" },
+    { level: 24, id: "firmar", name: "Firmar", type: "warrior_shield" }
+  ];
+  if(tier30 === "brutamontes" && player.level >= 54){
+    activeSkills.push({ level: 54, id: "ruptura_titanica", name: "Ruptura Titanica", type: "warrior_titan_break" });
+  }
+  if(tier30 === "espadachim" && player.level >= 54){
+    activeSkills.push({ level: 54, id: "romper_armadura", name: "Romper Armadura", type: "warrior_armor_break" });
+  }
+  const passiveSkills = [
+    { level: tier30 === "espadachim" && player.level >= 42 ? 42 : 6, id: tier30 === "espadachim" && player.level >= 42 ? "veloz" : "vontade_de_ferro", name: tier30 === "espadachim" && player.level >= 42 ? "Veloz" : "Vontade de Ferro", type: tier30 === "espadachim" && player.level >= 42 ? "warrior_enemy_miss" : "warrior_flat_reduction" },
+    { level: 18, id: "mana_primeiro_golpe", name: "Mana?", type: "warrior_first_skill_free" }
+  ];
+  if(tier30 === "brutamontes"){
+    passiveSkills.push({ level: 42, id: "treinamento_intensivo", name: "Treinamento Intensivo", type: "bonus_xp" });
+  }
+  return { activeSkills, passiveSkills };
+}
+
+function buildMageTrees(){
+  const subclassState = getPlayerSubclassState();
+  const tier30 = subclassState.tier30;
+  const activeSkills = [
+    tier30 === "elementalista" && player.level >= 36
+      ? { level: 36, id: "bola_de_fogo", name: "Bola de Fogo", type: "mage_fireball" }
+      : { level: 12, id: "explosao_de_mana", name: "Explosao de Mana", type: "mage_mana_burst" }
+  ];
+  if(tier30 === "arcanista" && player.level >= 36){
+    activeSkills.push({ level: 36, id: "concentracao", name: "Concentracao", type: "mage_concentration" });
+  }
+  activeSkills.push({ level: 24, id: "escudo_de_mana", name: "Escudo de Mana", type: "mage_mana_shield" });
+  if(tier30 === "elementalista" && player.level >= 48){
+    activeSkills.push({ level: 48, id: "congelar", name: "Congelar", type: "mage_freeze" });
+  }
+  return {
+    activeSkills,
+    passiveSkills: [
+      { level: 6, id: "estudo_arduo", name: "Estudo Arduo", type: "mage_skill_level_bonus" },
+      { level: tier30 === "elementalista" && player.level >= 54 ? 54 : 18, id: tier30 === "elementalista" && player.level >= 54 ? "canhao_de_vidro" : "preciosa_mana", name: tier30 === "elementalista" && player.level >= 54 ? "Canhao de Vidro" : "Preciosa Mana", type: tier30 === "elementalista" && player.level >= 54 ? "mage_first_damage_skill_boost" : "mage_precious_mana" },
+      { level: 25, id: "mana_e_vida", name: "Mana e Vida", type: "mage_mana_to_life" }
+    ]
+  };
+}
+
+function buildArcherTrees(){
+  const subclassState = getPlayerSubclassState();
+  const tier30 = subclassState.tier30;
+  const activeSkills = [
+    { level: 1, id: "mirar", name: "Mirar", type: "archer_focus" },
+    { level: tier30 === "atirador" && player.level >= 36 ? 36 : 12, id: "headshot", name: "Headshot", type: "archer_headshot" },
+    { level: 24, id: "esconder_se", name: "Esconder-se", type: "archer_hide" }
+  ];
+  if(tier30 === "cacador" && player.level >= 36){
+    activeSkills.push({ level: 36, id: "rajada_de_flechas", name: "Rajada de Flechas", type: "archer_barrage" });
+  }
+  const passiveSkills = [
+    { level: tier30 === "atirador" && player.level >= 42 ? 42 : 6, id: tier30 === "atirador" && player.level >= 42 ? "passos_silenciosos" : "passos_leves", name: tier30 === "atirador" && player.level >= 42 ? "Passos Silenciosos" : "Passos Leves", type: tier30 === "atirador" && player.level >= 42 ? "archer_mana_regen_set" : "archer_enemy_miss" },
+    { level: 18, id: "pulso_firme", name: "Pulso Firme", type: "archer_attack_level_bonus" }
+  ];
+  if(tier30 === "cacador" && player.level >= 42){
+    passiveSkills.push({ level: 42, id: "bolsos_cheios", name: "Bolsos Cheios", type: "coin_bonus" });
+  }
+  return { activeSkills, passiveSkills };
+}
+
+function getClassTrees(){
+  if(!player){ return { activeSkills: [], passiveSkills: [] }; }
+  const trees = player.class === "Guerreiro" ? buildWarriorTrees() : player.class === "Mago" ? buildMageTrees() : buildArcherTrees();
+  trees.activeSkills.sort((a, b) => a.level - b.level);
+  trees.passiveSkills.sort((a, b) => a.level - b.level);
+  return trees;
+}
 
 function selectClass(name){
   const base = classes[name];
@@ -455,8 +595,8 @@ function selectClass(name){
     attack: base.attack,
     baseAttack: base.attack,
     growth: base.growth,
-    activeSkills: base.activeSkills,
-    passiveSkills: base.passiveSkills,
+    activeSkills: [],
+    passiveSkills: [],
     inventory: [],
     stats: {
       enemiesDefeated: 0,
@@ -489,7 +629,8 @@ function chooseWeightedEnemy(enemyList){
 function getEnemyStats(template){
   return {
     maxHp: template.hp + template.level * 18,
-    attack: template.attack + template.level * 2
+    attack: template.attack + template.level * 2,
+    armor: Math.max(0, Math.floor(template.level / 6) + (template.level >= 40 ? 1 : 0))
   };
 }
 
@@ -530,9 +671,16 @@ function normalizePlayerState(){
     deaths: 0
   };
   player.stats.invested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
-  player.subclass = player.subclass || null;
-  player.activeSkills = getCurrentClassData().activeSkills;
-  player.passiveSkills = getCurrentClassData().passiveSkills;
+  const legacySubclass = player.subclass?.id || player.subclass || null;
+  player.subclass = null;
+  const subclassState = getPlayerSubclassState(player);
+  if(legacySubclass && !subclassState.tier30){
+    if(getTier30ChoiceDef(player.class, legacySubclass)){
+      subclassState.tier30 = legacySubclass;
+    }
+  }
+  player.activeSkills = getClassTrees().activeSkills;
+  player.passiveSkills = getClassTrees().passiveSkills;
   playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
 }
 
@@ -562,15 +710,23 @@ function getCurrentClassData(){
 }
 
 function getSubclassChoices(){
-  return getCurrentClassData().subclasses || [];
+  if(!player){ return []; }
+  const subclassState = getPlayerSubclassState();
+  if(player.level >= 30 && !subclassState.tier30){
+    return subclassChoicesByClass[player.class]?.tier30 || [];
+  }
+  if(player.level >= 60 && subclassState.tier30 && !subclassState.tier60){
+    return subclassChoicesByClass[player.class]?.tier60?.[subclassState.tier30] || [];
+  }
+  return [];
 }
 
 function getUnlockedActiveSkills(){
-  return (player.activeSkills || []).filter(skill => player.level >= skill.level);
+  return getClassTrees().activeSkills.filter(skill => player.level >= skill.level);
 }
 
 function getUnlockedPassiveSkills(){
-  return (player.passiveSkills || []).filter(skill => player.level >= skill.level);
+  return getClassTrees().passiveSkills.filter(skill => player.level >= skill.level);
 }
 
 function getPassiveModifiers(){
@@ -580,40 +736,59 @@ function getPassiveModifiers(){
     bonusAttack: 0,
     manaRegen: 0,
     manaRegenPercent: 0,
+    manaRegenPercentSet: null,
     damageReduction: 0,
     coinBonus: 0,
     skillPower: 0,
     flatReduction: 0,
     reflectPercent: 0,
     turnHealPercent: 0,
-    skillCostIncrease: 0
+    skillCostIncrease: 0,
+    enemyMissChance: 0,
+    xpBonus: 0,
+    preciousMana: false,
+    manaToLifePercent: 0
   };
+  const subclassState = getPlayerSubclassState();
+  const tier30 = subclassState.tier30;
   for(const passive of getUnlockedPassiveSkills()){
-    if(passive.type === "bonus_hp"){ base.bonusHp += passive.value; }
-    if(passive.type === "bonus_mp"){ base.bonusMp += passive.value; }
-    if(passive.type === "bonus_attack"){ base.bonusAttack += passive.value; }
-    if(passive.type === "mana_regen"){ base.manaRegen += passive.value; }
-    if(passive.type === "mana_regen_percent"){ base.manaRegenPercent += passive.value; }
-    if(passive.type === "damage_reduction"){ base.damageReduction += passive.value; }
-    if(passive.type === "coin_bonus"){ base.coinBonus += passive.value; }
-    if(passive.type === "skill_power"){ base.skillPower += passive.value; }
-    if(passive.type === "flat_reduction_scale"){ base.flatReduction += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0)); }
-    if(passive.type === "reflect_percent"){ base.reflectPercent += passive.value; }
-    if(passive.type === "turn_heal_percent"){ base.turnHealPercent += passive.value; }
-    if(passive.type === "bonus_attack_scale"){ base.bonusAttack += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0)); }
-    if(passive.type === "skill_power_scale"){
-      base.skillPower += (passive.base || 0) + Math.floor(player.level * (passive.scale || 0));
-      base.skillCostIncrease += passive.extra?.skillCostIncrease || 0;
+    if(passive.type === "warrior_flat_reduction"){
+      base.flatReduction += Math.floor(1.2 * player.level);
+    }
+    if(passive.type === "warrior_enemy_miss"){
+      base.enemyMissChance += 0.05;
+    }
+    if(passive.type === "bonus_xp"){
+      base.xpBonus += 0.1;
+    }
+    if(passive.type === "mage_skill_level_bonus"){
+      const factor = tier30 === "elementalista" && player.level >= 42 ? 2.4 : 2;
+      base.skillPower += Math.floor(factor * player.level);
+    }
+    if(passive.type === "mage_precious_mana"){
+      base.preciousMana = true;
+    }
+    if(passive.type === "archer_enemy_miss"){
+      base.enemyMissChance += tier30 === "cacador" && player.level >= 54 ? 0.1 : 0.05;
+    }
+    if(passive.type === "archer_mana_regen_set"){
+      base.manaRegenPercentSet = 0.16;
+    }
+    if(passive.type === "archer_attack_level_bonus"){
+      base.bonusAttack += Math.floor(0.4 * player.level);
+    }
+    if(passive.type === "coin_bonus"){
+      base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
+    }
+    if(passive.id === "mana_e_vida"){
+      base.manaToLifePercent += 0.1;
     }
   }
-  if(player.subclass){
-    base.bonusHp += player.subclass.hp || 0;
-    base.bonusMp += player.subclass.mp || 0;
-    base.bonusAttack += player.subclass.attack || 0;
-    base.manaRegen += player.subclass.manaRegen || 0;
-    base.damageReduction += player.subclass.damageReduction || 0;
-    base.coinBonus += player.subclass.coinBonus || 0;
-    base.skillPower += player.subclass.skillPower || 0;
+  for(const subclass of getChosenSubclassDefs()){
+    base.bonusHp += subclass.bonusHp || 0;
+    base.bonusMp += subclass.bonusMp || 0;
+    base.bonusAttack += subclass.bonusAttack || 0;
+    base.skillPower += subclass.skillPower || 0;
   }
   for(const slot of equipmentSlots){
     const item = player.equipment?.[slot];
@@ -623,16 +798,19 @@ function getPassiveModifiers(){
     base.bonusAttack += item.bonusAttack || 0;
     base.skillPower += item.skillPower || 0;
   }
-  for(const passive of getUnlockedPassiveSkills()){
-    if(passive.type === "mana_to_life_percent"){
-      base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * passive.value);
-    }
+  if(player.class === "Mago" && player.level >= 25){
+    base.manaToLifePercent = 0.1;
+  }
+  if(base.manaToLifePercent > 0){
+    base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.manaToLifePercent);
   }
   return base;
 }
 
 function needsSubclassChoice(){
-  return player.level >= 30 && !player.subclass;
+  if(!player){ return false; }
+  const subclassState = getPlayerSubclassState();
+  return (player.level >= 30 && !subclassState.tier30) || (player.level >= 60 && !!subclassState.tier30 && !subclassState.tier60);
 }
 
 function getTrophyCompletion(){
@@ -690,6 +868,14 @@ function getDungeonPlayerProfile(){
   };
 }
 
+function getDungeonCurrentTurnId(){
+  return dungeonMultiplayer.turnOrder[dungeonMultiplayer.turnIndex] || null;
+}
+
+function isMyDungeonTurn(){
+  return isDungeonConnected() && dungeonMultiplayer.battleActive && getDungeonCurrentTurnId() === dungeonMultiplayer.peer?.id;
+}
+
 function syncDungeonEnemyState(sharedEnemy){
   if(currentMode !== "dungeon"){ return; }
   enemy = sharedEnemy ? { ...sharedEnemy } : null;
@@ -712,7 +898,12 @@ function broadcastDungeonState(){
     type: "state",
     roomCode: dungeonMultiplayer.roomCode,
     party: dungeonMultiplayer.party,
-    enemy: enemy ? { ...enemy } : null
+    enemy: enemy ? { ...enemy } : null,
+    turnOrder: [...dungeonMultiplayer.turnOrder],
+    turnIndex: dungeonMultiplayer.turnIndex,
+    round: dungeonMultiplayer.round,
+    enemySkipTurn: !!dungeonMultiplayer.enemySkipTurn,
+    battleActive: !!dungeonMultiplayer.battleActive
   });
 }
 
@@ -732,6 +923,14 @@ function handleDungeonPeerDisconnect(peerId){
   if(dungeonMultiplayer.party[peerId]){
     log(`${dungeonMultiplayer.party[peerId].name} saiu da sala da dungeon.`);
     delete dungeonMultiplayer.party[peerId];
+    dungeonMultiplayer.turnOrder = dungeonMultiplayer.turnOrder.filter(id => id !== peerId);
+    if(dungeonMultiplayer.turnIndex >= dungeonMultiplayer.turnOrder.length){
+      dungeonMultiplayer.turnIndex = 0;
+    }
+    if(dungeonMultiplayer.battleActive && dungeonMultiplayer.turnOrder.length < 2){
+      handleDungeonRaidDefeat("A incursao terminou porque o grupo se desfez.");
+      return;
+    }
     broadcastDungeonState();
     updateUI();
   }
@@ -770,9 +969,15 @@ function renderDungeonPartyList(){
 
 function getDungeonStatusText(){
   if(isDungeonHost()){
+    if(dungeonMultiplayer.battleActive && enemy){
+      return `Rodada ${dungeonMultiplayer.round}. Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}.`;
+    }
     return `Sala criada. Compartilhe o codigo ${dungeonMultiplayer.roomCode} com seus amigos.`;
   }
   if(isDungeonConnected()){
+    if(dungeonMultiplayer.battleActive && enemy){
+      return `Conectado a sala ${dungeonMultiplayer.roomCode}. Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}.`;
+    }
     return `Conectado a sala ${dungeonMultiplayer.roomCode}. Aguarde o host iniciar a incursao.`;
   }
   return "Crie uma sala ou entre com um codigo para jogar online com ate 2 amigos.";
@@ -890,22 +1095,33 @@ function handleDungeonHostMessage(connection, data){
     updateUI();
     return;
   }
+  if(data.type === "player_defeated"){
+    handleDungeonRaidDefeat(`${dungeonMultiplayer.party[connection.peer]?.name || "Um jogador"} caiu na dungeon. A incursao foi perdida.`);
+    return;
+  }
   if(data.type === "action"){
     if(data.player){
       dungeonMultiplayer.party[connection.peer] = data.player;
+    }
+    if(getDungeonCurrentTurnId() !== connection.peer || !dungeonMultiplayer.battleActive || !enemy){
+      return;
     }
     if(data.message){
       log(data.message);
       broadcastToDungeonPeers({ type: "log", message: data.message });
     }
     if(enemy && data.damage){
-      enemy.hp -= data.damage;
+      applyDamageToEnemy(data.damage, { ignoreArmor: !!data.ignoreArmor });
       displayState.enemyHp = enemy.hp;
+    }
+    if(enemy && data.freezeNext){
+      enemy.skipNextAttack = true;
     }
     if(enemy && enemy.hp <= 0){
       handleDungeonRaidVictory();
       return;
     }
+    advanceDungeonTurn();
     broadcastDungeonState();
     updateUI();
   }
@@ -924,8 +1140,17 @@ function handleDungeonGuestMessage(data){
     return;
   }
   if(data.type === "state"){
+    const wasBattleActive = dungeonMultiplayer.battleActive;
     dungeonMultiplayer.roomCode = data.roomCode || dungeonMultiplayer.roomCode;
     dungeonMultiplayer.party = data.party || {};
+    dungeonMultiplayer.turnOrder = data.turnOrder || [];
+    dungeonMultiplayer.turnIndex = data.turnIndex || 0;
+    dungeonMultiplayer.round = data.round || 1;
+    dungeonMultiplayer.enemySkipTurn = !!data.enemySkipTurn;
+    dungeonMultiplayer.battleActive = !!data.battleActive;
+    if(dungeonMultiplayer.battleActive && !wasBattleActive){
+      resetCombatEffects();
+    }
     syncDungeonEnemyState(data.enemy || null);
     updateUI();
     return;
@@ -940,7 +1165,19 @@ function handleDungeonGuestMessage(data){
   }
   if(data.type === "victory"){
     syncDungeonEnemyState(null);
+    dungeonMultiplayer.battleActive = false;
+    dungeonMultiplayer.turnOrder = [];
+    dungeonMultiplayer.turnIndex = 0;
     grantDungeonRaidRewards(data.rewards);
+    log(data.message);
+    updateUI();
+    return;
+  }
+  if(data.type === "defeat"){
+    dungeonMultiplayer.battleActive = false;
+    dungeonMultiplayer.turnOrder = [];
+    dungeonMultiplayer.turnIndex = 0;
+    syncDungeonEnemyState(null);
     log(data.message);
     updateUI();
     return;
@@ -955,19 +1192,17 @@ function startDungeonRaid(){
   if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || enemy){ return; }
   const template = chooseWeightedEnemy(dungeonData.enemies);
   enemy = createEnemyFromTemplate(template, false);
+  resetCombatEffects();
   displayState.enemyHp = enemy.hp;
   needsNewEnemy = false;
+  dungeonMultiplayer.turnOrder = Object.keys(dungeonMultiplayer.party);
+  dungeonMultiplayer.turnIndex = 0;
+  dungeonMultiplayer.round = 1;
+  dungeonMultiplayer.enemySkipTurn = false;
+  dungeonMultiplayer.battleActive = true;
   log(`A dungeon comecou contra ${enemy.name}!`);
   broadcastToDungeonPeers({ type: "log", message: `A dungeon comecou contra ${enemy.name}!` });
   broadcastDungeonState();
-  clearDungeonEnemyTimer();
-  dungeonMultiplayer.enemyAttackTimer = setInterval(() => {
-    if(!isDungeonHost() || currentMode !== "dungeon" || !enemy){ return; }
-    const damage = enemy.attack + Math.floor(Math.random() * 5);
-    const message = `${enemy.name} atingiu todo o grupo com ${damage} de dano.`;
-    processDungeonIncomingDamage(damage, message);
-    broadcastToDungeonPeers({ type: "enemy_attack", damage, message });
-  }, 3800);
   updateUI();
 }
 
@@ -986,8 +1221,10 @@ function handleDungeonRaidVictory(){
     coins: 14 + enemy.level * 4
   };
   const enemyName = enemy.name;
-  clearDungeonEnemyTimer();
   enemy = null;
+  dungeonMultiplayer.battleActive = false;
+  dungeonMultiplayer.turnOrder = [];
+  dungeonMultiplayer.turnIndex = 0;
   displayState.enemyHp = null;
   needsNewEnemy = true;
   grantDungeonRaidRewards(rewards);
@@ -998,32 +1235,79 @@ function handleDungeonRaidVictory(){
   updateUI();
 }
 
+function handleDungeonRaidDefeat(message){
+  enemy = null;
+  dungeonMultiplayer.battleActive = false;
+  dungeonMultiplayer.turnOrder = [];
+  dungeonMultiplayer.turnIndex = 0;
+  displayState.enemyHp = null;
+  needsNewEnemy = true;
+  if(isDungeonHost()){
+    broadcastToDungeonPeers({ type: "defeat", message });
+    broadcastDungeonState();
+  }
+  log(message);
+  updateUI();
+}
+
+function advanceDungeonTurn(){
+  if(!isDungeonHost() || !dungeonMultiplayer.battleActive || !enemy){ return; }
+  if(dungeonMultiplayer.turnIndex < dungeonMultiplayer.turnOrder.length - 1){
+    dungeonMultiplayer.turnIndex++;
+    return;
+  }
+  if(enemy.skipNextAttack){
+    enemy.skipNextAttack = false;
+    dungeonMultiplayer.turnIndex = 0;
+    dungeonMultiplayer.round++;
+    log(`${enemy.name} perdeu o turno.`);
+    broadcastToDungeonPeers({ type: "log", message: `${enemy.name} perdeu o turno.` });
+    return;
+  }
+  const damage = enemy.attack + Math.floor(Math.random() * 5);
+  const message = `${enemy.name} atacou o grupo e causou ${damage} de dano.`;
+  processDungeonIncomingDamage(damage, message);
+  broadcastToDungeonPeers({ type: "enemy_attack", damage, message });
+  if(player.hp <= 0){
+    handleDungeonRaidDefeat("O grupo foi derrotado na dungeon.");
+    return;
+  }
+  dungeonMultiplayer.turnIndex = 0;
+  dungeonMultiplayer.round++;
+}
+
 function processDungeonIncomingDamage(baseDamage, message){
   if(message){
     log(message);
   }
-  let dmg = baseDamage;
-  const hpBefore = player.hp;
-  const passiveReduction = getPassiveModifiers().damageReduction;
-  const flatReduction = getPassiveModifiers().flatReduction;
-  dmg = Math.max(0, dmg - flatReduction);
-  if(flatReduction > 0){
-    log(`Sua resistencia reduziu ${flatReduction} de dano.`);
+  const result = applyIncomingDamage(baseDamage);
+  if(result.missed){
+    log("O inimigo errou o golpe contra voce.");
   }
-  dmg = Math.max(0, Math.floor(dmg * (1 - Math.min(0.75, passiveReduction))));
-  if(playerEffects.shieldValue > 0 && dmg > 0){
-    const absorbed = Math.min(dmg, playerEffects.shieldValue);
-    playerEffects.shieldValue -= absorbed;
-    dmg -= absorbed;
-    log(`Seu escudo absorveu ${absorbed} de dano.`);
+  if(result.absorbed > 0){
+    log(`Seu escudo absorveu ${result.absorbed} de dano.`);
   }
-  if(dmg > 0){
-    player.hp = Math.max(1, player.hp - dmg);
+  if(result.manaAbsorbed > 0){
+    log(`Preciosa Mana converteu ${result.manaAbsorbed} de dano em gasto de mana.`);
   }
-  if(hpBefore > 1 && player.hp === 1){
-    log("Voce ficou por um fio, mas o grupo ainda te manteve na batalha.");
+  if(playerEffects.shieldValue <= 0){
+    playerEffects.shieldTurns = 0;
+  }else if(playerEffects.shieldTurns > 0){
+    playerEffects.shieldTurns--;
+    if(playerEffects.shieldTurns <= 0){
+      playerEffects.shieldValue = 0;
+      log("Seu escudo se desfez.");
+    }
+  }
+  if(player.hp <= 0){
+    if(isDungeonHost()){
+      handleDungeonRaidDefeat("O grupo foi derrotado na dungeon.");
+    }else if(dungeonMultiplayer.hostConnection?.open){
+      dungeonMultiplayer.hostConnection.send({ type: "player_defeated" });
+    }
   }
   displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
   updateUI();
 }
 
@@ -1038,111 +1322,52 @@ function sendDungeonActionPayload(payload){
 }
 
 function dungeonAttack(){
-  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead){ return; }
-  if(Date.now() < dungeonMultiplayer.actionLockedUntil){
+  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead || !isMyDungeonTurn()){ return; }
+  const result = getBasicAttackResult(getDungeonPlayerProfile().name, false);
+  if(result.blocked){
+    log(result.message);
     updateUI();
     return;
   }
-  dungeonMultiplayer.actionLockedUntil = Date.now() + 900;
-  let damage = 0;
-  let message;
-  if(player.class === "Arqueiro" && !rollHit("basic")){
-    message = `${getDungeonPlayerProfile().name} errou o ataque.`;
-  }else{
-    damage = getActiveAttack() + Math.floor(Math.random() * 6);
-    message = `${getDungeonPlayerProfile().name} causou ${damage} de dano.`;
-  }
   decayPlayerBuffs();
+  const healed = getTurnHealing();
+  if(healed > 0){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
+    log(`Voce recuperou ${healed} de vida.`);
+  }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
+  }
   updateUI();
-  sendDungeonActionPayload({ damage, message });
+  sendDungeonActionPayload({ damage: result.damage, message: result.message });
 }
 
 function dungeonUseSkill(index){
-  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead){ return; }
-  if(Date.now() < dungeonMultiplayer.actionLockedUntil){
-    updateUI();
-    return;
-  }
+  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead || !isMyDungeonTurn()){ return; }
   const skillInfo = getSkillInfo()[index];
   if(!skillInfo){
     log("Voce ainda nao desbloqueou essa habilidade.");
     return;
   }
-  if(player.mp < skillInfo.cost){
-    log("Mana insuficiente!");
+  const result = applySkillLocally(skillInfo, getDungeonPlayerProfile().name, false);
+  if(result.blocked){
+    log(result.message);
+    updateUI();
     return;
   }
-  player.mp -= skillInfo.cost;
-  displayState.playerMp = player.mp;
-  let damage = 0;
-  let message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name}.`;
-  let freeTurn = false;
-
-  if(skillInfo.type === "damage" || skillInfo.type === "fireball" || skillInfo.type === "damage_maxhp_percent"){
-    damage = skillInfo.damage;
-    message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  decayPlayerBuffs();
+  const healed = getTurnHealing();
+  if(healed > 0){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
+    log(`Voce recuperou ${healed} de vida.`);
   }
-  if(skillInfo.type === "damage_and_drain_mana"){
-    damage = skillInfo.damage;
-    message = `${getDungeonPlayerProfile().name} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
   }
-  if(skillInfo.type === "triple_shot"){
-    let totalDamage = 0;
-    let hitsLanded = 0;
-    for(let hit = 0; hit < skillInfo.hits; hit++){
-      if(rollHit("multi")){
-        totalDamage += getActiveAttack() + Math.floor(Math.random() * 4);
-        hitsLanded++;
-      }
-    }
-    damage = totalDamage;
-    message = hitsLanded
-      ? `${getDungeonPlayerProfile().name} acertou ${hitsLanded} flecha(s) com ${skillInfo.name} e causou ${damage} de dano.`
-      : `${getDungeonPlayerProfile().name} falhou com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "heal_percent"){
-    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + skillInfo.heal);
-    displayState.playerHp = player.hp;
-    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.heal} de vida com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "mana_percent"){
-    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
-    displayState.playerMp = player.mp;
-    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.mana} de mana com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "mana_percent_free"){
-    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
-    displayState.playerMp = player.mp;
-    freeTurn = true;
-    message = `${getDungeonPlayerProfile().name} recuperou ${skillInfo.mana} de mana com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "shield"){
-    playerEffects.shieldValue = skillInfo.shield;
-    playerEffects.shieldTurns = skillInfo.turns || -1;
-    message = `${getDungeonPlayerProfile().name} ergueu um escudo de ${skillInfo.shield} com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "battle_cry"){
-    playerEffects.attackBuffTurns = skillInfo.turns;
-    playerEffects.attackBuffAmount = skillInfo.attackBuff;
-    playerEffects.skillBuffTurns = skillInfo.turns;
-    playerEffects.skillBuffAmount = skillInfo.skillBuff;
-    message = `${getDungeonPlayerProfile().name} fortaleceu o grupo com ${skillInfo.name}.`;
-  }
-  if(skillInfo.type === "aim_buff"){
-    playerEffects.attackBuffTurns = skillInfo.turns;
-    playerEffects.attackBuffAmount = skillInfo.attackBuff;
-    playerEffects.skillBuffTurns = skillInfo.turns;
-    playerEffects.skillBuffAmount = skillInfo.skillBuff;
-    playerEffects.precisionTurns = skillInfo.turns;
-    playerEffects.precisionBonus = skillInfo.precision;
-    message = `${getDungeonPlayerProfile().name} entrou em foco total com ${skillInfo.name}.`;
-  }
-  if(!freeTurn && !["battle_cry", "aim_buff"].includes(skillInfo.type)){
-    decayPlayerBuffs();
-  }
-  dungeonMultiplayer.actionLockedUntil = Date.now() + (freeTurn ? 250 : 900);
   updateUI();
-  sendDungeonActionPayload({ damage, message });
+  sendDungeonActionPayload({ damage: result.damage, message: result.message, ignoreArmor: !!skillInfo.ignoreArmor, freezeNext: !!result.freezeApplied });
 }
 
 function getRegionRequirement(region){
@@ -1150,11 +1375,15 @@ function getRegionRequirement(region){
 }
 
 function getActiveAttack(){
-  return getPreviewStats().attack + (playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffAmount : 0);
+  const baseAttack = getPreviewStats().attack + (playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffAmount : 0);
+  const percent = playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffPercent : 0;
+  return Math.floor(baseAttack * (1 + percent));
 }
 
 function getSkillPowerBonus(){
-  return getPassiveModifiers().skillPower + (playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffAmount : 0);
+  const baseSkill = getPassiveModifiers().skillPower + (playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffAmount : 0);
+  const percent = playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffPercent : 0;
+  return Math.floor(baseSkill * (1 + percent));
 }
 
 function getAccuracyBonus(){
@@ -1162,8 +1391,9 @@ function getAccuracyBonus(){
 }
 
 function getHitChance(mode = "basic"){
+  if(playerEffects.guaranteedHitTurns > 0){ return 1; }
   if(player.class !== "Arqueiro"){ return 1; }
-  const baseChance = mode === "multi" ? 0.82 : mode === "precise" ? 0.95 : 0.86;
+  const baseChance = mode === "precise" ? 0.9 : 0.84;
   return Math.min(1, baseChance + getAccuracyBonus());
 }
 
@@ -1171,97 +1401,147 @@ function rollHit(mode = "basic"){
   return Math.random() < getHitChance(mode);
 }
 
+function getArcherDoubleChance(){
+  const subclassState = getPlayerSubclassState();
+  let chance = playerEffects.damageDoubleTurns > 0 ? playerEffects.damageDoubleChanceBonus : 0;
+  if(subclassState.tier30 === "atirador" && player.level >= 54){
+    chance += 0.1;
+  }
+  return chance;
+}
+
+function shouldDoubleDamage(baseChance = 0){
+  const totalChance = Math.min(0.95, baseChance + (player.class === "Arqueiro" ? getArcherDoubleChance() : 0));
+  return Math.random() < totalChance;
+}
+
+function getEnemyMissChance(){
+  const passiveChance = getPassiveModifiers().enemyMissChance;
+  const effectChance = playerEffects.enemyMissBonusTurns > 0 ? playerEffects.enemyMissBonus : 0;
+  return Math.min(0.95, passiveChance + effectChance);
+}
+
 function decayPlayerBuffs(){
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "precisionTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "precisionTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "damageDoubleTurns"]){
     if(playerEffects[buffName] > 0){
       playerEffects[buffName]--;
     }
   }
   if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffAmount = 0; }
+  if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffPercent = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffAmount = 0; }
+  if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffPercent = 0; }
   if(playerEffects.precisionTurns <= 0){ playerEffects.precisionBonus = 0; }
+  if(playerEffects.guaranteedHitTurns <= 0){ playerEffects.guaranteedHitTurns = 0; }
+  if(playerEffects.enemyMissBonusTurns <= 0){ playerEffects.enemyMissBonus = 0; }
+  if(playerEffects.regenTurns <= 0){ playerEffects.regenPercent = 0; }
+  if(playerEffects.damageDoubleTurns <= 0){ playerEffects.damageDoubleChanceBonus = 0; }
 }
 
 function getTurnHealing(){
-  return Math.floor(getCurrentCaps().maxHp * getPassiveModifiers().turnHealPercent);
+  return playerEffects.regenTurns > 0 ? Math.floor(getCurrentCaps().maxHp * playerEffects.regenPercent) : 0;
 }
 
 function getSkillInfo(){
+  const subclassState = getPlayerSubclassState();
+  const passiveModifiers = getPassiveModifiers();
+  const maxHp = getPreviewStats().maxHp;
+  const maxMp = getPreviewStats().maxMp;
+  const attack = getActiveAttack();
+  const skillPower = getSkillPowerBonus();
+  const arcanistExtraCost = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 42 ? Math.floor(maxMp * 0.05) : 0;
   return getUnlockedActiveSkills().map(skill => {
-    const passiveModifiers = getPassiveModifiers();
-    const subclassCostReduction = player.subclass?.skillCostReduction || 0;
-    const attackBonus = getActiveAttack() - player.baseAttack;
-    const skillBonus = getSkillPowerBonus();
-    const costIncrease = passiveModifiers.skillCostIncrease || 0;
-    let cost = Math.max(8, Math.ceil(skill.cost * (1 - subclassCostReduction + costIncrease)));
-    if(skill.type === "damage"){
-      const damage = skill.value + attackBonus + skillBonus;
-      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
+    if(skill.type === "warrior_brandish"){
+      const damage = Math.floor(attack * 1.5);
+      return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano.` };
     }
-    if(skill.type === "fireball"){
-      cost += Math.floor(skillBonus / 12);
-      const damage = skill.value + attackBonus + skillBonus;
-      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
+    if(skill.type === "warrior_smash"){
+      const damage = Math.floor(maxHp * 0.1) + attack + skillPower;
+      return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano usando sua vida maxima.` };
     }
-    if(skill.type === "heal_percent"){
-      const heal = Math.ceil(getPreviewStats().maxHp * skill.value);
-      return { ...skill, cost, heal, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.` };
+    if(skill.type === "warrior_swift_strikes"){
+      const damage = attack * 2 + skillPower;
+      return { ...skill, cost: 12, damage, description: `${skill.name}: consome 12 MP e causa ${damage} de dano em cortes sucessivos.` };
     }
-    if(skill.type === "mana_percent"){
-      const mana = Math.ceil(getPreviewStats().maxMp * skill.value);
-      return { ...skill, cost, mana, description: `${skill.name}: consome ${cost} MP e recupera ${mana} de mana.` };
+    if(skill.type === "warrior_regen"){
+      const turns = subclassState.tier30 === "brutamontes" && player.level >= 48 ? 5 : 3;
+      const heal = Math.floor(maxHp * 0.05);
+      const attackPercent = subclassState.tier30 === "espadachim" && player.level >= 48 ? 0.1 : 0;
+      return { ...skill, cost: 16, turns, heal, attackPercent, description: `${skill.name}: consome 16 MP e recupera ${heal} de vida por turno durante ${turns} turnos${attackPercent ? ", alem de aumentar o dano basico em 10%" : ""}.` };
     }
-    if(skill.type === "mana_percent_free"){
-      const mana = Math.ceil(getPreviewStats().maxMp * skill.value);
-      return { ...skill, cost, mana, description: `${skill.name}: consome ${cost} MP, recupera ${mana} de mana e nao encerra seu turno.` };
+    if(skill.type === "warrior_shield"){
+      const shield = Math.floor(maxHp * 0.15);
+      return { ...skill, cost: 20, shield, description: `${skill.name}: consome 20 MP e concede ${shield} de escudo.` };
     }
-    if(skill.type === "shield"){
-      const baseStat = skill.stat === "mp" ? getPreviewStats().maxMp : getPreviewStats().maxHp;
-      const shield = Math.ceil(baseStat * skill.value);
-      const durationText = skill.turns ? ` por ${skill.turns} turno(s)` : "";
-      return { ...skill, cost, shield, description: `${skill.name}: consome ${cost} MP e cria um escudo de ${shield}${durationText}.` };
+    if(skill.type === "warrior_titan_break"){
+      const damage = Math.floor(maxHp * 0.15);
+      return { ...skill, cost: 28, damage, ignoreArmor: true, description: `${skill.name}: consome 28 MP e causa ${damage} de dano ignorando a armadura.` };
     }
-    if(skill.type === "damage_maxhp_percent"){
-      const damage = Math.ceil(getPreviewStats().maxHp * skill.value) + Math.floor(skillBonus / 2);
-      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano com base na vida maxima.` };
+    if(skill.type === "warrior_armor_break"){
+      const damage = 5 * skillPower;
+      return { ...skill, cost: 28, damage, ignoreArmor: true, description: `${skill.name}: consome 28 MP e causa ${damage} de dano ignorando a armadura.` };
     }
-    if(skill.type === "battle_cry"){
-      const attackBuff = 5 + Math.floor(player.level * 0.4);
-      const skillBuff = 7 + Math.floor(player.level * 0.45);
-      return { ...skill, cost, attackBuff, skillBuff, description: `${skill.name}: consome ${cost} MP e aumenta ataque em ${attackBuff} e habilidades em ${skillBuff} por ${skill.turns} turnos.` };
+    if(skill.type === "mage_mana_burst"){
+      const damage = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 54
+        ? 30 + Math.floor(0.4 * (skillPower + attack))
+        : 30 + Math.floor(0.4 * skillPower);
+      return { ...skill, cost: 30 + arcanistExtraCost, damage, description: `${skill.name}: consome ${30 + arcanistExtraCost} MP e causa ${damage} de dano.` };
     }
-    if(skill.type === "aim_buff"){
-      const attackBuff = 4 + Math.floor(player.level * 0.3);
-      const skillBuff = 4 + Math.floor(player.level * 0.3);
-      const precision = 0.18;
-      return { ...skill, cost, attackBuff, skillBuff, precision, description: `${skill.name}: consome ${cost} MP, aumenta a precisao e adiciona ${attackBuff} ao ataque e ${skillBuff} as habilidades por ${skill.turns} turnos.` };
+    if(skill.type === "mage_fireball"){
+      const damage = 30 + Math.floor(0.6 * skillPower);
+      return { ...skill, cost: 40, damage, description: `${skill.name}: consome 40 MP e causa ${damage} de dano de fogo.` };
     }
-    if(skill.type === "triple_shot"){
-      const perHit = getActiveAttack();
-      return { ...skill, cost, perHit, description: `${skill.name}: consome ${cost} MP e dispara ${skill.hits} ataques com seu dano basico.` };
+    if(skill.type === "mage_concentration"){
+      return { ...skill, cost: 40 + arcanistExtraCost, turns: 3, percent: 0.1, description: `${skill.name}: consome ${40 + arcanistExtraCost} MP e aumenta o dano de habilidade em 10% por 3 turnos.` };
     }
-    if(skill.type === "damage_and_drain_mana"){
-      const damage = skill.value + attackBonus + skillBonus;
-      return { ...skill, cost, damage, manaDrain: skill.manaDrainPercent, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e drena 10% da mana do alvo.` };
+    if(skill.type === "mage_mana_shield"){
+      const improvedShield = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 48;
+      const manaPercentCost = improvedShield ? 0.05 : 0.15;
+      const cost = Math.floor(maxMp * manaPercentCost) + (improvedShield ? 0 : arcanistExtraCost);
+      const shield = 20 + Math.floor(0.4 * maxMp);
+      return { ...skill, cost, shield, turns: 2, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo por 2 turnos.` };
     }
-    return { ...skill, cost, description: skill.description || skill.name };
+    if(skill.type === "mage_freeze"){
+      const damage = 20 + Math.floor(0.4 * skillPower);
+      return { ...skill, cost: 26, damage, freezeChance: 0.15, description: `${skill.name}: consome 26 MP, causa ${damage} de dano e tem 15% de chance de impedir o proximo ataque do inimigo.` };
+    }
+    if(skill.type === "archer_focus"){
+      const bonus = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0.05;
+      const doubleChance = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0;
+      return { ...skill, cost: 20, turns: 3, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 3 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
+    }
+    if(skill.type === "archer_headshot"){
+      const damage = 30 + Math.floor((subclassState.tier30 === "atirador" && player.level >= 36 ? 0.5 : 0.3) * skillPower);
+      const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
+      const critChance = subclassState.tier30 === "atirador" && player.level >= 36 ? 0.15 : 0.1;
+      return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
+    }
+    if(skill.type === "archer_hide"){
+      const chance = subclassState.tier30 === "cacador" && player.level >= 48 ? 0.25 : 0.15;
+      return { ...skill, cost: 18, turns: 3, dodge: chance, description: `${skill.name}: consome 18 MP e aumenta sua chance de esquiva em ${Math.floor(chance * 100)}% por 3 turnos.` };
+    }
+    if(skill.type === "archer_barrage"){
+      return { ...skill, cost: 30, hits: 2, description: `${skill.name}: consome 30 MP e realiza 2 ataques basicos no mesmo turno.` };
+    }
+    return { ...skill, cost: 0, description: skill.name };
   });
 }
 
 function getCampEntries(){
+  const classTrees = getClassTrees();
   const unlockedActiveNames = new Set(getUnlockedActiveSkills().map(skill => skill.name));
   const activeDetails = new Map(getSkillInfo().map(skill => [skill.name, skill]));
-  const activeEntries = (player.activeSkills || []).map(skill => {
+  const activeEntries = (classTrees.activeSkills || []).map(skill => {
     const activeDetail = activeDetails.get(skill.name);
     const unlocked = unlockedActiveNames.has(skill.name);
     return {
       name: skill.name,
       status: unlocked ? "Disponivel" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
-      description: activeDetail?.description || skill.description
+      description: activeDetail?.description || "Habilidade ainda bloqueada."
     };
   });
-  const passiveEntries = (player.passiveSkills || []).map(skill => {
+  const passiveEntries = (classTrees.passiveSkills || []).map(skill => {
     const unlocked = player.level >= skill.level;
     return {
       name: skill.name,
@@ -1274,38 +1554,239 @@ function getCampEntries(){
 }
 
 function getPassiveStatusDescription(skill){
+  const subclassState = getPlayerSubclassState();
+  if(skill.type === "warrior_flat_reduction"){
+    return `${skill.name}: reduz ${Math.floor(1.2 * player.level)} de dano por ataque recebido.`;
+  }
+  if(skill.type === "warrior_enemy_miss"){
+    return `${skill.name}: concede 5% de chance do inimigo errar ao atacar voce.`;
+  }
+  if(skill.type === "warrior_first_skill_free"){
+    return `${skill.name}: a primeira habilidade usada em cada combate nao custa mana.`;
+  }
+  if(skill.type === "bonus_xp"){
+    return `${skill.name}: aumenta toda XP ganha em 10%.`;
+  }
+  if(skill.type === "mage_skill_level_bonus"){
+    const factor = subclassState.tier30 === "elementalista" && player.level >= 42 ? 2.4 : 2;
+    return `${skill.name}: concede ${Math.floor(factor * player.level)} de dano de habilidade no nivel atual.`;
+  }
+  if(skill.type === "mage_precious_mana"){
+    return `${skill.name}: abaixo de 10% de vida, o dano sofrido tenta ser pago com mana antes da vida.`;
+  }
+  if(skill.type === "mage_first_damage_skill_boost"){
+    return `${skill.name}: a primeira habilidade de dano do combate causa 50% de dano final extra.`;
+  }
+  if(skill.id === "mana_e_vida"){
+    return `${skill.name}: converte ${Math.floor(getPreviewStats().maxMp * 0.1)} de mana maxima em vida maxima.`;
+  }
+  if(skill.type === "archer_enemy_miss"){
+    const chance = subclassState.tier30 === "cacador" && player.level >= 54 ? 10 : 5;
+    return `${skill.name}: concede ${chance}% de chance do inimigo errar o ataque contra voce.`;
+  }
+  if(skill.type === "archer_mana_regen_set"){
+    return `${skill.name}: sua regeneracao total de mana por turno passa a ser 16% da mana maxima.`;
+  }
+  if(skill.type === "archer_attack_level_bonus"){
+    let description = `${skill.name}: concede ${Math.floor(0.4 * player.level)} de dano de ataque basico no nivel atual.`;
+    if(subclassState.tier30 === "atirador" && player.level >= 54){
+      description += " Alem disso, ataques e habilidades ganham 10% de chance de dano dobrado.";
+    }
+    return description;
+  }
   if(skill.type === "coin_bonus"){
-    return `${skill.name}: aumenta as moedas obtidas em ${Math.floor(skill.value * 100)}%.`;
-  }
-  if(skill.type === "bonus_attack_scale"){
-    const bonus = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
-    return `${skill.name}: concede ${bonus} de dano base extra no nivel atual.`;
-  }
-  if(skill.type === "mana_regen_percent"){
-    const totalPercent = Math.floor((0.1 + skill.value) * 100);
-    return `${skill.name}: sua regeneracao total de mana por turno esta em ${totalPercent}%.`;
-  }
-  if(skill.type === "flat_reduction_scale"){
-    const reduction = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
-    return `${skill.name}: reduz ${reduction} de dano fixo por ataque recebido no nivel atual.`;
-  }
-  if(skill.type === "turn_heal_percent"){
-    const heal = Math.floor(getCurrentCaps().maxHp * skill.value);
-    return `${skill.name}: recupera ${heal} de vida ao final de cada turno seu.`;
-  }
-  if(skill.type === "reflect_percent"){
-    return `${skill.name}: devolve ${Math.floor(skill.value * 100)}% do dano recebido ao inimigo.`;
-  }
-  if(skill.type === "skill_power_scale"){
-    const bonus = (skill.base || 0) + Math.floor(player.level * (skill.scale || 0));
-    const extraCost = Math.floor((skill.extra?.skillCostIncrease || 0) * 100);
-    return `${skill.name}: concede ${bonus} de dano de habilidade e aumenta os custos em ${extraCost}%.`;
-  }
-  if(skill.type === "mana_to_life_percent"){
-    const converted = Math.floor(getPreviewStats().maxMp * skill.value);
-    return `${skill.name}: converte 10% da mana maxima em vida maxima. Bonus atual: ${converted} de vida.`;
+    return `${skill.name}: aumenta as moedas obtidas em 15%.`;
   }
   return skill.description;
+}
+
+function getBasicAttackLabel(){
+  return player.class === "Mago" ? "Missel Magico" : "Atacar";
+}
+
+function getBasicAttackTooltip(){
+  if(player.class === "Mago"){
+    return `Missel Magico: consome 10 MP e causa ${getActiveAttack() + getSkillPowerBonus()} de dano.`;
+  }
+  const attackMin = getActiveAttack();
+  const attackMax = getActiveAttack() + 5;
+  if(player.class === "Arqueiro"){
+    return `Ataque basico. Dano entre ${attackMin} e ${attackMax}. Chance de acerto: ${Math.floor(getHitChance("basic") * 100)}%.`;
+  }
+  return `Ataque basico. Dano entre ${attackMin} e ${attackMax}.`;
+}
+
+function resetCombatEffects(){
+  const subclassState = getPlayerSubclassState();
+  playerEffects = createDefaultPlayerEffects();
+  playerEffects.firstSkillFreeAvailable = player.class === "Guerreiro" && player.level >= 18;
+  playerEffects.firstDamageSkillBoostAvailable = player.class === "Mago" && subclassState.tier30 === "elementalista" && player.level >= 54;
+}
+
+function applyEnemyArmor(rawDamage, ignoreArmor = false){
+  let damage = Math.max(0, Math.floor(rawDamage));
+  if(!enemy || ignoreArmor){ return damage; }
+  const armor = enemy.armor || 0;
+  if(armor > 0 && damage > 0){
+    const absorbed = Math.min(armor, damage);
+    damage = Math.max(0, damage - armor);
+    log(`${enemy.baseName} absorveu ${absorbed} de dano com a armadura.`);
+  }
+  return damage;
+}
+
+function applyDamageToEnemy(rawDamage, options = {}){
+  if(!enemy){ return 0; }
+  const damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  enemy.hp -= damage;
+  return damage;
+}
+
+function applyIncomingDamage(baseDamage){
+  let damage = Math.max(0, Math.floor(baseDamage));
+  const missChance = getEnemyMissChance();
+  if(missChance > 0 && Math.random() < missChance){
+    return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
+  }
+  const flatReduction = getPassiveModifiers().flatReduction;
+  if(flatReduction > 0){
+    damage = Math.max(0, damage - flatReduction);
+  }
+  let absorbed = 0;
+  if(playerEffects.shieldValue > 0 && damage > 0){
+    absorbed = Math.min(damage, playerEffects.shieldValue);
+    playerEffects.shieldValue -= absorbed;
+    damage -= absorbed;
+  }
+  let manaAbsorbed = 0;
+  const passiveModifiers = getPassiveModifiers();
+  if(passiveModifiers.preciousMana && player.hp <= Math.max(1, Math.floor(getCurrentCaps().maxHp * 0.1)) && damage > 0 && player.mp >= damage){
+    manaAbsorbed = damage;
+    player.mp = Math.max(0, player.mp - damage);
+    damage = 0;
+  }
+  if(damage > 0){
+    player.hp -= damage;
+  }
+  return { damage, missed: false, absorbed, manaAbsorbed };
+}
+
+function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
+  if(player.class === "Mago"){
+    if(player.mp < 10){
+      return { blocked: true, message: "Mana insuficiente para usar Missel Magico." };
+    }
+    player.mp -= 10;
+    const damage = getActiveAttack() + getSkillPowerBonus();
+    const finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    return { damage: finalDamage, message: `${namePrefix} lançou Missel Magico e causou ${finalDamage} de dano.` };
+  }
+  if(player.class === "Arqueiro" && !rollHit("basic")){
+    return { damage: 0, message: `${namePrefix} errou o ataque.` };
+  }
+  let damage = getActiveAttack() + Math.floor(Math.random() * 6);
+  if(player.class === "Arqueiro" && shouldDoubleDamage()){
+    damage *= 2;
+  }
+  const finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+  return { damage: finalDamage, message: `${namePrefix} causou ${finalDamage} de dano.` };
+}
+
+function applyFirstDamageSkillBonus(damage, isDamageSkill){
+  if(isDamageSkill && playerEffects.firstDamageSkillBoostAvailable){
+    playerEffects.firstDamageSkillBoostAvailable = false;
+    return Math.floor(damage * 1.5);
+  }
+  return damage;
+}
+
+function useSkillCost(skillInfo){
+  if(playerEffects.firstSkillFreeAvailable){
+    playerEffects.firstSkillFreeAvailable = false;
+    return 0;
+  }
+  return skillInfo.cost;
+}
+
+function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
+  const cost = useSkillCost(skillInfo);
+  if(player.mp < cost){
+    return { blocked: true, message: "Mana insuficiente!" };
+  }
+  player.mp -= cost;
+  let damage = 0;
+  let message = `${actorName} usou ${skillInfo.name}.`;
+  let freeTurn = false;
+  let freezeApplied = false;
+  if(["warrior_brandish", "warrior_smash", "warrior_swift_strikes", "warrior_titan_break", "warrior_armor_break", "mage_mana_burst", "mage_fireball", "mage_freeze"].includes(skillInfo.type)){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: skillInfo.ignoreArmor }) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    if(skillInfo.type === "mage_freeze" && Math.random() < skillInfo.freezeChance){
+      if(applyToTarget && enemy){
+        enemy.skipNextAttack = true;
+      }
+      freezeApplied = true;
+      message += " O inimigo foi congelado e pode perder o proximo ataque.";
+    }
+  }
+  if(skillInfo.type === "archer_headshot"){
+    damage = skillInfo.damage;
+    if(shouldDoubleDamage(skillInfo.critChance)){
+      damage *= 2;
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "archer_barrage"){
+    let totalDamage = 0;
+    let hits = 0;
+    for(let i = 0; i < skillInfo.hits; i++){
+      if(rollHit("basic")){
+        let hitDamage = getActiveAttack() + Math.floor(Math.random() * 6);
+        if(shouldDoubleDamage()){
+          hitDamage *= 2;
+        }
+        totalDamage += applyToTarget ? applyDamageToEnemy(hitDamage) : hitDamage;
+        hits++;
+      }
+    }
+    damage = totalDamage;
+    message = hits ? `${actorName} usou ${skillInfo.name} e acertou ${hits} disparo(s), causando ${damage} de dano.` : `${actorName} usou ${skillInfo.name}, mas nao acertou nenhum disparo.`;
+  }
+  if(skillInfo.type === "warrior_regen"){
+    playerEffects.regenTurns = skillInfo.turns;
+    playerEffects.regenPercent = 0.05;
+    if(skillInfo.attackPercent){
+      playerEffects.attackBuffTurns = skillInfo.turns;
+      playerEffects.attackBuffPercent = skillInfo.attackPercent;
+    }
+    message = `${actorName} usou ${skillInfo.name} e vai recuperar ${skillInfo.heal} de vida por turno durante ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "warrior_shield" || skillInfo.type === "mage_mana_shield"){
+    playerEffects.shieldValue = skillInfo.shield;
+    playerEffects.shieldTurns = skillInfo.turns || 0;
+    message = `${actorName} usou ${skillInfo.name} e ganhou ${skillInfo.shield} de escudo.`;
+  }
+  if(skillInfo.type === "mage_concentration"){
+    playerEffects.skillBuffTurns = skillInfo.turns;
+    playerEffects.skillBuffPercent = skillInfo.percent;
+    message = `${actorName} usou ${skillInfo.name} e aumentou o dano de habilidade por ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "archer_focus"){
+    playerEffects.attackBuffTurns = skillInfo.turns;
+    playerEffects.attackBuffPercent = skillInfo.bonus;
+    playerEffects.guaranteedHitTurns = skillInfo.turns;
+    playerEffects.damageDoubleTurns = skillInfo.turns;
+    playerEffects.damageDoubleChanceBonus = skillInfo.doubleChance;
+    message = `${actorName} usou ${skillInfo.name} e ficou com acerto garantido por ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "archer_hide"){
+    playerEffects.enemyMissBonusTurns = skillInfo.turns;
+    playerEffects.enemyMissBonus = skillInfo.dodge;
+    message = `${actorName} usou ${skillInfo.name} e ganhou ${Math.floor(skillInfo.dodge * 100)}% de esquiva adicional por ${skillInfo.turns} turnos.`;
+  }
+  return { blocked: false, message, damage, freeTurn, freezeApplied };
 }
 
 function getRarityStat(statKey, rarity){
@@ -1713,15 +2194,6 @@ function fleeBattle(){
   updateUI();
 }
 
-function grantNextLevelXPCommand(){
-  if(!player || player.level >= MAX_LEVEL){ return; }
-  const xpNeeded = Math.max(0, getXpToNextLevel() - player.xp);
-  if(xpNeeded <= 0){ return; }
-  gainXP(xpNeeded);
-  log("Comando de teste: XP do proximo nivel concedido.");
-  updateUI();
-}
-
 function createEnemyFromTemplate(template, isBoss = false){
   const stats = getEnemyStats(template);
   const origin = isDungeonMode() ? "Dungeon" : currentRegion;
@@ -1734,6 +2206,7 @@ function createEnemyFromTemplate(template, isBoss = false){
     maxHp: stats.maxHp,
     hp: stats.maxHp,
     attack: stats.attack,
+    armor: isDungeonMode() ? 0 : stats.armor + (isBoss ? 2 : 0),
     isBoss,
     rarityKey: rarity.key,
     rarityLabel: rarity.label,
@@ -1755,6 +2228,7 @@ function spawnEnemy(isBoss = false){
       ? (!isDungeonMode() ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") : null) || chooseWeightedEnemy(regionData.enemies)
       : chooseWeightedEnemy(regionData.enemies);
   enemy = createEnemyFromTemplate(template, isBoss);
+  resetCombatEffects();
   if(!isBoss){
     enemiesSpawned++;
   }
@@ -2048,9 +2522,9 @@ function updateUI(){
       <h3>${player.class} - Nivel ${player.level}</h3>
       <div class="coin-badge">${player.coins} moedas</div>
     </div>
+    ${playerEffects.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${playerEffects.shieldValue}</div><div class="bar small"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div></div></div>` : ""}
     Vida: ${player.hp}/${previewStats.maxHp}
-    <div class="bar"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
-    ${playerEffects.shieldValue > 0 ? `<div class="lock-note">Escudo: ${playerEffects.shieldValue}</div>` : ""}
+    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
     Mana: ${player.mp}/${previewStats.maxMp}
     <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
     XP: ${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}
@@ -2107,9 +2581,6 @@ function updateUI(){
       <strong>Equipamentos</strong>
       ${renderEquipmentShowcase()}
     </div>
-    <div class="button-row">
-      <button onclick="grantNextLevelXPCommand()">Teste: Proximo nivel</button>
-    </div>
     <div class="inventory-list">
       <div class="inventory-item">
         <strong>Habilidades ativas</strong>
@@ -2123,7 +2594,7 @@ function updateUI(){
           ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
         </div>
       </div>
-      ${player.subclass ? `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">${player.subclass.name}: ${player.subclass.description}</span></div>` : ""}
+      ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">${getChosenSubclassDefs().map(subclass => `${subclass.name}: ${subclass.description}`).join(" | ")}</span></div>` : ""}
     </div>`
     : currentMode === "dungeon" ? `
     <h3>Dungeon</h3>
@@ -2141,7 +2612,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa os atributos atuais, as habilidades ativas e as passivas da sua classe." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Voce pode gastar moedas para recuperar a vida e comprar suprimentos."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div>${renderForgePanel()}</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? renderDungeonRoomControls() : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div>${renderForgePanel()}</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -2282,14 +2753,14 @@ function renderActions(){
       actions.innerHTML = `${isDungeonHost() ? `<button onclick="startDungeonRaid()" ${getDungeonRoomMembers().length >= 2 ? "" : "disabled"}>Iniciar dungeon</button>` : `<button disabled>Aguardando o host iniciar</button>`}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
       return;
     }
-    if(Date.now() < dungeonMultiplayer.actionLockedUntil){
-      actions.innerHTML = `<button disabled>Recuperando folego...</button>`;
+    if(!isMyDungeonTurn()){
+      actions.innerHTML = `<button disabled>Aguarde o turno do grupo...</button><button onclick="leaveDungeonRoom()">Sair da sala</button>`;
       return;
     }
     const dungeonSkillButtons = skillInfo.length
       ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`).join("")
-      : `<button disabled>Nova habilidade no nivel 1</button>`;
-    actions.innerHTML = `<button class="action-btn" data-tooltip="${player.class === "Arqueiro" ? `Ataque basico. Dano entre ${getActiveAttack()} e ${getActiveAttack() + 5}. Chance de acerto: ${Math.round(getHitChance("basic") * 100)}%.` : `Ataque basico. Dano entre ${getActiveAttack()} e ${getActiveAttack() + 5}.`}" onclick="dungeonAttack()">Atacar</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
+      : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
+    actions.innerHTML = `<button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="dungeonAttack()">${getBasicAttackLabel()}</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
     return;
   }
   if(levelUpPoints > 0){
@@ -2305,20 +2776,15 @@ function renderActions(){
     return;
   }
 
-  const attackMin = getActiveAttack();
-  const attackMax = getActiveAttack() + 5;
-  const attackTooltip = player.class === "Arqueiro"
-    ? `Ataque basico. Dano entre ${attackMin} e ${attackMax}. Chance de acerto: ${Math.round(getHitChance("basic") * 100)}%.`
-    : `Ataque basico. Dano entre ${attackMin} e ${attackMax}.`;
   if(!enemy){
     actions.innerHTML = `<button onclick="ensureEnemy()">Procurar inimigo</button>`;
     return;
   }
   const skillButtons = skillInfo.length
     ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="useSkill(${index})">${skill.name}</button>`).join("")
-    : `<button disabled>Nova habilidade no nivel 1</button>`;
+    : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
   actions.innerHTML = `
-    <button class="action-btn" data-tooltip="${attackTooltip}" onclick="attack()">Atacar</button>
+    <button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="attack()">${getBasicAttackLabel()}</button>
     ${skillButtons}
     <button class="action-btn" data-tooltip="Foge da batalha atual sem receber recompensas. Custa ${getFleeCost()} moedas." onclick="fleeBattle()">Fugir</button>`;
 }
@@ -2331,10 +2797,12 @@ function toggleLog(){
 function renderLevelUpPanel(){
   const panel = document.getElementById("levelUpPanel");
   if(needsSubclassChoice()){
+    const subclassState = getPlayerSubclassState();
+    const tierLabel = !subclassState.tier30 ? "primeira" : "segunda";
     panel.style.display = "block";
     panel.innerHTML = `
       <h3>Escolha sua subclasse</h3>
-      <p>Ao atingir o nivel 30, ${player.class} deve escolher uma nova vertente.</p>
+      <p>Escolha sua ${tierLabel} vertente para continuar evoluindo.</p>
       <div class="button-row">
         ${getSubclassChoices().map(subclass => `<button class="action-btn" data-tooltip="${subclass.description}" onclick="chooseSubclass('${subclass.id}')">${subclass.name}</button>`).join("")}
       </div>`;
@@ -2379,7 +2847,8 @@ function renderLevelUpPanel(){
 
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
-  return Math.max(1, Math.floor(getPreviewStats().maxMp * (0.1 + modifiers.manaRegenPercent)) + modifiers.manaRegen);
+  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent);
+  return Math.max(1, Math.floor(getPreviewStats().maxMp * totalPercent) + modifiers.manaRegen);
 }
 
 function regenMana(){
@@ -2396,14 +2865,24 @@ function wait(ms){
 async function attack(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
   isProcessingTurn = true;
-  if(player.class === "Arqueiro" && !rollHit("basic")){
-    log("Seu ataque passou raspando pelo alvo.");
-  }else{
-    const dmg = getActiveAttack() + Math.floor(Math.random() * 6);
-    enemy.hp -= dmg;
-    log(`Voce causou ${dmg} de dano.`);
+  const result = getBasicAttackResult("Voce");
+  if(result.blocked){
+    log(result.message);
+    isProcessingTurn = false;
+    updateUI();
+    return;
   }
+  log(result.message);
   decayPlayerBuffs();
+  const healed = getTurnHealing();
+  if(healed > 0){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
+    log(`Voce recuperou ${healed} de vida.`);
+  }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
+  }
   updateUI();
   await wait(320);
   await afterTurn();
@@ -2417,90 +2896,26 @@ async function useSkill(index){
     log("Voce ainda nao desbloqueou uma habilidade.");
     return;
   }
-  if(player.mp < skillInfo.cost){
-    log("Mana insuficiente!");
-    return;
-  }
   isProcessingTurn = true;
-  player.mp -= skillInfo.cost;
-  let freeTurn = false;
-  if(skillInfo.type === "damage"){
-    enemy.hp -= skillInfo.damage;
-    log(`${skillInfo.name} causou ${skillInfo.damage} de dano!`);
-  }
-  if(skillInfo.type === "fireball"){
-    enemy.hp -= skillInfo.damage;
-    log(`${skillInfo.name} explodiu causando ${skillInfo.damage} de dano!`);
-  }
-  if(skillInfo.type === "heal_percent"){
-    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + skillInfo.heal);
-    log(`${skillInfo.name} recuperou ${skillInfo.heal} de vida.`);
-  }
-  if(skillInfo.type === "mana_percent"){
-    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
-    log(`${skillInfo.name} recuperou ${skillInfo.mana} de mana.`);
-  }
-  if(skillInfo.type === "mana_percent_free"){
-    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + skillInfo.mana);
-    log(`${skillInfo.name} recuperou ${skillInfo.mana} de mana sem encerrar seu turno.`);
-    freeTurn = true;
-  }
-  if(skillInfo.type === "shield"){
-    playerEffects.shieldValue = skillInfo.shield;
-    playerEffects.shieldTurns = skillInfo.turns || -1;
-    log(`${skillInfo.name} criou um escudo de ${skillInfo.shield}.`);
-  }
-  if(skillInfo.type === "damage_maxhp_percent"){
-    enemy.hp -= skillInfo.damage;
-    log(`${skillInfo.name} esmagou o alvo com ${skillInfo.damage} de dano!`);
-  }
-  if(skillInfo.type === "battle_cry"){
-    playerEffects.attackBuffTurns = skillInfo.turns;
-    playerEffects.attackBuffAmount = skillInfo.attackBuff;
-    playerEffects.skillBuffTurns = skillInfo.turns;
-    playerEffects.skillBuffAmount = skillInfo.skillBuff;
-    log(`${skillInfo.name} elevou seu ataque em ${skillInfo.attackBuff} e suas habilidades em ${skillInfo.skillBuff}.`);
-  }
-  if(skillInfo.type === "aim_buff"){
-    playerEffects.attackBuffTurns = skillInfo.turns;
-    playerEffects.attackBuffAmount = skillInfo.attackBuff;
-    playerEffects.skillBuffTurns = skillInfo.turns;
-    playerEffects.skillBuffAmount = skillInfo.skillBuff;
-    playerEffects.precisionTurns = skillInfo.turns;
-    playerEffects.precisionBonus = skillInfo.precision;
-    log(`${skillInfo.name} deixou seus proximos disparos muito mais precisos.`);
-  }
-  if(skillInfo.type === "triple_shot"){
-    let totalDamage = 0;
-    let hitsLanded = 0;
-    for(let hit = 0; hit < skillInfo.hits; hit++){
-      if(rollHit("multi")){
-        const arrowDamage = getActiveAttack() + Math.floor(Math.random() * 4);
-        totalDamage += arrowDamage;
-        enemy.hp -= arrowDamage;
-        hitsLanded++;
-      }
-    }
-    log(hitsLanded ? `${skillInfo.name} acertou ${hitsLanded} flecha(s) e causou ${totalDamage} de dano.` : `${skillInfo.name} falhou em encontrar o alvo.`);
-  }
-  if(skillInfo.type === "damage_and_drain_mana"){
-    enemy.hp -= skillInfo.damage;
-    let drained = 0;
-    if(enemy.maxMp > 0){
-      drained = Math.floor(enemy.maxMp * skillInfo.manaDrain);
-      enemy.mp = Math.max(0, enemy.mp - drained);
-    }
-    log(`${skillInfo.name} causou ${skillInfo.damage} de dano${drained ? ` e drenou ${drained} de mana` : ""}.`);
-  }
-  if(!freeTurn && !["battle_cry", "aim_buff"].includes(skillInfo.type)){
-    decayPlayerBuffs();
-  }
-  updateUI();
-  if(freeTurn){
+  const result = applySkillLocally(skillInfo);
+  if(result.blocked){
+    log(result.message);
     isProcessingTurn = false;
     updateUI();
     return;
   }
+  log(result.message);
+  decayPlayerBuffs();
+  const healed = getTurnHealing();
+  if(healed > 0){
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
+    log(`Voce recuperou ${healed} de vida.`);
+  }
+  const manaRecovered = regenMana();
+  if(manaRecovered > 0){
+    log(`Voce recuperou ${manaRecovered} de mana.`);
+  }
+  updateUI();
   await wait(320);
   await afterTurn();
 }
@@ -2512,7 +2927,8 @@ function handleEnemyDefeat(){
   tryEnemyDrop(enemy);
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
   const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
-  const xpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
+  const baseXpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
+  const xpEarned = baseXpEarned + Math.floor(baseXpEarned * getPassiveModifiers().xpBonus);
   player.coins += coinsEarned;
   player.stats.coinsEarned += coinsEarned;
   if(enemy.isBoss){
@@ -2525,7 +2941,7 @@ function handleEnemyDefeat(){
   if(wasBoss && defeatedRegion){
     grantBossChest(defeatedRegion);
   }
-  gainXP(xpEarned);
+  gainXP(baseXpEarned);
   enemy = null;
   needsNewEnemy = true;
   displayState.enemyHp = null;
@@ -2548,39 +2964,35 @@ async function enemyTurn(){
   if(enemy.isBoss && enemy.mp >= enemy.skillCost && Math.random() < 0.45){
     enemy.mp -= enemy.skillCost;
     dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
-    log(`${enemy.skillName} atingiu voce com ${dmg} de dano.`);
+    log(`${enemy.skillName} foi conjurada.`);
   }else{
     dmg = enemy.attack + Math.floor(Math.random() * 5);
-    log(`O inimigo atacou e causou ${dmg} de dano.`);
+    log(`O inimigo atacou.`);
   }
   if(enemy.isBoss && enemy.mp < enemy.maxMp){
     enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
   }
-  const passiveReduction = getPassiveModifiers().damageReduction;
-  const flatReduction = getPassiveModifiers().flatReduction;
-  dmg = Math.max(0, dmg - flatReduction);
-  if(flatReduction > 0){
-    log(`Sua resistencia reduziu ${flatReduction} de dano.`);
-  }
-  const totalReduction = 1 - Math.min(0.75, passiveReduction);
-  dmg = Math.max(0, Math.floor(dmg * totalReduction));
-  if(playerEffects.shieldValue > 0 && dmg > 0){
-    const absorbed = Math.min(dmg, playerEffects.shieldValue);
-    playerEffects.shieldValue -= absorbed;
-    dmg -= absorbed;
-    log(`Seu escudo absorveu ${absorbed} de dano.`);
-    if(playerEffects.shieldValue <= 0){
-      playerEffects.shieldValue = 0;
-      playerEffects.shieldTurns = 0;
-      log("Seu escudo foi destruido.");
+  if(enemy.skipNextAttack){
+    enemy.skipNextAttack = false;
+    log(`${enemy.name} perdeu o ataque desta rodada.`);
+    dmg = 0;
+  }else{
+    const result = applyIncomingDamage(dmg);
+    if(result.missed){
+      log("O inimigo errou o ataque.");
+      dmg = 0;
+    }else{
+      if(result.absorbed > 0){
+        log(`Seu escudo absorveu ${result.absorbed} de dano.`);
+      }
+      if(result.manaAbsorbed > 0){
+        log(`Preciosa Mana absorveu ${result.manaAbsorbed} de dano com mana.`);
+      }
+      dmg = result.damage;
+      if(dmg > 0){
+        log(`Voce sofreu ${dmg} de dano.`);
+      }
     }
-  }
-  player.hp -= dmg;
-  const reflectPercent = getPassiveModifiers().reflectPercent;
-  if(reflectPercent > 0 && dmg > 0){
-    const reflected = Math.max(1, Math.floor(dmg * reflectPercent));
-    enemy.hp -= reflected;
-    log(`Pele de Ferro devolveu ${reflected} de dano ao inimigo.`);
   }
   if(playerEffects.shieldTurns > 0){
     playerEffects.shieldTurns--;
@@ -2599,25 +3011,17 @@ async function enemyTurn(){
     handleEnemyDefeat();
     return;
   }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
-  }
-  const healed = getTurnHealing();
-  if(healed > 0){
-    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
-    log(`Voce recuperou ${healed} de vida.`);
-  }
   isProcessingTurn = false;
   updateUI();
 }
 
 function gainXP(amount){
+  const totalAmount = amount + Math.floor(amount * getPassiveModifiers().xpBonus);
   if(player.level >= MAX_LEVEL){
     player.xp = getXpToNextLevel();
     return;
   }
-  player.xp += amount;
+  player.xp += totalAmount;
   while(player.level < MAX_LEVEL && player.xp >= getXpToNextLevel()){
     player.xp -= getXpToNextLevel();
     player.level++;
@@ -2675,9 +3079,16 @@ function chooseSubclass(subclassId){
   if(!needsSubclassChoice()){ return; }
   const subclass = getSubclassChoices().find(option => option.id === subclassId);
   if(!subclass){ return; }
-  player.subclass = subclass;
-  player.hp = Math.min(getPreviewStats().maxHp, player.hp + (subclass.hp || 0));
-  player.mp = Math.min(getPreviewStats().maxMp, player.mp + (subclass.mp || 0));
+  const subclassState = getPlayerSubclassState();
+  if(!subclassState.tier30){
+    subclassState.tier30 = subclass.id;
+  }else{
+    subclassState.tier60 = subclass.id;
+  }
+  player.activeSkills = getClassTrees().activeSkills;
+  player.passiveSkills = getClassTrees().passiveSkills;
+  player.hp = Math.min(getPreviewStats().maxHp, player.hp + (subclass.bonusHp || 0));
+  player.mp = Math.min(getPreviewStats().maxMp, player.mp + (subclass.bonusMp || 0));
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
   log(`Voce escolheu a subclasse ${subclass.name}.`);
@@ -2696,7 +3107,6 @@ setInterval(() => {
     updateUI();
   }
 }, 1000);
-window.comandoProximoNivel = grantNextLevelXPCommand;
 </script>
 </body>
 </html>
