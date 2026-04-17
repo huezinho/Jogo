@@ -496,20 +496,30 @@ function createDefaultPlayerEffects(){
     skillBuffTurns: 0,
     skillBuffAmount: 0,
     skillBuffPercent: 0,
+    manaRegenBuffTurns: 0,
+    manaRegenBuffPercent: 0,
     guaranteedHitTurns: 0,
     enemyMissBonusTurns: 0,
     enemyMissBonus: 0,
     regenTurns: 0,
     regenPercent: 0,
     firstSkillFreeAvailable: false,
-    firstDamageSkillBoostAvailable: false,
     finalDamageBuffTurns: 0,
     finalDamageBuffPercent: 0,
     nextDamageBonusPercent: 0,
+    nextBarrageDamageBonusPercent: 0,
     shieldValue: 0,
     shieldTurns: 0,
+    shieldReactiveWeakening: false,
     flatReduction: 0,
-    reflectPercent: 0
+    reflectPercent: 0,
+    arcaneCharges: 0,
+    arcaneChargeTurns: 0,
+    firstAttackDoubleAvailable: false,
+    incomingDamageBonusTurns: 0,
+    incomingDamageBonusPercent: 0,
+    lastActionType: "",
+    lastActionTurn: 0
   };
 }
 
@@ -867,17 +877,17 @@ const subclassChoicesByClass = {
   },
   Mago: {
     tier30: [
-      { id: "elementalista", name: "Elementalista", description: "Domina os elementos e reforca o poder bruto das magias.", bonusHp: 0, bonusMp: 100, bonusAttack: 0, skillPower: 20 },
-      { id: "arcanista", name: "Arcanista", description: "Amplia os reservatorios arcanos e mistura tecnica com mana.", bonusHp: 0, bonusMp: 300, bonusAttack: 10, skillPower: 10 }
+      { id: "elementalista", name: "Elementalista", description: "Manipula fogo e reforca o poder bruto das magias.", bonusHp: 0, bonusMp: 40, bonusAttack: 0, skillPower: 30 },
+      { id: "arcanista", name: "Arcanista", description: "Acumula cargas arcanas e transforma mana em dano bruto.", bonusHp: 0, bonusMp: 100, bonusAttack: 10, skillPower: 15 }
     ],
     tier60: {
       elementalista: [
         { id: "mago_incendiario", name: "Mago Incendiario", description: "Canaliza fogo puro em cada feitiço.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 60 },
-        { id: "mago_frigido", name: "Mago Frigido", description: "Frio absoluto com grande reserva arcana.", bonusHp: 0, bonusMp: 300, bonusAttack: 0, skillPower: 35 }
+        { id: "mago_frigido", name: "Mago Frigido", description: "Frio absoluto com grande reserva arcana.", bonusHp: 0, bonusMp: 400, bonusAttack: 0, skillPower: 40 }
       ],
       arcanista: [
-        { id: "arquimago", name: "Arquimago", description: "Mestria equilibrada entre mana, ataque e poder de habilidade.", bonusHp: 0, bonusMp: 200, bonusAttack: 30, skillPower: 40 },
-        { id: "corrompido", name: "Corrompido", description: "Mana absurda alimentando um estilo arcano instavel.", bonusHp: 0, bonusMp: 600, bonusAttack: 15, skillPower: 25 }
+        { id: "arquimago", name: "Arquimago", description: "Mestria suprema entre mana, ataque e poder arcano.", bonusHp: 0, bonusMp: 800, bonusAttack: 10, skillPower: 10 },
+        { id: "corrompido", name: "Corrompido", description: "Poder instavel que mistura mana, arma e sacrificio.", bonusHp: 0, bonusMp: 300, bonusAttack: 25, skillPower: 25 }
       ]
     }
   },
@@ -889,11 +899,11 @@ const subclassChoicesByClass = {
     tier60: {
       atirador: [
         { id: "atirador_arcano", name: "Atirador Arcano", description: "Transforma mana em disparos tecnicos e marcas arcanas.", bonusHp: 0, bonusMp: 200, bonusAttack: 0, skillPower: 40 },
-        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em execucao letal de alvo unico.", bonusHp: 0, bonusMp: 0, bonusAttack: 30, skillPower: 30 }
+        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em execucao letal de alvo unico.", bonusHp: 0, bonusMp: 0, bonusAttack: 40, skillPower: 0 }
       ],
       cacador: [
-        { id: "espreitador", name: "Espreitador", description: "Caçador agil com bom equilibrio entre mana e dano.", bonusHp: 0, bonusMp: 40, bonusAttack: 30, skillPower: 15 },
-        { id: "guarda_florestal", name: "Guarda Florestal", description: "Resistente, preciso e acostumado a longas jornadas.", bonusHp: 200, bonusMp: 0, bonusAttack: 25, skillPower: 20 }
+        { id: "espreitador", name: "Espreitador", description: "Predador furtivo com equilibrio entre mana e dano oportunista.", bonusHp: 0, bonusMp: 50, bonusAttack: 25, skillPower: 10 },
+        { id: "guarda_florestal", name: "Guarda Florestal", description: "Sentinela resistente que domina tiros de controle e sobrevivencia.", bonusHp: 400, bonusMp: 0, bonusAttack: 25, skillPower: 0 }
       ]
     }
   }
@@ -988,24 +998,62 @@ function buildWarriorTrees(){
 function buildMageTrees(){
   const subclassState = getPlayerSubclassState();
   const tier30 = subclassState.tier30;
+  const tier60 = subclassState.tier60;
   const activeSkills = [
-    tier30 === "elementalista" && player.level >= 36
-      ? { level: 36, id: "bola_de_fogo", name: "Bola de Fogo", type: "mage_fireball" }
-      : { level: 12, id: "explosao_de_mana", name: "Explosao de Mana", type: "mage_mana_burst" }
+    { level: 20, id: "explosao_de_mana", name: "Explosao de Mana", type: "mage_mana_burst" }
   ];
-  if(tier30 === "arcanista" && player.level >= 36){
-    activeSkills.push({ level: 36, id: "concentracao", name: "Concentracao", type: "mage_concentration" });
+  if(tier30 === "elementalista"){
+    if(player.level >= 30){
+      const isFrigido = tier60 === "mago_frigido" && player.level >= 60;
+      activeSkills.push({ level: 30, id: isFrigido ? "bola_de_neve" : "bola_de_fogo", name: isFrigido ? "Bola de Neve" : "Bola de Fogo", type: "mage_fireball" });
+    }
+    if(player.level >= 50){
+      const isIncendiario = tier60 === "mago_incendiario" && player.level >= 60;
+      activeSkills.push({ level: 50, id: isIncendiario ? "bafo_de_fogo" : "congelar", name: isIncendiario ? "Bafo de Fogo" : "Congelar", type: "mage_freeze" });
+    }
+    if(tier60 === "mago_incendiario" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "fenix_sagrada", name: "Fenix Sagrada", type: "mage_sacred_phoenix" });
+    }
+    if(tier60 === "mago_frigido" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "nevasca", name: "Nevasca", type: "mage_blizzard" });
+    }
+    if(tier60 === "mago_incendiario" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "explodir", name: "Explodir", type: "mage_explode" });
+    }
+    if(tier60 === "mago_frigido" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "avalanche", name: "Avalanche", type: "mage_avalanche" });
+    }
   }
-  activeSkills.push({ level: 24, id: "escudo_de_mana", name: "Escudo de Mana", type: "mage_mana_shield" });
-  if(tier30 === "elementalista" && player.level >= 48){
-    activeSkills.push({ level: 48, id: "congelar", name: "Congelar", type: "mage_freeze" });
+  if(tier30 === "arcanista"){
+    if(player.level >= 30){
+      activeSkills.push({ level: 30, id: "descarregar", name: "Descarregar", type: "mage_discharge" });
+    }
+    if(player.level >= 50){
+      activeSkills.push({ level: 50, id: "escudo_de_mana", name: "Escudo de Mana", type: "mage_mana_shield" });
+    }
+    if(tier60 === "arquimago" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "concentracao", name: "Concentracao", type: "mage_concentration" });
+    }
+    if(tier60 === "corrompido" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "corrupcao", name: "Corrupcao", type: "mage_corruption" });
+    }
+    if(tier60 === "arquimago" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "sobrecarregar", name: "Sobrecarregar", type: "mage_overcharge" });
+    }
+    if(tier60 === "corrompido" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "incorporar_demonio", name: "Incorporar Demonio", type: "mage_demon_form" });
+    }
   }
   return {
     activeSkills,
     passiveSkills: [
-      { level: 6, id: "estudo_arduo", name: "Estudo Arduo", type: "mage_skill_level_bonus" },
-      { level: tier30 === "elementalista" && player.level >= 54 ? 54 : 18, id: tier30 === "elementalista" && player.level >= 54 ? "canhao_de_vidro" : "preciosa_mana", name: tier30 === "elementalista" && player.level >= 54 ? "Canhao de Vidro" : "Preciosa Mana", type: tier30 === "elementalista" && player.level >= 54 ? "mage_first_damage_skill_boost" : "mage_precious_mana" },
-      { level: 25, id: "mana_e_vida", name: "Mana e Vida", type: "mage_mana_to_life" }
+      { level: 10, id: "ultimo_recurso", name: "Ultimo Recurso", type: "mage_last_resort" },
+      ...(tier30 === "elementalista" && player.level >= 40 ? [{ level: 40, id: "mana_e_vida", name: "Mana e Vida", type: "mage_mana_to_life" }] : []),
+      ...(tier30 === "arcanista" && player.level >= 40 ? [{ level: 40, id: "transbordando", name: "Transbordando", type: "mage_overflowing" }] : []),
+      ...(tier60 === "mago_incendiario" && player.level >= 70 ? [{ level: 70, id: "fogo_do_inferno", name: "Fogo do Inferno", type: "mage_hellfire" }] : []),
+      ...(tier60 === "mago_frigido" && player.level >= 70 ? [{ level: 70, id: "gelo_queima", name: "Gelo Queima", type: "mage_frostburn" }] : []),
+      ...(tier60 === "arquimago" && player.level >= 70 ? [{ level: 70, id: "carregar", name: "Carregar", type: "mage_charge_damage" }] : []),
+      ...(tier60 === "corrompido" && player.level >= 70 ? [{ level: 70, id: "canhao_de_vidro", name: "Canhao de Vidro", type: "mage_glass_cannon" }] : [])
     ]
   };
 }
@@ -1029,11 +1077,29 @@ function buildArcherTrees(){
     if(tier60 === "sniper" && player.level >= 60){
       activeSkills.push({ level: 60, id: "executar", name: "Executar", type: "archer_execute" });
     }
+    if(tier60 === "atirador_arcano" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "sobrecarregar", name: "Sobrecarregar", type: "archer_overcharge" });
+    }
+    if(tier60 === "sniper" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "ponto_fraco", name: "Ponto Fraco", type: "archer_weak_spot" });
+    }
   }
   if(tier30 === "cacador"){
     activeSkills.push({ level: 30, id: "rajada_de_flechas", name: "Rajada de Flechas", type: "archer_barrage" });
     if(player.level >= 50){
       activeSkills.push({ level: 50, id: "armadilha", name: "Armadilha", type: "archer_trap" });
+    }
+    if(tier60 === "espreitador" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "surpresa", name: "Surpresa", type: "archer_surprise" });
+    }
+    if(tier60 === "guarda_florestal" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "tranquilizante", name: "Tranquilizante", type: "archer_tranquilizer" });
+    }
+    if(tier60 === "espreitador" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "mirar_no_pe", name: "Mirar no Pe", type: "archer_aim_leg" });
+    }
+    if(tier60 === "guarda_florestal" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "tiro_cortante", name: "Tiro Cortante", type: "archer_cutting_shot" });
     }
   }
   const passiveSkills = [
@@ -1042,7 +1108,7 @@ function buildArcherTrees(){
       id: "passos_leves",
       name: "Passos Leves",
       type: tier30 === "atirador"
-        ? "archer_global_double_chance"
+        ? "archer_dodge_double_bonus"
         : tier30 === "cacador"
           ? "archer_dodge_coin_bonus"
           : "archer_dodge_level_scaling"
@@ -1050,9 +1116,21 @@ function buildArcherTrees(){
   ];
   if(tier30 === "atirador"){
     passiveSkills.push({ level: 40, id: "pulso_firme", name: "Pulso Firme", type: "archer_attack_level_bonus" });
+    if(tier60 === "atirador_arcano" && player.level >= 70){
+      passiveSkills.push({ level: 70, id: "cristalizar_mana", name: "Cristalizar Mana", type: "archer_mana_to_skill_bonus" });
+    }
+    if(tier60 === "sniper" && player.level >= 70){
+      passiveSkills.push({ level: 70, id: "olhos_de_falcao", name: "Olhos de Falcao", type: "archer_sniper_bonus_crit" });
+    }
   }
   if(tier30 === "cacador"){
     passiveSkills.push({ level: 40, id: "errou", name: "Errou", type: "archer_dodge_damage_buff" });
+    if(tier60 === "espreitador" && player.level >= 70){
+      passiveSkills.push({ level: 70, id: "passos_silenciosos", name: "Passos Silenciosos", type: "archer_enemy_skip_chance" });
+    }
+    if(tier60 === "guarda_florestal" && player.level >= 70){
+      passiveSkills.push({ level: 70, id: "resistencia_florestal", name: "Resistencia Florestal", type: "archer_flat_reduction_level" });
+    }
   }
   return { activeSkills, passiveSkills };
 }
@@ -1233,6 +1311,8 @@ function getSkillAnimationStyle(skillInfo){
     "warrior_shield",
     "mage_concentration",
     "mage_mana_shield",
+    "mage_blizzard",
+    "mage_demon_form",
     "archer_focus",
     "archer_camouflage"
   ]);
@@ -1478,13 +1558,17 @@ function getPassiveModifiers(){
     reflectPercent: 0,
     turnHealPercent: 0,
     skillCostIncrease: 0,
+    totalDamageFlat: 0,
+    totalDamagePercent: 0,
     enemyMissChance: 0,
+    enemySkipChance: 0,
     xpBonus: 0,
     preciousMana: false,
     manaToLifePercent: 0
   };
   const subclassState = getPlayerSubclassState();
   const tier30 = subclassState.tier30;
+  const tier60 = subclassState.tier60;
   for(const passive of getUnlockedPassiveSkills()){
     if(passive.type === "warrior_flat_reduction"){
       base.flatReduction += Math.floor(0.8 * player.level);
@@ -1495,14 +1579,25 @@ function getPassiveModifiers(){
     if(passive.type === "bonus_xp"){
       base.xpBonus += 0.1;
     }
-    if(passive.type === "mage_skill_level_bonus"){
-      const factor = tier30 === "elementalista" && player.level >= 42 ? 2.4 : 2;
-      base.skillPower += Math.floor(factor * player.level);
-    }
-    if(passive.type === "mage_precious_mana"){
+    if(passive.type === "mage_last_resort"){
       base.preciousMana = true;
     }
+    if(passive.type === "mage_mana_to_life"){
+      base.manaToLifePercent += tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
+    }
+    if(passive.type === "mage_overflowing"){
+      // applied after all mana bonuses are known
+    }
+    if(passive.type === "mage_charge_damage"){
+      base.totalDamagePercent += 0.05 * (playerEffects.arcaneCharges || 0);
+    }
+    if(passive.type === "mage_glass_cannon"){
+      // handled in combat state
+    }
     if(passive.type === "archer_dodge_level_scaling"){
+      base.enemyMissChance += 0.05 + (0.005 * player.level);
+    }
+    if(passive.type === "archer_dodge_double_bonus"){
       base.enemyMissChance += 0.05 + (0.005 * player.level);
     }
     if(passive.type === "archer_dodge_coin_bonus"){
@@ -1516,14 +1611,14 @@ function getPassiveModifiers(){
       base.bonusAttack += attackBonus;
       base.skillPower += skillBonus;
     }
-    if(passive.type === "archer_coin_bonus"){
-      base.coinBonus += 0.1;
+    if(passive.type === "archer_flat_reduction_level"){
+      base.flatReduction += Math.floor(0.2 * player.level);
+    }
+    if(passive.type === "archer_enemy_skip_chance"){
+      base.enemySkipChance += 0.07;
     }
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
-    }
-    if(passive.id === "mana_e_vida"){
-      base.manaToLifePercent += 0.1;
     }
   }
   for(const subclass of getChosenSubclassDefs()){
@@ -1545,8 +1640,17 @@ function getPassiveModifiers(){
   base.bonusMp += activeSetBonuses.bonusMp || 0;
   base.bonusAttack += activeSetBonuses.bonusAttack || 0;
   base.skillPower += activeSetBonuses.skillPower || 0;
-  if(player.class === "Mago" && player.level >= 25){
-    base.manaToLifePercent = 0.1;
+  if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
+    const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
+    const costFactor = tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.1;
+    base.totalDamageFlat += Math.floor((player.maxMp + base.bonusMp) * damageFactor);
+    base.skillCostIncrease += Math.floor((player.maxMp + base.bonusMp) * costFactor);
+  }
+  if(getUnlockedPassiveSkills().some(passive => passive.type === "archer_mana_to_skill_bonus")){
+    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.05);
+  }
+  if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_mana_to_life") && tier60 === "mago_incendiario" && player.level >= 60){
+    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.1);
   }
   if(base.manaToLifePercent > 0){
     base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.manaToLifePercent);
@@ -2078,14 +2182,16 @@ function processDungeonIncomingDamage(baseDamage, message){
     log(`Seu escudo absorveu ${result.absorbed} de dano.`);
   }
   if(result.manaAbsorbed > 0){
-    log(`Preciosa Mana converteu ${result.manaAbsorbed} de dano em gasto de mana.`);
+    log(`Ultimo Recurso converteu ${result.manaAbsorbed} de dano em gasto de mana.`);
   }
   if(playerEffects.shieldValue <= 0){
     playerEffects.shieldTurns = 0;
+    playerEffects.shieldReactiveWeakening = false;
   }else if(playerEffects.shieldTurns > 0){
     playerEffects.shieldTurns--;
     if(playerEffects.shieldTurns <= 0){
       playerEffects.shieldValue = 0;
+      playerEffects.shieldReactiveWeakening = false;
       log("Seu escudo se desfez.");
     }
   }
@@ -2128,6 +2234,7 @@ async function dungeonAttack(){
     return;
   }
   await playSpriteAttackAnimation("hero", player.class === "Mago" ? "cast" : "attack", result.damage > 0, player.class === "Mago" ? Math.min(result.missiles || 1, 3) : 1, 70, 82);
+  playerEffects.lastActionType = "basic_attack";
   decayPlayerBuffs();
   const healed = getTurnHealing();
   if(healed > 0){
@@ -2209,6 +2316,32 @@ function getSkillPowerBonus(){
   return Math.floor(baseSkill * (1 + percent));
 }
 
+function getUniversalDamageFlatBonus(){
+  return getPassiveModifiers().totalDamageFlat || 0;
+}
+
+function getUniversalDamagePercentBonus(){
+  return getPassiveModifiers().totalDamagePercent || 0;
+}
+
+function getArcaneChargeInfo(){
+  return {
+    charges: playerEffects.arcaneCharges || 0,
+    turns: playerEffects.arcaneChargeTurns || 0
+  };
+}
+
+function addArcaneCharges(amount){
+  const gained = Math.max(0, Math.floor(amount));
+  if(gained <= 0){ return 0; }
+  if(playerEffects.arcaneCharges <= 0 || playerEffects.arcaneChargeTurns <= 0){
+    playerEffects.arcaneCharges = 0;
+    playerEffects.arcaneChargeTurns = 3;
+  }
+  playerEffects.arcaneCharges += gained;
+  return gained;
+}
+
 function getHitChance(mode = "basic"){
   if(playerEffects.guaranteedHitTurns > 0){ return 1; }
   if(player.class !== "Arqueiro"){ return 1; }
@@ -2226,12 +2359,38 @@ function getArcherDoubleChance(){
   if(subclassState.tier30 === "atirador" && player.level >= 30){
     chance += 0.05;
   }
+  if(subclassState.tier60 === "sniper" && player.level >= 60){
+    chance += 0.15;
+  }
+  if(subclassState.tier60 === "sniper" && player.level >= 70){
+    chance += 0.15;
+  }
   return chance;
 }
 
+function archerCanOverflowToTriple(skillType = ""){
+  const subclassState = getPlayerSubclassState();
+  if(subclassState.tier60 === "sniper" && player.level >= 70){
+    return true;
+  }
+  return skillType === "archer_headshot" && subclassState.tier60 === "sniper" && player.level >= 60;
+}
+
+function getArcherDamageMultiplier(baseChance = 0, allowTriple = false){
+  const totalChance = Math.max(0, baseChance + (player.class === "Arqueiro" ? getArcherDoubleChance() : 0));
+  if(allowTriple && totalChance > 1){
+    const tripleChance = Math.min(0.95, totalChance - 1);
+    if(Math.random() < tripleChance){
+      return 3;
+    }
+    return 2;
+  }
+  const doubleChance = Math.min(0.95, totalChance);
+  return Math.random() < doubleChance ? 2 : 1;
+}
+
 function shouldDoubleDamage(baseChance = 0){
-  const totalChance = Math.min(0.95, baseChance + (player.class === "Arqueiro" ? getArcherDoubleChance() : 0));
-  return Math.random() < totalChance;
+  return getArcherDamageMultiplier(baseChance) > 1;
 }
 
 function getEnemyMissChance(){
@@ -2241,7 +2400,7 @@ function getEnemyMissChance(){
 }
 
 function decayPlayerBuffs(){
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns"]){
     if(playerEffects[buffName] > 0){
       playerEffects[buffName]--;
     }
@@ -2250,10 +2409,16 @@ function decayPlayerBuffs(){
   if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffPercent = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffAmount = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffPercent = 0; }
+  if(playerEffects.manaRegenBuffTurns <= 0){ playerEffects.manaRegenBuffPercent = 0; }
   if(playerEffects.guaranteedHitTurns <= 0){ playerEffects.guaranteedHitTurns = 0; }
   if(playerEffects.enemyMissBonusTurns <= 0){ playerEffects.enemyMissBonus = 0; }
   if(playerEffects.regenTurns <= 0){ playerEffects.regenPercent = 0; }
   if(playerEffects.finalDamageBuffTurns <= 0){ playerEffects.finalDamageBuffPercent = 0; }
+  if(playerEffects.incomingDamageBonusTurns <= 0){ playerEffects.incomingDamageBonusPercent = 0; }
+  if(playerEffects.arcaneChargeTurns <= 0){
+    playerEffects.arcaneCharges = 0;
+    playerEffects.arcaneChargeTurns = 0;
+  }
 }
 
 function getTurnHealing(){
@@ -2267,7 +2432,7 @@ function getSkillInfo(){
   const maxMp = getPreviewStats().maxMp;
   const attack = getActiveAttack();
   const skillPower = getSkillPowerBonus();
-  const arcanistExtraCost = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 42 ? Math.floor(maxMp * 0.05) : 0;
+  const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_brandish"){
       const damage = Math.floor(attack * 1.3);
@@ -2300,29 +2465,105 @@ function getSkillInfo(){
       return { ...skill, cost: 32, damage, ignoreArmor: true, description: `${skill.name}: consome 32 MP e causa ${damage} de dano ignorando a armadura.` };
     }
     if(skill.type === "mage_mana_burst"){
-      const manaBurstCost = 30 + Math.floor(0.1 * maxMp) + arcanistExtraCost;
-      const damage = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 54
-        ? 26 + Math.floor(1.0 * (skillPower + attack)) + Math.floor(0.35 * maxMp)
-        : 26 + Math.floor(1.0 * skillPower) + Math.floor(0.35 * maxMp);
-      return { ...skill, cost: manaBurstCost, damage, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano.` };
+      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.8;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.45 : 0.3;
+      const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
+      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.3, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 30% da vida maxima do inimigo, devolve toda a mana gasta.` };
     }
     if(skill.type === "mage_fireball"){
-      const damage = 30 + Math.floor(0.6 * skillPower);
-      return { ...skill, cost: 40, damage, description: `${skill.name}: consome 40 MP e causa ${damage} de dano de fogo.` };
+      const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
+      const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
+      const currentHpBonus = isIncendiario && enemy ? Math.floor(enemy.hp * 0.05) : 0;
+      const damage = 50 + Math.floor(1.3 * skillPower) + currentHpBonus + getUniversalDamageFlatBonus();
+      const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
+      const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
+      return {
+        ...skill,
+        name: isFrigido ? "Bola de Neve" : skill.name,
+        cost: 40 + mageExtraCost,
+        damage,
+        burnDamage,
+        burnTurns: 3,
+        healReductionPercent: 0.3,
+        chillTurns: isFrigido ? 3 : 0,
+        chillAttackDownPercent: isFrigido ? 0.3 : 0,
+        appliesBurn: !isFrigido,
+        appliesChill: isFrigido,
+        description: isFrigido
+          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
+          : `${skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
+      };
     }
     if(skill.type === "mage_concentration"){
-      return { ...skill, cost: 40 + arcanistExtraCost, turns: 3, percent: 0.1, description: `${skill.name}: consome ${40 + arcanistExtraCost} MP e aumenta o dano de habilidade em 10% por 3 turnos.` };
+      return { ...skill, cost: 200 + mageExtraCost, turns: 4, percent: 0.1, manaRegenPercent: 0.1, description: `${skill.name}: consome ${200 + mageExtraCost} MP, aumenta o dano total em 10% e a regeneracao de mana em 10% por 4 turnos.` };
     }
     if(skill.type === "mage_mana_shield"){
-      const improvedShield = player.class === "Mago" && subclassState.tier30 === "arcanista" && player.level >= 48;
-      const manaPercentCost = improvedShield ? 0.05 : 0.15;
-      const cost = Math.floor(maxMp * manaPercentCost) + (improvedShield ? 0 : arcanistExtraCost);
-      const shield = 18 + Math.floor(0.34 * maxMp);
+      const isArquimago = subclassState.tier60 === "arquimago" && player.level >= 60;
+      const factor = isArquimago ? 0.4 : 0.3;
+      const costPercent = isArquimago ? 0.12 : 0.15;
+      const cost = Math.floor(maxMp * costPercent) + mageExtraCost;
+      const shield = 40 + Math.floor(factor * maxMp);
       return { ...skill, cost, shield, turns: 2, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo por 2 turnos.` };
     }
     if(skill.type === "mage_freeze"){
-      const damage = 20 + Math.floor(0.4 * skillPower);
-      return { ...skill, cost: 26, damage, freezeChance: 0.15, description: `${skill.name}: consome 26 MP, causa ${damage} de dano e tem 15% de chance de impedir o proximo ataque do inimigo.` };
+      const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
+      const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
+      const damage = 60 + Math.floor(0.9 * skillPower) + getUniversalDamageFlatBonus();
+      const cost = 40 + Math.floor(0.2 * player.level) + mageExtraCost;
+      const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
+      const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
+      return {
+        ...skill,
+        name: isIncendiario ? "Bafo de Fogo" : skill.name,
+        cost,
+        damage,
+        freezeChance: isIncendiario ? 0 : 0.3,
+        burnDamage,
+        burnTurns: isIncendiario ? 6 : 0,
+        chillTurns: isFrigido ? 2 : 0,
+        chillAttackDownPercent: isFrigido ? 0.3 : 0,
+        description: isIncendiario
+          ? `Bafo de Fogo: consome ${cost} MP, causa ${damage} de dano e aplica queimadura por 6 turnos.`
+          : `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem 30% de chance de impedir o proximo ataque do inimigo.${isFrigido ? " Se nao impedir o turno, ainda aplica resfriamento por 2 turnos." : ""}`
+      };
+    }
+    if(skill.type === "mage_discharge"){
+      const charges = getArcaneChargeInfo().charges;
+      const damage = 60 + (10 * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.1 * maxMp) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: (10 * charges) + mageExtraCost, damage, charges, description: `${skill.name}: consome ${(10 * charges) + mageExtraCost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
+    }
+    if(skill.type === "mage_sacred_phoenix"){
+      const cost = 200 + skillPower + mageExtraCost;
+      const damage = 100 + Math.floor(1.6 * skillPower) + getUniversalDamageFlatBonus();
+      const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
+      const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
+      return { ...skill, cost, damage, burnDamage, burnTurns: 1, healReductionPercent: 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, aplicando queimadura por 1 turno.` };
+    }
+    if(skill.type === "mage_blizzard"){
+      return { ...skill, cost: 120 + mageExtraCost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${120 + mageExtraCost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
+    }
+    if(skill.type === "mage_corruption"){
+      const currentManaCost = Math.floor(player.mp * 0.3);
+      const damage = 100 + Math.floor(1.0 * skillPower) + Math.floor(0.3 * maxMp) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: currentManaCost, damage, armorBreakPercent: 1, armorBreakTurns: 5, noShieldTurns: 5, description: `${skill.name}: consome ${currentManaCost} MP, causa ${damage} de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.` };
+    }
+    if(skill.type === "mage_overcharge"){
+      const charges = getArcaneChargeInfo().charges;
+      const damage = 200 + maxMp + (15 * charges) + getUniversalDamageFlatBonus();
+      const cost = Math.floor(maxMp * 0.95) + mageExtraCost;
+      return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano usando sua mana maxima e as cargas arcanas.` };
+    }
+    if(skill.type === "mage_demon_form"){
+      return { ...skill, cost: Math.floor(player.mp * 0.3), turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${Math.floor(player.mp * 0.3)} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
+    }
+    if(skill.type === "mage_explode"){
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: 500 + mageExtraCost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${500 + mageExtraCost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
+    }
+    if(skill.type === "mage_avalanche"){
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.6 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: 400 + mageExtraCost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${400 + mageExtraCost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
     }
     if(skill.type === "archer_focus"){
       const cost = 30 + player.level;
@@ -2343,9 +2584,11 @@ function getSkillInfo(){
       const baseDamage = 30 + attack + skillPower;
       const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
       const cost = 60 + Math.floor(0.3 * player.level);
-      const critChance = Math.min(0.95, 0.1 + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0) + getArcherDoubleChance());
+      const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.5 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
       const marksOnNonCrit = subclassState.tier60 === "atirador_arcano" && player.level >= 60;
-      return { ...skill, cost, damage, critChance, marksOnNonCrit, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado${marksOnNonCrit ? ". Se nao dobrar o dano, marca o alvo para receber 15% a mais no proximo golpe." : "."}` };
+      const totalDoubleChance = critChance + getArcherDoubleChance();
+      const overflowText = archerCanOverflowToTriple("archer_headshot") && totalDoubleChance > 1 ? ` O excedente acima de 100% vira ${Math.floor((totalDoubleChance - 1) * 100)}% de chance de dano triplo.` : "";
+      return { ...skill, cost, damage, critChance, marksOnNonCrit, allowTriple: archerCanOverflowToTriple("archer_headshot"), description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(totalDoubleChance * 100)}% de chance total de dano dobrado${marksOnNonCrit ? ". Se nao dobrar o dano, marca o alvo para receber 15% a mais no proximo golpe." : "."}${overflowText}` };
     }
     if(skill.type === "archer_camouflage"){
       const cost = 40 + Math.floor(0.5 * player.level);
@@ -2355,16 +2598,21 @@ function getSkillInfo(){
     }
     if(skill.type === "archer_barrage"){
       const extraShotChance = playerEffects.guaranteedHitTurns > 0 ? 0.1 : 0;
-      return { ...skill, cost: 60, hits: 2, extraShotChance, description: `${skill.name}: consome 60 MP e realiza 2 ataques basicos no mesmo turno${extraShotChance ? ", com 10% de chance de um disparo adicional por causa do Mirar" : ""}.` };
+      const hits = subclassState.tier60 === "guarda_florestal" && player.level >= 60 ? 3 : 2;
+      const bonusText = playerEffects.nextBarrageDamageBonusPercent > 0 ? ` A proxima rajada esta fortalecida em ${Math.floor(playerEffects.nextBarrageDamageBonusPercent * 100)}%.` : "";
+      return { ...skill, cost: 60, hits, extraShotChance, description: `${skill.name}: consome 60 MP e realiza ${hits} ataques basicos no mesmo turno${extraShotChance ? ", com 10% de chance de um disparo adicional por causa do Mirar" : ""}.${bonusText}` };
     }
     if(skill.type === "archer_piercing_shot"){
+      const attackFactor = subclassState.tier60 === "sniper" && player.level >= 60 ? 1.2 : 0.8;
       const skillFactor = subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.2 : 0.8;
-      const damage = 50 + Math.floor(0.8 * attack) + Math.floor(skillFactor * skillPower);
+      const damage = 50 + Math.floor(attackFactor * attack) + Math.floor(skillFactor * skillPower);
       return { ...skill, cost: 80, damage, ignoreArmor: true, ignoreShield: true, description: `${skill.name}: consome 80 MP e causa ${damage} de dano, ignorando armadura e escudo do inimigo.` };
     }
     if(skill.type === "archer_trap"){
-      const damage = 30 + Math.floor(1.1 * skillPower);
-      return { ...skill, cost: 80, damage, skipChance: 0.3, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.` };
+      const bonusCurrentHpDamage = subclassState.tier60 === "espreitador" && player.level >= 60 && enemy ? Math.floor(enemy.hp * 0.08) : 0;
+      const damage = 30 + Math.floor(1.1 * skillPower) + bonusCurrentHpDamage;
+      const nextBarrageBonus = subclassState.tier60 === "guarda_florestal" && player.level >= 60 ? 0.15 : 0;
+      return { ...skill, cost: 80, damage, skipChance: 0.3, nextBarrageBonus, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.${bonusCurrentHpDamage ? " O dano inclui 8% da vida atual do inimigo." : ""}${nextBarrageBonus ? " Se prender o alvo, sua proxima Rajada de Flechas causara 15% de dano adicional." : ""}` };
     }
     if(skill.type === "archer_arcane_shot"){
       const damage = 60 + Math.floor(1.1 * skillPower) + Math.floor(0.6 * maxMp);
@@ -2373,6 +2621,36 @@ function getSkillInfo(){
     if(skill.type === "archer_execute"){
       const damage = 60 + Math.floor(1.1 * attack) + Math.floor(0.9 * skillPower);
       return { ...skill, cost: 120, damage, executeThreshold: 0.4, executeMultiplier: 3, description: `${skill.name}: consome 120 MP e causa ${damage} de dano. Se o inimigo estiver abaixo de 40% da vida, o dano e triplicado.` };
+    }
+    if(skill.type === "archer_surprise"){
+      const fromCamouflage = playerEffects.lastActionType === "archer_camouflage";
+      const damage = fromCamouflage
+        ? 80 + Math.floor(1.2 * attack) + Math.floor(0.9 * skillPower)
+        : 60 + Math.floor(0.9 * attack) + Math.floor(0.7 * skillPower);
+      return { ...skill, cost: 80, damage, empoweredFromCamouflage: fromCamouflage, description: `${skill.name}: consome 80 MP e causa ${damage} de dano.${fromCamouflage ? " Como sua ultima acao foi Camuflagem, esta versao saiu fortalecida." : ""}` };
+    }
+    if(skill.type === "archer_tranquilizer"){
+      const damage = 60 + Math.floor(0.8 * attack) + Math.floor(0.6 * skillPower);
+      return { ...skill, cost: 80, damage, enemyAttackDownPercent: 0.3, enemyAttackDownTurns: 3, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e reduz em 30% o dano do inimigo por 3 turnos.` };
+    }
+    if(skill.type === "archer_overcharge"){
+      const currentMana = player.mp;
+      const damage = 80 + Math.floor(0.6 * skillPower) + Math.floor(0.6 * currentMana);
+      return { ...skill, cost: currentMana, damage, description: `${skill.name}: gasta toda a mana atual (${currentMana}) e causa ${damage} de dano.` };
+    }
+    if(skill.type === "archer_weak_spot"){
+      const enemyCurrentHp = enemy ? enemy.hp : 0;
+      const damage = 100 + Math.floor(0.4 * attack) + Math.floor(0.3 * skillPower) + Math.floor(0.2 * enemyCurrentHp);
+      return { ...skill, cost: 120, damage, description: `${skill.name}: consome 120 MP e causa ${damage} de dano, explorando a vida atual do alvo.` };
+    }
+    if(skill.type === "archer_aim_leg"){
+      const damage = 80 + Math.floor(0.6 * skillPower) + Math.floor(0.5 * attack);
+      return { ...skill, cost: 100, damage, enemyAttackDownPercent: 0.15, enemyAttackDownTurns: 3, enemyArmorDownPercent: 0.5, enemyArmorDownTurns: 3, skipChance: 0.1, description: `${skill.name}: consome 100 MP, causa ${damage} de dano, reduz em 15% o dano do inimigo, corta 50% da armadura por 3 turnos e tem 10% de chance de fazer o alvo perder o proximo turno.` };
+    }
+    if(skill.type === "archer_cutting_shot"){
+      const totalDamage = 120 + Math.floor(1.2 * attack) + Math.floor(1.2 * skillPower);
+      const dotDamage = Math.floor(totalDamage / 3);
+      return { ...skill, cost: 80, damage: 0, totalDamage, dotDamage, dotTurns: 3, description: `${skill.name}: consome 80 MP e faz o alvo sofrer ${dotDamage} de dano por rodada durante 3 rodadas (${dotDamage * 3} no total).` };
     }
     return { ...skill, cost: 0, description: skill.name };
   });
@@ -2424,15 +2702,30 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "bonus_xp"){
     return `${skill.name}: aumenta toda XP ganha em 10%.`;
   }
-  if(skill.type === "mage_skill_level_bonus"){
-    const factor = subclassState.tier30 === "elementalista" && player.level >= 42 ? 2.4 : 2;
-    return `${skill.name}: concede ${Math.floor(factor * player.level)} de dano de habilidade no nivel atual.`;
+  if(skill.type === "mage_last_resort"){
+    return `${skill.name}: se um golpe fatal acertaria voce e sua mana atual for maior que esse dano, a mana e gasta para anular o golpe.`;
   }
-  if(skill.type === "mage_precious_mana"){
-    return `${skill.name}: abaixo de 10% de vida, o dano sofrido tenta ser pago com mana antes da vida.`;
+  if(skill.type === "mage_mana_to_life"){
+    const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
+    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.1)} de dano de habilidade.` : "";
+    return `${skill.name}: converte ${Math.floor(factor * 100)}% da mana maxima em vida maxima.${extraSkill}`;
   }
-  if(skill.type === "mage_first_damage_skill_boost"){
-    return `${skill.name}: a primeira habilidade de dano do combate causa 50% de dano final extra.`;
+  if(skill.type === "mage_overflowing"){
+    const damageFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
+    const costFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.1;
+    return `${skill.name}: concede ${Math.floor(getPreviewStats().maxMp * damageFactor)} de dano adicional em ataques e habilidades e aumenta os custos das habilidades em ${Math.floor(getPreviewStats().maxMp * costFactor)}.`;
+  }
+  if(skill.type === "mage_hellfire"){
+    return `${skill.name}: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno.`;
+  }
+  if(skill.type === "mage_frostburn"){
+    return `${skill.name}: sempre que aplicar resfriamento, tambem causa queimadura de 3% da vida maxima por 1 turno.`;
+  }
+  if(skill.type === "mage_charge_damage"){
+    return `${skill.name}: cada carga arcana aumenta o dano total em 5%. Atualmente: ${Math.floor((playerEffects.arcaneCharges || 0) * 5)}%.`;
+  }
+  if(skill.type === "mage_glass_cannon"){
+    return `${skill.name}: o primeiro ataque do combate causa o dobro de dano, mas voce sofre 50% de dano adicional nos 2 primeiros turnos do combate.`;
   }
   if(skill.id === "mana_e_vida"){
     return `${skill.name}: converte ${Math.floor(getPreviewStats().maxMp * 0.1)} de mana maxima em vida maxima.`;
@@ -2440,11 +2733,8 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "archer_dodge_level_scaling"){
     return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce.`;
   }
-  if(skill.type === "archer_global_double_chance"){
-    return `${skill.name}: concede 5% de chance de qualquer ataque ou habilidade causar dano dobrado.`;
-  }
-  if(skill.type === "archer_coin_bonus"){
-    return `${skill.name}: aumenta em 10% as moedas recebidas dos inimigos.`;
+  if(skill.type === "archer_dodge_double_bonus"){
+    return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e 5% de chance de qualquer ataque ou habilidade causar dano dobrado.`;
   }
   if(skill.type === "archer_dodge_coin_bonus"){
     return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.`;
@@ -2452,10 +2742,28 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "archer_attack_level_bonus"){
     const attackBonus = Math.floor(0.9 * player.level);
     const skillBonus = Math.floor((subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.3 : 0.9) * player.level);
-    return `${skill.name}: concede ${attackBonus} de dano de ataque basico e ${skillBonus} de dano de habilidade no nivel atual.`;
+    return `${skill.name}: concede ${attackBonus} de dano de ataque basico e ${skillBonus} de dano de habilidade no nivel atual.${subclassState.tier60 === "sniper" && player.level >= 60 ? " Alem disso, seus ataques e habilidades ganham 15% de chance adicional de dano dobrado." : ""}`;
   }
   if(skill.type === "archer_dodge_damage_buff"){
+    if(subclassState.tier60 === "espreitador" && player.level >= 60){
+      return `${skill.name}: ao esquivar de um ataque, seu proximo dano causado fica 50% mais forte.`;
+    }
+    if(subclassState.tier60 === "guarda_florestal" && player.level >= 60){
+      return `${skill.name}: ao esquivar de um ataque, voce recupera ${Math.floor(getCurrentCaps().maxHp * 0.13)} de vida.`;
+    }
     return `${skill.name}: ao esquivar de um ataque, voce ganha 10% de dano total por 2 turnos.`;
+  }
+  if(skill.type === "archer_mana_to_skill_bonus"){
+    return `${skill.name}: converte ${Math.floor((player.maxMp + getPassiveModifiers().bonusMp) * 0.05)} de mana maxima em dano de habilidade.`;
+  }
+  if(skill.type === "archer_sniper_bonus_crit"){
+    return `${skill.name}: concede 15% de chance de dano dobrado e faz qualquer excedente acima de 100% virar chance de dano triplo.`;
+  }
+  if(skill.type === "archer_enemy_skip_chance"){
+    return `${skill.name}: concede 7% de chance do inimigo perder o turno sem atacar.`;
+  }
+  if(skill.type === "archer_flat_reduction_level"){
+    return `${skill.name}: reduz ${Math.floor(0.2 * player.level)} de dano por ataque recebido.`;
   }
   if(skill.type === "coin_bonus"){
     return `${skill.name}: aumenta as moedas obtidas em 15%.`;
@@ -2496,22 +2804,32 @@ function getActiveBuffs(){
   if(playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
     buffs.push(`Dano total +${Math.floor(playerEffects.finalDamageBuffPercent * 100)}% | ${playerEffects.finalDamageBuffTurns} turno(s)`);
   }
+  if(playerEffects.manaRegenBuffTurns > 0 && playerEffects.manaRegenBuffPercent > 0){
+    buffs.push(`Regen de mana +${Math.floor(playerEffects.manaRegenBuffPercent * 100)}% | ${playerEffects.manaRegenBuffTurns} turno(s)`);
+  }
+  if(playerEffects.arcaneCharges > 0){
+    buffs.push(`Cargas arcanas ${playerEffects.arcaneCharges} | ${playerEffects.arcaneChargeTurns} turno(s)`);
+  }
   if(playerEffects.nextDamageBonusPercent > 0){
     buffs.push(`Proximo dano +${Math.floor(playerEffects.nextDamageBonusPercent * 100)}%`);
+  }
+  if(playerEffects.nextBarrageDamageBonusPercent > 0){
+    buffs.push(`Proxima rajada +${Math.floor(playerEffects.nextBarrageDamageBonusPercent * 100)}%`);
   }
   return buffs;
 }
 
 function getBasicAttackLabel(){
-  return player.class === "Mago" ? "Missel Magico" : "Atacar";
+  return player.class === "Mago" ? "Misseis Magicos" : "Atacar";
 }
 
 function getBasicAttackTooltip(){
   if(player.class === "Mago"){
-    const missiles = Math.floor(3 + 0.2 * player.level);
-    const manaCost = missiles * 5;
-    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
-    const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
+    const missiles = Math.floor(3 + 0.1 * player.level);
+    const manaCost = missiles * 3;
+    const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
+    const minPerMissile = Math.floor(getActiveAttack() * 0.2) + elementalistaBonus + getUniversalDamageFlatBonus();
+    const maxPerMissile = Math.floor(getActiveAttack() * 0.5) + elementalistaBonus + getUniversalDamageFlatBonus();
     return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
   const attackMin = getActiveAttack();
@@ -2526,16 +2844,19 @@ function resetCombatEffects(){
   const subclassState = getPlayerSubclassState();
   playerEffects = createDefaultPlayerEffects();
   playerEffects.firstSkillFreeAvailable = player.class === "Guerreiro" && player.level >= 18;
-  playerEffects.firstDamageSkillBoostAvailable = player.class === "Mago" && subclassState.tier30 === "elementalista" && player.level >= 54;
+  playerEffects.firstAttackDoubleAvailable = player.class === "Mago" && subclassState.tier60 === "corrompido" && player.level >= 70;
+  playerEffects.incomingDamageBonusTurns = playerEffects.firstAttackDoubleAvailable ? 2 : 0;
+  playerEffects.incomingDamageBonusPercent = playerEffects.firstAttackDoubleAvailable ? 0.5 : 0;
 }
 
 function applyEnemyArmor(rawDamage, ignoreArmor = false){
   let damage = Math.max(0, Math.floor(rawDamage));
   if(!enemy || ignoreArmor){ return damage; }
-  const armor = enemy.armor || 0;
+  const armorReduction = enemy.armorDownTurns > 0 ? (enemy.armorDownPercent || 0) : 0;
+  const armor = Math.max(0, Math.floor((enemy.armor || 0) * (1 - armorReduction)));
   if(armor > 0 && damage > 0){
     const absorbed = Math.min(armor, damage);
-    damage = Math.max(0, damage - armor);
+    damage = Math.max(0, damage - absorbed);
     log(`${enemy.baseName} absorveu ${absorbed} de dano com a armadura.`);
   }
   return damage;
@@ -2544,6 +2865,10 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
   let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  const passivePercentBonus = getUniversalDamagePercentBonus();
+  if(damage > 0 && passivePercentBonus > 0){
+    damage += Math.floor(damage * passivePercentBonus);
+  }
   if(damage > 0 && playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
     damage += Math.floor(damage * playerEffects.finalDamageBuffPercent);
   }
@@ -2565,11 +2890,23 @@ function applyDamageToEnemy(rawDamage, options = {}){
 
 function applyIncomingDamage(baseDamage, options = {}){
   let damage = Math.max(0, Math.floor(baseDamage));
+  if(playerEffects.incomingDamageBonusTurns > 0 && playerEffects.incomingDamageBonusPercent > 0){
+    damage += Math.floor(damage * playerEffects.incomingDamageBonusPercent);
+  }
   const missChance = getEnemyMissChance();
   if(missChance > 0 && Math.random() < missChance){
     if(getUnlockedPassiveSkills().some(skill => skill.type === "archer_dodge_damage_buff")){
-      playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, 2);
-      playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, 0.1);
+      const subclassState = getPlayerSubclassState();
+      if(subclassState.tier60 === "espreitador" && player.level >= 60){
+        playerEffects.nextDamageBonusPercent = Math.max(playerEffects.nextDamageBonusPercent, 0.5);
+      }else if(subclassState.tier60 === "guarda_florestal" && player.level >= 60){
+        const heal = Math.floor(getCurrentCaps().maxHp * 0.13);
+        player.hp = Math.min(getCurrentCaps().maxHp, player.hp + heal);
+        log(`Errou ativou e restaurou ${heal} de vida.`);
+      }else{
+        playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, 2);
+        playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, 0.1);
+      }
     }
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
@@ -2585,13 +2922,33 @@ function applyIncomingDamage(baseDamage, options = {}){
   }
   let manaAbsorbed = 0;
   const passiveModifiers = getPassiveModifiers();
-  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && player.hp <= Math.max(1, Math.floor(getCurrentCaps().maxHp * 0.1)) && damage > 0 && player.mp >= damage){
+  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && damage >= player.hp && damage > 0 && player.mp > damage){
     manaAbsorbed = damage;
     player.mp = Math.max(0, player.mp - damage);
     damage = 0;
+    if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30){
+      addArcaneCharges(Math.floor(manaAbsorbed / 100));
+    }
+    const subclassState = getPlayerSubclassState();
+    if(subclassState.tier30 === "elementalista" && player.level >= 30 && enemy){
+      enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
+      enemy.dotTurns = Math.max(enemy.dotTurns || 0, 3);
+      enemy.dotSourceName = "Ultimo Recurso";
+      enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
+      enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, 3);
+    }
   }
   if(damage > 0){
     player.hp -= damage;
+    if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
+      playerEffects.shieldValue += damage;
+      playerEffects.shieldTurns = 0;
+      log(`Transbordando converteu ${damage} de dano recebido em escudo.`);
+    }
+  }
+  if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && playerEffects.shieldReactiveWeakening && (absorbed > 0 || damage > 0) && enemy){
+    enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, 0.5);
+    enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, 1);
   }
   player.hp = Math.max(0, player.hp);
   return { damage, missed: false, absorbed, manaAbsorbed };
@@ -2599,44 +2956,59 @@ function applyIncomingDamage(baseDamage, options = {}){
 
 function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
   if(player.class === "Mago"){
-    const missiles = Math.floor(3 + 0.2 * player.level);
-    const manaCost = missiles * 5;
+    const missiles = Math.floor(3 + 0.1 * player.level);
+    const manaCost = missiles * 3;
     if(player.mp < manaCost){
       return { blocked: true, message: "Mana insuficiente para usar Missel Magico." };
     }
     player.mp -= manaCost;
-    const minPerMissile = Math.floor(getActiveAttack() * 0.3);
-    const maxPerMissile = Math.floor(getActiveAttack() * 0.5);
+    const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
+    const minPerMissile = Math.floor(getActiveAttack() * 0.2) + elementalistaBonus + getUniversalDamageFlatBonus();
+    const maxPerMissile = Math.floor(getActiveAttack() * 0.5) + elementalistaBonus + getUniversalDamageFlatBonus();
     const hitDamages = [];
+    let chargeGains = 0;
+    const openingDouble = playerEffects.firstAttackDoubleAvailable;
+    if(openingDouble){
+      playerEffects.firstAttackDoubleAvailable = false;
+    }
     if(applyToTarget){
       for(let missile = 0; missile < missiles; missile++){
-        const rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
-        hitDamages.push(applyDamageToEnemy(rolledDamage));
+        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
+        if(openingDouble){ rolledDamage *= 2; }
+        const finalRolledDamage = Math.floor(rolledDamage * (1 + getUniversalDamagePercentBonus()));
+        hitDamages.push(applyDamageToEnemy(finalRolledDamage));
+        if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
+          chargeGains += addArcaneCharges(1);
+        }
       }
     }else{
       for(let missile = 0; missile < missiles; missile++){
-        const rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
-        hitDamages.push(rolledDamage);
+        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
+        if(openingDouble){ rolledDamage *= 2; }
+        hitDamages.push(Math.floor(rolledDamage * (1 + getUniversalDamagePercentBonus())));
+        if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
+          chargeGains += addArcaneCharges(1);
+        }
       }
     }
     const finalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
-    return { damage: finalDamage, missiles, hitDamages, message: `${namePrefix} lançou ${missiles} misseis magicos e causou ${finalDamage} de dano.` };
+    return { damage: finalDamage, missiles, hitDamages, message: `${namePrefix} lançou ${missiles} misseis magicos e causou ${finalDamage} de dano.${chargeGains > 0 ? ` Voce ganhou ${chargeGains} carga(s) arcana(s).` : ""}` };
   }
   if(player.class === "Arqueiro" && !rollHit("basic")){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
   }
   let damage = getActiveAttack() + Math.floor(Math.random() * 6);
-  if(player.class === "Arqueiro" && shouldDoubleDamage()){
-    damage *= 2;
+  if(player.class === "Arqueiro"){
+    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple());
   }
   const finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
   return { damage: finalDamage, message: `${namePrefix} causou ${finalDamage} de dano.` };
 }
 
 function applyFirstDamageSkillBonus(damage, isDamageSkill){
-  if(isDamageSkill && playerEffects.firstDamageSkillBoostAvailable){
-    playerEffects.firstDamageSkillBoostAvailable = false;
-    return Math.floor(damage * 1.5);
+  if(damage > 0 && playerEffects.firstAttackDoubleAvailable){
+    playerEffects.firstAttackDoubleAvailable = false;
+    return Math.floor(damage * 2);
   }
   return damage;
 }
@@ -2654,30 +3026,149 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   if(player.mp < cost){
     return { blocked: true, message: "Mana insuficiente!" };
   }
+  if(skillInfo.hpCostPercent){
+    const hpCost = Math.floor(getCurrentCaps().maxHp * skillInfo.hpCostPercent);
+    if(player.hp <= hpCost){
+      return { blocked: true, message: "Vida insuficiente para usar essa habilidade!" };
+    }
+  }
   player.mp -= cost;
+  if(skillInfo.hpCostPercent){
+    player.hp -= Math.floor(getCurrentCaps().maxHp * skillInfo.hpCostPercent);
+  }
   let damage = 0;
   let message = `${actorName} usou ${skillInfo.name}.`;
   let freeTurn = false;
   let freezeApplied = false;
-  if(["warrior_brandish", "warrior_smash", "warrior_swift_strikes", "warrior_titan_break", "warrior_armor_break", "mage_mana_burst", "mage_fireball", "mage_freeze"].includes(skillInfo.type)){
+  if(["warrior_brandish", "warrior_smash", "warrior_swift_strikes", "warrior_titan_break", "warrior_armor_break", "mage_mana_burst", "mage_fireball", "mage_freeze", "mage_sacred_phoenix", "mage_avalanche"].includes(skillInfo.type)){
     damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    if(!applyToTarget){
+      damage = Math.floor(damage * (1 + getUniversalDamagePercentBonus()));
+    }
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: skillInfo.ignoreArmor }) : damage;
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    if(skillInfo.type === "mage_mana_burst" && applyToTarget && enemy && damage > Math.floor(enemy.maxHp * (skillInfo.refundThresholdPercent || 0))){
+      player.mp = Math.min(getCurrentCaps().maxMp, player.mp + cost);
+      message += " A explosao foi poderosa o bastante para devolver toda a mana gasta.";
+    }
+    if(skillInfo.type === "mage_fireball" && applyToTarget && enemy){
+      if(skillInfo.appliesBurn){
+        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
+        enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
+        enemy.dotSourceName = skillInfo.name;
+        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
+        enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
+        message += " O inimigo ficou queimando.";
+      }
+      if(skillInfo.appliesChill){
+        enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
+        enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+        message += " O inimigo ficou resfriado.";
+        if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
+          enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
+          enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
+          enemy.dotSourceName = "Gelo Queima";
+        }
+      }
+    }
     if(skillInfo.type === "mage_freeze" && Math.random() < skillInfo.freezeChance){
       if(applyToTarget && enemy){
         enemy.skipNextAttack = true;
       }
       freezeApplied = true;
       message += " O inimigo foi congelado e pode perder o proximo ataque.";
+    }else if(skillInfo.type === "mage_freeze" && applyToTarget && enemy){
+      if(skillInfo.burnTurns > 0){
+        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
+        enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
+        enemy.dotSourceName = skillInfo.name;
+        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
+        enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
+        message += " O alvo ficou incendiado.";
+      }
+      if(skillInfo.chillTurns > 0){
+        enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
+        enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+        message += " O inimigo ficou resfriado.";
+        if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
+          enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
+          enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
+          enemy.dotSourceName = "Gelo Queima";
+        }
+      }
     }
+    if(skillInfo.type === "mage_sacred_phoenix" && applyToTarget && enemy){
+      enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
+      enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
+      enemy.dotSourceName = skillInfo.name;
+      enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
+      enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
+    }
+    if(skillInfo.type === "mage_avalanche" && applyToTarget && enemy){
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
+      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+      if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
+        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
+        enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
+        enemy.dotSourceName = "Gelo Queima";
+      }
+    }
+  }
+  if(skillInfo.type === "mage_discharge"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    if(!applyToTarget){
+      damage = Math.floor(damage * (1 + getUniversalDamagePercentBonus()));
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60){
+      playerEffects.nextDamageBonusPercent = Math.max(playerEffects.nextDamageBonusPercent, 0.3);
+    }
+    playerEffects.arcaneCharges = 0;
+    playerEffects.arcaneChargeTurns = 0;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano, consumindo todas as cargas arcanas.`;
+  }
+  if(skillInfo.type === "mage_blizzard"){
+    if(applyToTarget && enemy){
+      enemy.blizzardSkipChance = Math.max(enemy.blizzardSkipChance || 0, skillInfo.enemySkipChance || 0);
+      enemy.blizzardTurns = Math.max(enemy.blizzardTurns || 0, skillInfo.turns || 0);
+    }
+    message = `${actorName} usou ${skillInfo.name} e envolveu o inimigo em uma tempestade por ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "mage_corruption"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    if(!applyToTarget){
+      damage = Math.floor(damage * (1 + getUniversalDamagePercentBonus()));
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: true }) : damage;
+    if(applyToTarget && enemy){
+      enemy.armorDownPercent = Math.max(enemy.armorDownPercent || 0, skillInfo.armorBreakPercent || 1);
+      enemy.armorDownTurns = Math.max(enemy.armorDownTurns || 0, skillInfo.armorBreakTurns || 5);
+      enemy.noShieldTurns = Math.max(enemy.noShieldTurns || 0, skillInfo.noShieldTurns || 5);
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano, corrompendo as defesas do alvo.`;
+  }
+  if(skillInfo.type === "mage_overcharge"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    if(!applyToTarget){
+      damage = Math.floor(damage * (1 + getUniversalDamagePercentBonus()));
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    playerEffects.arcaneCharges = 0;
+    playerEffects.arcaneChargeTurns = 0;
+    message = `${actorName} usou ${skillInfo.name} e liberou ${damage} de dano arcano.`;
+  }
+  if(skillInfo.type === "mage_demon_form"){
+    playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, skillInfo.turns);
+    playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, skillInfo.damagePercent);
+    playerEffects.incomingDamageBonusTurns = Math.max(playerEffects.incomingDamageBonusTurns, skillInfo.turns);
+    playerEffects.incomingDamageBonusPercent = Math.max(playerEffects.incomingDamageBonusPercent, skillInfo.vulnerabilityPercent);
+    message = `${actorName} usou ${skillInfo.name} e foi tomado por um poder demoniaco por ${skillInfo.turns} turnos.`;
   }
   if(skillInfo.type === "archer_headshot"){
     damage = skillInfo.damage;
-    const doubled = Math.random() < skillInfo.critChance;
-    const shouldMarkTarget = !doubled && skillInfo.marksOnNonCrit && applyToTarget && !!enemy;
-    if(doubled){
-      damage *= 2;
-    }
+    const critMultiplier = getArcherDamageMultiplier(skillInfo.critChance, !!skillInfo.allowTriple);
+    const shouldMarkTarget = critMultiplier === 1 && skillInfo.marksOnNonCrit && applyToTarget && !!enemy;
+    damage *= critMultiplier;
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
     if(shouldMarkTarget && enemy){
       enemy.nextDamageTakenPercent = Math.max(enemy.nextDamageTakenPercent || 0, 0.15);
@@ -2687,26 +3178,40 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   if(skillInfo.type === "archer_barrage"){
     let totalDamage = 0;
     let hits = 0;
+    let missedShots = 0;
     const totalShots = skillInfo.hits + (skillInfo.extraShotChance > 0 && Math.random() < skillInfo.extraShotChance ? 1 : 0);
+    const barrageBonusPercent = playerEffects.nextBarrageDamageBonusPercent || 0;
+    if(barrageBonusPercent > 0){
+      playerEffects.nextBarrageDamageBonusPercent = 0;
+    }
     for(let i = 0; i < totalShots; i++){
       if(rollHit("basic")){
         let hitDamage = getActiveAttack() + Math.floor(Math.random() * 6);
-        if(shouldDoubleDamage()){
-          hitDamage *= 2;
+        if(barrageBonusPercent > 0){
+          hitDamage += Math.floor(hitDamage * barrageBonusPercent);
         }
+        hitDamage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple());
         totalDamage += applyToTarget ? applyDamageToEnemy(hitDamage) : hitDamage;
         hits++;
+      }else{
+        missedShots++;
       }
+    }
+    if(missedShots > 0 && getPlayerSubclassState().tier60 === "espreitador" && player.level >= 60){
+      playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, 2);
+      playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, 0.1);
     }
     damage = totalDamage;
     message = hits ? `${actorName} usou ${skillInfo.name} e acertou ${hits} disparo(s), causando ${damage} de dano.` : `${actorName} usou ${skillInfo.name}, mas nao acertou nenhum disparo.`;
   }
-  if(["archer_piercing_shot", "archer_arcane_shot"].includes(skillInfo.type)){
+  if(["archer_piercing_shot", "archer_arcane_shot", "archer_surprise", "archer_tranquilizer", "archer_overcharge", "archer_weak_spot"].includes(skillInfo.type)){
     damage = skillInfo.damage;
-    if(shouldDoubleDamage()){
-      damage *= 2;
+    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
+    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor, ignoreShield: !!skillInfo.ignoreShield }) : damage;
+    if(applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
+      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
     }
-    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor }) : damage;
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
   }
   if(skillInfo.type === "archer_execute"){
@@ -2714,9 +3219,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     if(enemy && enemy.hp <= Math.floor(enemy.maxHp * skillInfo.executeThreshold)){
       damage *= skillInfo.executeMultiplier;
     }
-    if(shouldDoubleDamage()){
-      damage *= 2;
-    }
+    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
   }
@@ -2725,8 +3228,35 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     if(applyToTarget && enemy && Math.random() < skillInfo.skipChance){
       enemy.skipNextAttack = true;
       freezeApplied = true;
+      if(skillInfo.nextBarrageBonus){
+        playerEffects.nextBarrageDamageBonusPercent = Math.max(playerEffects.nextBarrageDamageBonusPercent, skillInfo.nextBarrageBonus);
+      }
     }
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${freezeApplied ? " O inimigo ficou preso e pode perder o proximo turno." : ""}`;
+  }
+  if(skillInfo.type === "archer_aim_leg"){
+    damage = skillInfo.damage;
+    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
+    damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    if(applyToTarget && enemy){
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
+      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
+      enemy.armorDownPercent = Math.max(enemy.armorDownPercent || 0, skillInfo.enemyArmorDownPercent);
+      enemy.armorDownTurns = Math.max(enemy.armorDownTurns || 0, skillInfo.enemyArmorDownTurns || 0);
+      if(Math.random() < skillInfo.skipChance){
+        enemy.skipNextAttack = true;
+        freezeApplied = true;
+      }
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${freezeApplied ? " O inimigo perdeu o equilibrio e pode perder o proximo turno." : ""}`;
+  }
+  if(skillInfo.type === "archer_cutting_shot"){
+    if(applyToTarget && enemy){
+      enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.dotDamage);
+      enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.dotTurns);
+      enemy.dotSourceName = skillInfo.name;
+    }
+    message = `${actorName} usou ${skillInfo.name} e deixou o alvo sangrando por ${skillInfo.dotTurns} rodadas.`;
   }
   if(skillInfo.type === "warrior_regen"){
     playerEffects.regenTurns = skillInfo.turns;
@@ -2740,12 +3270,16 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   if(skillInfo.type === "warrior_shield" || skillInfo.type === "mage_mana_shield"){
     playerEffects.shieldValue = skillInfo.shield;
     playerEffects.shieldTurns = skillInfo.turns || 0;
+    playerEffects.shieldReactiveWeakening = player.class === "Mago" && getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60;
     message = `${actorName} usou ${skillInfo.name} e ganhou ${skillInfo.shield} de escudo.`;
   }
   if(skillInfo.type === "mage_concentration"){
     playerEffects.skillBuffTurns = skillInfo.turns;
-    playerEffects.skillBuffPercent = skillInfo.percent;
-    message = `${actorName} usou ${skillInfo.name} e aumentou o dano de habilidade por ${skillInfo.turns} turnos.`;
+    playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, skillInfo.turns);
+    playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, skillInfo.percent);
+    playerEffects.manaRegenBuffTurns = skillInfo.turns;
+    playerEffects.manaRegenBuffPercent = Math.max(playerEffects.manaRegenBuffPercent, skillInfo.manaRegenPercent || 0);
+    message = `${actorName} usou ${skillInfo.name} e aumentou o dano total e a regeneracao de mana por ${skillInfo.turns} turnos.`;
   }
   if(skillInfo.type === "archer_focus"){
     playerEffects.attackBuffTurns = skillInfo.turns;
@@ -2761,6 +3295,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     message = `${actorName} usou ${skillInfo.name} e ganhou ${Math.floor(skillInfo.dodge * 100)}% de esquiva adicional por ${skillInfo.turns} turnos.${skillInfo.nextDamageBonus ? " O proximo dano causado sera fortalecido." : ""}`;
   }
+  playerEffects.lastActionType = skillInfo.type;
   return { blocked: false, message, damage, freeTurn, freezeApplied };
 }
 
@@ -3319,6 +3854,18 @@ function createEnemyFromTemplate(template, isBoss = false){
     skillCost: isBoss ? template.skillCost : 0,
     bossAbilities: isBoss ? getBossAbilitySet(template.name, origin) : [],
     nextDamageTakenPercent: 0,
+    armorDownPercent: 0,
+    armorDownTurns: 0,
+    attackDownPercent: 0,
+    attackDownTurns: 0,
+    dotDamagePerTurn: 0,
+    dotTurns: 0,
+    dotSourceName: "",
+    healReductionPercent: 0,
+    healReductionTurns: 0,
+    blizzardSkipChance: 0,
+    blizzardTurns: 0,
+    noShieldTurns: 0,
     bossBuffTurns: 0,
     bossAttackBuffPercent: 0,
     bossFlatDamageBonus: 0,
@@ -4020,7 +4567,8 @@ function renderLevelUpPanel(){
 
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
-  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent);
+  const bonusPercent = playerEffects.manaRegenBuffTurns > 0 ? playerEffects.manaRegenBuffPercent : 0;
+  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent + bonusPercent);
   return Math.max(1, Math.floor(getPreviewStats().maxMp * totalPercent) + modifiers.manaRegen);
 }
 
@@ -4123,6 +4671,7 @@ async function attack(){
     return;
   }
   log(result.message);
+  playerEffects.lastActionType = "basic_attack";
   if(player.class === "Mago" && result.hitDamages?.length){
     await playSpriteAttackAnimation("hero", "cast", false);
     await animateEnemyHitSequence(result.hitDamages);
@@ -4202,6 +4751,7 @@ async function passTurn(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
   isProcessingTurn = true;
   log("Voce passou o turno.");
+  playerEffects.lastActionType = "pass_turn";
   decayPlayerBuffs();
   const healed = getTurnHealing();
   if(healed > 0){
@@ -4257,7 +4807,8 @@ async function afterTurn(){
 function handleBossBuffUpkeep(){
   if(!enemy?.isBoss){ return; }
   if(enemy.bossBuffTurns > 0 && enemy.bossRegenPercent > 0){
-    const heal = Math.max(1, Math.floor(enemy.maxHp * enemy.bossRegenPercent));
+    const baseHeal = Math.max(1, Math.floor(enemy.maxHp * enemy.bossRegenPercent));
+    const heal = Math.max(0, Math.floor(baseHeal * (1 - (enemy.healReductionTurns > 0 ? (enemy.healReductionPercent || 0) : 0))));
     const previousHp = enemy.hp;
     enemy.hp = Math.min(enemy.maxHp, enemy.hp + heal);
     if(enemy.hp > previousHp){
@@ -4288,6 +4839,9 @@ function getBossTemporaryBuffState(extraBuff = {}){
 
 function estimateBossDamageAgainstHero(rawDamage, options = {}){
   let damage = Math.max(0, Math.floor(rawDamage));
+  if(playerEffects.incomingDamageBonusTurns > 0 && playerEffects.incomingDamageBonusPercent > 0){
+    damage += Math.floor(damage * playerEffects.incomingDamageBonusPercent);
+  }
   if(enemy.maxHpStrikePercent > 0){
     damage += Math.floor(getCurrentCaps().maxHp * enemy.maxHpStrikePercent);
   }
@@ -4298,7 +4852,7 @@ function estimateBossDamageAgainstHero(rawDamage, options = {}){
   if(!options.ignoreShield){
     damage = Math.max(0, damage - (playerEffects.shieldValue || 0));
   }
-  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && player.hp <= Math.max(1, Math.floor(getCurrentCaps().maxHp * 0.1)) && player.mp >= damage){
+  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && damage >= player.hp && player.mp > damage){
     damage = 0;
   }
   const hitRate = Math.max(0.05, 1 - getEnemyMissChance());
@@ -4489,6 +5043,36 @@ function resolveBossAction(ability){
 
 async function enemyTurn(){
   handleBossBuffUpkeep();
+  if(enemy.dotTurns > 0 && enemy.dotDamagePerTurn > 0){
+    enemy.hp -= enemy.dotDamagePerTurn;
+    log(`${enemy.baseName} sofreu ${enemy.dotDamagePerTurn} de dano continuo${enemy.dotSourceName ? ` por ${enemy.dotSourceName}` : ""}.`);
+    enemy.dotTurns--;
+    if(enemy.dotTurns <= 0){
+      enemy.dotDamagePerTurn = 0;
+      enemy.dotSourceName = "";
+    }
+    updateUI();
+    await wait(220);
+    if(enemy.hp <= 0){
+      handleEnemyDefeat();
+      return;
+    }
+  }
+  if(enemy.healReductionTurns > 0){
+    enemy.healReductionTurns--;
+    if(enemy.healReductionTurns <= 0){
+      enemy.healReductionPercent = 0;
+    }
+  }
+  if(enemy.blizzardTurns > 0){
+    enemy.blizzardTurns--;
+    if(enemy.blizzardTurns <= 0){
+      enemy.blizzardSkipChance = 0;
+    }
+  }
+  if(enemy.noShieldTurns > 0){
+    enemy.noShieldTurns--;
+  }
   log(`${enemy.name} prepara um ataque!`);
   await wait(220);
   let dmg = 0;
@@ -4521,6 +5105,7 @@ async function enemyTurn(){
         playerEffects.shieldTurns--;
         if(playerEffects.shieldTurns <= 0){
           playerEffects.shieldValue = 0;
+          playerEffects.shieldReactiveWeakening = false;
           log("Seu escudo se desfez.");
         }
       }
@@ -4565,14 +5150,25 @@ async function enemyTurn(){
   if(enemy.isBoss && enemy.maxMp > 0 && enemy.mp < enemy.maxMp){
     enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
   }
+  const passiveEnemySkipChance = getPassiveModifiers().enemySkipChance || 0;
   if(enemy.skipNextAttack){
     enemy.skipNextAttack = false;
     log(`${enemy.name} perdeu o ataque desta rodada.`);
     dmg = 0;
-  }else{
+  }else if(enemy.blizzardSkipChance > 0 && Math.random() < enemy.blizzardSkipChance){
+    log(`${enemy.name} ficou preso na nevasca e perdeu o turno.`);
+    dmg = 0;
+  }else if(passiveEnemySkipChance > 0 && Math.random() < passiveEnemySkipChance){
+    log(`${enemy.name} hesitou e perdeu o turno.`);
+    dmg = 0;
+  }
+  if(dmg > 0){
     if(enemy.maxHpStrikePercent > 0){
       maxHpImpactDamage = Math.floor(getCurrentCaps().maxHp * enemy.maxHpStrikePercent);
       dmg += maxHpImpactDamage;
+    }
+    if(enemy.attackDownTurns > 0){
+      dmg = Math.floor(dmg * (1 - (enemy.attackDownPercent || 0)));
     }
     const result = applyIncomingDamage(dmg, incomingOptions);
     await playSpriteAttackAnimation("enemy", animationStyle, connectHit && !result.missed);
@@ -4590,7 +5186,7 @@ async function enemyTurn(){
         log(`Seu escudo absorveu ${result.absorbed} de dano.`);
       }
       if(result.manaAbsorbed > 0){
-        log(`Preciosa Mana absorveu ${result.manaAbsorbed} de dano com mana.`);
+        log(`Ultimo Recurso absorveu ${result.manaAbsorbed} de dano com mana.`);
       }
       dmg = result.damage;
       if(dmg > 0){
@@ -4599,10 +5195,23 @@ async function enemyTurn(){
     }
   }
   tickBossBuff();
+  if(enemy.attackDownTurns > 0){
+    enemy.attackDownTurns--;
+    if(enemy.attackDownTurns <= 0){
+      enemy.attackDownPercent = 0;
+    }
+  }
+  if(enemy.armorDownTurns > 0){
+    enemy.armorDownTurns--;
+    if(enemy.armorDownTurns <= 0){
+      enemy.armorDownPercent = 0;
+    }
+  }
   if(playerEffects.shieldTurns > 0){
     playerEffects.shieldTurns--;
     if(playerEffects.shieldTurns <= 0){
       playerEffects.shieldValue = 0;
+      playerEffects.shieldReactiveWeakening = false;
       log("Seu escudo se desfez.");
     }
   }
