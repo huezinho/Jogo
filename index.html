@@ -464,17 +464,17 @@ const regionSetBonusProfiles = {
   Cataclismo: { bonusHp: 520, bonusMp: 170, bonusAttack: 54, skillPower: 63 }
 };
 const regionCombatProfiles = {
-  Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0 },
-  Caverna: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0 },
-  Ruinas: { armorScale: 0.12, armorFlat: 0, maxHpStrikePercent: 0 },
-  Pantano: { armorScale: 0.14, armorFlat: 1, maxHpStrikePercent: 0 },
-  Vulcao: { armorScale: 0.16, armorFlat: 2, maxHpStrikePercent: 0 },
-  Abismo: { armorScale: 0.18, armorFlat: 3, maxHpStrikePercent: 0.02 },
-  Fortaleza: { armorScale: 0.21, armorFlat: 4, maxHpStrikePercent: 0.025 },
-  Necropole: { armorScale: 0.24, armorFlat: 6, maxHpStrikePercent: 0.03 },
-  Citadela: { armorScale: 0.28, armorFlat: 8, maxHpStrikePercent: 0.035 },
-  Panteao: { armorScale: 0.32, armorFlat: 10, maxHpStrikePercent: 0.04 },
-  Cataclismo: { armorScale: 0.36, armorFlat: 12, maxHpStrikePercent: 0.05 }
+  Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
+  Caverna: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
+  Ruinas: { armorScale: 0.12, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.02, bossAttackMultiplier: 1.02, bossSkillMultiplier: 1.03, bossManaMultiplier: 1.02, bossArmorBonus: 0 },
+  Pantano: { armorScale: 0.14, armorFlat: 1, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.04, bossAttackMultiplier: 1.04, bossSkillMultiplier: 1.05, bossManaMultiplier: 1.03, bossArmorBonus: 1 },
+  Vulcao: { armorScale: 0.22, armorFlat: 4, maxHpStrikePercent: 0.01, hpMultiplier: 1.18, attackMultiplier: 1.14, bossHpMultiplier: 1.18, bossAttackMultiplier: 1.16, bossSkillMultiplier: 1.18, bossManaMultiplier: 1.12, bossArmorBonus: 2 },
+  Abismo: { armorScale: 0.28, armorFlat: 6, maxHpStrikePercent: 0.02, hpMultiplier: 1.32, attackMultiplier: 1.24, bossHpMultiplier: 1.24, bossAttackMultiplier: 1.22, bossSkillMultiplier: 1.25, bossManaMultiplier: 1.14, bossArmorBonus: 3 },
+  Fortaleza: { armorScale: 0.35, armorFlat: 9, maxHpStrikePercent: 0.03, hpMultiplier: 1.48, attackMultiplier: 1.36, bossHpMultiplier: 1.3, bossAttackMultiplier: 1.28, bossSkillMultiplier: 1.32, bossManaMultiplier: 1.16, bossArmorBonus: 4 },
+  Necropole: { armorScale: 0.43, armorFlat: 13, maxHpStrikePercent: 0.04, hpMultiplier: 1.66, attackMultiplier: 1.5, bossHpMultiplier: 1.38, bossAttackMultiplier: 1.36, bossSkillMultiplier: 1.4, bossManaMultiplier: 1.18, bossArmorBonus: 5 },
+  Citadela: { armorScale: 0.52, armorFlat: 18, maxHpStrikePercent: 0.05, hpMultiplier: 1.86, attackMultiplier: 1.66, bossHpMultiplier: 1.48, bossAttackMultiplier: 1.46, bossSkillMultiplier: 1.5, bossManaMultiplier: 1.2, bossArmorBonus: 6 },
+  Panteao: { armorScale: 0.62, armorFlat: 24, maxHpStrikePercent: 0.065, hpMultiplier: 2.08, attackMultiplier: 1.82, bossHpMultiplier: 1.6, bossAttackMultiplier: 1.58, bossSkillMultiplier: 1.62, bossManaMultiplier: 1.22, bossArmorBonus: 8 },
+  Cataclismo: { armorScale: 0.74, armorFlat: 30, maxHpStrikePercent: 0.08, hpMultiplier: 2.32, attackMultiplier: 2.0, bossHpMultiplier: 1.74, bossAttackMultiplier: 1.72, bossSkillMultiplier: 1.76, bossManaMultiplier: 1.25, bossArmorBonus: 10 }
 };
 const enemyDropSlotGroups = [
   ["feet", "chest"],
@@ -1030,7 +1030,7 @@ function buildArcherTrees(){
       type: tier30 === "atirador"
         ? "archer_global_double_chance"
         : tier30 === "cacador"
-          ? "archer_coin_bonus"
+          ? "archer_dodge_coin_bonus"
           : "archer_dodge_level_scaling"
     }
   ];
@@ -1101,14 +1101,16 @@ function getEnemyStats(template, regionOverride = null, isBoss = false){
   const regionName = regionOverride || currentRegion;
   const combatProfile = regionCombatProfiles[regionName] || regionCombatProfiles.Floresta;
   const bossProfile = getBossDifficultyProfile(regionName, isBoss);
+  const hpMultiplier = isBoss ? bossProfile.hpMultiplier : (combatProfile.hpMultiplier || 1);
+  const attackMultiplier = isBoss ? bossProfile.attackMultiplier : (combatProfile.attackMultiplier || 1);
   const hasArmor = combatProfile.armorScale > 0 || combatProfile.armorFlat > 0;
   const armor = hasArmor
     ? Math.max(1, Math.floor(template.level * combatProfile.armorScale) + combatProfile.armorFlat + (isBoss ? Math.max(2, Math.floor(template.level / 30)) + bossProfile.armorBonus : 0))
     : 0;
   const maxHpStrikePercent = combatProfile.maxHpStrikePercent + (isBoss && combatProfile.maxHpStrikePercent > 0 ? 0.01 : 0);
   return {
-    maxHp: Math.floor((template.hp + template.level * 18) * bossProfile.hpMultiplier),
-    attack: Math.floor((template.attack + template.level * 2) * bossProfile.attackMultiplier),
+    maxHp: Math.floor((template.hp + template.level * 18) * hpMultiplier),
+    attack: Math.floor((template.attack + template.level * 2) * attackMultiplier),
     armor,
     maxHpStrikePercent
   };
@@ -1141,22 +1143,23 @@ function isAdvancedBossRegion(regionName){
 }
 
 function getBossDifficultyProfile(regionName, isBoss = false){
+  const combatProfile = regionCombatProfiles[regionName] || regionCombatProfiles.Floresta;
   if(!isBoss || !isAdvancedBossRegion(regionName)){
     return {
-      hpMultiplier: 1,
-      attackMultiplier: 1,
-      skillMultiplier: 1,
-      manaMultiplier: 1,
-      armorBonus: 0
+      hpMultiplier: combatProfile.bossHpMultiplier || 1,
+      attackMultiplier: combatProfile.bossAttackMultiplier || 1,
+      skillMultiplier: combatProfile.bossSkillMultiplier || 1,
+      manaMultiplier: combatProfile.bossManaMultiplier || 1,
+      armorBonus: combatProfile.bossArmorBonus || 0
     };
   }
   const index = Math.max(0, advancedBossRegions.indexOf(regionName));
   return {
-    hpMultiplier: 1.08 + index * 0.02,
-    attackMultiplier: 1.05 + index * 0.015,
-    skillMultiplier: 1.08 + index * 0.018,
-    manaMultiplier: 1.06 + index * 0.02,
-    armorBonus: 1 + Math.floor(index / 2)
+    hpMultiplier: (combatProfile.bossHpMultiplier || 1) * (1 + index * 0.01),
+    attackMultiplier: (combatProfile.bossAttackMultiplier || 1) * (1 + index * 0.008),
+    skillMultiplier: (combatProfile.bossSkillMultiplier || 1) * (1 + index * 0.01),
+    manaMultiplier: (combatProfile.bossManaMultiplier || 1) * (1 + index * 0.006),
+    armorBonus: (combatProfile.bossArmorBonus || 0) + Math.floor(index / 3)
   };
 }
 
@@ -1487,6 +1490,10 @@ function getPassiveModifiers(){
     }
     if(passive.type === "archer_dodge_level_scaling"){
       base.enemyMissChance += 0.05 + (0.005 * player.level);
+    }
+    if(passive.type === "archer_dodge_coin_bonus"){
+      base.enemyMissChance += 0.05 + (0.005 * player.level);
+      base.coinBonus += 0.1;
     }
     if(passive.type === "archer_attack_level_bonus"){
       const attackBonus = Math.floor(0.9 * player.level);
@@ -2424,6 +2431,9 @@ function getPassiveStatusDescription(skill){
   }
   if(skill.type === "archer_coin_bonus"){
     return `${skill.name}: aumenta em 10% as moedas recebidas dos inimigos.`;
+  }
+  if(skill.type === "archer_dodge_coin_bonus"){
+    return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.`;
   }
   if(skill.type === "archer_attack_level_bonus"){
     const attackBonus = Math.floor(0.9 * player.level);
