@@ -3570,7 +3570,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button onclick="resetInvestedStatsAtCamp()" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -3644,6 +3644,11 @@ function updateUI(){
   }
   if(inventoryPanel){
     inventoryPanel.style.display = currentMode === "trophies" ? "none" : "block";
+  }
+  const trainerButton = document.getElementById("trainerRespecBtn");
+  if(trainerButton && !trainerButton.dataset.bound){
+    trainerButton.addEventListener("click", () => resetInvestedStatsAtCamp());
+    trainerButton.dataset.bound = "true";
   }
   saveCampaign();
 }
@@ -3732,11 +3737,11 @@ function renderActions(){
       ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`).join("")
       : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
     actions.innerHTML = `<button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="dungeonAttack()">${getBasicAttackLabel()}</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
-    return;
+    return false;
   }
   if(levelUpPoints > 0){
     actions.innerHTML = `<button disabled>Distribua seus atributos para continuar</button>`;
-    return;
+    return false;
   }
   if(needsSubclassChoice()){
     actions.innerHTML = `<button disabled>Escolha sua subclasse para continuar</button>`;
@@ -4077,18 +4082,84 @@ function tickBossBuff(){
   }
 }
 
+function getBossActionScore(ability){
+  const currentCaps = getCurrentCaps();
+  const playerMaxHp = currentCaps.maxHp || 1;
+  const playerHpRatio = player.hp / playerMaxHp;
+  const playerShield = playerEffects.shieldValue || 0;
+  const shieldRatio = playerShield / Math.max(1, playerMaxHp);
+  const bossHpRatio = enemy.hp / Math.max(1, enemy.maxHp || enemy.hp || 1);
+  const buffActive = enemy.bossBuffTurns > 0;
+  let score = 10 + Math.floor((ability.chance || 0) * 100);
+
+  if(ability.type === "buff"){
+    if(buffActive){
+      return -999;
+    }
+    score += bossHpRatio <= 0.55 ? 32 : 18;
+    if(playerShield > 0 && (enemy.bossAbilities || []).some(entry => entry.type === "pierce" || entry.type === "shield_breaker")){
+      score -= 8;
+    }
+    if(enemy.mp >= ((ability.cost || 0) + Math.max(enemy.skillCost || 0, 18))){
+      score += 8;
+    }
+    return score;
+  }
+
+  if(ability.type === "pierce"){
+    score += playerShield > 0 ? 42 : 6;
+    score += shieldRatio >= 0.18 ? 18 : 0;
+    score += (playerEffects.flatReduction || 0) > 0 ? 10 : 0;
+  }
+
+  if(ability.type === "execute_unshielded"){
+    score += playerShield <= 0 ? 38 : -20;
+    score += playerHpRatio <= 0.45 ? 8 : 0;
+  }
+
+  if(ability.type === "max_hp" || ability.maxHpPercent){
+    const hpPercent = ability.maxHpPercent || 0;
+    score += Math.floor(playerMaxHp * hpPercent * 0.18);
+    score += playerMaxHp >= 900 ? 20 : playerMaxHp >= 600 ? 10 : 0;
+  }
+
+  if(ability.type === "nuke"){
+    score += playerHpRatio >= 0.55 ? 14 : 4;
+    score += playerShield > 0 ? -8 : 0;
+  }
+
+  const manaLeft = enemy.mp - (ability.cost || 0);
+  if(manaLeft < 0){
+    return -999;
+  }
+  if(manaLeft < Math.min(enemy.skillCost || 0, 20)){
+    score -= 6;
+  }
+  score += Math.floor(Math.random() * 8);
+  return score;
+}
+
 function chooseBossAction(){
   const availableAbilities = (enemy.bossAbilities || []).filter(ability => enemy.mp >= (ability.cost || 0));
-  const buffActive = enemy.bossBuffTurns > 0;
-  for(const ability of availableAbilities){
-    if(ability.type === "buff" && buffActive){
-      continue;
-    }
-    if(Math.random() < (ability.chance || 0)){
-      return ability;
-    }
+  if(!availableAbilities.length){
+    return null;
   }
-  return null;
+  const ranked = availableAbilities
+    .map(ability => ({ ability, score: getBossActionScore(ability) }))
+    .filter(entry => entry.score > -100)
+    .sort((a, b) => b.score - a.score);
+  if(!ranked.length){
+    return null;
+  }
+  const top = ranked[0];
+  const second = ranked[1];
+  if(top.score < 24){
+    return Math.random() < 0.35 ? top.ability : null;
+  }
+  if(second && second.score >= top.score - 8 && Math.random() < 0.3){
+    return second.ability;
+  }
+  return top.ability;
 }
 
 function resolveBossAction(ability){
@@ -4116,7 +4187,14 @@ function resolveBossAction(ability){
     damage += ability.bonusIfNoShield || 0;
     log(`${ability.name} encontrou voce desprotegido e ficou mais forte.`);
   }
-  if(ability.type === "pierce" && enemy.bossPierceBonus > 0){
+  if(ability.type === "max_hp" || ability.maxHpPercent){
+    const maxHpDamage = Math.floor(getCurrentCaps().maxHp * (ability.maxHpPercent || 0));
+    damage += maxHpDamage;
+    if(maxHpDamage > 0){
+      log(`${ability.name} drenou ${maxHpDamage} com base na sua vida maxima.`);
+    }
+  }
+  if((ability.type === "pierce" || ability.type === "shield_breaker") && enemy.bossPierceBonus > 0){
     damage += Math.floor(damage * enemy.bossPierceBonus);
   }
   log(`${enemy.baseName} usou ${ability.name}.`);
@@ -4177,7 +4255,8 @@ async function enemyTurn(){
     }
   }else{
     const canUseBossSkill = enemy.isBoss && enemy.skillCost > 0 && enemy.mp >= enemy.skillCost;
-    if(canUseBossSkill && Math.random() < 0.45){
+    const shouldCastFallbackSkill = canUseBossSkill && ((playerEffects.shieldValue || 0) <= 0 || Math.random() < 0.72);
+    if(shouldCastFallbackSkill){
       enemy.mp -= enemy.skillCost;
       dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
       animationStyle = "cast";
@@ -4295,9 +4374,13 @@ function getTrainerRespecCost(){
 }
 
 function resetInvestedStatsAtCamp(){
+  if(!player || !player.stats){
+    log("O treinador nao encontrou seus dados de progresso.");
+    return false;
+  }
   if(currentMode !== "camp"){
     log("O treinador so atende no acampamento.");
-    return;
+    return false;
   }
   if(isProcessingTurn || isDead){
     log("Voce nao pode reorganizar atributos agora.");
@@ -4315,12 +4398,12 @@ function resetInvestedStatsAtCamp(){
   const totalInvested = getTotalInvestedPoints();
   if(totalInvested <= 0){
     log("Voce ainda nao tem pontos investidos para redistribuir.");
-    return;
+    return false;
   }
   const cost = getTrainerRespecCost();
   if(player.coins < cost){
     log(`O treinador cobra ${cost} moedas para reorganizar seus pontos.`);
-    return;
+    return false;
   }
   const refundHp = (Number(invested.hp) || 0) * player.growth.hp;
   const refundMp = (Number(invested.mp) || 0) * player.growth.mp;
@@ -4343,6 +4426,7 @@ function resetInvestedStatsAtCamp(){
   if(panel){
     panel.scrollIntoView({ behavior: "smooth", block: "center" });
   }
+  return true;
 }
 
 function finishLevelUp(){
