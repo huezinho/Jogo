@@ -258,7 +258,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <button class="class-card class-warrior" onclick="selectClass('Guerreiro')">
 <span class="class-icon">&#x1F6E1;&#xFE0F;</span>
 <h4>Guerreiro</h4>
-<p><span class="stat-hp">Vida 140</span></p>
+<p><span class="stat-hp">Vida 120</span></p>
 <p><span class="stat-mp">Mana 60</span></p>
 <p><span class="stat-atk">Dano basico 18</span></p>
 <small>Alta resistencia, pouca mana e o ataque basico mais forte entre as tres classes.</small>
@@ -266,7 +266,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <button class="class-card class-archer" onclick="selectClass('Arqueiro')">
 <span class="class-icon">&#x1F3F9;</span>
 <h4>Arqueiro</h4>
-<p><span class="stat-hp">Vida 120</span></p>
+<p><span class="stat-hp">Vida 100</span></p>
 <p><span class="stat-mp">Mana 80</span></p>
 <p><span class="stat-atk">Dano basico 16</span></p>
 <small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
@@ -274,7 +274,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 <button class="class-card class-mage" onclick="selectClass('Mago')">
 <span class="class-icon">&#x1F52E;</span>
 <h4>Mago</h4>
-<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-hp">Vida 80</span></p>
 <p><span class="stat-mp">Mana 100</span></p>
 <p><span class="stat-atk">Dano basico 14</span></p>
 <small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes.</small>
@@ -417,10 +417,10 @@ const regionArticleMap = {
 };
 const rarityMultipliers = {
   comum: 1,
-  incomum: 1.35,
-  rara: 1.8,
-  ultra_rara: 2.35,
-  lendaria: 3.1
+  incomum: 1.7,
+  rara: 2.45,
+  ultra_rara: 3.4,
+  lendaria: 4.8
 };
 const regionArmorPieceNames = {
   head: "Capuz",
@@ -679,19 +679,19 @@ const enemySprites = {
 
 const classes = {
   Guerreiro: {
-    hp: 140,
+    hp: 120,
     mp: 60,
     attack: 18,
     growth: { hp: 40, mp: 10, attack: 4 }
   },
   Arqueiro: {
-    hp: 120,
+    hp: 100,
     mp: 80,
     attack: 16,
     growth: { hp: 26, mp: 18, attack: 6 }
   },
   Mago: {
-    hp: 100,
+    hp: 80,
     mp: 100,
     attack: 14,
     growth: { hp: 10, mp: 26, attack: 3 }
@@ -1606,9 +1606,21 @@ function normalizePlayerState(){
     deaths: 0,
     regionKills: {}
   };
+  player.stats.migrations = player.stats.migrations || {};
   player.stats.regionKills = player.stats.regionKills || {};
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
+  if(!player.stats.migrations.baseHpRebalance_v1){
+    const oldBaseHpByClass = { Guerreiro: 140, Arqueiro: 120, Mago: 100 };
+    const oldBaseHp = oldBaseHpByClass[player.class];
+    if(oldBaseHp && player.baseStats.hp === oldBaseHp){
+      const hpDelta = oldBaseHp - classDefaults.hp;
+      player.baseStats.hp = classDefaults.hp;
+      player.maxHp = Math.max(classDefaults.hp, (player.maxHp || classDefaults.hp) - hpDelta);
+      player.hp = Math.min(player.maxHp, Math.max(1, (player.hp || player.maxHp) - hpDelta));
+    }
+    player.stats.migrations.baseHpRebalance_v1 = true;
+  }
   player.stats.invested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
   const legacySubclass = player.subclass?.id || player.subclass || null;
   player.subclass = null;
@@ -2975,7 +2987,7 @@ function getCampEntries(){
       isNext: !unlocked && skill.level === Math.min(...(classTrees.activeSkills || []).filter(entry => player.level < entry.level).map(entry => entry.level), Infinity),
       status: unlocked ? "Disponivel" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
-      description: activeDetail?.description || "Habilidade ainda bloqueada."
+      description: activeDetail?.description || getActiveSkillPreviewDescription(skill)
     };
   });
   const passiveEntries = (classTrees.passiveSkills || []).map(skill => {
@@ -2987,10 +2999,104 @@ function getCampEntries(){
       isNext: !unlocked && skill.level === Math.min(...(classTrees.passiveSkills || []).filter(entry => player.level < entry.level).map(entry => entry.level), Infinity),
       status: unlocked ? "Sempre ativa" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
-      description: unlocked ? getPassiveStatusDescription(skill) : skill.description
+      description: unlocked ? getPassiveStatusDescription(skill) : getPassivePreviewDescription(skill)
     };
   });
   return { activeEntries, passiveEntries };
+}
+
+function getActiveSkillPreviewDescription(skill){
+  const previews = {
+    warrior_second_wind: "Recupera vida com base na vida maxima e, em alguns ramos, tambem fortalece seu proximo ciclo ofensivo.",
+    warrior_shove: "Golpe de impacto baseado na sua vida maxima, com variacoes ofensivas conforme a rota escolhida.",
+    warrior_stagger: "Ataque pesado de controle que pode travar o ritmo do inimigo em rotas defensivas.",
+    warrior_swift_strikes: "Sequencia de ataques basicos; em rotas avancadas pode aplicar sangramento ou ganhar golpes extras.",
+    warrior_warcry: "Buff ofensivo ou de furia, dependendo da subclasse escolhida.",
+    warrior_deep_cut: "Corte forte com dano direto e efeito continuo no alvo.",
+    warrior_judgement: "Golpe de alto peso baseado em vida, ataque e dano de habilidade.",
+    warrior_valhalla: "Estado de furia extrema que troca seguranca por dano esmagador.",
+    warrior_armor_pierce: "Ataque especializado em atravessar escudos, armadura ou resistencias.",
+    warrior_smoke_bomb: "Ferramenta de evasao ofensiva para preparar o proximo golpe.",
+    warrior_faith_shield: "Tecnica suprema de defesa total, seguida de explosao do dano armazenado.",
+    warrior_unstoppable: "Postura final de agressao contínua para dominar turnos decisivos.",
+    warrior_ultrasonic_cuts: "Entrar em modo de cortes puros, focando apenas no ataque basico por alguns turnos.",
+    warrior_giant_slayer: "Finalizador brutal contra alvos com muita vida atual.",
+    mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e pode devolver o custo quando acerta muito forte.",
+    mage_fireball: "Magia elemental que aplica efeito persistente no inimigo, mudando de fogo para gelo conforme a rota.",
+    mage_freeze: "Feitico de controle ou dano elemental que evolui junto da subclasse.",
+    mage_sacred_phoenix: "Invocacao incendiaria de alto custo e alto impacto.",
+    mage_blizzard: "Pressao de controle por varios turnos em volta do inimigo.",
+    mage_discharge: "Consome cargas arcanas para transformar preparacao em burst imediato.",
+    mage_mana_shield: "Converte mana em escudo e sustentacao defensiva.",
+    mage_concentration: "Buff arcano de dano total e regeneracao de mana.",
+    mage_corruption: "Golpe ofensivo que destroi armadura e bloqueia escudos do alvo.",
+    mage_overcharge: "Canaliza quase toda a mana em uma descarga suprema.",
+    mage_demon_form: "Modo de risco extremo: muito dano extra, mas tambem muita vulnerabilidade.",
+    mage_explode: "Feitico sacrificial devastador que consome mana e vida.",
+    mage_avalanche: "Magia de avalanche com dano pesado e enfraquecimento prolongado.",
+    archer_focus: "Buff de precisão e dano que prepara seus tiros mais importantes por varios turnos.",
+    archer_camouflage: "Ferramenta de esquiva e preparação ofensiva, excelente para jogadas taticas.",
+    archer_headshot: "Disparo tecnico de alto dano, com chance de explosao critíca ou marcacao.",
+    archer_barrage: "Sequencia de disparos basicos, com evolucoes diferentes para cada rota do cacador.",
+    archer_piercing_shot: "Tiro direto para atravessar escudo e armadura.",
+    archer_trap: "Ferramenta de controle que pode travar o turno do inimigo e criar vantagem.",
+    archer_arcane_shot: "Disparo que mistura habilidade e mana maxima em burst magico.",
+    archer_execute: "Finalizador de alvo unico que escala muito contra inimigos enfraquecidos.",
+    archer_surprise: "Ataque oportunista que cresce bastante se voce veio de camuflagem.",
+    archer_tranquilizer: "Tiro utilitario que causa dano e reduz o potencial ofensivo do inimigo.",
+    archer_overcharge: "Explosao arcana de custo alto para fechar lutas rapidamente.",
+    archer_weak_spot: "Ataque preciso que explora a vida atual do inimigo para causar burst.",
+    archer_aim_leg: "Controle fino que reduz ataque, corta armadura e ainda pode travar o alvo.",
+    archer_cutting_shot: "Disparo em dano ao longo do tempo, excelente para lutas compridas."
+  };
+  return previews[skill.type] || "Habilidade importante da sua progressao. Quando desbloqueada, a descricao completa aparece aqui com valores atualizados.";
+}
+
+function getPassivePreviewDescription(skill){
+  const previews = {
+    warrior_flat_reduction: "Passiva defensiva que reduz dano recebido e, em algumas rotas, tambem melhora sua sustentacao por turno.",
+    warrior_enemy_miss: "Passiva voltada para evasao e ritmo ofensivo.",
+    warrior_reflect: "Passiva reativa: pode devolver dano ou responder com contra-ataques.",
+    warrior_counter_on_dodge: "Passiva de resposta ao esquivar, melhorando sua pressao sem gastar turno.",
+    warrior_aura_shield: "Passiva de escudo constante, ideal para lutas longas.",
+    warrior_last_stand: "Passiva de sobrevivencia extrema para aguentar um golpe fatal.",
+    warrior_first_strike_echo: "Passiva que fortalece o primeiro ataque do combate.",
+    warrior_execute_bonus: "Passiva ofensiva para encerrar inimigos ja enfraquecidos.",
+    mage_last_resort: "Passiva defensiva que troca mana por sobrevivencia em golpes fatais.",
+    mage_mana_to_life: "Passiva de conversao entre mana e vida maxima.",
+    mage_overflowing: "Passiva que transforma mana em dano, mas tambem aumenta o custo das habilidades.",
+    mage_hellfire: "Passiva que deixa queimaduras muito mais perigosas.",
+    mage_frostburn: "Passiva hibrida que mistura frio e fogo no mesmo controle.",
+    mage_charge_damage: "Passiva que recompensa manter cargas arcanas ativas.",
+    mage_glass_cannon: "Passiva de burst inicial extremo com risco elevado.",
+    archer_dodge_level_scaling: "Passiva base de esquiva do arqueiro, escalando com o nivel.",
+    archer_dodge_double_bonus: "Passiva mista de esquiva com chance extra de dano dobrado.",
+    archer_dodge_coin_bonus: "Passiva de esquiva com foco economico.",
+    archer_attack_level_bonus: "Passiva central da rota ofensiva, aumentando ataque base e dano de habilidade por nivel.",
+    archer_dodge_damage_buff: "Passiva reativa que transforma esquiva em vantagem ofensiva ou sustentacao.",
+    archer_mana_to_skill_bonus: "Passiva que converte mana maxima em dano de habilidade.",
+    archer_sniper_bonus_crit: "Passiva de crítico avançado, com chance de dano triplo ao extrapolar o limite.",
+    archer_enemy_skip_chance: "Passiva de pressão que pode fazer o inimigo perder o turno.",
+    archer_flat_reduction_level: "Passiva defensiva de redução fixa por nivel.",
+    coin_bonus: "Passiva voltada para aumentar suas recompensas em moedas."
+  };
+  return previews[skill.type] || "Passiva importante da rota escolhida. Quando desbloqueada, o texto aqui passa a mostrar o efeito real no seu nivel atual.";
+}
+
+function renderSubclassSpoilers(){
+  const chosen = getChosenSubclassDefs();
+  const tier30Choices = subclassChoicesByClass[player.class]?.tier30 || [];
+  const tier30Spoiler = tier30Choices.length
+    ? `<div class="inventory-item"><strong>Subclasses de nivel 30</strong><br><span class="lock-note">${tier30Choices.map(option => option.name).join(" | ")}</span></div>`
+    : "";
+  const tier60Source = chosen[0]?.id
+    ? (subclassChoicesByClass[player.class]?.tier60?.[chosen[0].id] || [])
+    : tier30Choices.flatMap(option => (subclassChoicesByClass[player.class]?.tier60?.[option.id] || []));
+  const uniqueTier60 = [...new Map(tier60Source.map(option => [option.id, option])).values()];
+  const tier60Spoiler = uniqueTier60.length
+    ? `<div class="inventory-item"><strong>Subclasses de nivel 60</strong><br><span class="lock-note">${uniqueTier60.map(option => option.name).join(" | ")}</span></div>`
+    : "";
+  return `${tier30Spoiler}${tier60Spoiler}`;
 }
 
 function getPassiveStatusDescription(skill){
@@ -4888,7 +4994,8 @@ function updateUI(){
         </div>
       </div>
       ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Rota de subclasse</strong><div class="subclass-route">${getChosenSubclassDefs().map((subclass, index, arr) => `<span class="subclass-chip active">${index === arr.length - 1 ? "Atual: " : "Escolhida: "}${subclass.name}</span>`).join("")} </div><div class="subclass-summary"><strong>Bonus recebidos</strong><div class="subclass-bonus-list">${getChosenSubclassDefs().map(subclass => `<div class="inventory-item"><strong>${subclass.name}</strong><br><span class="lock-note">${subclass.description}</span><br><span class="status-on">${formatSubclassStatBonuses(subclass)}</span></div>`).join("")}</div><div class="inventory-item" style="margin-top:10px;"><strong>Total acumulado</strong><br><span class="status-on">${formatSubclassStatBonuses(getTotalSubclassBonuses())}</span></div></div></div>` : `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">Ainda nao escolhida. Sua primeira escolha acontece no nivel 30 e a segunda no nivel 60.</span></div>`}
-      <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio" : "Em breve"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
+      <div class="inventory-item"><strong>Spoiler de subclasses</strong><br><span class="lock-note">Aqui voce ja consegue ver os nomes das rotas futuras da sua classe.</span><div class="inventory-list">${renderSubclassSpoilers()}</div></div>
+      <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio mais proximo" : "Desbloqueio futuro"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
       <div class="inventory-item"><strong>Sets ativos</strong><br><span class="lock-note">${activeSetData.activeSets.length ? activeSetData.activeSets.map(setEntry => `${setEntry.setName}: ${setEntry.text}`).join(" | ") : "Nenhum set completo equipado."}</span></div>
     </div>`
     : currentMode === "bestiary" ? `
