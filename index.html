@@ -2783,7 +2783,7 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.8;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.16 : 0.18;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.16 : 0.12;
       const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
       const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.4, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 40% da vida maxima do inimigo, devolve toda a mana gasta.` };
@@ -2847,7 +2847,7 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_discharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 60 + (16 * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.05 * maxMp) + getUniversalDamageFlatBonus();
+      const damage = 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: (10 * charges) + mageExtraCost, damage, charges, description: `${skill.name}: consome ${(10 * charges) + mageExtraCost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_sacred_phoenix"){
