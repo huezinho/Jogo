@@ -119,15 +119,23 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .hero-guerreiro{color:#f2d0a1}
 .hero-arqueiro{color:#bce9bf}
 .hero-mago{color:#bdd7ff}
+.hero-brutamontes,.hero-paladino{color:#f3d2a7;text-shadow:0 0 14px rgba(255,215,160,.22)}
+.hero-espadachim,.hero-samurai,.hero-ninja,.hero-berserker{color:#ffd6a6;text-shadow:0 0 14px rgba(255,184,120,.22)}
+.hero-elementalista,.hero-mago-incendiario,.hero-mago-frigido{color:#bfe0ff;text-shadow:0 0 14px rgba(120,190,255,.22)}
+.hero-arcanista,.hero-arquimago,.hero-corrompido{color:#d6c4ff;text-shadow:0 0 16px rgba(171,112,255,.24)}
+.hero-atirador,.hero-atirador-arcano,.hero-sniper{color:#c8f2c7;text-shadow:0 0 14px rgba(136,223,136,.2)}
+.hero-cacador,.hero-espreitador,.hero-guarda-florestal{color:#cde8ab;text-shadow:0 0 14px rgba(153,214,102,.22)}
 .sprite-fx{position:absolute;inset:0;pointer-events:none;z-index:3}
 .sprite-box.attacking .sprite-figure{animation:heroStrike .24s linear}
 .enemy-sprite-box.attacking .sprite-figure{animation:enemyStrike .24s linear}
 .sprite-box.casting .sprite-figure{animation:heroCast .42s ease-out}
+.sprite-box.buffing .sprite-figure{animation:heroBuff .5s ease-out}
 .sprite-box.hit .sprite-figure{animation:spriteHit .22s linear}
-.sprite-box.attacking .sprite-fx::after,.sprite-box.casting .sprite-fx::after,.sprite-box.hit .sprite-fx::after{content:"";position:absolute;opacity:0}
+.sprite-box.attacking .sprite-fx::after,.sprite-box.casting .sprite-fx::after,.sprite-box.buffing .sprite-fx::after,.sprite-box.hit .sprite-fx::after{content:"";position:absolute;opacity:0}
 .hero-sprite-box.attacking .sprite-fx::after{width:96px;height:10px;right:20%;top:48%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.92),rgba(255,215,120,0));transform:rotate(-18deg);animation:slashTrail .24s linear}
 .enemy-sprite-box.attacking .sprite-fx::after{width:96px;height:10px;left:20%;top:48%;background:linear-gradient(90deg,rgba(255,120,120,0),rgba(255,244,244,.92),rgba(255,255,255,0));transform:rotate(18deg);animation:enemySlashTrail .24s linear}
 .sprite-box.casting .sprite-fx::after{width:76px;height:76px;left:50%;top:46%;border-radius:50%;background:radial-gradient(circle,rgba(159,216,255,.95),rgba(95,165,255,.48),rgba(95,165,255,0));transform:translate(-50%,-50%);animation:castPulse .42s ease-out}
+.sprite-box.buffing .sprite-fx::after{width:92px;height:92px;left:50%;top:50%;border-radius:50%;border:2px solid rgba(178,255,203,.72);background:radial-gradient(circle,rgba(178,255,203,.32),rgba(109,228,170,.18),rgba(109,228,170,0));transform:translate(-50%,-50%);animation:buffPulse .5s ease-out}
 .sprite-box.hit .sprite-fx::after{inset:14px;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,85,85,.42));animation:hitFlash .22s linear}
 .region-floresta{background:linear-gradient(180deg,#295238,#182a1d)}
 .region-caverna{background:linear-gradient(180deg,#4b5158,#24282d)}
@@ -155,6 +163,12 @@ button:disabled{cursor:not-allowed;opacity:.6}
   35%{transform:translateY(-8px) scale(1.05)}
   100%{transform:translateY(0) scale(1)}
 }
+@keyframes heroBuff{
+  0%{transform:translateY(0) scale(1)}
+  35%{transform:translateY(-5px) scale(1.08)}
+  70%{transform:translateY(-2px) scale(1.03)}
+  100%{transform:translateY(0) scale(1)}
+}
 @keyframes spriteHit{
   0%{transform:translateX(0)}
   25%{transform:translateX(8px)}
@@ -176,6 +190,11 @@ button:disabled{cursor:not-allowed;opacity:.6}
   0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
   30%{opacity:1}
   100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}
+}
+@keyframes buffPulse{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  35%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.35)}
 }
 @keyframes hitFlash{
   0%{opacity:0}
@@ -200,6 +219,13 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .settings-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .settings-options button.active{background:#2e7d32;color:#fff}
 .settings-note{display:block;margin-top:10px;color:#d0d0d0;font-size:13px;line-height:1.45}
+.subclass-summary{margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.subclass-route{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.subclass-chip{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;font-weight:700}
+.subclass-chip.active{background:#2e7d32;color:#fff}
+.subclass-bonus-list,.progression-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.progression-item{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.progression-item.next{border:1px solid rgba(255,193,7,.45);background:rgba(255,193,7,.08)}
 @media (max-width:640px){
   .attribute-row{flex-direction:column;align-items:flex-start}
   .action-btn[data-tooltip]:hover::after{left:0;transform:none}
@@ -322,6 +348,26 @@ const classIcons = {
   Guerreiro: "&#x1F6E1;&#xFE0F;",
   Arqueiro: "&#x1F3F9;",
   Mago: "&#x1F52E;"
+};
+const subclassIcons = {
+  brutamontes: "&#x1F9F1;",
+  espadachim: "&#x2694;&#xFE0F;",
+  paladino: "&#x2728;",
+  berserker: "&#x1FA93;",
+  samurai: "&#x1F5E1;&#xFE0F;",
+  ninja: "&#x1F977;",
+  elementalista: "&#x1F30A;",
+  arcanista: "&#x2728;",
+  mago_incendiario: "&#x1F525;",
+  mago_frigido: "&#x2744;&#xFE0F;",
+  arquimago: "&#x1F52E;",
+  corrompido: "&#x1F47E;",
+  atirador: "&#x1F3AF;",
+  cacador: "&#x1F3F9;",
+  atirador_arcano: "&#x2728;",
+  sniper: "&#x1F4A5;",
+  espreitador: "&#x1F576;&#xFE0F;",
+  guarda_florestal: "&#x1F333;"
 };
 const legacyEnemyDrops = {
   "Lobo Sombrio": { id: "sandalia_mago", name: "Sandalia de Mago", slot: "feet", classRestriction: "Mago", stats: { bonusHp: "hp" } },
@@ -802,6 +848,45 @@ function getChosenSubclassDefs(targetPlayer = player){
   return [tier30, tier60].filter(Boolean);
 }
 
+function getCurrentSubclassDef(targetPlayer = player){
+  const chosen = getChosenSubclassDefs(targetPlayer);
+  return chosen[chosen.length - 1] || null;
+}
+
+function getDisplayedClassName(targetPlayer = player){
+  return getCurrentSubclassDef(targetPlayer)?.name || targetPlayer.class;
+}
+
+function getHeroSpriteIcon(targetPlayer = player){
+  const currentSubclass = getCurrentSubclassDef(targetPlayer);
+  return (currentSubclass && subclassIcons[currentSubclass.id]) || classIcons[targetPlayer.class] || "&#x2694;&#xFE0F;";
+}
+
+function getHeroSpriteClass(targetPlayer = player){
+  const currentSubclass = getCurrentSubclassDef(targetPlayer);
+  return `hero-${toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro")}`;
+}
+
+function formatSubclassStatBonuses(subclass){
+  if(!subclass){ return "Sem bonus de status."; }
+  const parts = [];
+  if(subclass.bonusHp){ parts.push(`+${subclass.bonusHp} HP`); }
+  if(subclass.bonusMp){ parts.push(`+${subclass.bonusMp} MP`); }
+  if(subclass.bonusAttack){ parts.push(`+${subclass.bonusAttack} ATQ`); }
+  if(subclass.skillPower){ parts.push(`+${subclass.skillPower} PODER DE HABILIDADE`); }
+  return parts.length ? parts.join(" | ") : "Sem bonus de status.";
+}
+
+function getTotalSubclassBonuses(){
+  return getChosenSubclassDefs().reduce((acc, subclass) => {
+    acc.bonusHp += subclass.bonusHp || 0;
+    acc.bonusMp += subclass.bonusMp || 0;
+    acc.bonusAttack += subclass.bonusAttack || 0;
+    acc.skillPower += subclass.skillPower || 0;
+    return acc;
+  }, { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 });
+}
+
 function buildWarriorTrees(){
   const subclassState = getPlayerSubclassState();
   const tier30 = subclassState.tier30;
@@ -964,10 +1049,6 @@ function getRegionSpriteClass(regionName){
   return `region-${toCssToken(regionName)}`;
 }
 
-function getHeroSpriteClass(){
-  return `hero-${toCssToken(player?.class || "guerreiro")}`;
-}
-
 function restartElementAnimation(element, className){
   if(!element){ return; }
   element.classList.remove(className);
@@ -990,10 +1071,11 @@ function pulseSpriteClass(elementId, className, duration = 260){
 async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = 72, betweenHits = 92){
   const attackerId = attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox";
   const defenderId = attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox";
-  const attackerClass = style === "cast" ? "casting" : "attacking";
-  pulseSpriteClass(attackerId, attackerClass, style === "cast" ? 420 : 260);
+  const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : "attacking";
+  const attackerDuration = style === "cast" ? 420 : style === "buff" ? 500 : 260;
+  pulseSpriteClass(attackerId, attackerClass, attackerDuration);
   if(!connectHit){
-    await wait(style === "cast" ? 200 : 130);
+    await wait(style === "cast" ? 200 : style === "buff" ? 240 : 130);
     return;
   }
   await wait(hitDelay);
@@ -1003,7 +1085,22 @@ async function playSpriteAttackAnimation(attacker = "hero", style = "attack", co
       await wait(betweenHits);
     }
   }
-  await wait(style === "cast" ? 160 : 100);
+  await wait(style === "cast" ? 160 : style === "buff" ? 130 : 100);
+}
+
+function getSkillAnimationStyle(skillInfo){
+  const buffTypes = new Set([
+    "warrior_regen",
+    "warrior_shield",
+    "mage_concentration",
+    "mage_mana_shield",
+    "archer_focus",
+    "archer_hide"
+  ]);
+  if(buffTypes.has(skillInfo.type)){
+    return "buff";
+  }
+  return player.class === "Mago" || skillInfo.type.startsWith("mage_") ? "cast" : "attack";
 }
 
 function getEnemyTemplateByName(enemyName){
@@ -1304,6 +1401,22 @@ function needsSubclassChoice(){
   return (player.level >= 30 && !subclassState.tier30) || (player.level >= 60 && !!subclassState.tier30 && !subclassState.tier60);
 }
 
+function getCollectedEquipmentCount(){
+  return player.inventory.filter(item => item.type === "equipment").length + Object.values(player.equipment || {}).filter(Boolean).length;
+}
+
+function getLegendaryEquipmentCount(){
+  return [...player.inventory, ...Object.values(player.equipment || {})].filter(Boolean).filter(item => item.type === "equipment" && item.rarity === "lendaria").length;
+}
+
+function getCompletedSetCount(){
+  return getActiveSetBonuses().activeSets.length;
+}
+
+function getSubclassCount(){
+  return getChosenSubclassDefs().length;
+}
+
 function getTrophyCompletion(){
   const trophies = getTrophies();
   const done = trophies.filter(trophy => trophy.done).length;
@@ -1320,9 +1433,20 @@ function getTrophies(){
     { name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
     { name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
     { name: "Magnata do Vilarejo", done: player.stats.coinsEarned >= 2500, description: "Acumule 2500 moedas ao longo da campanha." },
+    { name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
+    { name: "Tesouro Lendario", done: getLegendaryEquipmentCount() >= 1, description: "Obtenha pelo menos 1 equipamento lendario." },
+    { name: "Vestido para Guerra", done: Object.values(player.equipment || {}).filter(Boolean).length >= 5, description: "Equipe todos os 5 slots de equipamento." },
+    { name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
+    { name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
+    { name: "Forma Final", done: getSubclassCount() >= 2, description: "Escolha sua segunda subclasse." },
     { name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance nivel suficiente para entrar na Fortaleza." },
+    { name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance nivel suficiente para entrar na Citadela." },
+    { name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance nivel suficiente para entrar no Panteao." },
+    { name: "Fim do Mundo", done: player.level >= 76, description: "Alcance nivel suficiente para entrar em Cataclismo." },
     { name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
+    { name: "Veterano de Guerra", done: player.stats.deaths >= 5, description: "Caia 5 vezes e continue a jornada." },
     { name: "Mestre do Vazio", done: player.level >= 60, description: "Alcance o nivel 60." },
+    { name: "Ascensao Heroica", done: player.level >= 80, description: "Alcance o nivel 80." },
     { name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." }
   ];
 }
@@ -1357,10 +1481,10 @@ function getDungeonRoomMembers(){
 function getDungeonPlayerProfile(){
   return {
     id: dungeonMultiplayer.peer?.id || "local",
-    name: `${player.class} Lv.${player.level}`,
+    name: `${getDisplayedClassName()} Lv.${player.level}`,
     class: player.class,
     level: player.level,
-    icon: classIcons[player.class] || "&#x2694;&#xFE0F;"
+    icon: getHeroSpriteIcon()
   };
 }
 
@@ -1872,7 +1996,7 @@ async function dungeonUseSkill(index){
     updateUI();
     return;
   }
-  await playSpriteAttackAnimation("hero", player.class === "Mago" || skillInfo.type.startsWith("mage_") ? "cast" : "attack", result.damage > 0);
+  await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
   decayPlayerBuffs();
   const healed = getTurnHealing();
   if(healed > 0){
@@ -2077,6 +2201,9 @@ function getCampEntries(){
     const unlocked = unlockedActiveNames.has(skill.name);
     return {
       name: skill.name,
+      level: skill.level,
+      unlocked,
+      isNext: !unlocked && skill.level === Math.min(...(classTrees.activeSkills || []).filter(entry => player.level < entry.level).map(entry => entry.level), Infinity),
       status: unlocked ? "Disponivel" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
       description: activeDetail?.description || "Habilidade ainda bloqueada."
@@ -2086,6 +2213,9 @@ function getCampEntries(){
     const unlocked = player.level >= skill.level;
     return {
       name: skill.name,
+      level: skill.level,
+      unlocked,
+      isNext: !unlocked && skill.level === Math.min(...(classTrees.passiveSkills || []).filter(entry => player.level < entry.level).map(entry => entry.level), Infinity),
       status: unlocked ? "Sempre ativa" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
       description: unlocked ? getPassiveStatusDescription(skill) : skill.description
@@ -2749,6 +2879,9 @@ async function useManaPotion(){
   }
   log("Voce usou uma Pocao de Mana e recuperou 60 de mana.");
   updateUI();
+  if(["buff_skill", "buff_attack"].includes(config.effectType)) {
+    await playSpriteAttackAnimation("hero", "buff", false);
+  }
   if(currentMode === "dungeon" && isDungeonConnected()){
     syncDungeonProfile();
     return;
@@ -2799,6 +2932,9 @@ async function useConsumable(itemId){
   }
 
   updateUI();
+  if(["buff_skill", "buff_attack"].includes(config.effectType)) {
+    await playSpriteAttackAnimation("hero", "buff", false);
+  }
   if(currentMode === "dungeon" && isDungeonConnected()){
     syncDungeonProfile();
     return;
@@ -3253,10 +3389,10 @@ function updateUI(){
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
     <div class="player-header">
-      <h3>${player.class} - Nivel ${player.level}</h3>
+      <div><h3>${getDisplayedClassName()} - Nivel ${player.level}</h3>${getDisplayedClassName() !== player.class ? `<span class="lock-note">Classe base: ${player.class}</span>` : ""}</div>
       <div class="coin-badge">${player.coins} moedas</div>
     </div>
-    ${["battle", "dungeon"].includes(currentMode) ? `<div id="heroSpriteBox" class="sprite-box hero-sprite-box ${getHeroSpriteClass()}"><div class="sprite-stage"><div class="sprite-ground"></div><div class="sprite-fx"></div><div id="heroSprite" class="sprite-figure ${getHeroSpriteClass()}">${classIcons[player.class] || "&#x2694;&#xFE0F;"}</div></div></div>` : ""}
+    ${["battle", "dungeon"].includes(currentMode) ? `<div id="heroSpriteBox" class="sprite-box hero-sprite-box ${getHeroSpriteClass()}"><div class="sprite-stage"><div class="sprite-ground"></div><div class="sprite-fx"></div><div id="heroSprite" class="sprite-figure ${getHeroSpriteClass()}">${getHeroSpriteIcon()}</div></div></div>` : ""}
     ${playerEffects.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${playerEffects.shieldValue}</div><div class="bar small"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div></div></div>` : ""}
     Vida: ${player.hp}/${previewStats.maxHp}
     <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
@@ -3335,7 +3471,8 @@ function updateUI(){
           ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
         </div>
       </div>
-      ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">${getChosenSubclassDefs().map(subclass => `${subclass.name}: ${subclass.description}`).join(" | ")}</span></div>` : ""}
+      ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Rota de subclasse</strong><div class="subclass-route">${getChosenSubclassDefs().map((subclass, index, arr) => `<span class="subclass-chip active">${index === arr.length - 1 ? "Atual: " : "Escolhida: "}${subclass.name}</span>`).join("")} </div><div class="subclass-summary"><strong>Bonus recebidos</strong><div class="subclass-bonus-list">${getChosenSubclassDefs().map(subclass => `<div class="inventory-item"><strong>${subclass.name}</strong><br><span class="lock-note">${subclass.description}</span><br><span class="status-on">${formatSubclassStatBonuses(subclass)}</span></div>`).join("")}</div><div class="inventory-item" style="margin-top:10px;"><strong>Total acumulado</strong><br><span class="status-on">${formatSubclassStatBonuses(getTotalSubclassBonuses())}</span></div></div></div>` : `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">Ainda nao escolhida. Sua primeira escolha acontece no nivel 30 e a segunda no nivel 60.</span></div>`}
+      <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio" : "Em breve"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
       <div class="inventory-item"><strong>Sets ativos</strong><br><span class="lock-note">${activeSetData.activeSets.length ? activeSetData.activeSets.map(setEntry => `${setEntry.setName}: ${setEntry.text}`).join(" | ") : "Nenhum set completo equipado."}</span></div>
     </div>`
     : currentMode === "bestiary" ? `
@@ -3356,8 +3493,8 @@ function updateUI(){
   `).join("");
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa seus atributos atuais, habilidades ativas, passivas, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -3757,7 +3894,7 @@ async function useSkill(index){
     return;
   }
   log(result.message);
-  await playSpriteAttackAnimation("hero", player.class === "Mago" || skillInfo.type.startsWith("mage_") ? "cast" : "attack", result.damage > 0);
+  await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
   if(result.damage > 0){
     const animationConfig = getEnemyBarAnimationConfig(false);
     await animateEnemyBarTo(
@@ -3983,7 +4120,8 @@ function chooseSubclass(subclassId){
   player.mp = Math.min(getPreviewStats().maxMp, player.mp + (subclass.bonusMp || 0));
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
-  log(`Voce escolheu a subclasse ${subclass.name}.`);
+  currentMode = "camp";
+  log(`Voce escolheu a subclasse ${subclass.name} e recebeu ${formatSubclassStatBonuses(subclass)}.`);
   updateUI();
 }
 
