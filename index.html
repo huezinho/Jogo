@@ -779,57 +779,57 @@ const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza
 const bossAbilityCatalog = {
   "Ent Ancestral": [
     { id: "raizes_esmagadoras", name: "Raizes Esmagadoras", type: "nuke", chance: 0.24, cost: 18, power: 36, variance: 6, animation: "cast", description: "Prende o alvo em raizes violentas." },
-    { id: "casca_antiga", name: "Casca Antiga", type: "buff", chance: 0.18, cost: 12, turns: 3, attackPercent: 0.12, regenPercent: 0.05, description: "Endurece a casca e recupera vigor." },
+    { id: "casca_antiga", name: "Casca Antiga", type: "buff", chance: 0.18, cost: 12, turns: 3, attackPercent: 0.16, flatDamageBonus: 4, regenPercent: 0.06, description: "Endurece a casca e recupera vigor." },
     { id: "vinhas_sufocantes", name: "Vinhas Sufocantes", type: "max_hp", chance: 0.16, cost: 14, power: 18, variance: 4, maxHpPercent: 0.03, animation: "cast", description: "Aperta o alvo com dano baseado na vida maxima." }
   ],
   "Troll das Profundezas": [
     { id: "eco_de_pedra", name: "Eco de Pedra", type: "nuke", chance: 0.24, cost: 22, power: 54, variance: 8, animation: "cast", description: "Golpe sismico das cavernas." },
-    { id: "pele_granito", name: "Pele de Granito", type: "buff", chance: 0.18, cost: 14, turns: 3, attackPercent: 0.14, regenPercent: 0.04, description: "Torna o troll mais duro e agressivo." },
+    { id: "pele_granito", name: "Pele de Granito", type: "buff", chance: 0.18, cost: 14, turns: 3, attackPercent: 0.18, flatDamageBonus: 6, regenPercent: 0.05, description: "Torna o troll mais duro e agressivo." },
     { id: "clava_demolidora", name: "Clava Demolidora", type: "shield_breaker", chance: 0.18, cost: 16, power: 34, variance: 6, ignoreShield: true, bonusIfShield: 24, description: "Destruidor de escudos e guardas." }
   ],
   "Rei Espectral": [
     { id: "lamento_real", name: "Lamento Real", type: "nuke", chance: 0.24, cost: 28, power: 78, variance: 8, animation: "cast", description: "Magia principal do chefe." },
-    { id: "coroa_fantasma", name: "Coroa Fantasma", type: "buff", chance: 0.2, cost: 20, turns: 3, attackPercent: 0.22, description: "Aumenta o dano dos proximos golpes." },
+    { id: "coroa_fantasma", name: "Coroa Fantasma", type: "buff", chance: 0.2, cost: 20, turns: 4, attackPercent: 0.28, flatDamageBonus: 10, pierceBonus: 0.08, description: "Aumenta o dano dos proximos golpes." },
     { id: "toque_inexoravel", name: "Toque Inexoravel", type: "pierce", chance: 0.18, cost: 18, power: 52, variance: 6, ignoreShield: true, ignoreFlatReduction: true, description: "Ignora escudos e reducoes planas." }
   ],
   "Hidra do Lodo": [
     { id: "sopro_corrosivo", name: "Sopro Corrosivo", type: "nuke", chance: 0.24, cost: 32, power: 96, variance: 10, animation: "cast", description: "Ataque principal do chefe." },
-    { id: "pele_viscosa", name: "Pele Viscosa", type: "buff", chance: 0.18, cost: 18, turns: 3, attackPercent: 0.18, regenPercent: 0.05, description: "Aumenta dano e recupera vida por turno." },
+    { id: "pele_viscosa", name: "Pele Viscosa", type: "buff", chance: 0.18, cost: 18, turns: 4, attackPercent: 0.22, flatDamageBonus: 10, regenPercent: 0.07, description: "Aumenta dano e recupera vida por turno." },
     { id: "mordida_predatoria", name: "Mordida Predatoria", type: "execute_unshielded", chance: 0.16, cost: 20, power: 58, variance: 8, bonusIfNoShield: 28, description: "Causa dano extra em alvos sem escudo." }
   ],
   "Draco Magmatico": [
     { id: "explosao_vulcanica", name: "Explosao Vulcanica", type: "nuke", chance: 0.22, cost: 38, power: 124, variance: 12, animation: "cast", description: "Explosao principal do chefe." },
-    { id: "escamas_ardentes", name: "Escamas Ardentes", type: "buff", chance: 0.2, cost: 24, turns: 3, attackPercent: 0.2, regenPercent: 0.04, description: "Escamas super aquecidas reforcam o draco." },
+    { id: "escamas_ardentes", name: "Escamas Ardentes", type: "buff", chance: 0.2, cost: 24, turns: 4, attackPercent: 0.25, flatDamageBonus: 12, pierceBonus: 0.08, regenPercent: 0.06, description: "Escamas super aquecidas reforcam o draco." },
     { id: "mergulho_igneo", name: "Mergulho Igneo", type: "pierce", chance: 0.16, cost: 24, power: 74, variance: 10, ignoreShield: true, ignoreFlatReduction: true, description: "Investida que ignora escudos." }
   ],
   "Arauto do Vazio": [
     { id: "dilacerar_realidade", name: "Dilacerar Realidade", type: "nuke", chance: 0.22, cost: 44, power: 156, variance: 14, animation: "cast", description: "Magia principal do chefe." },
-    { id: "manto_do_vazio", name: "Manto do Vazio", type: "buff", chance: 0.18, cost: 24, turns: 3, attackPercent: 0.22, pierceBonus: 0.12, description: "Deixa os proximos golpes mais perigosos." },
+    { id: "manto_do_vazio", name: "Manto do Vazio", type: "buff", chance: 0.18, cost: 24, turns: 4, attackPercent: 0.28, flatDamageBonus: 14, pierceBonus: 0.2, description: "Deixa os proximos golpes mais perigosos." },
     { id: "fenda_do_abismo", name: "Fenda do Abismo", type: "execute_unshielded", chance: 0.18, cost: 26, power: 82, variance: 10, bonusIfNoShield: 34, description: "Dano extra contra alvo desprotegido." }
   ],
   "General de Aco": [
     { id: "marcha_de_ferro", name: "Marcha de Ferro", type: "nuke", chance: 0.22, cost: 48, power: 188, variance: 16, animation: "cast", description: "Ataque principal do chefe." },
-    { id: "ordem_de_guerra", name: "Ordem de Guerra", type: "buff", chance: 0.2, cost: 26, turns: 3, attackPercent: 0.24, flatDamageBonus: 18, description: "Amplifica o dano bruto do general." },
+    { id: "ordem_de_guerra", name: "Ordem de Guerra", type: "buff", chance: 0.2, cost: 26, turns: 4, attackPercent: 0.3, flatDamageBonus: 28, pierceBonus: 0.08, description: "Amplifica o dano bruto do general." },
     { id: "estocada_rasga_aco", name: "Estocada Rasga-Aco", type: "pierce", chance: 0.16, cost: 28, power: 98, variance: 10, ignoreShield: true, ignoreFlatReduction: true, description: "Golpe perfurante e sem defesa." }
   ],
   "Lorde da Cripta": [
     { id: "sentenca_funebre", name: "Sentenca Funebre", type: "nuke", chance: 0.22, cost: 52, power: 220, variance: 18, animation: "cast", description: "Magia principal do chefe." },
-    { id: "pacto_funebre", name: "Pacto Funebre", type: "buff", chance: 0.18, cost: 28, turns: 3, attackPercent: 0.2, regenPercent: 0.06, description: "Rouba vigor para prolongar a luta." },
+    { id: "pacto_funebre", name: "Pacto Funebre", type: "buff", chance: 0.18, cost: 28, turns: 4, attackPercent: 0.28, flatDamageBonus: 18, regenPercent: 0.08, description: "Rouba vigor para prolongar a luta." },
     { id: "ceifa_do_desprotegido", name: "Ceifa do Desprotegido", type: "execute_unshielded", chance: 0.16, cost: 30, power: 110, variance: 12, bonusIfNoShield: 44, description: "Mais forte contra alvo sem escudo." }
   ],
   "Imperador do Eclipse": [
     { id: "ruptura_estelar", name: "Ruptura Estelar", type: "nuke", chance: 0.22, cost: 60, power: 260, variance: 20, animation: "cast", description: "Ataque principal do chefe." },
-    { id: "dominio_crepuscular", name: "Dominio Crepuscular", type: "buff", chance: 0.18, cost: 32, turns: 3, attackPercent: 0.24, pierceBonus: 0.15, description: "Fortalece o dominio do eclipse." },
+    { id: "dominio_crepuscular", name: "Dominio Crepuscular", type: "buff", chance: 0.18, cost: 32, turns: 4, attackPercent: 0.32, flatDamageBonus: 20, pierceBonus: 0.24, description: "Fortalece o dominio do eclipse." },
     { id: "lamina_umbra", name: "Lamina Umbra", type: "pierce", chance: 0.15, cost: 32, power: 132, variance: 14, ignoreShield: true, ignoreFlatReduction: true, description: "Ignora as principais defesas do alvo." }
   ],
   "Avatar do Zenith": [
     { id: "julgamento_solar", name: "Julgamento Solar", type: "nuke", chance: 0.22, cost: 66, power: 305, variance: 22, animation: "cast", description: "Ataque principal do chefe." },
-    { id: "aurea_divina", name: "Aurea Divina", type: "buff", chance: 0.18, cost: 34, turns: 3, attackPercent: 0.26, regenPercent: 0.05, description: "Canaliza energia sagrada para se fortalecer." },
+    { id: "aurea_divina", name: "Aurea Divina", type: "buff", chance: 0.18, cost: 34, turns: 4, attackPercent: 0.34, flatDamageBonus: 22, pierceBonus: 0.12, regenPercent: 0.07, description: "Canaliza energia sagrada para se fortalecer." },
     { id: "raio_do_veredito", name: "Raio do Veredito", type: "execute_unshielded", chance: 0.15, cost: 34, power: 150, variance: 16, bonusIfNoShield: 52, description: "Castiga alvos sem escudo." }
   ],
   "Deus da Ruina": [
     { id: "colapso_final", name: "Colapso Final", type: "nuke", chance: 0.2, cost: 74, power: 360, variance: 24, animation: "cast", description: "Ataque principal do chefe." },
-    { id: "manto_da_ruina", name: "Manto da Ruina", type: "buff", chance: 0.18, cost: 40, turns: 3, attackPercent: 0.28, flatDamageBonus: 26, pierceBonus: 0.18, description: "Amplifica a devastacao dos proximos turnos." },
+    { id: "manto_da_ruina", name: "Manto da Ruina", type: "buff", chance: 0.18, cost: 40, turns: 4, attackPercent: 0.38, flatDamageBonus: 38, pierceBonus: 0.26, regenPercent: 0.05, description: "Amplifica a devastacao dos proximos turnos." },
     { id: "aniquilacao_perfurante", name: "Aniquilacao Perfurante", type: "pierce", chance: 0.15, cost: 40, power: 176, variance: 18, ignoreShield: true, ignoreFlatReduction: true, description: "Golpe devastador que atravessa defesas." },
     { id: "fim_dos_fracos", name: "Fim dos Fracos", type: "execute_unshielded", chance: 0.12, cost: 42, power: 168, variance: 18, bonusIfNoShield: 64, description: "Punicao brutal contra alvos desprotegidos." }
   ]
