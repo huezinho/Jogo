@@ -2708,7 +2708,7 @@ function getSkillInfo(){
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_second_wind"){
-      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.18 : 0.1;
+      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.18 : 0.07;
       const heal = Math.floor(maxHp * healFactor);
       const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.1 : 0;
       return { ...skill, cost: 20, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome 20 MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 10% por 3 turnos." : ""}` };
@@ -2716,8 +2716,8 @@ function getSkillInfo(){
     if(skill.type === "warrior_shove"){
       const isEspadachim = subclassState.tier30 === "espadachim" && player.level >= 30;
       const damage = isEspadachim
-        ? 20 + Math.floor(0.2 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
-        : 20 + Math.floor(0.2 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
+        ? 20 + Math.floor(0.1 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
+        : 20 + Math.floor(0.1 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
       const cost = isEspadachim ? 50 : subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 44 : 38;
       return {
         ...skill,
@@ -2733,8 +2733,8 @@ function getSkillInfo(){
       const isBerserker = subclassState.tier60 === "berserker" && player.level >= 60;
       const maxEnemyHp = enemy?.maxHp || 0;
       const damage = isBerserker
-        ? 60 + Math.floor(0.4 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
-        : 30 + Math.floor((subclassState.tier60 === "paladino" && player.level >= 60 ? 0.4 : 0.2) * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
+        ? 60 + Math.floor(0.2 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
+        : 30 + Math.floor((subclassState.tier60 === "paladino" && player.level >= 60 ? 0.2 : 0.1) * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
       return { ...skill, cost: 40, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome 40 MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
     }
     if(skill.type === "warrior_swift_strikes"){
@@ -2783,7 +2783,7 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.8;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.45 : 0.3;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.34 : 0.22;
       const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
       const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.3, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 30% da vida maxima do inimigo, devolve toda a mana gasta.` };
