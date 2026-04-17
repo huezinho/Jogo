@@ -1075,14 +1075,15 @@ function chooseWeightedEnemy(enemyList){
 function getEnemyStats(template, regionOverride = null, isBoss = false){
   const regionName = regionOverride || currentRegion;
   const combatProfile = regionCombatProfiles[regionName] || regionCombatProfiles.Floresta;
+  const bossProfile = getBossDifficultyProfile(regionName, isBoss);
   const hasArmor = combatProfile.armorScale > 0 || combatProfile.armorFlat > 0;
   const armor = hasArmor
-    ? Math.max(1, Math.floor(template.level * combatProfile.armorScale) + combatProfile.armorFlat + (isBoss ? Math.max(2, Math.floor(template.level / 30)) : 0))
+    ? Math.max(1, Math.floor(template.level * combatProfile.armorScale) + combatProfile.armorFlat + (isBoss ? Math.max(2, Math.floor(template.level / 30)) + bossProfile.armorBonus : 0))
     : 0;
   const maxHpStrikePercent = combatProfile.maxHpStrikePercent + (isBoss && combatProfile.maxHpStrikePercent > 0 ? 0.01 : 0);
   return {
-    maxHp: template.hp + template.level * 18,
-    attack: template.attack + template.level * 2,
+    maxHp: Math.floor((template.hp + template.level * 18) * bossProfile.hpMultiplier),
+    attack: Math.floor((template.attack + template.level * 2) * bossProfile.attackMultiplier),
     armor,
     maxHpStrikePercent
   };
@@ -1114,9 +1115,35 @@ function isAdvancedBossRegion(regionName){
   return advancedBossRegions.includes(regionName);
 }
 
-function getBossAbilitySet(enemyName){
+function getBossDifficultyProfile(regionName, isBoss = false){
+  if(!isBoss || !isAdvancedBossRegion(regionName)){
+    return {
+      hpMultiplier: 1,
+      attackMultiplier: 1,
+      skillMultiplier: 1,
+      manaMultiplier: 1,
+      armorBonus: 0
+    };
+  }
+  const index = Math.max(0, advancedBossRegions.indexOf(regionName));
+  return {
+    hpMultiplier: 1.08 + index * 0.02,
+    attackMultiplier: 1.05 + index * 0.015,
+    skillMultiplier: 1.08 + index * 0.018,
+    manaMultiplier: 1.06 + index * 0.02,
+    armorBonus: 1 + Math.floor(index / 2)
+  };
+}
+
+function getBossAbilitySet(enemyName, regionName = currentRegion){
   const abilities = bossAbilityCatalog[enemyName] || [];
-  return abilities.map(ability => ({ ...ability }));
+  const bossProfile = getBossDifficultyProfile(regionName, true);
+  return abilities.map(ability => ({
+    ...ability,
+    power: Number.isFinite(ability.power) ? Math.floor(ability.power * bossProfile.skillMultiplier) : ability.power,
+    bonusIfShield: Number.isFinite(ability.bonusIfShield) ? Math.floor(ability.bonusIfShield * bossProfile.skillMultiplier) : ability.bonusIfShield,
+    bonusIfNoShield: Number.isFinite(ability.bonusIfNoShield) ? Math.floor(ability.bonusIfNoShield * bossProfile.skillMultiplier) : ability.bonusIfNoShield
+  }));
 }
 
 function restartElementAnimation(element, className){
@@ -2858,7 +2885,10 @@ function renderBestiary(){
       return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">${getRegionSetLabel(regionName)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(regionName))}</span></div>`;
     }).join("");
     const bossStats = getEnemyStats(regionData.boss, regionName, true);
-    return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Mana: ${regionData.boss.mp} | Habilidade: ${regionData.boss.skillName} (${regionData.boss.skillDamage} de dano)${(bossAbilityCatalog[regionData.boss.name] || []).length ? ` | Kit: ${(bossAbilityCatalog[regionData.boss.name] || []).map(ability => ability.name).join(", ")}` : ""}</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)}</span></div></div></div>`;
+    const bossProfile = getBossDifficultyProfile(regionName, true);
+    const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
+    const bossSkillDamage = Math.floor(regionData.boss.skillDamage * bossProfile.skillMultiplier);
+    return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Mana: ${bossMana} | Habilidade: ${regionData.boss.skillName} (${bossSkillDamage} de dano)${(bossAbilityCatalog[regionData.boss.name] || []).length ? ` | Kit: ${(bossAbilityCatalog[regionData.boss.name] || []).map(ability => ability.name).join(", ")}` : ""}</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)}</span></div></div></div>`;
   }).join("");
 }
 
@@ -3128,9 +3158,10 @@ function fleeBattle(){
 function createEnemyFromTemplate(template, isBoss = false){
   const origin = isDungeonMode() ? "Dungeon" : currentRegion;
   const stats = getEnemyStats(template, origin, isBoss);
+  const bossProfile = getBossDifficultyProfile(origin, isBoss);
   const rarity = getEnemyRarity(origin, template.name, isBoss);
-  const advancedBoss = isBoss && isAdvancedBossRegion(origin);
-  const adjustedAttack = advancedBoss ? Math.floor(stats.attack * 0.88) : stats.attack;
+  const bossMana = isBoss ? Math.floor(template.mp * bossProfile.manaMultiplier) : 0;
+  const bossSkillDamage = isBoss ? Math.floor(template.skillDamage * bossProfile.skillMultiplier) : 0;
   return {
     name: template.name + " Lv." + template.level,
     baseName: template.name,
@@ -3138,7 +3169,7 @@ function createEnemyFromTemplate(template, isBoss = false){
     level: template.level,
     maxHp: stats.maxHp,
     hp: stats.maxHp,
-    attack: adjustedAttack,
+    attack: stats.attack,
     armor: isDungeonMode() ? 0 : stats.armor,
     maxHpStrikePercent: isDungeonMode() ? 0 : stats.maxHpStrikePercent,
     isBoss,
@@ -3146,12 +3177,12 @@ function createEnemyFromTemplate(template, isBoss = false){
     rarityLabel: rarity.label,
     rarityClass: rarity.cssClass,
     possibleDrop: getEnemyPossibleDrop(template.name, origin, isBoss),
-    maxMp: isBoss ? template.mp : 0,
-    mp: isBoss ? template.mp : 0,
+    maxMp: bossMana,
+    mp: bossMana,
     skillName: isBoss ? template.skillName : "",
-    skillDamage: isBoss ? template.skillDamage : 0,
+    skillDamage: bossSkillDamage,
     skillCost: isBoss ? template.skillCost : 0,
-    bossAbilities: isBoss ? getBossAbilitySet(template.name) : [],
+    bossAbilities: isBoss ? getBossAbilitySet(template.name, origin) : [],
     bossBuffTurns: 0,
     bossAttackBuffPercent: 0,
     bossFlatDamageBonus: 0,
@@ -4108,72 +4139,149 @@ function tickBossBuff(){
   }
 }
 
+function getBossTemporaryBuffState(extraBuff = {}){
+  return {
+    attackPercent: (enemy.bossAttackBuffPercent || 0) + (extraBuff.attackPercent || 0),
+    flatDamageBonus: (enemy.bossFlatDamageBonus || 0) + (extraBuff.flatDamageBonus || 0),
+    pierceBonus: (enemy.bossPierceBonus || 0) + (extraBuff.pierceBonus || 0)
+  };
+}
+
+function estimateBossDamageAgainstHero(rawDamage, options = {}){
+  let damage = Math.max(0, Math.floor(rawDamage));
+  if(enemy.maxHpStrikePercent > 0){
+    damage += Math.floor(getCurrentCaps().maxHp * enemy.maxHpStrikePercent);
+  }
+  const passiveModifiers = getPassiveModifiers();
+  if(!options.ignoreFlatReduction){
+    damage = Math.max(0, damage - (passiveModifiers.flatReduction || 0));
+  }
+  if(!options.ignoreShield){
+    damage = Math.max(0, damage - (playerEffects.shieldValue || 0));
+  }
+  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && player.hp <= Math.max(1, Math.floor(getCurrentCaps().maxHp * 0.1)) && player.mp >= damage){
+    damage = 0;
+  }
+  const hitRate = Math.max(0.05, 1 - getEnemyMissChance());
+  return Math.max(0, Math.floor(damage * hitRate));
+}
+
+function getBossAbilityDamageEstimate(ability, extraBuff = {}){
+  const tempBuff = getBossTemporaryBuffState(extraBuff);
+  let damage = (ability.power || enemy.attack) + Math.floor((ability.variance || 6) / 2);
+  damage += tempBuff.flatDamageBonus || 0;
+  if(tempBuff.attackPercent > 0){
+    damage += Math.floor(damage * tempBuff.attackPercent);
+  }
+  if(ability.type === "execute_unshielded" && (playerEffects.shieldValue || 0) <= 0){
+    damage += ability.bonusIfNoShield || 0;
+  }
+  if(ability.type === "shield_breaker" && (playerEffects.shieldValue || 0) > 0){
+    damage += ability.bonusIfShield || 0;
+  }
+  if(ability.type === "max_hp" || ability.maxHpPercent){
+    damage += Math.floor(getCurrentCaps().maxHp * (ability.maxHpPercent || 0));
+  }
+  if((ability.type === "pierce" || ability.type === "shield_breaker") && tempBuff.pierceBonus > 0){
+    damage += Math.floor(damage * tempBuff.pierceBonus);
+  }
+  return estimateBossDamageAgainstHero(damage, {
+    ignoreShield: !!ability.ignoreShield,
+    ignoreFlatReduction: !!ability.ignoreFlatReduction,
+    ignorePreciousMana: !!ability.ignorePreciousMana
+  });
+}
+
+function getBossBasicAttackScore(extraBuff = {}){
+  const tempBuff = getBossTemporaryBuffState(extraBuff);
+  let damage = enemy.attack + 2 + (tempBuff.flatDamageBonus || 0);
+  if(tempBuff.attackPercent > 0){
+    damage += Math.floor(damage * tempBuff.attackPercent);
+  }
+  return estimateBossDamageAgainstHero(damage);
+}
+
+function getBossFallbackSkillScore(manaBudget = enemy.mp, extraBuff = {}){
+  if(!enemy.isBoss || enemy.skillCost <= 0 || manaBudget < enemy.skillCost){
+    return -1;
+  }
+  const tempBuff = getBossTemporaryBuffState(extraBuff);
+  let damage = enemy.skillDamage + 3 + (tempBuff.flatDamageBonus || 0);
+  if(tempBuff.attackPercent > 0){
+    damage += Math.floor(damage * tempBuff.attackPercent);
+  }
+  return estimateBossDamageAgainstHero(damage);
+}
+
+function getBossFallbackOnlyScore(manaBudget = enemy.mp, extraBuff = {}){
+  return Math.max(getBossBasicAttackScore(extraBuff), getBossFallbackSkillScore(manaBudget, extraBuff));
+}
+
 function getBossActionScore(ability){
   const currentCaps = getCurrentCaps();
   const playerMaxHp = currentCaps.maxHp || 1;
   const playerHpRatio = player.hp / playerMaxHp;
   const playerShield = playerEffects.shieldValue || 0;
-  const shieldRatio = playerShield / Math.max(1, playerMaxHp);
   const bossHpRatio = enemy.hp / Math.max(1, enemy.maxHp || enemy.hp || 1);
   const buffActive = enemy.bossBuffTurns > 0;
-  let score = 10 + Math.floor((ability.chance || 0) * 100);
+  const manaLeft = enemy.mp - (ability.cost || 0);
+  if(manaLeft < 0){
+    return -999;
+  }
 
   if(ability.type === "buff"){
     if(buffActive){
       return -999;
     }
-    score += bossHpRatio <= 0.55 ? 32 : 18;
-    if((ability.regenPercent || 0) > 0){
-      score += bossHpRatio <= 0.45 ? 16 : 6;
+    const extraBuff = {
+      attackPercent: ability.attackPercent || 0,
+      flatDamageBonus: ability.flatDamageBonus || 0,
+      pierceBonus: ability.pierceBonus || 0
+    };
+    const bestCurrentDirect = Math.max(
+      getBossFallbackOnlyScore(enemy.mp, {}),
+      ...((enemy.bossAbilities || [])
+        .filter(entry => entry.type !== "buff" && enemy.mp >= (entry.cost || 0))
+        .map(entry => getBossAbilityDamageEstimate(entry, {})))
+    );
+    const bestBuffedDirect = Math.max(
+      getBossFallbackOnlyScore(manaLeft, extraBuff),
+      ...((enemy.bossAbilities || [])
+        .filter(entry => entry.type !== "buff" && manaLeft >= (entry.cost || 0))
+        .map(entry => getBossAbilityDamageEstimate(entry, extraBuff)))
+    );
+    const payoffTurns = Math.min(2, ability.turns || 1);
+    const bonusDamage = Math.max(0, bestBuffedDirect - bestCurrentDirect) * payoffTurns;
+    const regenValue = Math.floor(enemy.maxHp * (ability.regenPercent || 0) * payoffTurns);
+    let score = bonusDamage + Math.floor(regenValue * (bossHpRatio <= 0.6 ? 0.8 : 0.45)) - Math.floor(bestCurrentDirect * 0.75);
+    if(playerHpRatio <= 0.35){
+      score -= 20;
     }
-    if(playerShield > 0 && (enemy.bossAbilities || []).some(entry => entry.type === "pierce" || entry.type === "shield_breaker")){
+    if(manaLeft < Math.min(enemy.skillCost || manaLeft, 20)){
       score -= 8;
-    }
-    if(enemy.mp >= ((ability.cost || 0) + Math.max(enemy.skillCost || 0, 18))){
-      score += 8;
     }
     return score;
   }
 
-  if(ability.type === "pierce"){
-    score += playerShield > 0 ? 42 : 6;
-    score += shieldRatio >= 0.18 ? 18 : 0;
-    score += (playerEffects.flatReduction || 0) > 0 ? 10 : 0;
+  let score = getBossAbilityDamageEstimate(ability, {});
+  if(score >= player.hp){
+    score += 30;
   }
-
-  if(ability.type === "shield_breaker"){
-    score += playerShield > 0 ? 46 : -10;
-    score += shieldRatio >= 0.12 ? 18 : 0;
+  if(ability.type === "pierce" && playerShield > 0){
+    score += 14;
   }
-
-  if(ability.type === "execute_unshielded"){
-    score += playerShield <= 0 ? 38 : -20;
-    score += playerHpRatio <= 0.45 ? 14 : 0;
+  if(ability.type === "shield_breaker" && playerShield > 0){
+    score += 18;
   }
-
-  if(ability.type === "max_hp" || ability.maxHpPercent){
-    const hpPercent = ability.maxHpPercent || 0;
-    score += Math.floor(playerMaxHp * hpPercent * 0.18);
-    score += playerMaxHp >= 900 ? 20 : playerMaxHp >= 600 ? 10 : 0;
-    score += playerShield > 0 ? -6 : 0;
+  if(ability.type === "execute_unshielded" && playerShield <= 0){
+    score += playerHpRatio <= 0.45 ? 24 : 10;
   }
-
-  if(ability.type === "nuke"){
-    score += playerHpRatio >= 0.55 ? 14 : 4;
-    score += playerShield > 0 ? -8 : 0;
-    if((enemy.bossAbilities || []).some(entry => entry.type === "pierce" || entry.type === "shield_breaker") && playerShield > 0){
-      score -= 10;
-    }
+  if((ability.type === "max_hp" || ability.maxHpPercent) && playerMaxHp >= 700){
+    score += 12;
   }
-
-  const manaLeft = enemy.mp - (ability.cost || 0);
-  if(manaLeft < 0){
-    return -999;
+  if(manaLeft < Math.min(enemy.skillCost || 999, 24)){
+    score -= 5;
   }
-  if(manaLeft < Math.min(enemy.skillCost || 0, 20)){
-    score -= 6;
-  }
-  score += Math.floor(Math.random() * 8);
   return score;
 }
 
@@ -4190,14 +4298,11 @@ function chooseBossAction(){
     return null;
   }
   const top = ranked[0];
-  const second = ranked[1];
-  if(top.score < 24){
-    return Math.random() < 0.35 ? top.ability : null;
+  const fallbackScore = getBossFallbackOnlyScore(enemy.mp, {});
+  if(top.ability.type === "buff"){
+    return top.score > fallbackScore + 10 ? top.ability : null;
   }
-  if(second && second.score >= top.score - 8 && Math.random() < 0.3){
-    return second.ability;
-  }
-  return top.ability;
+  return top.score >= fallbackScore + 2 ? top.ability : null;
 }
 
 function resolveBossAction(ability){
@@ -4297,7 +4402,9 @@ async function enemyTurn(){
     }
   }else{
     const canUseBossSkill = enemy.isBoss && enemy.skillCost > 0 && enemy.mp >= enemy.skillCost;
-    const shouldCastFallbackSkill = canUseBossSkill && ((playerEffects.shieldValue || 0) <= 0 || Math.random() < 0.72);
+    const fallbackSkillScore = canUseBossSkill ? getBossFallbackSkillScore(enemy.mp, {}) : -1;
+    const basicScore = getBossBasicAttackScore({});
+    const shouldCastFallbackSkill = canUseBossSkill && fallbackSkillScore >= basicScore + 4;
     if(shouldCastFallbackSkill){
       enemy.mp -= enemy.skillCost;
       dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
