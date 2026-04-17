@@ -35,6 +35,16 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .inventory-list,.trophy-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 .inventory-item,.trophy-item{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
 .trophy-item.locked{opacity:.55}
+.trophy-category{padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.trophy-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.trophy-summary-card{padding:12px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.trophy-summary-card strong{display:block;font-size:12px;color:#d7d7d7;text-transform:uppercase;letter-spacing:.04em}
+.trophy-summary-card span{display:block;margin-top:6px;font-size:22px;font-weight:700}
+.trophy-summary-card small{display:block;margin-top:4px;color:#d7d7d7}
+.bestiary-filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.boss-ability-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.boss-ability-item{padding:10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06)}
+.boss-ability-item strong{display:block;margin-bottom:4px}
 .status-on{color:#89f07d;font-weight:700}
 .status-off{color:#ffd36a;font-weight:700}
 .camp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
@@ -148,6 +158,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .region-citadela{background:linear-gradient(180deg,#556d8d,#1c2335)}
 .region-panteao{background:linear-gradient(180deg,#8b7c47,#2c2614)}
 .region-cataclismo{background:linear-gradient(180deg,#702928,#1f0f0f)}
+.region-paradoxo{background:linear-gradient(180deg,#3d6f7b,#171d29)}
 @keyframes heroStrike{
   0%{transform:translateX(0) scale(1)}
   35%{transform:translateX(18px) scale(1.02)}
@@ -314,6 +325,7 @@ let isProcessingTurn = false;
 let currentRegion = "Floresta";
 let needsNewEnemy = false;
 let currentMode = "battle";
+let bestiaryRegionFilter = null;
 let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
@@ -400,7 +412,8 @@ const regionArticleMap = {
   Necropole: "da Necropole",
   Citadela: "da Citadela",
   Panteao: "do Panteao",
-  Cataclismo: "do Cataclismo"
+  Cataclismo: "do Cataclismo",
+  Paradoxo: "do Paradoxo"
 };
 const rarityMultipliers = {
   comum: 1,
@@ -408,25 +421,6 @@ const rarityMultipliers = {
   rara: 1.8,
   ultra_rara: 2.35,
   lendaria: 3.1
-};
-const equipmentBaseScaling = {
-  bonusHp: 4.8,
-  bonusMp: 4.1,
-  bonusAttack: 1.2,
-  skillPower: 1.28
-};
-const regionSetItemPower = {
-  Floresta: 2,
-  Caverna: 4,
-  Ruinas: 7,
-  Pantano: 11,
-  Vulcao: 15,
-  Abismo: 20,
-  Fortaleza: 26,
-  Necropole: 33,
-  Citadela: 41,
-  Panteao: 50,
-  Cataclismo: 60
 };
 const regionArmorPieceNames = {
   head: "Capuz",
@@ -439,29 +433,33 @@ const regionWeaponPieceNames = {
   Arqueiro: "Arco",
   Mago: "Cajado"
 };
-const regionArmorStatProfiles = {
-  head: { bonusHp: 0.52, bonusMp: 0.26, bonusAttack: 0.04, skillPower: 0.04 },
-  chest: { bonusHp: 0.95, bonusMp: 0.18, bonusAttack: 0.03, skillPower: 0.03 },
-  legs: { bonusHp: 0.74, bonusMp: 0.22, bonusAttack: 0.03, skillPower: 0.03 },
-  feet: { bonusHp: 0.48, bonusMp: 0.16, bonusAttack: 0.02, skillPower: 0.02 }
-};
-const regionWeaponStatProfiles = {
-  Guerreiro: { bonusHp: 0.12, bonusAttack: 0.74, skillPower: 0.36 },
-  Arqueiro: { bonusMp: 0.12, bonusAttack: 0.62, skillPower: 0.44 },
-  Mago: { bonusMp: 0.34, bonusAttack: 0.16, skillPower: 0.82 }
+const regionEquipmentBaseProfiles = {
+  Floresta: { armor: { bonusHp: 1, bonusMp: 3 }, weapon: { bonusAttack: 1, skillPower: 1 } },
+  Caverna: { armor: { bonusHp: 3, bonusMp: 1 }, weapon: { bonusAttack: 1, skillPower: 1 } },
+  Ruinas: { armor: { bonusHp: 2, bonusMp: 2 }, weapon: { bonusAttack: 2, skillPower: 2 } },
+  Pantano: { armor: { bonusHp: 2, bonusMp: 6 }, weapon: { bonusAttack: 2, skillPower: 2 } },
+  Vulcao: { armor: { bonusHp: 6, bonusMp: 2 }, weapon: { bonusAttack: 2, skillPower: 2 } },
+  Abismo: { armor: { bonusHp: 4, bonusMp: 4 }, weapon: { bonusAttack: 4, skillPower: 4 } },
+  Fortaleza: { armor: { bonusHp: 4, bonusMp: 12 }, weapon: { bonusAttack: 4, skillPower: 4 } },
+  Necropole: { armor: { bonusHp: 12, bonusMp: 4 }, weapon: { bonusAttack: 4, skillPower: 4 } },
+  Citadela: { armor: { bonusHp: 8, bonusMp: 8 }, weapon: { bonusAttack: 8, skillPower: 8 } },
+  Panteao: { armor: { bonusHp: 8, bonusMp: 24 }, weapon: { bonusAttack: 8, skillPower: 8 } },
+  Cataclismo: { armor: { bonusHp: 24, bonusMp: 8 }, weapon: { bonusAttack: 8, skillPower: 8 } },
+  Paradoxo: { armor: { bonusHp: 16, bonusMp: 16 }, weapon: { bonusAttack: 16, skillPower: 16 } }
 };
 const regionSetBonusProfiles = {
-  Floresta: { bonusHp: 20, bonusMp: 8, bonusAttack: 3, skillPower: 3 },
-  Caverna: { bonusHp: 36, bonusMp: 14, bonusAttack: 5, skillPower: 5 },
-  Ruinas: { bonusHp: 56, bonusMp: 22, bonusAttack: 7, skillPower: 8 },
-  Pantano: { bonusHp: 82, bonusMp: 30, bonusAttack: 10, skillPower: 12 },
-  Vulcao: { bonusHp: 118, bonusMp: 42, bonusAttack: 14, skillPower: 16 },
-  Abismo: { bonusHp: 158, bonusMp: 56, bonusAttack: 18, skillPower: 21 },
-  Fortaleza: { bonusHp: 210, bonusMp: 72, bonusAttack: 23, skillPower: 27 },
-  Necropole: { bonusHp: 272, bonusMp: 90, bonusAttack: 29, skillPower: 34 },
-  Citadela: { bonusHp: 340, bonusMp: 112, bonusAttack: 36, skillPower: 42 },
-  Panteao: { bonusHp: 424, bonusMp: 138, bonusAttack: 44, skillPower: 51 },
-  Cataclismo: { bonusHp: 520, bonusMp: 170, bonusAttack: 54, skillPower: 63 }
+  Floresta: { bonusMpPercent: 0.05 },
+  Caverna: { bonusHpPercent: 0.05 },
+  Ruinas: { totalDamagePercent: 0.03 },
+  Pantano: { bonusMpPercent: 0.10 },
+  Vulcao: { bonusHpPercent: 0.10 },
+  Abismo: { totalDamagePercent: 0.06 },
+  Fortaleza: { bonusMpPercent: 0.15 },
+  Necropole: { bonusHpPercent: 0.15 },
+  Citadela: { totalDamagePercent: 0.09 },
+  Panteao: { bonusMpPercent: 0.20 },
+  Cataclismo: { bonusHpPercent: 0.20 },
+  Paradoxo: { totalDamagePercent: 0.12 }
 };
 const regionCombatProfiles = {
   Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
@@ -474,7 +472,8 @@ const regionCombatProfiles = {
   Necropole: { armorScale: 0.68, armorFlat: 28, maxHpStrikePercent: 0.07, hpMultiplier: 2.7, attackMultiplier: 2.18, bossHpMultiplier: 2.0, bossAttackMultiplier: 1.88, bossSkillMultiplier: 1.96, bossManaMultiplier: 1.3, bossArmorBonus: 13 },
   Citadela: { armorScale: 0.82, armorFlat: 38, maxHpStrikePercent: 0.085, hpMultiplier: 3.16, attackMultiplier: 2.46, bossHpMultiplier: 2.24, bossAttackMultiplier: 2.08, bossSkillMultiplier: 2.18, bossManaMultiplier: 1.35, bossArmorBonus: 17 },
   Panteao: { armorScale: 0.98, armorFlat: 50, maxHpStrikePercent: 0.105, hpMultiplier: 3.7, attackMultiplier: 2.78, bossHpMultiplier: 2.52, bossAttackMultiplier: 2.32, bossSkillMultiplier: 2.42, bossManaMultiplier: 1.4, bossArmorBonus: 22 },
-  Cataclismo: { armorScale: 1.18, armorFlat: 64, maxHpStrikePercent: 0.13, hpMultiplier: 4.34, attackMultiplier: 3.16, bossHpMultiplier: 2.86, bossAttackMultiplier: 2.62, bossSkillMultiplier: 2.72, bossManaMultiplier: 1.46, bossArmorBonus: 28 }
+  Cataclismo: { armorScale: 1.18, armorFlat: 64, maxHpStrikePercent: 0.13, hpMultiplier: 4.34, attackMultiplier: 3.16, bossHpMultiplier: 2.86, bossAttackMultiplier: 2.62, bossSkillMultiplier: 2.72, bossManaMultiplier: 1.46, bossArmorBonus: 28 },
+  Paradoxo: { armorScale: 1.36, armorFlat: 82, maxHpStrikePercent: 0.15, hpMultiplier: 4.94, attackMultiplier: 3.55, bossHpMultiplier: 3.14, bossAttackMultiplier: 2.88, bossSkillMultiplier: 3.02, bossManaMultiplier: 1.52, bossArmorBonus: 34 }
 };
 const enemyDropSlotGroups = [
   ["feet", "chest"],
@@ -669,6 +668,10 @@ const enemySprites = {
   "Titan Rachado": "&#x1FAA8;",
   "Serafim do Fim": "&#x1F525;",
   "Deus da Ruina": "&#x2620;&#xFE0F;",
+  "Guardiao Temporal": "&#x23F3;",
+  "Oraculo do Zero": "&#x1F52E;",
+  "Devorador de Eras": "&#x1F573;&#xFE0F;",
+  "Soberano do Paradoxo": "&#x1FA9E;",
   "Carcereiro Abissal": "&#x26D3;&#xFE0F;",
   "Aracnida Rainha": "&#x1F578;&#xFE0F;",
   "Devorador do Eco": "&#x1F479;"
@@ -805,6 +808,16 @@ const regions = {
       { name: "Titan Rachado", level: 103, weight: 16, hp: 980, attack: 107 },
       { name: "Serafim do Fim", level: 108, weight: 6, hp: 1090, attack: 116 }
     ]
+  },
+  Paradoxo: {
+    minLevel: 84,
+    description: "Uma dobra final da realidade onde tempo, mana e carne se rompem ao mesmo tempo.",
+    boss: { name: "Soberano do Paradoxo", level: 120, hp: 2120, attack: 148, mp: 410, skillName: "Ruptura Temporal", skillDamage: 398, skillCost: 82 },
+    enemies: [
+      { name: "Guardiao Temporal", level: 111, weight: 78, hp: 1120, attack: 124 },
+      { name: "Oraculo do Zero", level: 113, weight: 16, hp: 1180, attack: 129 },
+      { name: "Devorador de Eras", level: 118, weight: 6, hp: 1310, attack: 139 }
+    ]
   }
 };
 
@@ -818,7 +831,7 @@ const dungeonData = {
   ]
 };
 
-const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela", "Panteao", "Cataclismo"];
+const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela", "Panteao", "Cataclismo", "Paradoxo"];
 const bossAbilityCatalog = {
   "Ent Ancestral": [
     { id: "raizes_esmagadoras", name: "Raizes Esmagadoras", type: "max_hp", chance: 0.28, cost: 18, power: 34, variance: 6, maxHpPercent: 0.04, targetDamageDownPercent: 0.15, targetDamageDownTurns: 2, animation: "cast", description: "Raizes esmagam o alvo e enfraquecem o seu dano." }
@@ -867,6 +880,12 @@ const bossAbilityCatalog = {
     { id: "manto_da_ruina", name: "Manto da Ruina", type: "buff", chance: 0.18, cost: 40, turns: 4, attackPercent: 0.34, flatDamageBonus: 34, pierceBonus: 0.2, regenPercent: 0.04, selfShieldPercent: 0.22, shieldTurns: 4, description: "A entidade do fim se cobre de devastacao e um enorme escudo." },
     { id: "aniquilacao_perfurante", name: "Aniquilacao Perfurante", type: "pierce", chance: 0.15, cost: 40, power: 186, variance: 18, ignoreShield: true, ignoreFlatReduction: true, targetDamageDownPercent: 0.3, targetDamageDownTurns: 3, description: "Perfura qualquer defesa e ainda reduz drasticamente o dano do heroi." },
     { id: "fim_dos_fracos", name: "Fim dos Fracos", type: "execute_unshielded", chance: 0.12, cost: 42, power: 170, variance: 18, bonusIfNoShield: 70, targetSkipChance: 0.3, targetBurnPercent: 0.06, targetBurnTurns: 3, description: "A punicao final castiga alvos expostos e pode quebrar o seu proximo turno." }
+  ],
+  "Soberano do Paradoxo": [
+    { id: "ruptura_temporal", name: "Ruptura Temporal", type: "nuke", chance: 0.2, cost: 82, power: 398, variance: 24, targetSkipChance: 0.28, targetDamageDownPercent: 0.2, targetDamageDownTurns: 3, description: "Fende o fluxo do tempo e deixa o heroi descompassado." },
+    { id: "armadura_de_eras", name: "Armadura de Eras", type: "buff", chance: 0.18, cost: 44, turns: 4, attackPercent: 0.36, flatDamageBonus: 38, pierceBonus: 0.18, regenPercent: 0.05, selfShieldPercent: 0.24, shieldTurns: 4, description: "Camadas de eras condensadas reforcam seu corpo e seus golpes." },
+    { id: "colapso_do_zero", name: "Colapso do Zero", type: "pierce", chance: 0.16, cost: 46, power: 214, variance: 18, ignoreShield: true, ignoreFlatReduction: true, targetHealReductionPercent: 0.45, targetHealReductionTurns: 4, description: "Apaga protecoes, atravessa resistencias e sabota qualquer cura." },
+    { id: "fim_inadiavel", name: "Fim Inadiavel", type: "execute_unshielded", chance: 0.14, cost: 48, power: 184, variance: 16, maxHpPercent: 0.1, bonusIfNoShield: 80, targetBurnPercent: 0.05, targetBurnTurns: 3, targetSkipChance: 0.18, description: "Forca o destino do heroi com dano pesado, ferida persistente e pressao brutal." }
   ]
 };
 
@@ -1315,7 +1334,7 @@ function getBossAbilityLimit(regionName){
   if(["Floresta", "Caverna", "Ruinas"].includes(regionName)){ return 1; }
   if(["Pantano", "Vulcao", "Abismo"].includes(regionName)){ return 2; }
   if(["Fortaleza", "Necropole", "Citadela"].includes(regionName)){ return 3; }
-  if(["Panteao", "Cataclismo"].includes(regionName)){ return 4; }
+  if(["Panteao", "Cataclismo", "Paradoxo"].includes(regionName)){ return 4; }
   return 1;
 }
 
@@ -1422,6 +1441,9 @@ function formatStatBonusList(source){
   if(source?.bonusMp){ parts.push(`+${source.bonusMp} mana maxima`); }
   if(source?.bonusAttack){ parts.push(`+${source.bonusAttack} dano de ataque`); }
   if(source?.skillPower){ parts.push(`+${source.skillPower} dano de habilidade`); }
+  if(source?.bonusHpPercent){ parts.push(`+${Math.floor(source.bonusHpPercent * 100)}% vida maxima`); }
+  if(source?.bonusMpPercent){ parts.push(`+${Math.floor(source.bonusMpPercent * 100)}% mana maxima`); }
+  if(source?.totalDamagePercent){ parts.push(`+${Math.floor(source.totalDamagePercent * 100)}% dano total`); }
   return parts.join(", ");
 }
 
@@ -1430,7 +1452,12 @@ function getRegionFromEnemy(enemyName){
 }
 
 function getSetBonusValues(regionName){
-  return regionSetBonusProfiles[regionName] || { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 };
+  return regionSetBonusProfiles[regionName] || { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
+}
+
+function getRegionEquipmentBaseStats(regionName, slot){
+  const profile = regionEquipmentBaseProfiles[regionName] || regionEquipmentBaseProfiles.Floresta;
+  return slot === "weapon" ? { ...(profile.weapon || {}) } : { ...(profile.armor || {}) };
 }
 
 function getRegionDropSlots(regionName, enemyName){
@@ -1454,10 +1481,7 @@ function getRegionSetTemplate(regionName, slot, className = player?.class || "Gu
     regionName,
     setId: `${slugify(regionName)}_set`,
     setName: getRegionSetLabel(regionName),
-    statProfile: slot === "weapon"
-      ? (regionWeaponStatProfiles[className] || regionWeaponStatProfiles.Guerreiro)
-      : (regionArmorStatProfiles[slot] || {}),
-    regionPower: regionSetItemPower[regionName] || 1
+    baseStats: getRegionEquipmentBaseStats(regionName, slot)
   };
 }
 
@@ -1476,7 +1500,7 @@ function getEquippedSetCount(setId){
 }
 
 function getActiveSetBonuses(){
-  const total = { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 };
+  const total = { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
   const activeSets = [];
   if(!player?.equipment){ return { bonuses: total, activeSets }; }
 
@@ -1498,6 +1522,9 @@ function getActiveSetBonuses(){
     total.bonusMp += setBonus.bonusMp || 0;
     total.bonusAttack += setBonus.bonusAttack || 0;
     total.skillPower += setBonus.skillPower || 0;
+    total.bonusHpPercent += setBonus.bonusHpPercent || 0;
+    total.bonusMpPercent += setBonus.bonusMpPercent || 0;
+    total.totalDamagePercent += setBonus.totalDamagePercent || 0;
     activeSets.push({
       setName: item.setName || getRegionSetLabel(item.regionName || "desconhecida"),
       text: formatStatBonusList(setBonus)
@@ -1756,6 +1783,10 @@ function getPassiveModifiers(){
   base.bonusMp += activeSetBonuses.bonusMp || 0;
   base.bonusAttack += activeSetBonuses.bonusAttack || 0;
   base.skillPower += activeSetBonuses.skillPower || 0;
+  base.totalDamagePercent += activeSetBonuses.totalDamagePercent || 0;
+  if(activeSetBonuses.bonusMpPercent > 0){
+    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * activeSetBonuses.bonusMpPercent);
+  }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
     const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
     const costFactor = tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.1;
@@ -1770,6 +1801,9 @@ function getPassiveModifiers(){
   }
   if(base.manaToLifePercent > 0){
     base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.manaToLifePercent);
+  }
+  if(activeSetBonuses.bonusHpPercent > 0){
+    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + allocation.hp * player.growth.hp) * activeSetBonuses.bonusHpPercent);
   }
   return base;
 }
@@ -1804,30 +1838,71 @@ function getTrophyCompletion(){
 
 function getTrophies(){
   return [
-    { name: "Primeiro Sangue", done: player.stats.enemiesDefeated >= 1, description: "Derrote 1 inimigo." },
-    { name: "Limpador de Trilha", done: player.stats.enemiesDefeated >= 10, description: "Derrote 10 inimigos." },
-    { name: "Cacador Experiente", done: player.stats.enemiesDefeated >= 25, description: "Derrote 25 inimigos." },
-    { name: "Exterminador", done: player.stats.enemiesDefeated >= 100, description: "Derrote 100 inimigos." },
-    { name: "Matador de Chefes", done: player.stats.bossesDefeated >= 1, description: "Derrote 1 chefao." },
-    { name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
-    { name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
-    { name: "Magnata do Vilarejo", done: player.stats.coinsEarned >= 2500, description: "Acumule 2500 moedas ao longo da campanha." },
-    { name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
-    { name: "Tesouro Lendario", done: getLegendaryEquipmentCount() >= 1, description: "Obtenha pelo menos 1 equipamento lendario." },
-    { name: "Vestido para Guerra", done: Object.values(player.equipment || {}).filter(Boolean).length >= 5, description: "Equipe todos os 5 slots de equipamento." },
-    { name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
-    { name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
-    { name: "Forma Final", done: getSubclassCount() >= 2, description: "Escolha sua segunda subclasse." },
-    { name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance nivel suficiente para entrar na Fortaleza." },
-    { name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance nivel suficiente para entrar na Citadela." },
-    { name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance nivel suficiente para entrar no Panteao." },
-    { name: "Fim do Mundo", done: player.level >= 76, description: "Alcance nivel suficiente para entrar em Cataclismo." },
-    { name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
-    { name: "Veterano de Guerra", done: player.stats.deaths >= 5, description: "Caia 5 vezes e continue a jornada." },
-    { name: "Mestre do Vazio", done: player.level >= 60, description: "Alcance o nivel 60." },
-    { name: "Ascensao Heroica", done: player.level >= 80, description: "Alcance o nivel 80." },
-    { name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." }
+    { category: "Combate", name: "Primeiro Sangue", done: player.stats.enemiesDefeated >= 1, description: "Derrote 1 inimigo." },
+    { category: "Combate", name: "Limpador de Trilha", done: player.stats.enemiesDefeated >= 10, description: "Derrote 10 inimigos." },
+    { category: "Combate", name: "Cacador Experiente", done: player.stats.enemiesDefeated >= 25, description: "Derrote 25 inimigos." },
+    { category: "Combate", name: "Exterminador", done: player.stats.enemiesDefeated >= 100, description: "Derrote 100 inimigos." },
+    { category: "Chefes", name: "Matador de Chefes", done: player.stats.bossesDefeated >= 1, description: "Derrote 1 chefao." },
+    { category: "Chefes", name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
+    { category: "Economia", name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
+    { category: "Economia", name: "Magnata do Vilarejo", done: player.stats.coinsEarned >= 2500, description: "Acumule 2500 moedas ao longo da campanha." },
+    { category: "Equipamentos", name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
+    { category: "Equipamentos", name: "Tesouro Lendario", done: getLegendaryEquipmentCount() >= 1, description: "Obtenha pelo menos 1 equipamento lendario." },
+    { category: "Equipamentos", name: "Vestido para Guerra", done: Object.values(player.equipment || {}).filter(Boolean).length >= 5, description: "Equipe todos os 5 slots de equipamento." },
+    { category: "Equipamentos", name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
+    { category: "Progressao", name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
+    { category: "Progressao", name: "Forma Final", done: getSubclassCount() >= 2, description: "Escolha sua segunda subclasse." },
+    { category: "Progressao", name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance nivel suficiente para entrar na Fortaleza." },
+    { category: "Progressao", name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance nivel suficiente para entrar na Citadela." },
+    { category: "Progressao", name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance nivel suficiente para entrar no Panteao." },
+    { category: "Progressao", name: "Fim do Mundo", done: player.level >= 76, description: "Alcance nivel suficiente para entrar em Cataclismo." },
+    { category: "Progressao", name: "Alem do Cataclismo", done: player.level >= 84, description: "Alcance nivel suficiente para entrar no Paradoxo." },
+    { category: "Sobrevivencia", name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
+    { category: "Sobrevivencia", name: "Veterano de Guerra", done: player.stats.deaths >= 5, description: "Caia 5 vezes e continue a jornada." },
+    { category: "Progressao", name: "Mestre do Vazio", done: player.level >= 60, description: "Alcance o nivel 60." },
+    { category: "Progressao", name: "Ascensao Heroica", done: player.level >= 80, description: "Alcance o nivel 80." },
+    { category: "Progressao", name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." }
   ];
+}
+
+function getTrophyCategories(){
+  const grouped = {};
+  for(const trophy of getTrophies()){
+    const category = trophy.category || "Geral";
+    grouped[category] = grouped[category] || [];
+    grouped[category].push(trophy);
+  }
+  return grouped;
+}
+
+function getTrophyCategorySummary(){
+  return Object.entries(getTrophyCategories()).map(([category, trophies]) => {
+    const completed = trophies.filter(trophy => trophy.done).length;
+    return {
+      category,
+      completed,
+      total: trophies.length,
+      percent: Math.floor((completed / Math.max(1, trophies.length)) * 100)
+    };
+  });
+}
+
+function renderTrophyGroups(){
+  return Object.entries(getTrophyCategories()).map(([category, trophies]) => {
+    const completed = trophies.filter(trophy => trophy.done).length;
+    return `<div class="trophy-category"><div class="panel-header"><strong>${category}</strong><span class="coin-badge">${completed}/${trophies.length}</span></div><div class="trophy-list">${trophies.map(trophy => `<div class="trophy-item ${trophy.done ? "" : "locked"}"><strong>${trophy.name}</strong><br><span class="lock-note">${trophy.description}</span></div>`).join("")}</div></div>`;
+  }).join("");
+}
+
+function renderTrophySummaryPanel(){
+  const categorySummary = getTrophyCategorySummary();
+  const overall = getTrophyCompletion();
+  return `
+    <h3>Resumo das conquistas</h3>
+    <div class="trophy-summary-grid">
+      ${categorySummary.map(entry => `<div class="trophy-summary-card"><strong>${entry.category}</strong><span>${entry.percent}%</span><small>${entry.completed}/${entry.total} concluidas</small></div>`).join("")}
+      <div class="trophy-summary-card"><strong>Total geral</strong><span>${overall}%</span><small>${getTrophies().filter(trophy => trophy.done).length}/${getTrophies().length} conquistas</small></div>
+    </div>`;
 }
 
 function isDungeonMode(){
@@ -3726,6 +3801,19 @@ function getRarityStat(statKey, rarity){
   return rarityStats[statKey]?.[rarity] || 0;
 }
 
+function applyEquipmentRarityStats(item, baseStats){
+  for(const bonusKey of ["bonusHp", "bonusMp", "bonusAttack", "skillPower"]){
+    delete item[bonusKey];
+  }
+  const rarityMultiplier = rarityMultipliers[item.rarity] || 1;
+  for(const [bonusKey, baseValue] of Object.entries(baseStats || {})){
+    const value = Math.ceil(baseValue * rarityMultiplier);
+    if(value > 0){
+      item[bonusKey] = value;
+    }
+  }
+}
+
 function normalizeEquipmentMetadata(item){
   if(!item || item.type !== "equipment"){ return item; }
   if(!item.baseItemId){
@@ -3748,6 +3836,13 @@ function normalizeEquipmentMetadata(item){
   if(item.regionName){
     item.setId = `${slugify(item.regionName)}_set`;
     item.setName = getRegionSetLabel(item.regionName);
+    const refreshedTemplate = getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
+    if(refreshedTemplate){
+      item.baseItemId = refreshedTemplate.id;
+      item.id = `${refreshedTemplate.id}_${item.rarity}`;
+      applyEquipmentRarityStats(item, refreshedTemplate.baseStats);
+      item.name = `${refreshedTemplate.name} ${getRarityInfo(item.rarity).label}`;
+    }
   }
   return item;
 }
@@ -3776,7 +3871,7 @@ function getEquipmentTooltip(item){
 
 function createEquipmentItem(dropTemplate, rarity){
   const rarityInfo = getRarityInfo(rarity);
-  const statProfile = dropTemplate.statProfile || dropTemplate.stats || {};
+  const baseStats = dropTemplate.baseStats || dropTemplate.stats || {};
   const item = {
     id: `${dropTemplate.id}_${rarity}`,
     baseItemId: dropTemplate.id,
@@ -3790,20 +3885,7 @@ function createEquipmentItem(dropTemplate, rarity){
     setId: dropTemplate.setId || null,
     setName: dropTemplate.setName || null
   };
-  if(dropTemplate.regionPower){
-    const rarityMultiplier = rarityMultipliers[rarity] || 1;
-    for(const [bonusKey, weight] of Object.entries(statProfile)){
-      const baseScale = equipmentBaseScaling[bonusKey] || 0;
-      const value = Math.floor(dropTemplate.regionPower * baseScale * weight * rarityMultiplier);
-      if(value > 0){
-        item[bonusKey] = value;
-      }
-    }
-  }else{
-    for(const [bonusKey, statScale] of Object.entries(statProfile)){
-      item[bonusKey] = getRarityStat(statScale, rarity);
-    }
-  }
+  applyEquipmentRarityStats(item, baseStats);
   item.description = buildEquipmentDescription(item);
   return item;
 }
@@ -3970,21 +4052,69 @@ function getEnemyPossibleDrop(enemyName, region, isBoss = false){
   return slots.map(slot => getRegionSetTemplate(region, slot, player?.class || "Guerreiro")?.name).join(" ou ");
 }
 
+function getSelectedBestiaryRegion(){
+  if(bestiaryRegionFilter && regions[bestiaryRegionFilter]){
+    return bestiaryRegionFilter;
+  }
+  return regions[currentRegion] ? currentRegion : Object.keys(regions)[0];
+}
+
+function setBestiaryRegion(regionName){
+  if(!regions[regionName]){ return; }
+  bestiaryRegionFilter = regionName;
+  updateUI();
+}
+
+function getBossAbilityDetailText(ability){
+  const details = [];
+  if(Number.isFinite(ability.power)){ details.push(`Dano base ${ability.power}`); }
+  if(ability.maxHpPercent){ details.push(`+${Math.floor(ability.maxHpPercent * 100)}% da vida maxima do alvo`); }
+  if(ability.targetBurnPercent && ability.targetBurnTurns){ details.push(`Queimadura de ${Math.floor(ability.targetBurnPercent * 100)}% da vida maxima por ${ability.targetBurnTurns} turnos`); }
+  if(ability.targetHealReductionPercent && ability.targetHealReductionTurns){ details.push(`Corta cura em ${Math.floor(ability.targetHealReductionPercent * 100)}% por ${ability.targetHealReductionTurns} turnos`); }
+  if(ability.targetDamageDownPercent && ability.targetDamageDownTurns){ details.push(`Reduz seu dano em ${Math.floor(ability.targetDamageDownPercent * 100)}% por ${ability.targetDamageDownTurns} turnos`); }
+  if(ability.targetSkipChance){ details.push(`${Math.floor(ability.targetSkipChance * 100)}% de chance de pular seu proximo turno`); }
+  if(ability.ignoreShield){ details.push("Ignora escudo"); }
+  if(ability.ignoreFlatReduction){ details.push("Ignora resistencia fixa"); }
+  if(ability.bonusIfShield){ details.push(`Ganha +${ability.bonusIfShield} se o alvo tiver escudo`); }
+  if(ability.bonusIfNoShield){ details.push(`Ganha +${ability.bonusIfNoShield} se o alvo estiver sem escudo`); }
+  if(ability.attackPercent){ details.push(`Buffa o proprio dano em ${Math.floor(ability.attackPercent * 100)}%${ability.turns ? ` por ${ability.turns} turnos` : ""}`); }
+  if(ability.flatDamageBonus){ details.push(`Recebe +${ability.flatDamageBonus} de dano bruto${ability.turns ? ` por ${ability.turns} turnos` : ""}`); }
+  if(ability.pierceBonus){ details.push(`Ganha ${Math.floor(ability.pierceBonus * 100)}% de perfuracao adicional${ability.turns ? ` por ${ability.turns} turnos` : ""}`); }
+  if(ability.regenPercent){ details.push(`Regenera ${Math.floor(ability.regenPercent * 100)}% da vida por turno${ability.turns ? ` por ${ability.turns} turnos` : ""}`); }
+  if(ability.selfShieldPercent || ability.selfShieldFlat){
+    const shieldText = ability.selfShieldPercent ? `${Math.floor(ability.selfShieldPercent * 100)}% da propria vida` : `${ability.selfShieldFlat} de escudo`;
+    details.push(`Cria escudo de ${shieldText}${ability.shieldTurns ? ` por ${ability.shieldTurns} turnos` : ""}`);
+  }
+  return details.join(" | ");
+}
+
 function renderBestiary(){
-  return Object.entries(regions).map(([regionName, regionData]) => {
-    const unlockProgress = getBossUnlockProgress(regionName);
-    const enemyCards = regionData.enemies.map(template => {
-      const stats = getEnemyStats(template, regionName, false);
-      const rarity = getEnemyRarity(regionName, template.name, false);
-      return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop: ${getEnemyPossibleDrop(template.name, regionName, false)}</span><br><span class="lock-note">${getRegionSetLabel(regionName)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(regionName))}</span></div>`;
-    }).join("");
-    const bossStats = getEnemyStats(regionData.boss, regionName, true);
-    const bossProfile = getBossDifficultyProfile(regionName, true);
-    const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
-    const bossKit = getBossAbilitySet(regionData.boss.name, regionName);
-    const mainBossSkill = bossKit[0];
-    return `<div class="inventory-item"><strong>${regionName}</strong><br><span class="lock-note">${regionData.description}</span><br><span class="lock-note">${getBossUnlockText(regionName)}</span><div class="inventory-list">${enemyCards}<div class="inventory-item"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br><span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Mana: ${bossMana}${mainBossSkill ? ` | Habilidade principal: ${mainBossSkill.name} (${mainBossSkill.power || 0} de dano base)` : ""}${bossKit.length ? ` | Kit: ${bossKit.map(ability => ability.name).join(", ")}` : ""}</span><br><span class="lock-note">Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, regionName, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span></div></div></div>`;
+  const selectedRegion = getSelectedBestiaryRegion();
+  const regionData = regions[selectedRegion];
+  const unlockProgress = getBossUnlockProgress(selectedRegion);
+  const enemyCards = regionData.enemies.map(template => {
+    const stats = getEnemyStats(template, selectedRegion, false);
+    const rarity = getEnemyRarity(selectedRegion, template.name, false);
+    return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop possivel: ${getEnemyPossibleDrop(template.name, selectedRegion, false)}</span><br><span class="lock-note">${getRegionSetLabel(selectedRegion)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(selectedRegion))}</span></div>`;
   }).join("");
+  const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
+  const bossProfile = getBossDifficultyProfile(selectedRegion, true);
+  const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
+  const bossKit = getBossAbilitySet(regionData.boss.name, selectedRegion);
+  return `
+    <div class="bestiary-filter-row">${Object.keys(regions).map(regionName => `<button class="region-chip action-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setBestiaryRegion('${regionName}')">${regionName}</button>`).join("")}</div>
+    <div class="inventory-item">
+      <strong>${selectedRegion}</strong><br>
+      <span class="lock-note">${regionData.description}</span><br>
+      <span class="lock-note">${getBossUnlockText(selectedRegion)}</span>
+      <div class="inventory-list">${enemyCards}</div>
+      <div class="inventory-item" style="margin-top:12px;">
+        <strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
+        <span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br>
+        <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span>
+        <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
+      </div>
+    </div>`;
 }
 
 function rollWeightedRarity(){
@@ -4726,9 +4856,7 @@ function updateUI(){
     <p>${currentMode === "dungeon" ? (isDungeonConnected() ? "Sala conectada. Aguarde o host iniciar ou enfrente o inimigo atual com o grupo." : "Crie uma sala ou entre com um codigo para jogar online.") : isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
     : currentMode === "trophies" ? `
     <h3>Sala de trofeus</h3>
-    <div class="trophy-list">
-      ${getTrophies().map(trophy => `<div class="trophy-item ${trophy.done ? "" : "locked"}"><strong>${trophy.name}</strong><br><span class="lock-note">${trophy.description}</span></div>`).join("")}
-    </div>`
+    <div class="trophy-list">${renderTrophyGroups()}</div>`
     : currentMode === "camp" ? `
     <h3>Acampamento</h3>
     <div class="camp-stats">
@@ -4781,11 +4909,11 @@ function updateUI(){
   `).join("");
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
     ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
-    ? ""
+    ? renderTrophySummaryPanel()
     : `
     <h3>Inventario</h3>
     ${player.inventory.length ? `<div class="inventory-list">${[...player.inventory].sort((a, b) => {
@@ -4855,7 +4983,7 @@ function updateUI(){
     playerPanel.style.order = "4";
   }
   if(inventoryPanel){
-    inventoryPanel.style.display = currentMode === "trophies" ? "none" : "block";
+    inventoryPanel.style.display = "block";
   }
   saveCampaign();
 }
