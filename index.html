@@ -1033,6 +1033,7 @@ function selectClass(name){
     level: 1,
     xp: 0,
     coins: 0,
+    baseStats: { hp: base.hp, mp: base.mp, attack: base.attack },
     maxHp: base.hp,
     hp: base.hp,
     maxMp: base.mp,
@@ -1320,6 +1321,8 @@ function normalizePlayerState(){
     coinsEarned: 0,
     deaths: 0
   };
+  const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
+  player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   player.stats.invested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
   const legacySubclass = player.subclass?.id || player.subclass || null;
   player.subclass = null;
@@ -1329,12 +1332,11 @@ function normalizePlayerState(){
       subclassState.tier30 = legacySubclass;
     }
   }
-  const classBase = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0, growth: player.growth || { hp: 0, mp: 0, attack: 0 } };
-  const subclassBonuses = getTotalSubclassBonuses(player);
+  const classBase = player.baseStats || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0, growth: player.growth || { hp: 0, mp: 0, attack: 0 } };
   const inferredInvested = {
-    hp: Math.max(0, Math.round(((player.maxHp || classBase.hp) - classBase.hp - (subclassBonuses.bonusHp || 0)) / Math.max(1, player.growth.hp))),
-    mp: Math.max(0, Math.round(((player.maxMp || classBase.mp) - classBase.mp - (subclassBonuses.bonusMp || 0)) / Math.max(1, player.growth.mp))),
-    attack: Math.max(0, Math.round(((player.attack || classBase.attack) - classBase.attack - (subclassBonuses.bonusAttack || 0)) / Math.max(1, player.growth.attack)))
+    hp: Math.max(0, Math.round(((player.maxHp || classBase.hp) - classBase.hp) / Math.max(1, player.growth.hp))),
+    mp: Math.max(0, Math.round(((player.maxMp || classBase.mp) - classBase.mp) / Math.max(1, player.growth.mp))),
+    attack: Math.max(0, Math.round(((player.attack || classBase.attack) - classBase.attack) / Math.max(1, player.growth.attack)))
   };
   const savedInvested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
   const savedTotal = (Number(savedInvested.hp) || 0) + (Number(savedInvested.mp) || 0) + (Number(savedInvested.attack) || 0);
@@ -3485,7 +3487,7 @@ function updateUI(){
   const activeBuffs = getActiveBuffs();
   const activeSetData = getActiveSetBonuses();
   const investedSummary = getInvestedSummary();
-  const classBaseData = classes[player.class];
+  const classBaseData = player.baseStats || classes[player.class];
   const subclassBonuses = getTotalSubclassBonuses();
 
   const campEntries = getCampEntries();
@@ -3599,7 +3601,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -4409,27 +4411,34 @@ function getTotalInvestedPoints(){
 }
 
 function getTrainerRespecCost(){
-  const totalInvested = getTotalInvestedPoints();
-  if(totalInvested <= 0){ return 0; }
-  return 120 + totalInvested * 35;
+  return Math.max(0, 30 * (player?.level || 0));
 }
 
 function syncInvestedStatsFromCurrentTotals(){
-  if(!player || !player.stats || !player.growth || !classes[player.class]){
+  if(!player || !player.stats || !player.growth){
     return;
   }
-  const subclassBonuses = getTotalSubclassBonuses(player);
-  const inferredInvested = {
-    hp: Math.max(0, Math.round(((player.maxHp || classes[player.class].hp) - classes[player.class].hp - (subclassBonuses.bonusHp || 0)) / Math.max(1, player.growth.hp))),
-    mp: Math.max(0, Math.round(((player.maxMp || classes[player.class].mp) - classes[player.class].mp - (subclassBonuses.bonusMp || 0)) / Math.max(1, player.growth.mp))),
-    attack: Math.max(0, Math.round(((player.attack || classes[player.class].attack) - classes[player.class].attack - (subclassBonuses.bonusAttack || 0)) / Math.max(1, player.growth.attack)))
-  };
-  const saved = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
-  const savedTotal = (Number(saved.hp) || 0) + (Number(saved.mp) || 0) + (Number(saved.attack) || 0);
-  const inferredTotal = inferredInvested.hp + inferredInvested.mp + inferredInvested.attack;
-  if(inferredTotal > 0 && (savedTotal <= 0 || savedTotal !== inferredTotal)){
-    player.stats.invested = inferredInvested;
+  const baseStats = player.baseStats || classes[player.class];
+  if(!baseStats){
+    return;
   }
+  const inferredInvested = {
+    hp: Math.max(0, Math.round(((player.maxHp || baseStats.hp) - baseStats.hp) / Math.max(1, player.growth.hp))),
+    mp: Math.max(0, Math.round(((player.maxMp || baseStats.mp) - baseStats.mp) / Math.max(1, player.growth.mp))),
+    attack: Math.max(0, Math.round(((player.attack || baseStats.attack) - baseStats.attack) / Math.max(1, player.growth.attack)))
+  };
+  const maxSpendable = Math.max(0, (player.level || 1) - 1);
+  const totalInferred = inferredInvested.hp + inferredInvested.mp + inferredInvested.attack;
+  if(totalInferred > maxSpendable){
+    let overflow = totalInferred - maxSpendable;
+    for(const key of ["attack", "mp", "hp"]){
+      if(overflow <= 0){ break; }
+      const reducible = Math.min(inferredInvested[key], overflow);
+      inferredInvested[key] -= reducible;
+      overflow -= reducible;
+    }
+  }
+  player.stats.invested = inferredInvested;
 }
 
 function getInvestedSummary(){
@@ -4438,6 +4447,8 @@ function getInvestedSummary(){
   const hpPoints = Number(invested.hp) || 0;
   const mpPoints = Number(invested.mp) || 0;
   const attackPoints = Number(invested.attack) || 0;
+  const trackedTotal = hpPoints + mpPoints + attackPoints;
+  const totalLevelPoints = Math.max(0, (player?.level || 1) - 1);
   return {
     hpPoints,
     mpPoints,
@@ -4445,7 +4456,10 @@ function getInvestedSummary(){
     hpGain: hpPoints * player.growth.hp,
     mpGain: mpPoints * player.growth.mp,
     attackGain: attackPoints * player.growth.attack,
-    skillGain: attackPoints * player.growth.attack
+    skillGain: attackPoints * player.growth.attack,
+    trackedTotal,
+    totalLevelPoints,
+    untrackedPoints: Math.max(0, totalLevelPoints - trackedTotal)
   };
 }
 
@@ -4470,9 +4484,7 @@ function resetInvestedStatsAtCamp(){
     log("Escolha sua subclasse antes de reorganizar atributos.");
     return;
   }
-  syncInvestedStatsFromCurrentTotals();
-  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
-  const totalInvested = getTotalInvestedPoints();
+  const totalInvested = Math.max(0, player.level - 1);
   if(totalInvested <= 0){
     log("Voce ainda nao tem pontos investidos para redistribuir.");
     return false;
@@ -4482,23 +4494,20 @@ function resetInvestedStatsAtCamp(){
     log(`O treinador cobra ${cost} moedas para reorganizar seus pontos.`);
     return false;
   }
-  const refundHp = (Number(invested.hp) || 0) * player.growth.hp;
-  const refundMp = (Number(invested.mp) || 0) * player.growth.mp;
-  const refundAttack = (Number(invested.attack) || 0) * player.growth.attack;
+  const baseStats = player.baseStats || classes[player.class];
   player.coins -= cost;
-  player.maxHp -= refundHp;
-  player.maxMp -= refundMp;
-  player.attack -= refundAttack;
+  player.maxHp = baseStats?.hp || player.maxHp;
+  player.maxMp = baseStats?.mp || player.maxMp;
+  player.attack = baseStats?.attack || player.attack;
   player.stats.invested = { hp: 0, mp: 0, attack: 0 };
-  pendingLevelUps = totalInvested;
   levelUpPoints = totalInvested;
   allocation = { hp: 0, mp: 0, attack: 0 };
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
-  currentMode = "battle";
-  log(`O treinador reorganizou seus atributos por ${cost} moedas. Redistribua ${totalInvested} ponto(s).`);
+  currentMode = "camp";
+  log(`O treinador reorganizou seus atributos por ${cost} moedas. Redistribua ${totalInvested} ponto(s) ganhos ate o seu nivel atual.`);
   updateUI();
   const panel = document.getElementById("levelUpPanel");
   if(panel){
