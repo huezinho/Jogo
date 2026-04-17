@@ -2782,8 +2782,8 @@ function getSkillInfo(){
       return { ...skill, cost: 200, damage, description: `${skill.name}: consome 200 MP e causa ${damage} de dano com base na vida atual do inimigo.` };
     }
     if(skill.type === "mage_mana_burst"){
-      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.8;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.16 : 0.12;
+      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.6;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.13 : 0.09;
       const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
       const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.4, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 40% da vida maxima do inimigo, devolve toda a mana gasta.` };
