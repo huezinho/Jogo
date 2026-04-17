@@ -496,8 +496,6 @@ function createDefaultPlayerEffects(){
     skillBuffTurns: 0,
     skillBuffAmount: 0,
     skillBuffPercent: 0,
-    precisionTurns: 0,
-    precisionBonus: 0,
     guaranteedHitTurns: 0,
     enemyMissBonusTurns: 0,
     enemyMissBonus: 0,
@@ -505,8 +503,9 @@ function createDefaultPlayerEffects(){
     regenPercent: 0,
     firstSkillFreeAvailable: false,
     firstDamageSkillBoostAvailable: false,
-    damageDoubleTurns: 0,
-    damageDoubleChanceBonus: 0,
+    finalDamageBuffTurns: 0,
+    finalDamageBuffPercent: 0,
+    nextDamageBonusPercent: 0,
     shieldValue: 0,
     shieldTurns: 0,
     flatReduction: 0,
@@ -870,13 +869,13 @@ const subclassChoicesByClass = {
   },
   Arqueiro: {
     tier30: [
-      { id: "atirador", name: "Atirador", description: "Precisao refinada com mais mana para tecnicas de longa distancia.", bonusHp: 0, bonusMp: 40, bonusAttack: 15, skillPower: 15 },
-      { id: "cacador", name: "Cacador", description: "Sobrevivencia em campo e golpes mais pesados.", bonusHp: 100, bonusMp: 0, bonusAttack: 15, skillPower: 0 }
+      { id: "atirador", name: "Atirador", description: "Especialista em tiros tecnicos, precisao e burst em alvo unico.", bonusHp: 0, bonusMp: 50, bonusAttack: 15, skillPower: 15 },
+      { id: "cacador", name: "Cacador", description: "Predador oportunista focado em rajadas, esquiva e recompensas.", bonusHp: 100, bonusMp: 0, bonusAttack: 15, skillPower: 0 }
     ],
     tier60: {
       atirador: [
-        { id: "atirador_arcano", name: "Atirador Arcano", description: "Une flechas e magia em disparos tecnicos.", bonusHp: 0, bonusMp: 120, bonusAttack: 0, skillPower: 40 },
-        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em dano puro e letal.", bonusHp: 0, bonusMp: 0, bonusAttack: 30, skillPower: 30 }
+        { id: "atirador_arcano", name: "Atirador Arcano", description: "Transforma mana em disparos tecnicos e marcas arcanas.", bonusHp: 0, bonusMp: 200, bonusAttack: 0, skillPower: 40 },
+        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em execucao letal de alvo unico.", bonusHp: 0, bonusMp: 0, bonusAttack: 30, skillPower: 30 }
       ],
       cacador: [
         { id: "espreitador", name: "Espreitador", description: "Caçador agil com bom equilibrio entre mana e dano.", bonusHp: 0, bonusMp: 40, bonusAttack: 30, skillPower: 15 },
@@ -1000,20 +999,46 @@ function buildMageTrees(){
 function buildArcherTrees(){
   const subclassState = getPlayerSubclassState();
   const tier30 = subclassState.tier30;
+  const tier60 = subclassState.tier60;
   const activeSkills = [
     { level: 1, id: "mirar", name: "Mirar", type: "archer_focus" },
-    { level: tier30 === "atirador" && player.level >= 36 ? 36 : 12, id: "headshot", name: "Headshot", type: "archer_headshot" },
-    { level: 24, id: "esconder_se", name: "Esconder-se", type: "archer_hide" }
+    { level: 20, id: "camuflagem", name: "Camuflagem", type: "archer_camouflage" }
   ];
-  if(tier30 === "cacador" && player.level >= 36){
-    activeSkills.push({ level: 36, id: "rajada_de_flechas", name: "Rajada de Flechas", type: "archer_barrage" });
+  if(tier30 === "atirador"){
+    activeSkills.push({ level: 30, id: "headshot", name: "Headshot", type: "archer_headshot" });
+    if(player.level >= 50){
+      activeSkills.push({ level: 50, id: "tiro_perfurante", name: "Tiro Perfurante", type: "archer_piercing_shot" });
+    }
+    if(tier60 === "atirador_arcano" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "disparo_arcano", name: "Disparo Arcano", type: "archer_arcane_shot" });
+    }
+    if(tier60 === "sniper" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "executar", name: "Executar", type: "archer_execute" });
+    }
+  }
+  if(tier30 === "cacador"){
+    activeSkills.push({ level: 30, id: "rajada_de_flechas", name: "Rajada de Flechas", type: "archer_barrage" });
+    if(player.level >= 50){
+      activeSkills.push({ level: 50, id: "armadilha", name: "Armadilha", type: "archer_trap" });
+    }
   }
   const passiveSkills = [
-    { level: tier30 === "atirador" && player.level >= 42 ? 42 : 6, id: tier30 === "atirador" && player.level >= 42 ? "passos_silenciosos" : "passos_leves", name: tier30 === "atirador" && player.level >= 42 ? "Passos Silenciosos" : "Passos Leves", type: tier30 === "atirador" && player.level >= 42 ? "archer_mana_regen_set" : "archer_enemy_miss" },
-    { level: 18, id: "pulso_firme", name: "Pulso Firme", type: "archer_attack_level_bonus" }
+    {
+      level: 10,
+      id: "passos_leves",
+      name: "Passos Leves",
+      type: tier30 === "atirador"
+        ? "archer_global_double_chance"
+        : tier30 === "cacador"
+          ? "archer_coin_bonus"
+          : "archer_dodge_level_scaling"
+    }
   ];
-  if(tier30 === "cacador" && player.level >= 42){
-    passiveSkills.push({ level: 42, id: "bolsos_cheios", name: "Bolsos Cheios", type: "coin_bonus" });
+  if(tier30 === "atirador"){
+    passiveSkills.push({ level: 40, id: "pulso_firme", name: "Pulso Firme", type: "archer_attack_level_bonus" });
+  }
+  if(tier30 === "cacador"){
+    passiveSkills.push({ level: 40, id: "errou", name: "Errou", type: "archer_dodge_damage_buff" });
   }
   return { activeSkills, passiveSkills };
 }
@@ -1192,7 +1217,7 @@ function getSkillAnimationStyle(skillInfo){
     "mage_concentration",
     "mage_mana_shield",
     "archer_focus",
-    "archer_hide"
+    "archer_camouflage"
   ]);
   if(buffTypes.has(skillInfo.type)){
     return "buff";
@@ -1460,16 +1485,18 @@ function getPassiveModifiers(){
     if(passive.type === "mage_precious_mana"){
       base.preciousMana = true;
     }
-    if(passive.type === "archer_enemy_miss"){
-      base.enemyMissChance += tier30 === "cacador" && player.level >= 54 ? 0.1 : 0.05;
-    }
-    if(passive.type === "archer_mana_regen_set"){
-      base.manaRegenPercentSet = 0.16;
+    if(passive.type === "archer_dodge_level_scaling"){
+      base.enemyMissChance += 0.05 + (0.005 * player.level);
     }
     if(passive.type === "archer_attack_level_bonus"){
-      const pulseBonus = Math.floor(1.1 * player.level);
-      base.bonusAttack += pulseBonus;
-      base.skillPower += pulseBonus;
+      const attackBonus = Math.floor(0.9 * player.level);
+      const skillFactor = tier30 === "atirador" && subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.3 : 0.9;
+      const skillBonus = Math.floor(skillFactor * player.level);
+      base.bonusAttack += attackBonus;
+      base.skillPower += skillBonus;
+    }
+    if(passive.type === "archer_coin_bonus"){
+      base.coinBonus += 0.1;
     }
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
@@ -2161,15 +2188,11 @@ function getSkillPowerBonus(){
   return Math.floor(baseSkill * (1 + percent));
 }
 
-function getAccuracyBonus(){
-  return playerEffects.precisionTurns > 0 ? playerEffects.precisionBonus : 0;
-}
-
 function getHitChance(mode = "basic"){
   if(playerEffects.guaranteedHitTurns > 0){ return 1; }
   if(player.class !== "Arqueiro"){ return 1; }
   const baseChance = mode === "precise" ? 0.9 : 0.84;
-  return Math.min(1, baseChance + getAccuracyBonus());
+  return Math.min(1, baseChance);
 }
 
 function rollHit(mode = "basic"){
@@ -2178,9 +2201,9 @@ function rollHit(mode = "basic"){
 
 function getArcherDoubleChance(){
   const subclassState = getPlayerSubclassState();
-  let chance = playerEffects.damageDoubleTurns > 0 ? playerEffects.damageDoubleChanceBonus : 0;
-  if(subclassState.tier30 === "atirador" && player.level >= 54){
-    chance += 0.1;
+  let chance = 0;
+  if(subclassState.tier30 === "atirador" && player.level >= 30){
+    chance += 0.05;
   }
   return chance;
 }
@@ -2197,7 +2220,7 @@ function getEnemyMissChance(){
 }
 
 function decayPlayerBuffs(){
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "precisionTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "damageDoubleTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns"]){
     if(playerEffects[buffName] > 0){
       playerEffects[buffName]--;
     }
@@ -2206,11 +2229,10 @@ function decayPlayerBuffs(){
   if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffPercent = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffAmount = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffPercent = 0; }
-  if(playerEffects.precisionTurns <= 0){ playerEffects.precisionBonus = 0; }
   if(playerEffects.guaranteedHitTurns <= 0){ playerEffects.guaranteedHitTurns = 0; }
   if(playerEffects.enemyMissBonusTurns <= 0){ playerEffects.enemyMissBonus = 0; }
   if(playerEffects.regenTurns <= 0){ playerEffects.regenPercent = 0; }
-  if(playerEffects.damageDoubleTurns <= 0){ playerEffects.damageDoubleChanceBonus = 0; }
+  if(playerEffects.finalDamageBuffTurns <= 0){ playerEffects.finalDamageBuffPercent = 0; }
 }
 
 function getTurnHealing(){
@@ -2282,23 +2304,54 @@ function getSkillInfo(){
       return { ...skill, cost: 26, damage, freezeChance: 0.15, description: `${skill.name}: consome 26 MP, causa ${damage} de dano e tem 15% de chance de impedir o proximo ataque do inimigo.` };
     }
     if(skill.type === "archer_focus"){
-      const bonus = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0.05;
-      const doubleChance = player.level >= 48 && subclassState.tier30 === "atirador" ? 0.1 : 0;
-      return { ...skill, cost: 24, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 24 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
+      const cost = 30 + player.level;
+      const attackBonus = 5 + player.level;
+      const headshotBonus = subclassState.tier30 === "atirador" ? 0.1 : 0;
+      const barrageExtraShotChance = subclassState.tier30 === "cacador" ? 0.1 : 0;
+      return {
+        ...skill,
+        cost,
+        turns: 4,
+        attackBonus,
+        description: `${skill.name}: consome ${cost} MP, garante 100% de acerto no ataque basico por 4 turnos e aumenta o dano de ataque basico em ${attackBonus}${headshotBonus ? ", alem de fortalecer o Headshot em 10% e dar +10% de chance de dano dobrado" : ""}${barrageExtraShotChance ? ", alem de conceder 10% de chance de um disparo extra na Rajada de Flechas" : ""}.`
+      };
     }
     if(skill.type === "archer_headshot"){
-      const improvedHeadshot = subclassState.tier30 === "atirador" && player.level >= 36;
-      const damage = Math.floor((improvedHeadshot ? 1.6 : 1.5) * skillPower);
-      const cost = improvedHeadshot ? 44 : 20;
-      const critChance = improvedHeadshot ? 0.15 : 0.1;
-      return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.${improvedHeadshot ? " A versao aprimorada do Atirador aumenta levemente o scaling da habilidade." : ""}` };
+      const focusActive = playerEffects.guaranteedHitTurns > 0;
+      const focusDamageBonus = subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0;
+      const baseDamage = 30 + attack + skillPower;
+      const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
+      const cost = 60 + Math.floor(0.3 * player.level);
+      const critChance = Math.min(0.95, 0.1 + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0) + getArcherDoubleChance());
+      const marksOnNonCrit = subclassState.tier60 === "atirador_arcano" && player.level >= 60;
+      return { ...skill, cost, damage, critChance, marksOnNonCrit, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado${marksOnNonCrit ? ". Se nao dobrar o dano, marca o alvo para receber 15% a mais no proximo golpe." : "."}` };
     }
-    if(skill.type === "archer_hide"){
-      const chance = subclassState.tier30 === "cacador" && player.level >= 48 ? 0.25 : 0.15;
-      return { ...skill, cost: 22, turns: 3, dodge: chance, description: `${skill.name}: consome 22 MP e aumenta sua chance de esquiva em ${Math.floor(chance * 100)}% por 3 turnos.` };
+    if(skill.type === "archer_camouflage"){
+      const cost = 40 + Math.floor(0.5 * player.level);
+      const dodge = 0.2 + (subclassState.tier30 === "cacador" ? 0.05 : 0);
+      const nextDamageBonus = subclassState.tier30 === "atirador" ? 0.3 : 0;
+      return { ...skill, cost, turns: 4, dodge, nextDamageBonus, description: `${skill.name}: consome ${cost} MP e concede ${Math.floor(dodge * 100)}% de esquiva adicional por 4 turnos${nextDamageBonus ? ", deixando o proximo dano causado 30% mais forte" : ""}.` };
     }
     if(skill.type === "archer_barrage"){
-      return { ...skill, cost: 34, hits: 2, description: `${skill.name}: consome 34 MP e realiza 2 ataques basicos no mesmo turno.` };
+      const extraShotChance = playerEffects.guaranteedHitTurns > 0 ? 0.1 : 0;
+      return { ...skill, cost: 60, hits: 2, extraShotChance, description: `${skill.name}: consome 60 MP e realiza 2 ataques basicos no mesmo turno${extraShotChance ? ", com 10% de chance de um disparo adicional por causa do Mirar" : ""}.` };
+    }
+    if(skill.type === "archer_piercing_shot"){
+      const skillFactor = subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.2 : 0.8;
+      const damage = 50 + Math.floor(0.8 * attack) + Math.floor(skillFactor * skillPower);
+      return { ...skill, cost: 80, damage, ignoreArmor: true, ignoreShield: true, description: `${skill.name}: consome 80 MP e causa ${damage} de dano, ignorando armadura e escudo do inimigo.` };
+    }
+    if(skill.type === "archer_trap"){
+      const damage = 30 + Math.floor(1.1 * skillPower);
+      return { ...skill, cost: 80, damage, skipChance: 0.3, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.` };
+    }
+    if(skill.type === "archer_arcane_shot"){
+      const damage = 60 + Math.floor(1.1 * skillPower) + Math.floor(0.6 * maxMp);
+      return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano arcano.` };
+    }
+    if(skill.type === "archer_execute"){
+      const damage = 60 + Math.floor(1.1 * attack) + Math.floor(0.9 * skillPower);
+      return { ...skill, cost: 120, damage, executeThreshold: 0.4, executeMultiplier: 3, description: `${skill.name}: consome 120 MP e causa ${damage} de dano. Se o inimigo estiver abaixo de 40% da vida, o dano e triplicado.` };
     }
     return { ...skill, cost: 0, description: skill.name };
   });
@@ -2363,20 +2416,22 @@ function getPassiveStatusDescription(skill){
   if(skill.id === "mana_e_vida"){
     return `${skill.name}: converte ${Math.floor(getPreviewStats().maxMp * 0.1)} de mana maxima em vida maxima.`;
   }
-  if(skill.type === "archer_enemy_miss"){
-    const chance = subclassState.tier30 === "cacador" && player.level >= 54 ? 10 : 5;
-    return `${skill.name}: concede ${chance}% de chance do inimigo errar o ataque contra voce.`;
+  if(skill.type === "archer_dodge_level_scaling"){
+    return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce.`;
   }
-  if(skill.type === "archer_mana_regen_set"){
-    return `${skill.name}: sua regeneracao total de mana por turno passa a ser 16% da mana maxima.`;
+  if(skill.type === "archer_global_double_chance"){
+    return `${skill.name}: concede 5% de chance de qualquer ataque ou habilidade causar dano dobrado.`;
+  }
+  if(skill.type === "archer_coin_bonus"){
+    return `${skill.name}: aumenta em 10% as moedas recebidas dos inimigos.`;
   }
   if(skill.type === "archer_attack_level_bonus"){
-    const pulseBonus = Math.floor(1.1 * player.level);
-    let description = `${skill.name}: concede ${pulseBonus} de dano de ataque basico e ${pulseBonus} de dano de habilidade no nivel atual.`;
-    if(subclassState.tier30 === "atirador" && player.level >= 54){
-      description += " Alem disso, ataques e habilidades ganham 10% de chance de dano dobrado.";
-    }
-    return description;
+    const attackBonus = Math.floor(0.9 * player.level);
+    const skillBonus = Math.floor((subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.3 : 0.9) * player.level);
+    return `${skill.name}: concede ${attackBonus} de dano de ataque basico e ${skillBonus} de dano de habilidade no nivel atual.`;
+  }
+  if(skill.type === "archer_dodge_damage_buff"){
+    return `${skill.name}: ao esquivar de um ataque, voce ganha 10% de dano total por 2 turnos.`;
   }
   if(skill.type === "coin_bonus"){
     return `${skill.name}: aumenta as moedas obtidas em 15%.`;
@@ -2414,8 +2469,11 @@ function getActiveBuffs(){
   if(playerEffects.regenTurns > 0 && playerEffects.regenPercent > 0){
     buffs.push(`Regeneracao ${Math.floor(playerEffects.regenPercent * 100)}% | ${playerEffects.regenTurns} turno(s)`);
   }
-  if(playerEffects.damageDoubleTurns > 0 && playerEffects.damageDoubleChanceBonus > 0){
-    buffs.push(`Dano dobrado +${Math.floor(playerEffects.damageDoubleChanceBonus * 100)}% | ${playerEffects.damageDoubleTurns} turno(s)`);
+  if(playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
+    buffs.push(`Dano total +${Math.floor(playerEffects.finalDamageBuffPercent * 100)}% | ${playerEffects.finalDamageBuffTurns} turno(s)`);
+  }
+  if(playerEffects.nextDamageBonusPercent > 0){
+    buffs.push(`Proximo dano +${Math.floor(playerEffects.nextDamageBonusPercent * 100)}%`);
   }
   return buffs;
 }
@@ -2461,7 +2519,22 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
 
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
-  const damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  if(damage > 0 && playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
+    damage += Math.floor(damage * playerEffects.finalDamageBuffPercent);
+  }
+  if(damage > 0 && playerEffects.nextDamageBonusPercent > 0){
+    const ambushBonus = Math.floor(damage * playerEffects.nextDamageBonusPercent);
+    damage += ambushBonus;
+    playerEffects.nextDamageBonusPercent = 0;
+    log(`Seu proximo golpe recebeu +${ambushBonus} de dano bonus.`);
+  }
+  if(damage > 0 && (enemy.nextDamageTakenPercent || 0) > 0){
+    const markedBonus = Math.floor(damage * enemy.nextDamageTakenPercent);
+    damage += markedBonus;
+    log(`${enemy.baseName} sofreu +${markedBonus} de dano por estar marcado.`);
+    enemy.nextDamageTakenPercent = 0;
+  }
   enemy.hp -= damage;
   return damage;
 }
@@ -2470,6 +2543,10 @@ function applyIncomingDamage(baseDamage, options = {}){
   let damage = Math.max(0, Math.floor(baseDamage));
   const missChance = getEnemyMissChance();
   if(missChance > 0 && Math.random() < missChance){
+    if(getUnlockedPassiveSkills().some(skill => skill.type === "archer_dodge_damage_buff")){
+      playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, 2);
+      playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, 0.1);
+    }
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
   const flatReduction = getPassiveModifiers().flatReduction;
@@ -2572,16 +2649,22 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "archer_headshot"){
     damage = skillInfo.damage;
-    if(shouldDoubleDamage(skillInfo.critChance)){
+    const doubled = Math.random() < skillInfo.critChance;
+    const shouldMarkTarget = !doubled && skillInfo.marksOnNonCrit && applyToTarget && !!enemy;
+    if(doubled){
       damage *= 2;
     }
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
-    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    if(shouldMarkTarget && enemy){
+      enemy.nextDamageTakenPercent = Math.max(enemy.nextDamageTakenPercent || 0, 0.15);
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${shouldMarkTarget ? " O alvo ficou marcado para o proximo golpe." : ""}`;
   }
   if(skillInfo.type === "archer_barrage"){
     let totalDamage = 0;
     let hits = 0;
-    for(let i = 0; i < skillInfo.hits; i++){
+    const totalShots = skillInfo.hits + (skillInfo.extraShotChance > 0 && Math.random() < skillInfo.extraShotChance ? 1 : 0);
+    for(let i = 0; i < totalShots; i++){
       if(rollHit("basic")){
         let hitDamage = getActiveAttack() + Math.floor(Math.random() * 6);
         if(shouldDoubleDamage()){
@@ -2593,6 +2676,33 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     damage = totalDamage;
     message = hits ? `${actorName} usou ${skillInfo.name} e acertou ${hits} disparo(s), causando ${damage} de dano.` : `${actorName} usou ${skillInfo.name}, mas nao acertou nenhum disparo.`;
+  }
+  if(["archer_piercing_shot", "archer_arcane_shot"].includes(skillInfo.type)){
+    damage = skillInfo.damage;
+    if(shouldDoubleDamage()){
+      damage *= 2;
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor }) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "archer_execute"){
+    damage = skillInfo.damage;
+    if(enemy && enemy.hp <= Math.floor(enemy.maxHp * skillInfo.executeThreshold)){
+      damage *= skillInfo.executeMultiplier;
+    }
+    if(shouldDoubleDamage()){
+      damage *= 2;
+    }
+    damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "archer_trap"){
+    damage = applyToTarget ? applyDamageToEnemy(skillInfo.damage) : skillInfo.damage;
+    if(applyToTarget && enemy && Math.random() < skillInfo.skipChance){
+      enemy.skipNextAttack = true;
+      freezeApplied = true;
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${freezeApplied ? " O inimigo ficou preso e pode perder o proximo turno." : ""}`;
   }
   if(skillInfo.type === "warrior_regen"){
     playerEffects.regenTurns = skillInfo.turns;
@@ -2615,16 +2725,17 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "archer_focus"){
     playerEffects.attackBuffTurns = skillInfo.turns;
-    playerEffects.attackBuffPercent = skillInfo.bonus;
+    playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, skillInfo.attackBonus);
     playerEffects.guaranteedHitTurns = skillInfo.turns;
-    playerEffects.damageDoubleTurns = skillInfo.turns;
-    playerEffects.damageDoubleChanceBonus = skillInfo.doubleChance;
     message = `${actorName} usou ${skillInfo.name} e ficou com acerto garantido por ${skillInfo.turns} turnos.`;
   }
-  if(skillInfo.type === "archer_hide"){
+  if(skillInfo.type === "archer_camouflage"){
     playerEffects.enemyMissBonusTurns = skillInfo.turns;
     playerEffects.enemyMissBonus = skillInfo.dodge;
-    message = `${actorName} usou ${skillInfo.name} e ganhou ${Math.floor(skillInfo.dodge * 100)}% de esquiva adicional por ${skillInfo.turns} turnos.`;
+    if(skillInfo.nextDamageBonus){
+      playerEffects.nextDamageBonusPercent = Math.max(playerEffects.nextDamageBonusPercent, skillInfo.nextDamageBonus);
+    }
+    message = `${actorName} usou ${skillInfo.name} e ganhou ${Math.floor(skillInfo.dodge * 100)}% de esquiva adicional por ${skillInfo.turns} turnos.${skillInfo.nextDamageBonus ? " O proximo dano causado sera fortalecido." : ""}`;
   }
   return { blocked: false, message, damage, freeTurn, freezeApplied };
 }
@@ -3183,6 +3294,7 @@ function createEnemyFromTemplate(template, isBoss = false){
     skillDamage: bossSkillDamage,
     skillCost: isBoss ? template.skillCost : 0,
     bossAbilities: isBoss ? getBossAbilitySet(template.name, origin) : [],
+    nextDamageTakenPercent: 0,
     bossBuffTurns: 0,
     bossAttackBuffPercent: 0,
     bossFlatDamageBonus: 0,
