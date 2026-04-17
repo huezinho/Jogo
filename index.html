@@ -810,7 +810,7 @@ const subclassChoicesByClass = {
   },
   Arqueiro: {
     tier30: [
-      { id: "atirador", name: "Atirador", description: "Precisao refinada com mais mana para tecnicas de longa distancia.", bonusHp: 0, bonusMp: 40, bonusAttack: 10, skillPower: 10 },
+      { id: "atirador", name: "Atirador", description: "Precisao refinada com mais mana para tecnicas de longa distancia.", bonusHp: 0, bonusMp: 40, bonusAttack: 15, skillPower: 15 },
       { id: "cacador", name: "Cacador", description: "Sobrevivencia em campo e golpes mais pesados.", bonusHp: 100, bonusMp: 0, bonusAttack: 15, skillPower: 0 }
     ],
     tier60: {
@@ -1334,7 +1334,7 @@ function getPassiveModifiers(){
   const tier30 = subclassState.tier30;
   for(const passive of getUnlockedPassiveSkills()){
     if(passive.type === "warrior_flat_reduction"){
-      base.flatReduction += Math.floor(1 * player.level);
+      base.flatReduction += Math.floor(0.8 * player.level);
     }
     if(passive.type === "warrior_enemy_miss"){
       base.enemyMissChance += 0.15;
@@ -2176,10 +2176,11 @@ function getSkillInfo(){
       return { ...skill, cost: 20, turns: 4, bonus, doubleChance, description: `${skill.name}: consome 20 MP, garante acerto por 4 turnos e aumenta o dano basico em ${Math.floor(bonus * 100)}%${doubleChance ? ", com 10% de chance extra de dano dobrado" : ""}.` };
     }
     if(skill.type === "archer_headshot"){
-      const damage = Math.floor(1.5 * skillPower);
-      const cost = subclassState.tier30 === "atirador" && player.level >= 36 ? 20 : 16;
-      const critChance = 0.1;
-      return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.` };
+      const improvedHeadshot = subclassState.tier30 === "atirador" && player.level >= 36;
+      const damage = Math.floor((improvedHeadshot ? 1.6 : 1.5) * skillPower);
+      const cost = improvedHeadshot ? 40 : 16;
+      const critChance = improvedHeadshot ? 0.15 : 0.1;
+      return { ...skill, cost, damage, critChance, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critChance * 100)}% de chance de dano dobrado.${improvedHeadshot ? " A versao aprimorada do Atirador aumenta levemente o scaling da habilidade." : ""}` };
     }
     if(skill.type === "archer_hide"){
       const chance = subclassState.tier30 === "cacador" && player.level >= 48 ? 0.25 : 0.15;
@@ -2227,7 +2228,7 @@ function getCampEntries(){
 function getPassiveStatusDescription(skill){
   const subclassState = getPlayerSubclassState();
   if(skill.type === "warrior_flat_reduction"){
-    return `${skill.name}: reduz ${Math.floor(1 * player.level)} de dano por ataque recebido.`;
+    return `${skill.name}: reduz ${Math.floor(0.8 * player.level)} de dano por ataque recebido.`;
   }
   if(skill.type === "warrior_enemy_miss"){
     return `${skill.name}: concede 15% de chance do inimigo errar ao atacar voce.`;
@@ -3494,7 +3495,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button onclick="resetInvestedStatsAtCamp()" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -4071,6 +4072,49 @@ function adjustAttribute(attribute, amount){
 
   allocation[attribute] += amount;
   levelUpPoints -= amount;
+  updateUI();
+}
+
+function getTotalInvestedPoints(){
+  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
+  return (Number(invested.hp) || 0) + (Number(invested.mp) || 0) + (Number(invested.attack) || 0);
+}
+
+function getTrainerRespecCost(){
+  const totalInvested = getTotalInvestedPoints();
+  if(totalInvested <= 0){ return 0; }
+  return 120 + totalInvested * 35;
+}
+
+function resetInvestedStatsAtCamp(){
+  if(currentMode !== "camp" || isProcessingTurn || isDead || levelUpPoints > 0 || needsSubclassChoice()){ return; }
+  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
+  const totalInvested = getTotalInvestedPoints();
+  if(totalInvested <= 0){
+    log("Voce ainda nao tem pontos investidos para redistribuir.");
+    return;
+  }
+  const cost = getTrainerRespecCost();
+  if(player.coins < cost){
+    log(`O treinador cobra ${cost} moedas para reorganizar seus pontos.`);
+    return;
+  }
+  const refundHp = (Number(invested.hp) || 0) * player.growth.hp;
+  const refundMp = (Number(invested.mp) || 0) * player.growth.mp;
+  const refundAttack = (Number(invested.attack) || 0) * player.growth.attack;
+  player.coins -= cost;
+  player.maxHp = Math.max(getCurrentClassData().hp, player.maxHp - refundHp);
+  player.maxMp = Math.max(getCurrentClassData().mp, player.maxMp - refundMp);
+  player.attack = Math.max(getCurrentClassData().attack, player.attack - refundAttack);
+  player.stats.invested = { hp: 0, mp: 0, attack: 0 };
+  pendingLevelUps = totalInvested;
+  levelUpPoints += totalInvested;
+  allocation = { hp: 0, mp: 0, attack: 0 };
+  player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
+  displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
+  log(`O treinador reorganizou seus atributos por ${cost} moedas. Redistribua ${totalInvested} ponto(s).`);
   updateUI();
 }
 
