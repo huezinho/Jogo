@@ -3461,6 +3461,7 @@ function updateUI(){
   const trophyCompletion = getTrophyCompletion();
   const activeBuffs = getActiveBuffs();
   const activeSetData = getActiveSetBonuses();
+  const investedSummary = getInvestedSummary();
 
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
@@ -3529,6 +3530,9 @@ function updateUI(){
       <div class="camp-stat"><strong>Dano de habilidade</strong><span>${getSkillPowerBonus()}</span></div>
       <div class="camp-stat"><strong>Dano resistido</strong><span>${getPassiveModifiers().flatReduction}</span></div>
       <div class="camp-stat"><strong>XP</strong><span>${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
+      <div class="camp-stat"><strong>Pontos em Vida</strong><span>${investedSummary.hpPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Mana</strong><span>${investedSummary.mpPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Ataque</strong><span>${investedSummary.attackPoints}</span></div>
     </div>
     <div class="inventory-item">
       <strong>Equipamentos</strong>
@@ -3570,7 +3574,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}.` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Consulte a vida, ataque, armadura, mana e os sets ligados a cada criatura ja catalogada." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${player.stats.invested.hp} | Mana: ${player.stats.invested.mp} | Ataque: ${player.stats.invested.attack}</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="button-row"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy ? "disabled" : ""}>Enfrentar chefao</button></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span></div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Permite reorganizar todos os pontos ganhos por nivel, caso voce tenha distribuido algo errado.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${getTotalInvestedPoints() <= 0 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? ""
@@ -3644,11 +3648,6 @@ function updateUI(){
   }
   if(inventoryPanel){
     inventoryPanel.style.display = currentMode === "trophies" ? "none" : "block";
-  }
-  const trainerButton = document.getElementById("trainerRespecBtn");
-  if(trainerButton && !trainerButton.dataset.bound){
-    trainerButton.addEventListener("click", () => resetInvestedStatsAtCamp());
-    trainerButton.dataset.bound = "true";
   }
   saveCampaign();
 }
@@ -4373,6 +4372,22 @@ function getTrainerRespecCost(){
   return 120 + totalInvested * 35;
 }
 
+function getInvestedSummary(){
+  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
+  const hpPoints = Number(invested.hp) || 0;
+  const mpPoints = Number(invested.mp) || 0;
+  const attackPoints = Number(invested.attack) || 0;
+  return {
+    hpPoints,
+    mpPoints,
+    attackPoints,
+    hpGain: hpPoints * player.growth.hp,
+    mpGain: mpPoints * player.growth.mp,
+    attackGain: attackPoints * player.growth.attack,
+    skillGain: attackPoints * player.growth.attack
+  };
+}
+
 function resetInvestedStatsAtCamp(){
   if(!player || !player.stats){
     log("O treinador nao encontrou seus dados de progresso.");
@@ -4420,6 +4435,7 @@ function resetInvestedStatsAtCamp(){
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
+  currentMode = "battle";
   log(`O treinador reorganizou seus atributos por ${cost} moedas. Redistribua ${totalInvested} ponto(s).`);
   updateUI();
   const panel = document.getElementById("levelUpPanel");
@@ -4496,4 +4512,3 @@ setInterval(() => {
 </script>
 </body>
 </html>
-
