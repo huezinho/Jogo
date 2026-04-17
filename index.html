@@ -2708,7 +2708,7 @@ function getSkillInfo(){
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_second_wind"){
-      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.18 : 0.07;
+      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.1 : 0.07;
       const heal = Math.floor(maxHp * healFactor);
       const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.1 : 0;
       return { ...skill, cost: 20, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome 20 MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 10% por 3 turnos." : ""}` };
@@ -2717,7 +2717,7 @@ function getSkillInfo(){
       const isEspadachim = subclassState.tier30 === "espadachim" && player.level >= 30;
       const damage = isEspadachim
         ? 20 + Math.floor(0.1 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
-        : 20 + Math.floor(0.1 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
+        : 20 + Math.floor(0.06 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
       const cost = isEspadachim ? 50 : subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 44 : 38;
       return {
         ...skill,
@@ -2733,8 +2733,8 @@ function getSkillInfo(){
       const isBerserker = subclassState.tier60 === "berserker" && player.level >= 60;
       const maxEnemyHp = enemy?.maxHp || 0;
       const damage = isBerserker
-        ? 60 + Math.floor(0.2 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
-        : 30 + Math.floor((subclassState.tier60 === "paladino" && player.level >= 60 ? 0.2 : 0.1) * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
+        ? 60 + Math.floor(0.06 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
+        : 30 + Math.floor(0.06 * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
       return { ...skill, cost: 40, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome 40 MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
     }
     if(skill.type === "warrior_swift_strikes"){
@@ -2783,10 +2783,10 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.8;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.34 : 0.22;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.16 : 0.18;
       const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
       const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.3, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 30% da vida maxima do inimigo, devolve toda a mana gasta.` };
+      return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.4, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 40% da vida maxima do inimigo, devolve toda a mana gasta.` };
     }
     if(skill.type === "mage_fireball"){
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
@@ -2847,7 +2847,7 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_discharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 60 + (10 * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.1 * maxMp) + getUniversalDamageFlatBonus();
+      const damage = 60 + (16 * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.05 * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: (10 * charges) + mageExtraCost, damage, charges, description: `${skill.name}: consome ${(10 * charges) + mageExtraCost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_sacred_phoenix"){
@@ -3136,7 +3136,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida.`;
   }
   if(skill.type === "mage_last_resort"){
-    return `${skill.name}: se um golpe fatal acertaria voce e sua mana atual for maior que esse dano, a mana e gasta para anular o golpe.`;
+    return `${skill.name}: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.`;
   }
   if(skill.type === "mage_mana_to_life"){
     const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
@@ -3284,9 +3284,13 @@ function getBasicAttackTooltip(){
   if(player.class === "Mago"){
     const missiles = Math.floor(3 + 0.1 * player.level);
     const manaCost = missiles * 3;
-    const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
+    const subclassState = getPlayerSubclassState();
+    const elementalistaBonus = subclassState.tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
     const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus + getUniversalDamageFlatBonus();
     const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus + getUniversalDamageFlatBonus();
+    if(subclassState.tier30 === "arcanista" && player.level >= 30){
+      return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.`;
+    }
     return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
   const attackMin = getActiveAttack();
@@ -3430,9 +3434,10 @@ function applyIncomingDamage(baseDamage, options = {}){
   }
   let manaAbsorbed = 0;
   const passiveModifiers = getPassiveModifiers();
-  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && damage >= player.hp && damage > 0 && player.mp > damage){
-    manaAbsorbed = damage;
-    player.mp = Math.max(0, player.mp - damage);
+  const lastResortManaCost = damage * 2;
+  if(!options.ignorePreciousMana && passiveModifiers.preciousMana && damage >= player.hp && damage > 0 && player.mp >= lastResortManaCost){
+    manaAbsorbed = lastResortManaCost;
+    player.mp = Math.max(0, player.mp - lastResortManaCost);
     damage = 0;
     if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30){
       addArcaneCharges(Math.floor(manaAbsorbed / 100));
