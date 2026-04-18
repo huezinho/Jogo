@@ -1862,12 +1862,12 @@ const subclassChoicesByClass = {
     ],
     tier60: {
       atirador: [
-        { id: "atirador_arcano", name: "Atirador Arcano", description: "Transforma mana em disparos tecnicos e marcas arcanas.", bonusHp: 0, bonusMp: 200, bonusAttack: 0, skillPower: 40 },
-        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em execucao letal de alvo unico.", bonusHp: 0, bonusMp: 0, bonusAttack: 40, skillPower: 0 }
+        { id: "atirador_arcano", name: "Atirador Arcano", description: "Transforma mana em disparos tecnicos e marcas arcanas.", bonusHp: 0, bonusMp: 400, bonusAttack: 0, skillPower: 50 },
+        { id: "sniper", name: "Sniper", description: "Concentra cada disparo em execucao letal de alvo unico.", bonusHp: 0, bonusMp: 0, bonusAttack: 70, skillPower: 0 }
       ],
       cacador: [
-        { id: "espreitador", name: "Espreitador", description: "Predador furtivo com equilibrio entre mana e dano oportunista.", bonusHp: 0, bonusMp: 50, bonusAttack: 25, skillPower: 10 },
-        { id: "guarda_florestal", name: "Guarda Florestal", description: "Sentinela resistente que domina tiros de controle e sobrevivencia.", bonusHp: 400, bonusMp: 0, bonusAttack: 25, skillPower: 0 }
+        { id: "espreitador", name: "Espreitador", description: "Predador furtivo com equilibrio entre mana e dano oportunista.", bonusHp: 0, bonusMp: 100, bonusAttack: 30, skillPower: 15 },
+        { id: "guarda_florestal", name: "Guarda Florestal", description: "Sentinela resistente que domina tiros de controle e sobrevivencia.", bonusHp: 500, bonusMp: 0, bonusAttack: 25, skillPower: 0 }
       ]
     }
   }
@@ -4159,7 +4159,7 @@ function getSkillInfo(){
       const baseDamage = 30 + attack + skillPower;
       const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
       const cost = 60 + Math.floor(0.3 * player.level);
-      const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.5 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
+      const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.7 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
       const marksOnNonCrit = subclassState.tier60 === "atirador_arcano" && player.level >= 60;
       const critProfile = getArcherCriticalProfile(critChance);
       const overflowText = critProfile.totalChance > 1 ? ` O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em ${Math.floor(critProfile.critDamageBonus * 100)}% de dano extra.` : "";
@@ -4181,7 +4181,8 @@ function getSkillInfo(){
       const attackFactor = subclassState.tier60 === "sniper" && player.level >= 60 ? 1.2 : 0.8;
       const skillFactor = subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.2 : 0.8;
       const damage = 50 + Math.floor(attackFactor * attack) + Math.floor(skillFactor * skillPower);
-      return { ...skill, cost: 80, damage, ignoreArmor: true, ignoreShield: true, description: `${skill.name}: consome 80 MP e causa ${damage} de dano, ignorando armadura e escudo do inimigo.` };
+      const shattersShield = subclassState.tier60 === "sniper" && player.level >= 60;
+      return { ...skill, cost: 80, damage, ignoreArmor: true, ignoreShield: true, shattersShield, description: `${skill.name}: consome 80 MP e causa ${damage} de dano, ignorando armadura e escudo do inimigo.${shattersShield ? " Alem disso, remove totalmente o escudo do alvo." : ""}` };
     }
     if(skill.type === "archer_trap"){
       const bonusCurrentHpDamage = subclassState.tier60 === "espreitador" && player.level >= 60 && enemy ? Math.floor(enemy.hp * 0.08) : 0;
@@ -4215,7 +4216,7 @@ function getSkillInfo(){
     }
     if(skill.type === "archer_weak_spot"){
       const enemyCurrentHp = enemy ? enemy.hp : 0;
-      const damage = 100 + Math.floor(0.4 * attack) + Math.floor(0.3 * skillPower) + Math.floor(0.2 * enemyCurrentHp);
+      const damage = 100 + Math.floor(0.4 * attack) + Math.floor(0.3 * skillPower) + Math.floor(0.25 * enemyCurrentHp);
       return { ...skill, cost: 120, damage, description: `${skill.name}: consome 120 MP e causa ${damage} de dano, explorando a vida atual do alvo.` };
     }
     if(skill.type === "archer_aim_leg"){
@@ -5101,6 +5102,10 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     const criticalHit = rollArcherCriticalOutcome(0);
     damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor, ignoreShield: !!skillInfo.ignoreShield }) : damage;
+    if(applyToTarget && enemy && skillInfo.shattersShield){
+      enemy.shieldValue = 0;
+      enemy.shieldTurns = 0;
+    }
     if(applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
       enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
       enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
