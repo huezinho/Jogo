@@ -657,6 +657,15 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .combat-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
 .combat-detail-card{padding:12px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:6px}
 .combat-detail-card strong{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:#f0f0f0}
+.simple-combat-banner{display:flex;align-items:center;gap:14px;margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08)}
+.simple-combat-avatar{width:88px;height:88px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);flex:0 0 auto}
+.simple-combat-copy{display:flex;flex-direction:column;gap:6px;min-width:0}
+.simple-combat-copy strong{font-size:18px}
+.simple-combat-copy span{color:#d6d6d6}
+.simple-item-line{display:flex;align-items:flex-start;gap:10px}
+.simple-item-symbol{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);font-size:18px;flex:0 0 auto}
+.simple-item-copy{min-width:0}
+.simple-item-copy strong{display:block}
 .scene-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
 .spawn-preview-pill{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
 .spawn-preview-pill strong{display:block;margin-bottom:4px}
@@ -5129,6 +5138,31 @@ function getPotionVisualKind(item){
   return "attack";
 }
 
+function getInventoryItemSymbol(item){
+  if(!item){ return "🎒"; }
+  if(item.type === "consumable"){
+    if(item.id === "health_potion"){ return "🧪"; }
+    if(item.id === "mana_potion"){ return "🔵"; }
+    if(item.id === "skill_tonic"){ return "✨"; }
+    return "⚔️";
+  }
+  if(item.type === "chest"){
+    return "📦";
+  }
+  if(item.type === "equipment"){
+    if(item.slot === "weapon"){
+      if(item.classRestriction === "Arqueiro"){ return "🏹"; }
+      if(item.classRestriction === "Mago"){ return "🪄"; }
+      return "🗡️";
+    }
+    if(item.slot === "head"){ return "🪖"; }
+    if(item.slot === "chest"){ return "🛡️"; }
+    if(item.slot === "legs"){ return "👖"; }
+    if(item.slot === "feet"){ return "🥾"; }
+  }
+  return "📦";
+}
+
 function getItemSpriteMarkup(item){
   if(!item){
     return `<div class="item-sprite chest"><span class="item-part body"></span><span class="item-part lid"></span><span class="item-part lock"></span></div>`;
@@ -5173,11 +5207,11 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
   return `<div class="inventory-item">
-    <div class="inventory-card ${compact ? "compact" : ""}">
-      <div class="inventory-media ${getItemToneClass(item)} ${getItemRarityVisualClass(item)}">
-        ${getItemSpriteMarkup(item)}
+    <div class="simple-item-line">
+      <div class="simple-item-symbol">
+        ${getInventoryItemSymbol(item)}
       </div>
-      <div class="inventory-content">
+      <div class="simple-item-copy">
         <div class="inventory-title-row">
           <strong>${item?.name || "Item"}</strong>
           ${quantityLine}
@@ -5289,7 +5323,7 @@ function getEquipmentDisplayName(item){
     return `<span class="slot-empty">Espaco vazio</span>`;
   }
   const rarityInfo = getRarityInfo(item.rarity);
-  return `<div class="inventory-media ${getItemToneClass(item)} ${getItemRarityVisualClass(item)}" style="width:46px;height:46px;border-radius:12px;margin-bottom:6px;">${getItemSpriteMarkup(item)}</div><span class="${rarityInfo.cssClass}">${item.name}</span>`;
+  return `<span class="simple-item-symbol" style="width:30px;height:30px;font-size:16px;margin:0 auto 6px;">${getInventoryItemSymbol(item)}</span><span class="${rarityInfo.cssClass}">${item.name}</span>`;
 }
 
 function getEquipmentSlotClass(item){
@@ -5543,13 +5577,15 @@ function renderBattleRegionPreviewCard(){
           <span class="enemy-badge">${currentRegion}</span>
         </div>
       </div>
-      ${renderCombatScene(null, currentRegion)}
-      <div class="combat-detail-grid">
-        <div class="combat-detail-card">
-          <strong>Ambiente</strong>
-          <span class="lock-note">${regionData.description}</span>
-          <span class="lock-note">${getBossUnlockText(currentRegion)}</span>
+      <div class="simple-combat-banner">
+        <div class="simple-combat-avatar">${getRegionBattleEmblem(currentRegion)}</div>
+        <div class="simple-combat-copy">
+          <strong>${currentRegion}</strong>
+          <span>${regionData.description}</span>
+          <span>${getBossUnlockText(currentRegion)}</span>
         </div>
+      </div>
+      <div class="combat-detail-grid">
         <div class="combat-detail-card">
           <strong>Chances atuais de encontro</strong>
           <div class="scene-preview-grid">
@@ -5574,12 +5610,19 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
           <span class="enemy-badge">${targetEnemy.region}</span>
         </div>
       </div>
-      ${renderCombatScene(targetEnemy, targetEnemy.region)}
+      <div class="simple-combat-banner">
+        <div class="simple-combat-avatar">${getEnemySpriteIcon(targetEnemy)}</div>
+        <div class="simple-combat-copy">
+          <strong>${targetEnemy.baseName || targetEnemy.name}</strong>
+          <span>${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} | Nivel ${targetEnemy.level}</span>
+          <span>${targetEnemy.possibleDrop}</span>
+        </div>
+      </div>
       <div class="combat-detail-grid">
         <div class="combat-detail-card">
           <strong>Estado do inimigo</strong>
           ${targetEnemy.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${targetEnemy.shieldValue}</div><div class="bar small"><div class="shield-fill" style="width:${Math.min(100, targetEnemy.shieldValue / Math.max(1, targetEnemy.maxHp) * 100)}%"></div></div></div>` : ""}
-          <span class="lock-note">Vida ${Math.max(0, targetEnemy.hp)}/${targetEnemy.maxHp}</span>
+          <span class="lock-note">Vida ${Math.max(0, shownEnemyHp)}/${targetEnemy.maxHp}</span>
           <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / targetEnemy.maxHp * 100}%"></div></div>
           ${targetEnemy.isBoss ? `<span class="lock-note">Mana ${targetEnemy.mp}/${targetEnemy.maxMp}</span><div class="bar"><div class="fill mp" style="width:${targetEnemy.mp / targetEnemy.maxMp * 100}%"></div></div>` : ""}
         </div>
