@@ -3814,6 +3814,9 @@ function getArcherCritChanceBonus(){
   if(subclassState.tier30 === "atirador" && player.level >= 30){
     chance += 0.05;
   }
+  if(subclassState.tier60 === "sniper" && player.level >= 60 && player.level >= 40){
+    chance += 0.15;
+  }
   if(subclassState.tier60 === "sniper" && player.level >= 60){
     chance += 0.15;
   }
