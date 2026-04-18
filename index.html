@@ -15,6 +15,17 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .side-column .panel,.main-column .panel{margin-top:0}
 .main-column{display:flex;flex-direction:column;gap:15px}
 .player-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.player-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+.hero-portrait-panel{padding:12px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.hero-portrait-panel h3{margin:0 0 10px 0}
+.hero-portrait-card{display:flex;flex-direction:column;gap:10px}
+.hero-portrait-stage{width:100%;height:320px;border-radius:18px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:
+radial-gradient(circle at 50% 18%,rgba(255,255,255,.12),rgba(255,255,255,0) 42%),
+linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.hero-portrait-stage .combat-avatar-media{width:100%;height:100%;object-fit:contain;object-position:center top}
+.hero-portrait-stage .combat-avatar-fallback{font-size:110px}
+.hero-portrait-copy{display:flex;flex-direction:column;gap:6px}
+.hero-portrait-copy strong{font-size:18px}
 .coin-badge{padding:8px 14px;border-radius:999px;background:#f6c445;color:#2b2100;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22)}
 .class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .class-card{padding:18px;border:none;border-radius:16px;background:linear-gradient(160deg,#4d4d4d,#2f2f2f);color:#fff;text-align:left;box-shadow:0 10px 20px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease}
@@ -658,8 +669,12 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .combat-detail-card{padding:12px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:6px}
 .combat-detail-card strong{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:#f0f0f0}
 .simple-combat-banner{display:flex;align-items:center;gap:14px;margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08)}
-.simple-combat-avatar{width:88px;height:88px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);flex:0 0 auto}
-.simple-combat-copy{display:flex;flex-direction:column;gap:6px;min-width:0}
+.simple-combat-avatar{width:104px;height:156px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);flex:0 0 auto;overflow:hidden}
+.simple-combat-avatar.enemy-focus-avatar{width:190px;height:284px;border-radius:24px}
+.simple-combat-avatar.region-focus-avatar{width:168px;height:240px;border-radius:24px}
+.combat-avatar-media{width:100%;height:100%;object-fit:contain;object-position:center top;image-rendering:pixelated;display:block}
+.combat-avatar-fallback{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:54px;line-height:1}
+.simple-combat-copy{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
 .simple-combat-copy strong{font-size:18px}
 .simple-combat-copy span{color:#d6d6d6}
 .simple-item-line{display:flex;align-items:flex-start;gap:10px}
@@ -1182,6 +1197,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 <h3>Locais</h3>
 <div class="tabs" id="modeTabs"></div>
 </div>
+<div class="panel hero-portrait-panel" id="heroPortraitPanel"></div>
 </div>
 <div class="main-column">
 <div class="panel" id="playerInfo"></div>
@@ -1247,8 +1263,8 @@ const rarityStats = {
   attack: { comum: 7, incomum: 12, rara: 18, ultra_rara: 26, lendaria: 38 },
   skill: { comum: 8, incomum: 14, rara: 21, ultra_rara: 31, lendaria: 45 }
 };
-const equipmentSlots = ["head", "chest", "weapon", "legs", "feet"];
-const slotLabels = { head: "Cabeca", chest: "Peito", weapon: "Arma", legs: "Pernas", feet: "Pes" };
+const equipmentSlots = ["head", "chest", "weapon", "legs", "feet", "accessory"];
+const slotLabels = { head: "Cabeca", chest: "Peito", weapon: "Arma", legs: "Pernas", feet: "Pes", accessory: "Acessorio" };
 const classIcons = {
   Guerreiro: "&#x1F6E1;&#xFE0F;",
   Arqueiro: "&#x1F3F9;",
@@ -1273,6 +1289,15 @@ const subclassIcons = {
   sniper: "&#x1F4A5;",
   espreitador: "&#x1F576;&#xFE0F;",
   guarda_florestal: "&#x1F333;"
+};
+const combatArtAssets = {
+  heroes: {},
+  enemies: {}
+};
+const combatArtAliases = {
+  enemies: {
+    "devorador-do-eco": "devorador-de-eras"
+  }
 };
 const legacyEnemyDrops = {
   "Lobo Sombrio": { id: "sandalia_mago", name: "Sandalia de Mago", slot: "feet", classRestriction: "Mago", stats: { bonusHp: "hp" } },
@@ -1354,6 +1379,20 @@ const regionSetBonusProfiles = {
   Cataclismo: { bonusHpPercent: 0.20 },
   Paradoxo: { totalDamagePercent: 0.12 }
 };
+const bossAccessoryProfiles = {
+  Floresta: { id: "colar_de_raizes", name: "Colar de Raizes", baseStats: { reflectPercent: 0.02 } },
+  Caverna: { id: "geodo", name: "Geodo", baseStats: { coinBonus: 0.02 } },
+  Ruinas: { id: "tabula_antiga", name: "Tabula Antiga", baseStats: { xpBonus: 0.02 } },
+  Pantano: { id: "escama_da_hidra", name: "Escama da Hidra", baseStats: { turnHealPercent: 0.003 } },
+  Vulcao: { id: "pedra_de_magma", name: "Pedra de Magma", baseStats: { burnDamageReductionPercent: 0.084 } },
+  Abismo: { id: "anel_abismal", name: "Anel Abismal", baseStats: { flatReduction: 5 } },
+  Fortaleza: { id: "alma_do_general", name: "Alma do General", baseStats: { bonusMpPercent: 0.01 } },
+  Necropole: { id: "pacto_do_lorde", name: "Pacto do Lorde", baseStats: { bonusHpPercent: 0.01 } },
+  Citadela: { id: "encanto_do_eclipse", name: "Encanto do Eclipse", baseStats: { totalDamagePercent: 0.01 } },
+  Panteao: { id: "colar_da_fe", name: "Colar da Fe", baseStats: { fatalSaveHealPercent: 0.05 } },
+  Cataclismo: { id: "tesseract", name: "Tesseract", baseStats: { critChanceBonus: 0.05 } },
+  Paradoxo: { id: "o_fim", name: "O Fim", baseStats: { totalDamagePercent: 1 } }
+};
 const regionCombatProfiles = {
   Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
   Caverna: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
@@ -1415,6 +1454,7 @@ function createDefaultPlayerEffects(){
     bonusBasicHits: 0,
     berserkerLastStandAvailable: false,
     berserkerLastStandPending: false,
+    accessoryFatalSaveUsed: false,
     samuraiEchoAvailable: false,
     burnDamagePerTurn: 0,
     burnTurns: 0,
@@ -1575,19 +1615,19 @@ const classes = {
     hp: 120,
     mp: 60,
     attack: 18,
-    growth: { hp: 40, mp: 10, attack: 4 }
+    growth: { hp: 39, mp: 20, attack: 4 }
   },
   Arqueiro: {
     hp: 100,
     mp: 80,
     attack: 16,
-    growth: { hp: 26, mp: 18, attack: 6 }
+    growth: { hp: 26, mp: 20, attack: 6 }
   },
   Mago: {
     hp: 80,
     mp: 100,
     attack: 14,
-    growth: { hp: 10, mp: 26, attack: 3 }
+    growth: { hp: 26, mp: 30, attack: 4 }
   }
 };
 
@@ -1874,6 +1914,11 @@ function getHeroSpriteClass(targetPlayer = player){
   return `hero-${toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro")}`;
 }
 
+function getHeroCombatAssetKey(targetPlayer = player){
+  const currentSubclass = getCurrentSubclassDef(targetPlayer);
+  return toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro");
+}
+
 function getHeroRigType(targetPlayer = player){
   if(targetPlayer?.class === "Guerreiro"){ return "warrior"; }
   if(targetPlayer?.class === "Arqueiro"){ return "archer"; }
@@ -1956,6 +2001,12 @@ function getMageRigMarkup(heroClass){
 function getHeroSpriteMarkup(targetPlayer = player){
   const heroClass = getHeroSpriteClass(targetPlayer);
   return `<div id="heroSprite" class="sprite-figure emoji-sprite ${heroClass}">${getHeroSpriteIcon(targetPlayer)}</div>`;
+}
+
+function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
+  const resolvedKey = combatArtAliases[kind]?.[assetKey] || assetKey;
+  const source = combatArtAssets[kind]?.[resolvedKey] || `assets/combat-art/normalized/${resolvedKey}.png`;
+  return `<img class="combat-avatar-media" src="${source}" alt="${altText}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="combat-avatar-fallback" style="display:none;">${fallbackMarkup}</span>`;
 }
 
 function formatSubclassStatBonuses(subclass){
@@ -2229,8 +2280,12 @@ function selectClass(name){
   updateUI();
 }
 
-function chooseWeightedEnemy(enemyList){
-  const weightedEntries = enemyList.map(enemyData => ({ enemyData, weight: getAdjustedEnemySpawnWeight(enemyData) }));
+function chooseWeightedEnemy(enemyList, options = {}){
+  const { regionName = currentRegion, applyLevelAdjustment = true } = options;
+  const weightedEntries = enemyList.map(enemyData => ({
+    enemyData,
+    weight: applyLevelAdjustment ? getAdjustedEnemySpawnWeight(enemyData, regionName) : Math.max(0, enemyData.weight || 0)
+  }));
   const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0);
   let roll = Math.random() * totalWeight;
   for(const entry of weightedEntries){
@@ -2242,14 +2297,20 @@ function chooseWeightedEnemy(enemyList){
   return enemyList[enemyList.length - 1];
 }
 
-function getAdjustedEnemySpawnWeight(enemyData){
+function getAdjustedEnemySpawnWeight(enemyData, regionName = currentRegion){
   if(!enemyData || !enemyData.weight){ return 0; }
   const levelGap = player.level - enemyData.level;
-  if(levelGap <= 5){
+  if(levelGap <= 3){
     return enemyData.weight;
   }
-  const excessGap = levelGap - 5;
-  const penalty = 1 + (excessGap * 1.8) + (excessGap * excessGap * 0.75);
+  const excessGap = levelGap - 3;
+  const rarityKey = getEnemyRarity(regionName, enemyData.name, false).key;
+  const rarityPenaltyFactor = {
+    comum: 1.45,
+    incomum: 0.9,
+    rara: 0.55
+  }[rarityKey] || 1;
+  const penalty = 1 + (excessGap * 2.4 * rarityPenaltyFactor) + (excessGap * excessGap * 1.1 * rarityPenaltyFactor);
   return Math.max(1, enemyData.weight / penalty);
 }
 
@@ -2269,7 +2330,7 @@ function getRegionSpawnPreview(regionName){
   }
   const weightedEntries = regionData.enemies.map(enemyData => ({
     enemyData,
-    weight: getAdjustedEnemySpawnWeight(enemyData)
+    weight: getAdjustedEnemySpawnWeight(enemyData, regionName)
   }));
   const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0) || 1;
   return weightedEntries.map(entry => ({
@@ -2570,9 +2631,17 @@ function formatStatBonusList(source){
   if(source?.bonusMp){ parts.push(`+${source.bonusMp} mana maxima`); }
   if(source?.bonusAttack){ parts.push(`+${source.bonusAttack} dano de ataque`); }
   if(source?.skillPower){ parts.push(`+${source.skillPower} dano de habilidade`); }
+  if(source?.reflectPercent){ parts.push(`+${Math.floor(source.reflectPercent * 100)}% reflexao de dano`); }
+  if(source?.coinBonus){ parts.push(`+${Math.floor(source.coinBonus * 100)}% moedas`); }
+  if(source?.xpBonus){ parts.push(`+${Math.floor(source.xpBonus * 100)}% XP`); }
+  if(source?.turnHealPercent){ parts.push(`+${(source.turnHealPercent * 100).toFixed(1)}% regen de vida`); }
+  if(source?.burnDamageReductionPercent){ parts.push(`-${(source.burnDamageReductionPercent * 100).toFixed(1)}% dano de queimadura recebido`); }
+  if(source?.flatReduction){ parts.push(`+${source.flatReduction} resistencia fixa`); }
   if(source?.bonusHpPercent){ parts.push(`+${Math.floor(source.bonusHpPercent * 100)}% vida maxima`); }
   if(source?.bonusMpPercent){ parts.push(`+${Math.floor(source.bonusMpPercent * 100)}% mana maxima`); }
   if(source?.totalDamagePercent){ parts.push(`+${Math.floor(source.totalDamagePercent * 100)}% dano total`); }
+  if(source?.fatalSaveHealPercent){ parts.push(`1 salvamento fatal por combate e cura de ${Math.floor(source.fatalSaveHealPercent * 100)}% da vida`); }
+  if(source?.critChanceBonus){ parts.push(`+${Math.floor(source.critChanceBonus * 100)}% chance de critico`); }
   return parts.join(", ");
 }
 
@@ -2586,6 +2655,9 @@ function getSetBonusValues(regionName){
 
 function getRegionEquipmentBaseStats(regionName, slot){
   const profile = regionEquipmentBaseProfiles[regionName] || regionEquipmentBaseProfiles.Floresta;
+  if(slot === "accessory"){
+    return { ...(getBossAccessoryTemplate(regionName)?.baseStats || {}) };
+  }
   return slot === "weapon" ? { ...(profile.weapon || {}) } : { ...(profile.armor || {}) };
 }
 
@@ -2611,6 +2683,21 @@ function getRegionSetTemplate(regionName, slot, className = player?.class || "Gu
     setId: `${slugify(regionName)}_set`,
     setName: getRegionSetLabel(regionName),
     baseStats: getRegionEquipmentBaseStats(regionName, slot)
+  };
+}
+
+function getBossAccessoryTemplate(regionName){
+  const accessory = bossAccessoryProfiles[regionName];
+  if(!accessory){ return null; }
+  return {
+    id: `${slugify(regionName)}_accessory_${accessory.id}`,
+    name: accessory.name,
+    slot: "accessory",
+    classRestriction: null,
+    regionName,
+    setId: null,
+    setName: null,
+    baseStats: accessory.baseStats
   };
 }
 
@@ -2726,7 +2813,8 @@ function normalizePlayerState(){
     chest: normalizeEquipmentMetadata(oldEquipment.chest || null),
     weapon: normalizeEquipmentMetadata(oldEquipment.weapon || null),
     legs: normalizeEquipmentMetadata(oldEquipment.legs || null),
-    feet: normalizeEquipmentMetadata(oldEquipment.feet || oldEquipment.boots || null)
+    feet: normalizeEquipmentMetadata(oldEquipment.feet || oldEquipment.boots || null),
+    accessory: normalizeEquipmentMetadata(oldEquipment.accessory || null)
   };
   player.stats = player.stats || {
     enemiesDefeated: 0,
@@ -2738,6 +2826,7 @@ function normalizePlayerState(){
   player.stats.migrations = player.stats.migrations || {};
   player.stats.regionKills = player.stats.regionKills || {};
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
+  player.growth = { ...(classDefaults.growth || player.growth || { hp: 0, mp: 0, attack: 0 }) };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   if(!player.stats.migrations.baseHpRebalance_v1){
     const oldBaseHpByClass = { Guerreiro: 140, Arqueiro: 120, Mago: 100 };
@@ -2841,6 +2930,11 @@ function getPassiveModifiers(){
     enemyMissChance: 0,
     enemySkipChance: 0,
     xpBonus: 0,
+    burnDamageReductionPercent: 0,
+    bonusHpPercentAccessory: 0,
+    bonusMpPercentAccessory: 0,
+    fatalSaveHealPercent: 0,
+    critChanceBonus: 0,
     preciousMana: false,
     manaToLifePercent: 0
   };
@@ -2918,6 +3012,17 @@ function getPassiveModifiers(){
     base.bonusMp += item.bonusMp || 0;
     base.bonusAttack += item.bonusAttack || 0;
     base.skillPower += item.skillPower || 0;
+    base.reflectPercent += item.reflectPercent || 0;
+    base.coinBonus += item.coinBonus || 0;
+    base.xpBonus += item.xpBonus || 0;
+    base.turnHealPercent += item.turnHealPercent || 0;
+    base.burnDamageReductionPercent += item.burnDamageReductionPercent || 0;
+    base.flatReduction += item.flatReduction || 0;
+    base.bonusMpPercentAccessory += item.bonusMpPercent || 0;
+    base.bonusHpPercentAccessory += item.bonusHpPercent || 0;
+    base.totalDamagePercent += item.totalDamagePercent || 0;
+    base.fatalSaveHealPercent = Math.max(base.fatalSaveHealPercent, item.fatalSaveHealPercent || 0);
+    base.critChanceBonus += item.critChanceBonus || 0;
   }
   const activeSetBonuses = getActiveSetBonuses().bonuses;
   base.bonusHp += activeSetBonuses.bonusHp || 0;
@@ -2927,6 +3032,9 @@ function getPassiveModifiers(){
   base.totalDamagePercent += activeSetBonuses.totalDamagePercent || 0;
   if(activeSetBonuses.bonusMpPercent > 0){
     base.bonusMp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * activeSetBonuses.bonusMpPercent);
+  }
+  if(base.bonusMpPercentAccessory > 0){
+    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.bonusMpPercentAccessory);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
     const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
@@ -2945,6 +3053,9 @@ function getPassiveModifiers(){
   }
   if(activeSetBonuses.bonusHpPercent > 0){
     base.bonusHp += Math.floor((player.maxHp + base.bonusHp + allocation.hp * player.growth.hp) * activeSetBonuses.bonusHpPercent);
+  }
+  if(base.bonusHpPercentAccessory > 0){
+    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + allocation.hp * player.growth.hp) * base.bonusHpPercentAccessory);
   }
   return base;
 }
@@ -3409,7 +3520,7 @@ function handleDungeonGuestMessage(data){
 
 function startDungeonRaid(){
   if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || enemy || isDead || player.hp <= 0){ return; }
-  const template = chooseWeightedEnemy(dungeonData.enemies);
+  const template = chooseWeightedEnemy(dungeonData.enemies, { regionName: "Dungeon" });
   enemy = createEnemyFromTemplate(template, false);
   resetCombatEffects();
   displayState.enemyHp = enemy.hp;
@@ -3697,9 +3808,9 @@ function rollHit(mode = "basic"){
   return Math.random() < getHitChance(mode);
 }
 
-function getArcherDoubleChance(){
+function getArcherCritChanceBonus(){
   const subclassState = getPlayerSubclassState();
-  let chance = 0;
+  let chance = getPassiveModifiers().critChanceBonus || 0;
   if(subclassState.tier30 === "atirador" && player.level >= 30){
     chance += 0.05;
   }
@@ -3712,29 +3823,26 @@ function getArcherDoubleChance(){
   return chance;
 }
 
-function archerCanOverflowToTriple(skillType = ""){
-  const subclassState = getPlayerSubclassState();
-  if(subclassState.tier60 === "sniper" && player.level >= 70){
-    return true;
-  }
-  return skillType === "archer_headshot" && subclassState.tier60 === "sniper" && player.level >= 60;
+function getArcherCriticalProfile(baseChance = 0){
+  const totalChance = Math.max(0, baseChance + (player.class === "Arqueiro" ? getArcherCritChanceBonus() : 0));
+  const critChance = Math.min(1, totalChance);
+  const critDamageBonus = 1 + Math.max(0, totalChance - 1);
+  return {
+    totalChance,
+    critChance,
+    critDamageBonus,
+    multiplierOnCrit: 1 + critDamageBonus
+  };
 }
 
-function getArcherDamageMultiplier(baseChance = 0, allowTriple = false){
-  const totalChance = Math.max(0, baseChance + (player.class === "Arqueiro" ? getArcherDoubleChance() : 0));
-  if(allowTriple && totalChance > 1){
-    const tripleChance = Math.min(0.95, totalChance - 1);
-    if(Math.random() < tripleChance){
-      return 3;
-    }
-    return 2;
-  }
-  const doubleChance = Math.min(0.95, totalChance);
-  return Math.random() < doubleChance ? 2 : 1;
-}
-
-function shouldDoubleDamage(baseChance = 0){
-  return getArcherDamageMultiplier(baseChance) > 1;
+function rollArcherCriticalOutcome(baseChance = 0){
+  const profile = getArcherCriticalProfile(baseChance);
+  const didCrit = Math.random() < profile.critChance;
+  return {
+    ...profile,
+    didCrit,
+    multiplier: didCrit ? profile.multiplierOnCrit : 1
+  };
 }
 
 function getEnemyMissChance(){
@@ -3811,9 +3919,20 @@ function applyEndOfTurnRecovery(){
 async function handlePlayerTurnStartEffects(){
   applyTurnStartPassives();
   if(playerEffects.burnTurns > 0 && playerEffects.burnDamagePerTurn > 0){
-    player.hp = Math.max(0, player.hp - playerEffects.burnDamagePerTurn);
+    const burnReduction = getPassiveModifiers().burnDamageReductionPercent || 0;
+    const burnDamage = Math.max(0, Math.floor(playerEffects.burnDamagePerTurn * (1 - burnReduction)));
+    if(burnDamage >= player.hp && getPassiveModifiers().fatalSaveHealPercent > 0 && !playerEffects.accessoryFatalSaveUsed){
+      playerEffects.accessoryFatalSaveUsed = true;
+      const healAmount = Math.max(1, Math.floor(getCurrentCaps().maxHp * getPassiveModifiers().fatalSaveHealPercent));
+      const healed = healPlayer(healAmount);
+      log(`O acessorio salvou sua vida da queimadura e restaurou ${healed} de vida.`);
+      updateUI();
+      await wait(180);
+      return false;
+    }
+    player.hp = Math.max(0, player.hp - burnDamage);
     displayState.playerHp = player.hp;
-    log(`Voce sofreu ${playerEffects.burnDamagePerTurn} de dano por queimadura.`);
+    log(`Voce sofreu ${burnDamage} de dano por queimadura.`);
     updateUI();
     await wait(180);
     if(player.hp <= 0){
@@ -4028,7 +4147,7 @@ function getSkillInfo(){
         cost,
         turns: 5,
         attackBonus,
-        description: `${skill.name}: consome ${cost} MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em ${attackBonus}${headshotBonus ? ", alem de fortalecer o Headshot em 10% e dar +10% de chance de dano dobrado" : ""}${barrageExtraShotChance ? ", alem de conceder 10% de chance de um disparo extra na Rajada de Flechas" : ""}.`
+        description: `${skill.name}: consome ${cost} MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em ${attackBonus}${headshotBonus ? ", alem de fortalecer o Headshot em 10% e dar +10% de chance de critico" : ""}${barrageExtraShotChance ? ", alem de conceder 10% de chance de um disparo extra na Rajada de Flechas" : ""}.`
       };
     }
     if(skill.type === "archer_headshot"){
@@ -4039,9 +4158,9 @@ function getSkillInfo(){
       const cost = 60 + Math.floor(0.3 * player.level);
       const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.5 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
       const marksOnNonCrit = subclassState.tier60 === "atirador_arcano" && player.level >= 60;
-      const totalDoubleChance = critChance + getArcherDoubleChance();
-      const overflowText = archerCanOverflowToTriple("archer_headshot") && totalDoubleChance > 1 ? ` O excedente acima de 100% vira ${Math.floor((totalDoubleChance - 1) * 100)}% de chance de dano triplo.` : "";
-      return { ...skill, cost, damage, critChance, marksOnNonCrit, allowTriple: archerCanOverflowToTriple("archer_headshot"), description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(totalDoubleChance * 100)}% de chance total de dano dobrado${marksOnNonCrit ? ". Se nao dobrar o dano, marca o alvo para receber 15% a mais no proximo golpe." : "."}${overflowText}` };
+      const critProfile = getArcherCriticalProfile(critChance);
+      const overflowText = critProfile.totalChance > 1 ? ` O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em ${Math.floor(critProfile.critDamageBonus * 100)}% de dano extra.` : "";
+      return { ...skill, cost, damage, critChance, marksOnNonCrit, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com ${Math.floor(critProfile.totalChance * 100)}% de chance total de critico.${marksOnNonCrit ? " Se nao critar, marca o alvo para receber 15% a mais no proximo golpe." : ""}${overflowText}` };
     }
     if(skill.type === "archer_camouflage"){
       const cost = 40 + Math.floor(0.5 * player.level);
@@ -4172,7 +4291,7 @@ function getActiveSkillPreviewDescription(skill){
     mage_avalanche: "Magia de avalanche com dano pesado e enfraquecimento prolongado.",
     archer_focus: "Buff de precisão e dano que prepara seus tiros mais importantes por varios turnos.",
     archer_camouflage: "Ferramenta de esquiva e preparação ofensiva, excelente para jogadas taticas.",
-    archer_headshot: "Disparo tecnico de alto dano, com chance de explosao critíca ou marcacao.",
+    archer_headshot: "Disparo tecnico de alto dano, com chance de critico ou marcacao.",
     archer_barrage: "Sequencia de disparos basicos, com evolucoes diferentes para cada rota do cacador.",
     archer_piercing_shot: "Tiro direto para atravessar escudo e armadura.",
     archer_trap: "Ferramenta de controle que pode travar o turno do inimigo e criar vantagem.",
@@ -4206,12 +4325,12 @@ function getPassivePreviewDescription(skill){
     mage_charge_damage: "Passiva que recompensa manter cargas arcanas ativas.",
     mage_glass_cannon: "Passiva de burst inicial extremo com risco elevado.",
     archer_dodge_level_scaling: "Passiva base de esquiva do arqueiro, escalando com o nivel.",
-    archer_dodge_double_bonus: "Passiva mista de esquiva com chance extra de dano dobrado.",
+    archer_dodge_double_bonus: "Passiva mista de esquiva com chance extra de critico.",
     archer_dodge_coin_bonus: "Passiva de esquiva com foco economico.",
     archer_attack_level_bonus: "Passiva central da rota ofensiva, aumentando ataque base e dano de habilidade por nivel.",
     archer_dodge_damage_buff: "Passiva reativa que transforma esquiva em vantagem ofensiva ou sustentacao.",
     archer_mana_to_skill_bonus: "Passiva que converte mana maxima em dano de habilidade.",
-    archer_sniper_bonus_crit: "Passiva de crítico avançado, com chance de dano triplo ao extrapolar o limite.",
+    archer_sniper_bonus_crit: "Passiva de critico avancado, fazendo o excedente acima de 100% virar dano critico.",
     archer_enemy_skip_chance: "Passiva de pressão que pode fazer o inimigo perder o turno.",
     archer_flat_reduction_level: "Passiva defensiva de redução fixa por nivel.",
     coin_bonus: "Passiva voltada para aumentar suas recompensas em moedas."
@@ -4303,7 +4422,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce.`;
   }
   if(skill.type === "archer_dodge_double_bonus"){
-    return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e 5% de chance de qualquer ataque ou habilidade causar dano dobrado.`;
+    return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.`;
   }
   if(skill.type === "archer_dodge_coin_bonus"){
     return `${skill.name}: concede ${Math.floor((0.05 + 0.005 * player.level) * 100)}% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.`;
@@ -4311,7 +4430,7 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "archer_attack_level_bonus"){
     const attackBonus = Math.floor(0.9 * player.level);
     const skillBonus = Math.floor((subclassState.tier60 === "atirador_arcano" && player.level >= 60 ? 1.3 : 0.9) * player.level);
-    return `${skill.name}: concede ${attackBonus} de dano de ataque basico e ${skillBonus} de dano de habilidade no nivel atual.${subclassState.tier60 === "sniper" && player.level >= 60 ? " Alem disso, seus ataques e habilidades ganham 15% de chance adicional de dano dobrado." : ""}`;
+    return `${skill.name}: concede ${attackBonus} de dano de ataque basico e ${skillBonus} de dano de habilidade no nivel atual.${subclassState.tier60 === "sniper" && player.level >= 60 ? " Alem disso, seus ataques e habilidades ganham 15% de chance adicional de critico." : ""}`;
   }
   if(skill.type === "archer_dodge_damage_buff"){
     if(subclassState.tier60 === "espreitador" && player.level >= 60){
@@ -4326,7 +4445,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: converte ${Math.floor((player.maxMp + getPassiveModifiers().bonusMp) * 0.05)} de mana maxima em dano de habilidade.`;
   }
   if(skill.type === "archer_sniper_bonus_crit"){
-    return `${skill.name}: concede 15% de chance de dano dobrado e faz qualquer excedente acima de 100% virar chance de dano triplo.`;
+    return `${skill.name}: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional.`;
   }
   if(skill.type === "archer_enemy_skip_chance"){
     return `${skill.name}: concede 7% de chance do inimigo perder o turno sem atacar.`;
@@ -4440,6 +4559,7 @@ function getBasicAttackTooltip(){
 function resetCombatEffects(){
   const subclassState = getPlayerSubclassState();
   playerEffects = createDefaultPlayerEffects();
+  playerEffects.accessoryFatalSaveUsed = false;
   playerEffects.firstSkillFreeAvailable = false;
   playerEffects.firstAttackDoubleAvailable = player.class === "Mago" && subclassState.tier60 === "corrompido" && player.level >= 70;
   playerEffects.incomingDamageBonusTurns = playerEffects.firstAttackDoubleAvailable ? 2 : 0;
@@ -4588,6 +4708,15 @@ function applyIncomingDamage(baseDamage, options = {}){
     }
   }
   if(damage > 0){
+    if(damage >= player.hp && passiveModifiers.fatalSaveHealPercent > 0 && !playerEffects.accessoryFatalSaveUsed){
+      playerEffects.accessoryFatalSaveUsed = true;
+      damage = 0;
+      const healAmount = Math.max(1, Math.floor(getCurrentCaps().maxHp * passiveModifiers.fatalSaveHealPercent));
+      const healed = healPlayer(healAmount);
+      log(`O acessorio salvou sua vida e restaurou ${healed} de vida.`);
+    }
+  }
+  if(damage > 0){
     player.hp -= damage;
     if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
       playerEffects.shieldValue += damage;
@@ -4664,8 +4793,13 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
   }
   let damage = getActiveAttack() + Math.floor(Math.random() * 6);
+  let criticalText = "";
   if(player.class === "Arqueiro"){
-    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple());
+    const criticalHit = rollArcherCriticalOutcome(0);
+    if(criticalHit.didCrit){
+      damage = Math.floor(damage * criticalHit.multiplier);
+      criticalText = ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.`;
+    }
   }
   let finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
   let extraText = "";
@@ -4676,7 +4810,7 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     finalDamage += dealtEcho;
     extraText = ` Mente Limpa adicionou um segundo corte de ${dealtEcho} de dano.`;
   }
-  return { damage: finalDamage, message: `${namePrefix} causou ${finalDamage} de dano.${extraText}` };
+  return { damage: finalDamage, message: `${namePrefix} causou ${finalDamage} de dano.${criticalText}${extraText}` };
 }
 
 function applyFirstDamageSkillBonus(damage, isDamageSkill){
@@ -4920,14 +5054,14 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "archer_headshot"){
     damage = skillInfo.damage;
-    const critMultiplier = getArcherDamageMultiplier(skillInfo.critChance, !!skillInfo.allowTriple);
-    const shouldMarkTarget = critMultiplier === 1 && skillInfo.marksOnNonCrit && applyToTarget && !!enemy;
-    damage *= critMultiplier;
+    const criticalHit = rollArcherCriticalOutcome(skillInfo.critChance);
+    const shouldMarkTarget = !criticalHit.didCrit && skillInfo.marksOnNonCrit && applyToTarget && !!enemy;
+    damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
     if(shouldMarkTarget && enemy){
       enemy.nextDamageTakenPercent = Math.max(enemy.nextDamageTakenPercent || 0, 0.15);
     }
-    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${shouldMarkTarget ? " O alvo ficou marcado para o proximo golpe." : ""}`;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${criticalHit.didCrit ? ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.` : ""}${shouldMarkTarget ? " O alvo ficou marcado para o proximo golpe." : ""}`;
   }
   if(skillInfo.type === "archer_barrage"){
     let totalDamage = 0;
@@ -4944,7 +5078,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         if(barrageBonusPercent > 0){
           hitDamage += Math.floor(hitDamage * barrageBonusPercent);
         }
-        hitDamage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple());
+        const criticalHit = rollArcherCriticalOutcome(0);
+        hitDamage = Math.floor(hitDamage * criticalHit.multiplier);
         totalDamage += applyToTarget ? applyDamageToEnemy(hitDamage) : hitDamage;
         hits++;
       }else{
@@ -4960,22 +5095,24 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(["archer_piercing_shot", "archer_arcane_shot", "archer_surprise", "archer_tranquilizer", "archer_overcharge", "archer_weak_spot"].includes(skillInfo.type)){
     damage = skillInfo.damage;
-    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
+    const criticalHit = rollArcherCriticalOutcome(0);
+    damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor, ignoreShield: !!skillInfo.ignoreShield }) : damage;
     if(applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
       enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
       enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
     }
-    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${criticalHit.didCrit ? ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.` : ""}`;
   }
   if(skillInfo.type === "archer_execute"){
     damage = skillInfo.damage;
     if(enemy && enemy.hp <= Math.floor(enemy.maxHp * skillInfo.executeThreshold)){
       damage *= skillInfo.executeMultiplier;
     }
-    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
+    const criticalHit = rollArcherCriticalOutcome(0);
+    damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
-    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${criticalHit.didCrit ? ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.` : ""}`;
   }
   if(skillInfo.type === "archer_trap"){
     damage = applyToTarget ? applyDamageToEnemy(skillInfo.damage) : skillInfo.damage;
@@ -4990,7 +5127,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "archer_aim_leg"){
     damage = skillInfo.damage;
-    damage *= getArcherDamageMultiplier(0, archerCanOverflowToTriple(skillInfo.type));
+    const criticalHit = rollArcherCriticalOutcome(0);
+    damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
     if(applyToTarget && enemy){
       enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
@@ -5002,7 +5140,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         freezeApplied = true;
       }
     }
-    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${freezeApplied ? " O inimigo perdeu o equilibrio e pode perder o proximo turno." : ""}`;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${criticalHit.didCrit ? ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.` : ""}${freezeApplied ? " O inimigo perdeu o equilibrio e pode perder o proximo turno." : ""}`;
   }
   if(skillInfo.type === "archer_cutting_shot"){
     if(applyToTarget && enemy){
@@ -5049,12 +5187,14 @@ function getRarityStat(statKey, rarity){
 }
 
 function applyEquipmentRarityStats(item, baseStats){
-  for(const bonusKey of ["bonusHp", "bonusMp", "bonusAttack", "skillPower"]){
+  for(const bonusKey of ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "reflectPercent", "coinBonus", "xpBonus", "turnHealPercent", "burnDamageReductionPercent", "flatReduction", "bonusMpPercent", "bonusHpPercent", "totalDamagePercent", "fatalSaveHealPercent", "critChanceBonus"]){
     delete item[bonusKey];
   }
   const rarityMultiplier = rarityMultipliers[item.rarity] || 1;
   for(const [bonusKey, baseValue] of Object.entries(baseStats || {})){
-    const value = Math.ceil(baseValue * rarityMultiplier);
+    const isDecimalStat = ["reflectPercent", "coinBonus", "xpBonus", "turnHealPercent", "burnDamageReductionPercent", "bonusMpPercent", "bonusHpPercent", "totalDamagePercent", "fatalSaveHealPercent", "critChanceBonus"].includes(bonusKey);
+    const rawValue = baseValue * rarityMultiplier;
+    const value = isDecimalStat ? Math.round(rawValue * 10000) / 10000 : Math.ceil(rawValue);
     if(value > 0){
       item[bonusKey] = value;
     }
@@ -5077,10 +5217,10 @@ function normalizeEquipmentMetadata(item){
   if(item.enemyName && !item.regionName){
     item.regionName = getRegionFromEnemy(item.enemyName);
   }
-  if(item.slot !== "weapon"){
+  if(!["weapon"].includes(item.slot)){
     item.classRestriction = null;
   }
-  if(item.regionName){
+  if(item.regionName && item.slot !== "accessory"){
     item.setId = `${slugify(item.regionName)}_set`;
     item.setName = getRegionSetLabel(item.regionName);
     const refreshedTemplate = getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
@@ -5089,6 +5229,16 @@ function normalizeEquipmentMetadata(item){
       item.id = `${refreshedTemplate.id}_${item.rarity}`;
       applyEquipmentRarityStats(item, refreshedTemplate.baseStats);
       item.name = `${refreshedTemplate.name} ${getRarityInfo(item.rarity).label}`;
+    }
+  }else if(item.regionName && item.slot === "accessory"){
+    item.setId = null;
+    item.setName = null;
+    const accessoryTemplate = getBossAccessoryTemplate(item.regionName);
+    if(accessoryTemplate){
+      item.baseItemId = accessoryTemplate.id;
+      item.id = `${accessoryTemplate.id}_${item.rarity}`;
+      applyEquipmentRarityStats(item, accessoryTemplate.baseStats);
+      item.name = `${accessoryTemplate.name} ${getRarityInfo(item.rarity).label}`;
     }
   }
   return item;
@@ -5099,6 +5249,9 @@ function buildEquipmentDescription(item){
   const lines = [];
   const statText = formatStatBonusList(item);
   if(statText){ lines.push(statText); }
+  if(item.slot === "accessory" && item.regionName){
+    lines.push(`Acessorio raro do chefao de ${item.regionName}`);
+  }
   if(item.setId && item.setName){
     const setPieces = getEquippedSetCount(item.setId);
     const setBonus = getSetBonusValues(item.regionName);
@@ -5150,6 +5303,7 @@ function getInventoryItemSymbol(item){
     return "📦";
   }
   if(item.type === "equipment"){
+    if(item.slot === "accessory"){ return "📿"; }
     if(item.slot === "weapon"){
       if(item.classRestriction === "Arqueiro"){ return "🏹"; }
       if(item.classRestriction === "Mago"){ return "🪄"; }
@@ -5159,6 +5313,7 @@ function getInventoryItemSymbol(item){
     if(item.slot === "chest"){ return "🛡️"; }
     if(item.slot === "legs"){ return "👖"; }
     if(item.slot === "feet"){ return "🥾"; }
+    if(item.slot === "accessory"){ return "📿"; }
   }
   return "📦";
 }
@@ -5247,6 +5402,9 @@ function createEquipmentItem(dropTemplate, rarity){
 
 function getDropTemplateFromItem(item){
   item = normalizeEquipmentMetadata(item);
+  if(item?.slot === "accessory" && item?.regionName){
+    return getBossAccessoryTemplate(item.regionName);
+  }
   if(item?.regionName){
     return getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
   }
@@ -5279,6 +5437,17 @@ function getSellPrice(item){
         + (item.bonusMp || 0) * 1
         + (item.bonusAttack || 0) * 7
         + (item.skillPower || 0) * 6
+        + Math.floor((item.reflectPercent || 0) * 600)
+        + Math.floor((item.coinBonus || 0) * 600)
+        + Math.floor((item.xpBonus || 0) * 800)
+        + Math.floor((item.turnHealPercent || 0) * 2600)
+        + Math.floor((item.burnDamageReductionPercent || 0) * 700)
+        + (item.flatReduction || 0) * 18
+        + Math.floor((item.bonusMpPercent || 0) * 900)
+        + Math.floor((item.bonusHpPercent || 0) * 900)
+        + Math.floor((item.totalDamagePercent || 0) * 1200)
+        + Math.floor((item.fatalSaveHealPercent || 0) * 2200)
+        + Math.floor((item.critChanceBonus || 0) * 900)
       )
     );
   }
@@ -5287,7 +5456,8 @@ function getSellPrice(item){
 
 function getForgeUpgradeCost(item){
   const rarityRank = getRarityRank(item.rarity);
-  return 70 + rarityRank * 95;
+  const baseCost = 70 + rarityRank * 95;
+  return item.slot === "accessory" ? Math.floor(baseCost * 12) : baseCost;
 }
 
 function getForgeUpgradeChance(item){
@@ -5335,6 +5505,7 @@ function renderEquipmentShowcase(){
     <div class="equipment-layout">
       <div class="equipment-stack">
         <div class="equip-slot action-btn equip-weapon ${getEquipmentSlotClass(player.equipment.weapon)}" data-tooltip="${getEquipmentTooltip(player.equipment.weapon)}" oncontextmenu="return unequipItem('weapon', event)"><strong>${slotLabels.weapon}</strong>${getEquipmentDisplayName(player.equipment.weapon)}</div>
+        <div class="equip-slot action-btn equip-accessory ${getEquipmentSlotClass(player.equipment.accessory)}" data-tooltip="${getEquipmentTooltip(player.equipment.accessory)}" oncontextmenu="return unequipItem('accessory', event)"><strong>${slotLabels.accessory}</strong>${getEquipmentDisplayName(player.equipment.accessory)}</div>
       </div>
       <div class="equipment-body">
         <div class="hero-silhouette">${classIcons[player.class] || "&#x2726;"}</div>
@@ -5397,7 +5568,8 @@ function getEnemyRarity(region, enemyName, isBoss = false){
 
 function getEnemyPossibleDrop(enemyName, region, isBoss = false){
   if(isBoss){
-    return `Bau da ${region}`;
+    const accessoryName = getBossAccessoryTemplate(region)?.name;
+    return accessoryName ? `Bau da ${region} | 3%: ${accessoryName}` : `Bau da ${region}`;
   }
   if(region === "Dungeon"){
     return "Tesouros da expedicao ainda nao catalogados";
@@ -5578,7 +5750,7 @@ function renderBattleRegionPreviewCard(){
         </div>
       </div>
       <div class="simple-combat-banner">
-        <div class="simple-combat-avatar">${getRegionBattleEmblem(currentRegion)}</div>
+        <div class="simple-combat-avatar region-focus-avatar"><span class="combat-avatar-fallback">${getRegionBattleEmblem(currentRegion)}</span></div>
         <div class="simple-combat-copy">
           <strong>${currentRegion}</strong>
           <span>${regionData.description}</span>
@@ -5611,7 +5783,7 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
         </div>
       </div>
       <div class="simple-combat-banner">
-        <div class="simple-combat-avatar">${getEnemySpriteIcon(targetEnemy)}</div>
+        <div class="simple-combat-avatar enemy-focus-avatar">${renderCombatAvatar("enemies", toCssToken(targetEnemy.baseName || targetEnemy.name || "inimigo"), getEnemySpriteIcon(targetEnemy), targetEnemy.baseName || targetEnemy.name)}</div>
         <div class="simple-combat-copy">
           <strong>${targetEnemy.baseName || targetEnemy.name}</strong>
           <span>${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} | Nivel ${targetEnemy.level}</span>
@@ -5620,7 +5792,6 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
       </div>
       <div class="combat-detail-grid">
         <div class="combat-detail-card">
-          <strong>Estado do inimigo</strong>
           ${targetEnemy.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${targetEnemy.shieldValue}</div><div class="bar small"><div class="shield-fill" style="width:${Math.min(100, targetEnemy.shieldValue / Math.max(1, targetEnemy.maxHp) * 100)}%"></div></div></div>` : ""}
           <span class="lock-note">Vida ${Math.max(0, shownEnemyHp)}/${targetEnemy.maxHp}</span>
           <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / targetEnemy.maxHp * 100}%"></div></div>
@@ -5630,7 +5801,7 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
           <strong>Perigos</strong>
           ${targetEnemy.armor > 0 ? `<span class="lock-note">Armadura: ${targetEnemy.armor}</span>` : `<span class="lock-note">Sem armadura adicional.</span>`}
           ${targetEnemy.maxHpStrikePercent > 0 ? `<span class="lock-note">Impacto brutal: +${Math.floor(targetEnemy.maxHpStrikePercent * 100)}% da sua vida maxima</span>` : ""}
-          ${(targetEnemy.bossAbilities || []).length ? `<div class="boss-ability-list">${targetEnemy.bossAbilities.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>` : `<span class="lock-note">${targetEnemy.isBoss ? "Este chefao ainda nao revelou habilidades extras." : "Use a arena e o ritmo do ataque para ler o padrao do inimigo."}</span>`}
+          ${(targetEnemy.bossAbilities || []).length ? `<div class="boss-ability-list">${targetEnemy.bossAbilities.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>` : `${targetEnemy.isBoss ? `<span class="lock-note">Este chefao ainda nao revelou habilidades extras.</span>` : ""}`}
           ${targetEnemy.bossBuffTurns > 0 ? `<span class="status-on">Buff ativo por ${targetEnemy.bossBuffTurns} turno(s)</span>` : ""}
         </div>
         <div class="combat-detail-card">
@@ -5648,7 +5819,7 @@ function renderBestiary(){
   const enemyCards = regionData.enemies.map(template => {
     const stats = getEnemyStats(template, selectedRegion, false);
     const rarity = getEnemyRarity(selectedRegion, template.name, false);
-    return `<div class="inventory-item"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop possivel: ${getEnemyPossibleDrop(template.name, selectedRegion, false)}</span><br><span class="lock-note">${getRegionSetLabel(selectedRegion)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(selectedRegion))}</span></div>`;
+    return `<div class="inventory-item"><div class="simple-item-line"><div class="simple-combat-avatar" style="width:64px;height:96px;border-radius:14px;">${renderCombatAvatar("enemies", toCssToken(template.name), getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div><div class="simple-item-copy"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop possivel: ${getEnemyPossibleDrop(template.name, selectedRegion, false)}</span><br><span class="lock-note">${getRegionSetLabel(selectedRegion)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(selectedRegion))}</span></div></div></div>`;
   }).join("");
   const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
   const bossProfile = getBossDifficultyProfile(selectedRegion, true);
@@ -5662,9 +5833,9 @@ function renderBestiary(){
       <span class="lock-note">${getBossUnlockText(selectedRegion)}</span>
       <div class="inventory-list">${enemyCards}</div>
       <div class="inventory-item" style="margin-top:12px;">
-        <strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
+        <div class="simple-item-line"><div class="simple-combat-avatar" style="width:72px;height:108px;border-radius:14px;">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
         <span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br>
-        <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span>
+        <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span></div></div>
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
       </div>
     </div>`;
@@ -5720,9 +5891,15 @@ function getBossChestItem(region){
   if(!regionData){ return null; }
   const possibleDrops = regionData.enemies.filter(enemyData => !!getEnemyDropTemplate(enemyData.name, region, player.class));
   if(!possibleDrops.length){ return null; }
-  const chosenEnemy = chooseWeightedEnemy(possibleDrops);
+  const chosenEnemy = chooseWeightedEnemy(possibleDrops, { regionName: region, applyLevelAdjustment: false });
   const dropTemplate = getEnemyDropTemplate(chosenEnemy.name, region, player.class);
   return createEquipmentItem(dropTemplate, rollWeightedRarity());
+}
+
+function getBossAccessoryItem(region){
+  const template = getBossAccessoryTemplate(region);
+  if(!template){ return null; }
+  return createEquipmentItem(template, rollWeightedRarity());
 }
 
 function createRegionChest(region){
@@ -5738,6 +5915,14 @@ function createRegionChest(region){
 function grantBossChest(region){
   addInventoryItem(createRegionChest(region));
   log(`Voce recebeu um Bau da ${region}!`);
+}
+
+function tryBossAccessoryDrop(region){
+  const accessory = getBossAccessoryItem(region);
+  if(!accessory){ return; }
+  if(Math.random() > 0.03){ return; }
+  addInventoryItem(accessory);
+  log(`O chefao deixou ${accessory.name}!`);
 }
 
 function openChest(itemUid){
@@ -6002,8 +6187,8 @@ function spawnEnemy(isBoss = false){
   const template = isBoss
     ? regionData.boss
     : enemiesSpawned < 3
-      ? (!isDungeonMode() ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") : null) || chooseWeightedEnemy(regionData.enemies)
-      : chooseWeightedEnemy(regionData.enemies);
+      ? (!isDungeonMode() ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") : null) || chooseWeightedEnemy(regionData.enemies, { regionName: isDungeonMode() ? "Dungeon" : currentRegion })
+      : chooseWeightedEnemy(regionData.enemies, { regionName: isDungeonMode() ? "Dungeon" : currentRegion });
   enemy = createEnemyFromTemplate(template, isBoss);
   resetCombatEffects();
   if(!isBoss){
@@ -6375,11 +6560,21 @@ function updateUI(){
   const classBaseData = player.baseStats || classes[player.class];
   const subclassBonuses = getTotalSubclassBonuses();
   const bossUnlockProgress = getBossUnlockProgress(currentRegion);
+  document.getElementById("heroPortraitPanel").innerHTML = `
+    <h3>Seu heroi</h3>
+    <div class="hero-portrait-card">
+      <div class="hero-portrait-stage">${renderCombatAvatar("heroes", getHeroCombatAssetKey(), getHeroSpriteIcon(), getDisplayedClassName())}</div>
+      <div class="hero-portrait-copy">
+        <strong class="coin-badge" style="align-self:flex-start;">Nivel ${player.level}</strong>
+      </div>
+    </div>`;
 
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
     <div class="player-header">
-      <div><h3>${getDisplayedClassName()} - Nivel ${player.level}</h3>${getDisplayedClassName() !== player.class ? `<span class="lock-note">Classe base: ${player.class}</span>` : ""}</div>
+      <div class="player-title-wrap">
+        <div><h3>${getDisplayedClassName()} - Nivel ${player.level}</h3>${getDisplayedClassName() !== player.class ? `<span class="lock-note">Classe base: ${player.class}</span>` : ""}</div>
+      </div>
       <div class="coin-badge">${player.coins} moedas</div>
     </div>
     ${playerEffects.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${playerEffects.shieldValue}</div><div class="bar small"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div></div></div>` : ""}
@@ -6941,6 +7136,7 @@ function handleEnemyDefeat(){
   log(`Voce ganhou ${xpEarned} de XP.`);
   if(wasBoss && defeatedRegion){
     grantBossChest(defeatedRegion);
+    tryBossAccessoryDrop(defeatedRegion);
   }
   gainXP(baseXpEarned);
   enemy = null;
