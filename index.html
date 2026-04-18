@@ -481,8 +481,8 @@ const enemyDropSlotGroups = [
   ["weapon"]
 ];
 const consumableCatalog = {
-  mana_potion: { name: "Pocao de Mana", price: 60, description: "Recupera 60% da mana maxima.", useLabel: "Usar", effectType: "restore_mana_percent", value: 0.6 },
-  health_potion: { name: "Pocao de Vida", price: 42, description: "Recupera 60% da vida maxima.", useLabel: "Usar", effectType: "restore_hp_percent", value: 0.6 },
+  mana_potion: { name: "Pocao de Mana", price: 60, description: "Recupera 35% da mana maxima.", useLabel: "Usar", effectType: "restore_mana_percent", value: 0.35 },
+  health_potion: { name: "Pocao de Vida", price: 42, description: "Recupera 35% da vida maxima.", useLabel: "Usar", effectType: "restore_hp_percent", value: 0.35 },
   skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 18, turns: 3 },
   attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 14, turns: 3 }
 };
@@ -710,7 +710,7 @@ const regions = {
     ]
   },
   Caverna: {
-    minLevel: 8,
+    minLevel: 10,
     description: "Passagens estreitas cheias de monstros resistentes.",
     boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
     enemies: [
@@ -720,7 +720,7 @@ const regions = {
     ]
   },
   Ruinas: {
-    minLevel: 15,
+    minLevel: 18,
     description: "Restos antigos guardados por inimigos mais agressivos.",
     boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
     enemies: [
@@ -730,7 +730,7 @@ const regions = {
     ]
   },
   Pantano: {
-    minLevel: 22,
+    minLevel: 26,
     description: "Neblina espessa, criaturas venenosas e terreno traiçoeiro.",
     boss: { name: "Hidra do Lodo", level: 40, hp: 470, attack: 36, mp: 120, skillName: "Sopro Corrosivo", skillDamage: 96, skillCost: 32 },
     enemies: [
@@ -740,7 +740,7 @@ const regions = {
     ]
   },
   Vulcao: {
-    minLevel: 28,
+    minLevel: 33,
     description: "Um reino de cinzas, magma e monstros forjados no fogo.",
     boss: { name: "Draco Magmatico", level: 50, hp: 610, attack: 48, mp: 150, skillName: "Explosao Vulcanica", skillDamage: 124, skillCost: 38 },
     enemies: [
@@ -750,7 +750,7 @@ const regions = {
     ]
   },
   Abismo: {
-    minLevel: 36,
+    minLevel: 42,
     description: "Um dominio de ecos sombrios, aco amaldiçoado e criaturas do vazio.",
     boss: { name: "Arauto do Vazio", level: 60, hp: 760, attack: 58, mp: 180, skillName: "Dilacerar Realidade", skillDamage: 156, skillCost: 44 },
     enemies: [
@@ -760,7 +760,7 @@ const regions = {
     ]
   },
   Fortaleza: {
-    minLevel: 44,
+    minLevel: 51,
     description: "Uma muralha esquecida repleta de elite armadurada e horrores de guerra.",
     boss: { name: "General de Aco", level: 70, hp: 920, attack: 68, mp: 210, skillName: "Marcha de Ferro", skillDamage: 188, skillCost: 48 },
     enemies: [
@@ -770,7 +770,7 @@ const regions = {
     ]
   },
   Necropole: {
-    minLevel: 52,
+    minLevel: 60,
     description: "Criptas antigas, magia necrotica e guerreiros que se recusam a descansar.",
     boss: { name: "Lorde da Cripta", level: 80, hp: 1100, attack: 79, mp: 240, skillName: "Sentenca Funebre", skillDamage: 220, skillCost: 52 },
     enemies: [
@@ -780,7 +780,7 @@ const regions = {
     ]
   },
   Citadela: {
-    minLevel: 60,
+    minLevel: 69,
     description: "Torres elevadas acima das nuvens, feras celestes e juizes do eclipse.",
     boss: { name: "Imperador do Eclipse", level: 90, hp: 1320, attack: 92, mp: 280, skillName: "Ruptura Estelar", skillDamage: 260, skillCost: 60 },
     enemies: [
@@ -790,7 +790,7 @@ const regions = {
     ]
   },
   Panteao: {
-    minLevel: 68,
+    minLevel: 78,
     description: "Templos celestes onde criaturas solares guardam reliquias do auge do mundo.",
     boss: { name: "Avatar do Zenith", level: 100, hp: 1540, attack: 108, mp: 320, skillName: "Julgamento Solar", skillDamage: 305, skillCost: 66 },
     enemies: [
@@ -800,7 +800,7 @@ const regions = {
     ]
   },
   Cataclismo: {
-    minLevel: 76,
+    minLevel: 87,
     description: "A fronteira do fim do mundo, com monstros que esmagam ate os herois mais resistentes.",
     boss: { name: "Deus da Ruina", level: 110, hp: 1820, attack: 130, mp: 360, skillName: "Colapso Final", skillDamage: 360, skillCost: 74 },
     enemies: [
@@ -810,7 +810,7 @@ const regions = {
     ]
   },
   Paradoxo: {
-    minLevel: 84,
+    minLevel: 96,
     description: "Uma dobra final da realidade onde tempo, mana e carne se rompem ao mesmo tempo.",
     boss: { name: "Soberano do Paradoxo", level: 120, hp: 2120, attack: 148, mp: 410, skillName: "Ruptura Temporal", skillDamage: 398, skillCost: 82 },
     enemies: [
@@ -1253,15 +1253,70 @@ function selectClass(name){
 }
 
 function chooseWeightedEnemy(enemyList){
-  const totalWeight = enemyList.reduce((sum, enemyData) => sum + enemyData.weight, 0);
+  const weightedEntries = enemyList.map(enemyData => ({ enemyData, weight: getAdjustedEnemySpawnWeight(enemyData) }));
+  const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0);
   let roll = Math.random() * totalWeight;
-  for(const enemyData of enemyList){
-    roll -= enemyData.weight;
+  for(const entry of weightedEntries){
+    roll -= entry.weight;
     if(roll <= 0){
-      return enemyData;
+      return entry.enemyData;
     }
   }
   return enemyList[enemyList.length - 1];
+}
+
+function getAdjustedEnemySpawnWeight(enemyData){
+  if(!enemyData || !enemyData.weight){ return 0; }
+  const levelGap = player.level - enemyData.level;
+  if(levelGap <= 5){
+    return enemyData.weight;
+  }
+  const excessGap = levelGap - 5;
+  const penalty = 1 + (excessGap * 1.8) + (excessGap * excessGap * 0.75);
+  return Math.max(1, enemyData.weight / penalty);
+}
+
+function getRegionSpawnPreview(regionName){
+  const regionData = regions[regionName];
+  if(!regionData?.enemies?.length){
+    return [];
+  }
+  if(regionName === currentRegion && !isDungeonMode() && enemiesSpawned < 3){
+    const forcedEnemy = regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio");
+    if(forcedEnemy){
+      return regionData.enemies.map(enemyData => ({
+        ...enemyData,
+        chance: enemyData.name === forcedEnemy.name ? 100 : 0
+      }));
+    }
+  }
+  const weightedEntries = regionData.enemies.map(enemyData => ({
+    enemyData,
+    weight: getAdjustedEnemySpawnWeight(enemyData)
+  }));
+  const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0) || 1;
+  return weightedEntries.map(entry => ({
+    ...entry.enemyData,
+    chance: (entry.weight / totalWeight) * 100
+  }));
+}
+
+function getRegionBattleEmblem(regionName){
+  const emblems = {
+    Floresta: "🌲",
+    Caverna: "🪨",
+    Ruinas: "🏛️",
+    Pantano: "🐸",
+    Vulcao: "🌋",
+    Abismo: "🕳️",
+    Fortaleza: "🛡️",
+    Necropole: "⚰️",
+    Citadela: "🏰",
+    Panteao: "☀️",
+    Cataclismo: "☄️",
+    Paradoxo: "🌀"
+  };
+  return emblems[regionName] || "⚔️";
 }
 
 function getEnemyStats(template, regionOverride = null, isBoss = false){
@@ -2470,6 +2525,9 @@ async function dungeonUseSkill(index){
     updateUI();
     return;
   }
+  displayState.playerMp = player.mp;
+  updateUI();
+  await wait(80);
   await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
   decayPlayerBuffs();
   const healed = getTurnHealing();
@@ -2487,6 +2545,10 @@ async function dungeonUseSkill(index){
 
 function getRegionRequirement(region){
   return regions[region].minLevel || 1;
+}
+
+function isRegionUnlockedForBattle(region){
+  return player.level >= getRegionRequirement(region);
 }
 
 function grantNextLevelForTest(){
@@ -2890,9 +2952,9 @@ function getSkillInfo(){
       return {
         ...skill,
         cost,
-        turns: 4,
+        turns: 5,
         attackBonus,
-        description: `${skill.name}: consome ${cost} MP, garante 100% de acerto no ataque basico por 4 turnos e aumenta o dano de ataque basico em ${attackBonus}${headshotBonus ? ", alem de fortalecer o Headshot em 10% e dar +10% de chance de dano dobrado" : ""}${barrageExtraShotChance ? ", alem de conceder 10% de chance de um disparo extra na Rajada de Flechas" : ""}.`
+        description: `${skill.name}: consome ${cost} MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em ${attackBonus}${headshotBonus ? ", alem de fortalecer o Headshot em 10% e dar +10% de chance de dano dobrado" : ""}${barrageExtraShotChance ? ", alem de conceder 10% de chance de um disparo extra na Rajada de Flechas" : ""}.`
       };
     }
     if(skill.type === "archer_headshot"){
@@ -4164,14 +4226,17 @@ function getEnemyPossibleDrop(enemyName, region, isBoss = false){
 }
 
 function getSelectedBestiaryRegion(){
-  if(bestiaryRegionFilter && regions[bestiaryRegionFilter]){
+  if(bestiaryRegionFilter && regions[bestiaryRegionFilter] && isRegionUnlockedForBattle(bestiaryRegionFilter)){
     return bestiaryRegionFilter;
   }
-  return regions[currentRegion] ? currentRegion : Object.keys(regions)[0];
+  if(regions[currentRegion] && isRegionUnlockedForBattle(currentRegion)){
+    return currentRegion;
+  }
+  return Object.keys(regions).find(regionName => isRegionUnlockedForBattle(regionName)) || Object.keys(regions)[0];
 }
 
 function setBestiaryRegion(regionName){
-  if(!regions[regionName]){ return; }
+  if(!regions[regionName] || !isRegionUnlockedForBattle(regionName)){ return; }
   bestiaryRegionFilter = regionName;
   updateUI();
 }
@@ -4213,7 +4278,7 @@ function renderBestiary(){
   const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
   const bossKit = getBossAbilitySet(regionData.boss.name, selectedRegion);
   return `
-    <div class="bestiary-filter-row">${Object.keys(regions).map(regionName => `<button class="region-chip action-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setBestiaryRegion('${regionName}')">${regionName}</button>`).join("")}</div>
+    <div class="bestiary-filter-row">${Object.keys(regions).map(regionName => `<button class="region-chip action-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setBestiaryRegion('${regionName}')" ${isRegionUnlockedForBattle(regionName) ? "" : "disabled"}>${regionName}</button>`).join("")}</div>
     <div class="inventory-item">
       <strong>${selectedRegion}</strong><br>
       <span class="lock-note">${regionData.description}</span><br>
@@ -4224,6 +4289,29 @@ function renderBestiary(){
         <span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br>
         <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span>
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
+      </div>
+    </div>`;
+}
+
+function renderBattleRegionPreviewCard(){
+  const regionData = regions[currentRegion];
+  const spawnPreview = getRegionSpawnPreview(currentRegion);
+  return `
+    <div class="enemy-card">
+      <div class="enemy-top">
+        <div class="enemy-title">
+          <h3>${currentRegion}</h3>
+          <p class="enemy-subtitle">Nenhum inimigo ativo no momento</p>
+        </div>
+        <div class="sprite-box enemy-sprite-box ${getRegionSpriteClass(currentRegion)}"><div class="sprite-stage"><div class="sprite-ground"></div><div class="sprite-fx"></div><div class="sprite-figure">${getRegionBattleEmblem(currentRegion)}</div></div></div>
+      </div>
+      <div class="enemy-badges">
+        <span class="enemy-badge">Nivel recomendado ${getRegionRequirement(currentRegion)}</span>
+        <span class="enemy-badge">${currentRegion}</span>
+      </div>
+      <span class="lock-note">${regionData.description}</span>
+      <div class="inventory-list" style="margin-top:12px;">
+        ${spawnPreview.map(entry => `<div class="inventory-item"><strong>${entry.name} Lv.${entry.level}</strong><br><span class="lock-note">Chance atual de spawn: ${entry.chance.toFixed(1)}%</span></div>`).join("")}
       </div>
     </div>`;
 }
@@ -4334,7 +4422,7 @@ async function useManaPotion(){
   removeInventoryUnit(itemIndex);
   const maxMp = getPreviewStats().maxMp;
   const manaBefore = player.mp;
-  const recovered = Math.max(1, Math.floor(maxMp * 0.6));
+  const recovered = Math.max(1, Math.floor(maxMp * 0.35));
   player.mp = Math.min(maxMp, player.mp + recovered);
   displayState.playerMp = player.mp;
   log(`Voce usou uma Pocao de Mana e recuperou ${player.mp - manaBefore} de mana.`);
@@ -4638,6 +4726,10 @@ function getHealCost(){
   return Math.max(0, Math.ceil((getPreviewStats().maxHp - player.hp) / 7));
 }
 
+function getManaHealCost(){
+  return Math.max(0, Math.ceil((getPreviewStats().maxMp - player.mp) / 7));
+}
+
 function healAtVillage(){
   if(currentMode !== "village"){ return; }
   const { maxHp } = getCurrentCaps();
@@ -4654,6 +4746,25 @@ function healAtVillage(){
   player.hp = maxHp;
   displayState.playerHp = player.hp;
   log(`Voce descansou no vilarejo e recuperou toda a vida por ${cost} moedas.`);
+  updateUI();
+}
+
+function restoreManaAtVillage(){
+  if(currentMode !== "village"){ return; }
+  const { maxMp } = getCurrentCaps();
+  if(player.mp >= maxMp){
+    log("Voce ja esta com a mana cheia.");
+    return;
+  }
+  const cost = getManaHealCost();
+  if(player.coins < cost){
+    log(`Moedas insuficientes. Recuperar mana custa ${cost} moedas.`);
+    return;
+  }
+  player.coins -= cost;
+  player.mp = maxMp;
+  displayState.playerMp = player.mp;
+  log(`Voce descansou a mente no vilarejo e recuperou toda a mana por ${cost} moedas.`);
   updateUI();
 }
 
@@ -4963,8 +5074,13 @@ function updateUI(){
       </div>
     </div>`
     : ["battle", "dungeon"].includes(currentMode) ? `
-    <h3>${currentMode === "dungeon" ? "Dungeon Online" : isDead ? "Voce foi derrotado" : "Proximo inimigo"}</h3>
-    <p>${currentMode === "dungeon" ? (isDungeonConnected() ? "Sala conectada. Aguarde o host iniciar ou enfrente o inimigo atual com o grupo." : "Crie uma sala ou entre com um codigo para jogar online.") : isDead ? "Escolha entre reiniciar a aventura ou aguardar o renascimento." : levelUpPoints > 0 ? "Distribua seus pontos para continuar." : "Preparando o proximo combate."}</p>`
+    ${currentMode === "dungeon"
+      ? `<h3>Dungeon Online</h3><p>${isDungeonConnected() ? "Sala conectada. Aguarde o host iniciar ou enfrente o inimigo atual com o grupo." : "Crie uma sala ou entre com um codigo para jogar online."}</p>`
+      : isDead
+        ? `<h3>Voce foi derrotado</h3><p>Escolha entre reiniciar a aventura ou aguardar o renascimento.</p>`
+        : levelUpPoints > 0
+          ? `<h3>Distribua seus pontos</h3><p>Finalize sua evolucao para continuar.</p>`
+          : renderBattleRegionPreviewCard()}`
     : currentMode === "trophies" ? `
     <h3>Sala de trofeus</h3>
     <div class="trophy-list">${renderTrophyGroups()}</div>`
@@ -5021,8 +5137,8 @@ function updateUI(){
   `).join("");
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui fica a pousada do vilarejo."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
@@ -5437,6 +5553,9 @@ async function useSkill(index){
     return;
   }
   log(result.message);
+  displayState.playerMp = player.mp;
+  updateUI();
+  await wait(80);
   await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
   if(result.damage > 0){
     const animationConfig = getEnemyBarAnimationConfig(false);
