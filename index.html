@@ -34,6 +34,82 @@ button:disabled{cursor:not-allowed;opacity:.6}
 .panel-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .inventory-list,.trophy-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 .inventory-item,.trophy-item{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06)}
+.inventory-card{display:grid;grid-template-columns:70px minmax(0,1fr);gap:12px;align-items:center}
+.inventory-card.compact{grid-template-columns:58px minmax(0,1fr)}
+.inventory-media{position:relative;width:70px;height:70px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 20px rgba(0,0,0,.16);overflow:hidden}
+.inventory-card.compact .inventory-media{width:58px;height:58px;border-radius:14px}
+.inventory-media::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,0) 38%,rgba(0,0,0,.1));pointer-events:none}
+.inventory-media::after{content:"";position:absolute;left:10px;right:10px;bottom:8px;height:12px;border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,.28),rgba(0,0,0,0));opacity:.72}
+.inventory-media.item-rarity-comum{box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 10px 20px rgba(0,0,0,.16)}
+.inventory-media.item-rarity-incomum{box-shadow:inset 0 0 0 1px rgba(126,231,135,.18),0 0 0 1px rgba(126,231,135,.28),0 12px 22px rgba(0,0,0,.18)}
+.inventory-media.item-rarity-rara{box-shadow:inset 0 0 0 1px rgba(98,176,255,.18),0 0 0 1px rgba(98,176,255,.34),0 12px 22px rgba(0,0,0,.18)}
+.inventory-media.item-rarity-ultra-rara{box-shadow:inset 0 0 0 1px rgba(211,148,255,.18),0 0 0 1px rgba(211,148,255,.34),0 12px 22px rgba(0,0,0,.18)}
+.inventory-media.item-rarity-lendaria{box-shadow:inset 0 0 0 1px rgba(255,191,71,.24),0 0 0 1px rgba(255,191,71,.38),0 14px 24px rgba(0,0,0,.2)}
+.inventory-media.tone-floresta{background:linear-gradient(180deg,rgba(93,146,91,.22),rgba(27,43,26,.22))}
+.inventory-media.tone-caverna{background:linear-gradient(180deg,rgba(118,130,145,.24),rgba(31,36,43,.18))}
+.inventory-media.tone-ruinas{background:linear-gradient(180deg,rgba(178,154,113,.22),rgba(53,42,31,.22))}
+.inventory-media.tone-pantano{background:linear-gradient(180deg,rgba(128,167,83,.22),rgba(35,52,29,.22))}
+.inventory-media.tone-vulcao{background:linear-gradient(180deg,rgba(196,105,73,.26),rgba(54,24,18,.22))}
+.inventory-media.tone-abismo{background:linear-gradient(180deg,rgba(118,101,188,.26),rgba(31,20,46,.22))}
+.inventory-media.tone-fortaleza{background:linear-gradient(180deg,rgba(139,156,174,.24),rgba(29,35,43,.2))}
+.inventory-media.tone-necropole{background:linear-gradient(180deg,rgba(124,113,164,.24),rgba(28,23,39,.22))}
+.inventory-media.tone-citadela{background:linear-gradient(180deg,rgba(111,142,179,.24),rgba(26,34,49,.22))}
+.inventory-media.tone-panteao{background:linear-gradient(180deg,rgba(222,196,113,.24),rgba(53,42,19,.22))}
+.inventory-media.tone-cataclismo{background:linear-gradient(180deg,rgba(200,97,88,.26),rgba(51,18,18,.22))}
+.inventory-media.tone-paradoxo,.inventory-media.tone-dungeon{background:linear-gradient(180deg,rgba(109,180,189,.24),rgba(19,30,39,.22))}
+.inventory-media.tone-neutral{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03))}
+.item-sprite{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:42px}
+.inventory-card.compact .item-sprite{width:34px;height:34px}
+.item-sprite .item-part{position:absolute;display:block;box-sizing:border-box}
+.item-sprite.weapon-sword .blade{left:19px;top:2px;width:8px;height:28px;background:linear-gradient(180deg,#f8fbff,#aebccc);clip-path:polygon(50% 0,100% 22%,72% 100%,28% 100%,0 22%)}
+.item-sprite.weapon-sword .guard{left:11px;top:27px;width:24px;height:5px;background:linear-gradient(180deg,#f1d597,#8f6d2b);border-radius:999px}
+.item-sprite.weapon-sword .hilt{left:18px;top:30px;width:10px;height:10px;background:linear-gradient(180deg,#9a6b39,#512f14);border-radius:4px}
+.item-sprite.weapon-sword .pommel{left:18px;top:37px;width:10px;height:5px;background:#d2ad62;border-radius:999px}
+.item-sprite.weapon-bow .bow{left:13px;top:3px;width:18px;height:34px;border:4px solid #b9823f;border-right-color:transparent;border-radius:44px;transform:rotate(8deg)}
+.item-sprite.weapon-bow .string{left:26px;top:5px;width:2px;height:30px;background:linear-gradient(180deg,#fff,#d0e8d8)}
+.item-sprite.weapon-bow .arrow{left:2px;top:18px;width:28px;height:4px;background:linear-gradient(90deg,#f8fcff,#d9f1ff);border-radius:999px}
+.item-sprite.weapon-bow .arrow::after{content:"";position:absolute;right:-7px;top:-2px;border-left:7px solid #eef5ff;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.item-sprite.weapon-bow .arrow::before{content:"";position:absolute;left:-7px;top:-3px;width:7px;height:10px;background:linear-gradient(180deg,#d4eec8,#86c285);clip-path:polygon(0 50%,100% 0,100% 100%)}
+.item-sprite.weapon-staff .shaft{left:19px;top:8px;width:6px;height:28px;background:linear-gradient(180deg,#a06a3f,#5a351b);border-radius:999px}
+.item-sprite.weapon-staff .orb{left:11px;top:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#f0e0ff,#af78ff 58%,#5830a5);box-shadow:0 0 10px rgba(173,120,255,.42)}
+.item-sprite.weapon-staff .rune{left:7px;top:2px;width:30px;height:30px;border-radius:50%;border:2px solid rgba(205,177,255,.34)}
+.item-sprite.armor-head .helm{left:6px;top:6px;width:30px;height:18px;background:linear-gradient(180deg,#cfd8e3,#677482);clip-path:polygon(50% 0,100% 38%,88% 100%,12% 100%,0 38%);border-radius:12px 12px 5px 5px}
+.item-sprite.armor-head .visor{left:11px;top:19px;width:20px;height:6px;background:linear-gradient(180deg,#26303b,#495564);border-radius:999px}
+.item-sprite.armor-head .crest{left:17px;top:0;width:8px;height:10px;background:linear-gradient(180deg,#d76047,#87261d);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.item-sprite.armor-chest .plate{left:9px;top:6px;width:24px;height:28px;background:linear-gradient(180deg,#98abc0,#415060);border-radius:14px 14px 10px 10px}
+.item-sprite.armor-chest .pauldron-left,.item-sprite.armor-chest .pauldron-right{top:8px;width:12px;height:10px;background:linear-gradient(180deg,#c7d1dc,#6a7582);border-radius:10px 10px 6px 6px}
+.item-sprite.armor-chest .pauldron-left{left:3px}
+.item-sprite.armor-chest .pauldron-right{right:3px}
+.item-sprite.armor-chest .emblem{left:16px;top:16px;width:10px;height:12px;background:linear-gradient(180deg,#e1c57f,#916927);clip-path:polygon(50% 0,95% 24%,82% 100%,18% 100%,5% 24%)}
+.item-sprite.armor-legs .leg-left,.item-sprite.armor-legs .leg-right{top:8px;width:11px;height:24px;background:linear-gradient(180deg,#64758a,#313b48);border-radius:8px}
+.item-sprite.armor-legs .leg-left{left:10px}
+.item-sprite.armor-legs .leg-right{left:21px}
+.item-sprite.armor-legs .belt{left:8px;top:4px;width:26px;height:6px;background:linear-gradient(180deg,#d9bb71,#8a6327);border-radius:999px}
+.item-sprite.armor-feet .boot-left,.item-sprite.armor-feet .boot-right{top:14px;width:14px;height:18px;background:linear-gradient(180deg,#58534f,#1c1f24);border-radius:9px 9px 6px 6px}
+.item-sprite.armor-feet .boot-left{left:7px}
+.item-sprite.armor-feet .boot-right{left:22px}
+.item-sprite.armor-feet .sole-left,.item-sprite.armor-feet .sole-right{top:28px;width:16px;height:6px;background:#101216;border-radius:999px}
+.item-sprite.armor-feet .sole-left{left:6px}
+.item-sprite.armor-feet .sole-right{left:21px}
+.item-sprite.potion .bottle{left:10px;top:6px;width:22px;height:28px;background:linear-gradient(180deg,#eef6ff,#a9bac7);clip-path:polygon(34% 0,66% 0,72% 10%,84% 20%,84% 100%,16% 100%,16% 20%,28% 10%);border-radius:8px}
+.item-sprite.potion .liquid{left:13px;top:16px;width:16px;height:14px;border-radius:0 0 8px 8px}
+.item-sprite.potion.health .liquid{background:linear-gradient(180deg,#ff9078,#c83a30)}
+.item-sprite.potion.mana .liquid{background:linear-gradient(180deg,#86d8ff,#2c82ff)}
+.item-sprite.potion.skill .liquid{background:linear-gradient(180deg,#d2afff,#7d40d5)}
+.item-sprite.potion.attack .liquid{background:linear-gradient(180deg,#ffd48a,#d06e1f)}
+.item-sprite.potion .cork{left:15px;top:0;width:12px;height:10px;background:linear-gradient(180deg,#a97a4c,#623914);border-radius:4px 4px 2px 2px}
+.item-sprite.chest .lid{left:6px;top:8px;width:30px;height:12px;background:linear-gradient(180deg,#c48a46,#6c4317);border-radius:8px 8px 4px 4px}
+.item-sprite.chest .body{left:5px;top:18px;width:32px;height:18px;background:linear-gradient(180deg,#a56a2b,#5c3815);border-radius:4px 4px 8px 8px}
+.item-sprite.chest .lock{left:17px;top:20px;width:8px;height:10px;background:linear-gradient(180deg,#f2df9a,#b58f36);border-radius:3px}
+.item-sprite.chest .band-left,.item-sprite.chest .band-right{top:8px;width:4px;height:28px;background:rgba(77,45,18,.48)}
+.item-sprite.chest .band-left{left:10px}
+.item-sprite.chest .band-right{right:10px}
+.inventory-content{min-width:0}
+.inventory-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.inventory-qty-badge{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;font-weight:700;color:#f0f0f0}
+.inventory-meta{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.inventory-tag{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;font-weight:700}
+.inventory-subtext{display:block;margin-top:4px}
 .trophy-item.locked{opacity:.55}
 .trophy-category{padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
 .trophy-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
@@ -617,6 +693,12 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .combat-entity .sprite-fx{position:absolute;inset:0;z-index:7;pointer-events:none}
 .combat-entity .sprite-figure{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);filter:drop-shadow(0 16px 18px rgba(0,0,0,.36))}
 .combat-entity.enemy-boss .sprite-figure{transform:translateX(-50%) scale(1.08)}
+.emoji-sprite{font-size:92px;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.hero-entity .emoji-sprite{transform:translateX(-50%) scaleX(-1)}
+.enemy-entity .emoji-sprite{transform:translateX(-50%)}
+.preview-scene .hero-entity{opacity:.92}
+.preview-scene .hero-entity .entity-aura{opacity:.26}
+.preview-scene .entity-shadow{opacity:.58}
 .enemy-entity{left:24px}
 .hero-entity{right:24px;transform:scaleX(-1)}
 .hero-entity .sprite-fx{transform:scaleX(-1);transform-origin:center center}
@@ -767,18 +849,32 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-rig .enemy-part{position:absolute;display:block;box-sizing:border-box}
 .enemy-rig .enemy-shadow-core{left:38px;bottom:0;width:78px;height:14px;border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,.28),rgba(0,0,0,0))}
 .enemy-rig.enemy-boss{filter:drop-shadow(0 0 18px rgba(255,255,255,.12))}
-.enemy-beast-rig .beast-tail{left:18px;bottom:56px;width:34px;height:12px;background:linear-gradient(180deg,#5f665f,#2d342f);border-radius:999px;transform:rotate(18deg);transform-origin:26px 6px}
-.enemy-beast-rig .beast-body{left:40px;bottom:40px;width:70px;height:38px;background:linear-gradient(180deg,#616960,#2f372f);border-radius:26px 24px 20px 18px}
-.enemy-beast-rig .beast-mane{left:78px;bottom:54px;width:30px;height:24px;background:linear-gradient(180deg,#837551,#463418);clip-path:polygon(18% 0,100% 18%,86% 100%,0 82%);border-radius:12px}
-.enemy-beast-rig .beast-leg{width:12px;height:30px;background:linear-gradient(180deg,#4b524c,#202722);border-radius:8px}
-.enemy-beast-rig .beast-leg-back{left:50px;bottom:18px}
-.enemy-beast-rig .beast-leg-front{left:86px;bottom:18px}
-.enemy-beast-rig .beast-head{left:92px;bottom:56px;width:34px;height:24px;background:linear-gradient(180deg,#697166,#303730);border-radius:18px 18px 14px 14px}
+.enemy-beast-rig .beast-tail{left:14px;bottom:62px;width:42px;height:10px;background:linear-gradient(180deg,#676e67,#2a312b);border-radius:999px;transform:rotate(20deg);transform-origin:34px 5px}
+.enemy-beast-rig .beast-tail-tip{left:10px;bottom:65px;width:16px;height:8px;background:linear-gradient(180deg,#c3c2bb,#676e67);border-radius:999px;transform:rotate(26deg)}
+.enemy-beast-rig .beast-body{left:40px;bottom:38px;width:72px;height:40px;background:linear-gradient(180deg,#666f68,#2b332d);border-radius:28px 30px 22px 20px}
+.enemy-beast-rig .beast-back{left:48px;bottom:58px;width:44px;height:18px;background:linear-gradient(180deg,#7a837b,#39423b);border-radius:18px 18px 12px 12px}
+.enemy-beast-rig .beast-underbelly{left:58px;bottom:36px;width:40px;height:18px;background:linear-gradient(180deg,#ddd7c5,#948a72);border-radius:12px 16px 14px 14px;opacity:.85}
+.enemy-beast-rig .beast-shoulder{left:82px;bottom:48px;width:20px;height:24px;background:linear-gradient(180deg,#768078,#313933);border-radius:50%}
+.enemy-beast-rig .beast-mane{left:80px;bottom:56px;width:28px;height:24px;background:linear-gradient(180deg,#8a7c56,#473419);clip-path:polygon(18% 0,100% 18%,86% 100%,0 82%);border-radius:12px}
+.enemy-beast-rig .beast-leg{width:12px;height:30px;background:linear-gradient(180deg,#4a524b,#1f2621);border-radius:8px}
+.enemy-beast-rig .beast-leg-back{left:52px;bottom:16px}
+.enemy-beast-rig .beast-leg-mid{left:72px;bottom:16px}
+.enemy-beast-rig .beast-leg-front{left:92px;bottom:16px}
+.enemy-beast-rig .beast-paw{width:16px;height:7px;background:#141712;border-radius:999px}
+.enemy-beast-rig .beast-paw-back{left:50px;bottom:12px}
+.enemy-beast-rig .beast-paw-mid{left:70px;bottom:12px}
+.enemy-beast-rig .beast-paw-front{left:90px;bottom:12px}
+.enemy-beast-rig .beast-head{left:94px;bottom:54px;width:34px;height:24px;background:linear-gradient(180deg,#70786f,#2f3530);border-radius:18px 18px 14px 14px}
+.enemy-beast-rig .beast-snout{left:112px;bottom:50px;width:26px;height:16px;background:linear-gradient(180deg,#dcd6c7,#8d8675);border-radius:12px 12px 10px 10px}
+.enemy-beast-rig .beast-jaw{left:116px;bottom:46px;width:20px;height:10px;background:linear-gradient(180deg,#f1ebdf,#9c937e);border-radius:10px}
+.enemy-beast-rig .beast-nose{left:129px;bottom:58px;width:8px;height:6px;background:#151717;border-radius:999px}
 .enemy-beast-rig .beast-ear{width:10px;height:12px;background:linear-gradient(180deg,#7a8376,#384039);clip-path:polygon(50% 0,100% 100%,0 100%)}
-.enemy-beast-rig .beast-ear-left{left:98px;bottom:74px}
-.enemy-beast-rig .beast-ear-right{left:112px;bottom:74px}
-.enemy-beast-rig .beast-jaw{left:106px;bottom:52px;width:24px;height:12px;background:linear-gradient(180deg,#dcd8c7,#7d7767);border-radius:12px}
-.enemy-beast-rig .beast-eye{left:115px;bottom:66px;width:6px;height:6px;border-radius:50%;background:#ffef92;box-shadow:0 0 8px rgba(255,239,146,.5)}
+.enemy-beast-rig .beast-ear-left{left:100px;bottom:74px}
+.enemy-beast-rig .beast-ear-right{left:114px;bottom:74px}
+.enemy-beast-rig .beast-eye{width:5px;height:5px;border-radius:50%;background:#ffef92;box-shadow:0 0 7px rgba(255,239,146,.45)}
+.enemy-beast-rig .beast-eye-left{left:111px;bottom:66px}
+.enemy-beast-rig .beast-eye-right{left:119px;bottom:65px}
+.enemy-beast-rig .beast-brow{left:108px;bottom:69px;width:16px;height:4px;background:linear-gradient(180deg,#2f352f,#101311);border-radius:999px;transform:rotate(-6deg)}
 .enemy-beast-rig .beast-body,.enemy-beast-rig .beast-head,.enemy-beast-rig .beast-jaw,.enemy-beast-rig .beast-leg{animation:enemyBeastIdleBody 2.8s ease-in-out infinite}
 .enemy-beast-rig .beast-tail{animation:enemyBeastIdleTail 2.4s ease-in-out infinite}
 #enemySpriteBox.attacking .enemy-beast-rig .beast-head{animation:enemyBeastBite .28s ease-out}
@@ -792,12 +888,21 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-humanoid-rig .humanoid-belt{left:48px;bottom:48px;width:34px;height:8px;background:linear-gradient(180deg,#d0aa62,#876523);border-radius:999px}
 .enemy-humanoid-rig .humanoid-head{left:56px;bottom:78px;width:18px;height:18px;background:#d4b18f;border-radius:50%}
 .enemy-humanoid-rig .humanoid-helm{left:50px;bottom:86px;width:28px;height:16px;background:linear-gradient(180deg,#8f6e55,#453327);clip-path:polygon(50% 0,100% 42%,86% 100%,14% 100%,0 42%);border-radius:10px 10px 4px 4px}
-.enemy-humanoid-rig .humanoid-eye{left:64px;bottom:84px;width:5px;height:5px;border-radius:50%;background:#fff39a;box-shadow:0 0 8px rgba(255,243,154,.42)}
+.enemy-humanoid-rig .humanoid-face{left:60px;bottom:80px;width:12px;height:10px;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(0,0,0,0));border-radius:50%}
+.enemy-humanoid-rig .humanoid-eye{width:4px;height:4px;border-radius:50%;background:#fff39a;box-shadow:0 0 8px rgba(255,243,154,.42)}
+.enemy-humanoid-rig .humanoid-eye-left{left:61px;bottom:85px}
+.enemy-humanoid-rig .humanoid-eye-right{left:67px;bottom:85px}
 .enemy-humanoid-rig .humanoid-arm{width:24px;height:10px;background:linear-gradient(180deg,#6f5648,#302621);border-radius:999px}
 .enemy-humanoid-rig .humanoid-arm-left{left:32px;bottom:54px;transform:rotate(18deg)}
 .enemy-humanoid-rig .humanoid-arm-right{left:78px;bottom:58px;transform:rotate(-18deg);transform-origin:4px 5px}
 .enemy-humanoid-rig .humanoid-weapon{left:94px;bottom:60px;width:18px;height:42px;background:linear-gradient(180deg,#efe8e0,#8a909a);clip-path:polygon(50% 0,100% 20%,76% 100%,24% 100%,0 20%);transform:rotate(-14deg);transform-origin:8px 36px}
 .enemy-humanoid-rig .humanoid-offhand{left:24px;bottom:42px;width:22px;height:28px;background:linear-gradient(180deg,#b68f51,#61451f);clip-path:polygon(50% 0,100% 16%,92% 74%,50% 100%,8% 74%,0 16%)}
+.enemy-humanoid-rig .humanoid-boot{width:16px;height:7px;background:#171613;border-radius:999px}
+.enemy-humanoid-rig .humanoid-boot-left{left:54px;bottom:8px}
+.enemy-humanoid-rig .humanoid-boot-right{left:72px;bottom:8px}
+.enemy-humanoid-rig .humanoid-shoulder{width:16px;height:12px;background:linear-gradient(180deg,#b59874,#5a4233);border-radius:10px}
+.enemy-humanoid-rig .humanoid-shoulder-left{left:41px;bottom:70px}
+.enemy-humanoid-rig .humanoid-shoulder-right{left:73px;bottom:72px}
 .enemy-humanoid-rig .humanoid-cloak,.enemy-humanoid-rig .humanoid-body,.enemy-humanoid-rig .humanoid-head,.enemy-humanoid-rig .humanoid-weapon{animation:enemyHumanoidIdle 2.9s ease-in-out infinite}
 #enemySpriteBox.attacking .enemy-humanoid-rig .humanoid-arm-right{animation:enemyHumanoidSwingArm .28s ease-out}
 #enemySpriteBox.attacking .enemy-humanoid-rig .humanoid-weapon{animation:enemyHumanoidSwingWeapon .28s ease-out}
@@ -855,6 +960,8 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-winged-rig .winged-head{left:62px;bottom:80px;width:22px;height:18px;background:linear-gradient(180deg,#9d805b,#422b18);border-radius:14px}
 .enemy-winged-rig .winged-beak{left:80px;bottom:84px;width:14px;height:8px;background:linear-gradient(180deg,#f7cf76,#b8792c);clip-path:polygon(0 0,100% 50%,0 100%)}
 .enemy-winged-rig .winged-eye{left:74px;bottom:88px;width:5px;height:5px;border-radius:50%;background:#fff39a;box-shadow:0 0 8px rgba(255,243,154,.4)}
+.enemy-winged-rig .winged-crest{left:66px;bottom:94px;width:14px;height:12px;background:linear-gradient(180deg,#f9d78e,#a36524);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.enemy-winged-rig .winged-feather{left:60px;bottom:58px;width:28px;height:16px;background:linear-gradient(180deg,#f0e7cf,#927a58);clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.78}
 .enemy-winged-rig .winged-talon{width:10px;height:18px;background:linear-gradient(180deg,#b08a52,#5d411f);clip-path:polygon(40% 0,100% 100%,0 100%)}
 .enemy-winged-rig .winged-talon-left{left:58px;bottom:18px}
 .enemy-winged-rig .winged-talon-right{left:76px;bottom:18px}
@@ -870,8 +977,10 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-specter-rig .specter-eye-left{left:64px;bottom:84px}
 .enemy-specter-rig .specter-eye-right{left:72px;bottom:84px}
 .enemy-specter-rig .specter-arm{left:90px;bottom:54px;width:26px;height:8px;background:linear-gradient(180deg,rgba(210,238,255,.7),rgba(127,170,255,.24));border-radius:999px;transform:rotate(-18deg)}
+.enemy-specter-rig .specter-hand{left:112px;bottom:56px;width:10px;height:10px;background:rgba(220,242,255,.74);border-radius:50%}
 .enemy-specter-rig .specter-weapon{left:102px;bottom:56px;width:20px;height:42px;background:linear-gradient(180deg,#edf6ff,#86a4c9);clip-path:polygon(50% 0,100% 22%,76% 100%,24% 100%,0 22%);transform:rotate(-12deg)}
 .enemy-specter-rig .specter-aura{left:36px;bottom:18px;width:68px;height:88px;border-radius:50%;border:2px solid rgba(168,213,255,.22);opacity:.65}
+.enemy-specter-rig .specter-trail{left:46px;bottom:10px;width:48px;height:42px;background:linear-gradient(180deg,rgba(214,237,255,.36),rgba(72,118,190,0));clip-path:polygon(18% 0,82% 0,100% 100%,0 100%)}
 .enemy-specter-rig .specter-shroud,.enemy-specter-rig .specter-core,.enemy-specter-rig .specter-head,.enemy-specter-rig .specter-aura{animation:enemySpecterIdle 2.9s ease-in-out infinite}
 #enemySpriteBox.attacking .enemy-specter-rig .specter-aura{animation:enemySpecterFlare .28s ease-out}
 #enemySpriteBox.attacking .enemy-specter-rig .specter-weapon{animation:enemySpecterSlash .28s ease-out}
@@ -889,6 +998,8 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-colossus-rig .colossus-fist-right{left:110px;bottom:34px}
 .enemy-colossus-rig .colossus-head{left:60px;bottom:92px;width:30px;height:22px;background:linear-gradient(180deg,#8e8572,#403931);border-radius:14px}
 .enemy-colossus-rig .colossus-eye{left:71px;bottom:100px;width:7px;height:7px;border-radius:50%;background:#ffef96;box-shadow:0 0 8px rgba(255,239,150,.48)}
+.enemy-colossus-rig .colossus-mouth{left:67px;bottom:92px;width:14px;height:5px;background:#2b2622;border-radius:999px}
+.enemy-colossus-rig .colossus-crack{left:52px;bottom:42px;width:34px;height:28px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,0));border-left:3px solid rgba(255,228,170,.24);border-right:2px solid rgba(0,0,0,.12);opacity:.66;clip-path:polygon(28% 0,42% 16%,18% 40%,54% 62%,28% 100%,72% 100%,96% 72%,70% 46%,88% 20%,62% 0)}
 .enemy-colossus-rig .colossus-crown{left:64px;bottom:110px;width:20px;height:12px;background:linear-gradient(180deg,#d8b463,#7d5d29);clip-path:polygon(0 100%,16% 40%,32% 100%,50% 0,68% 100%,84% 40%,100% 100%)}
 .enemy-colossus-rig .colossus-body,.enemy-colossus-rig .colossus-head,.enemy-colossus-rig .colossus-arm,.enemy-colossus-rig .colossus-core{animation:enemyColossusIdle 3.2s ease-in-out infinite}
 #enemySpriteBox.attacking .enemy-colossus-rig .colossus-arm-right,#enemySpriteBox.attacking .enemy-colossus-rig .colossus-fist-right{animation:enemyColossusSmash .3s ease-out}
@@ -904,17 +1015,43 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-ent-rig .ent-eye{width:7px;height:7px;border-radius:50%;background:#ffe990;box-shadow:0 0 8px rgba(255,233,144,.48)}
 .enemy-ent-rig .ent-eye-left{left:58px;bottom:70px}
 .enemy-ent-rig .ent-eye-right{left:72px;bottom:70px}
+.enemy-ent-rig .ent-brow{width:16px;height:5px;background:#3a2816;border-radius:999px}
+.enemy-ent-rig .ent-brow-left{left:52px;bottom:76px;transform:rotate(-10deg)}
+.enemy-ent-rig .ent-brow-right{left:70px;bottom:76px;transform:rotate(10deg)}
+.enemy-ent-rig .ent-mouth{left:58px;bottom:56px;width:18px;height:10px;background:#2d1d10;border-radius:0 0 10px 10px}
 .enemy-ent-rig .ent-crown,.enemy-ent-rig .ent-trunk{animation:enemyEntIdle 3.1s ease-in-out infinite}
 .enemy-ent-rig .ent-branch-left,.enemy-ent-rig .ent-branch-right{animation:enemyEntBranchIdle 3.4s ease-in-out infinite}
 #enemySpriteBox.attacking .enemy-ent-rig .ent-branch-left,#enemySpriteBox.attacking .enemy-ent-rig .ent-branch-right{animation:enemyEntSwing .32s ease-out}
 #enemySpriteBox.hit .enemy-ent-rig .ent-crown{animation:enemyEntShake .22s linear}
 .enemy-colossus-rig.enemy-general-de-aco .colossus-body,.enemy-colossus-rig.enemy-escudeiro-de-ferro .colossus-body,.enemy-colossus-rig.enemy-guardiao-temporal .colossus-body{background:linear-gradient(180deg,#a7b4c6,#4c596a)}
+.enemy-beast-rig.enemy-lobo-sombrio .beast-body,.enemy-beast-rig.enemy-lobo-sombrio .beast-head,.enemy-beast-rig.enemy-lobo-sombrio .beast-back,.enemy-beast-rig.enemy-lobo-sombrio .beast-shoulder{background:linear-gradient(180deg,#747c76,#303733)}
+.enemy-beast-rig.enemy-lobo-sombrio .beast-underbelly,.enemy-beast-rig.enemy-lobo-sombrio .beast-snout,.enemy-beast-rig.enemy-lobo-sombrio .beast-jaw{background:linear-gradient(180deg,#e4dfd2,#9e9583)}
+.enemy-beast-rig.enemy-lobo-sombrio .beast-mane{display:none}
+.enemy-beast-rig.enemy-lobo-sombrio .beast-tail-tip{background:linear-gradient(180deg,#f0efea,#787f79)}
+.enemy-beast-rig.enemy-sapo-colossal .beast-tail,.enemy-beast-rig.enemy-sapo-colossal .beast-tail-tip,.enemy-beast-rig.enemy-sapo-colossal .beast-mane{display:none}
+.enemy-beast-rig.enemy-sapo-colossal .beast-body{left:44px;bottom:34px;width:76px;height:52px;background:linear-gradient(180deg,#7ec46b,#2f6a30);border-radius:48% 52% 40% 42% / 52% 48% 58% 52%}
+.enemy-beast-rig.enemy-sapo-colossal .beast-back{left:60px;bottom:56px;width:34px;height:18px;background:linear-gradient(180deg,#b8e989,#4b8938);border-radius:50%}
+.enemy-beast-rig.enemy-sapo-colossal .beast-underbelly{left:64px;bottom:32px;width:34px;height:18px;background:linear-gradient(180deg,#e8efbd,#a7b867)}
+.enemy-beast-rig.enemy-sapo-colossal .beast-head{left:96px;bottom:56px;width:28px;height:20px;background:linear-gradient(180deg,#8ad66e,#356d2d)}
+.enemy-beast-rig.enemy-sapo-colossal .beast-snout,.enemy-beast-rig.enemy-sapo-colossal .beast-jaw{display:none}
+.enemy-beast-rig.enemy-sapo-colossal .beast-ear,.enemy-beast-rig.enemy-sapo-colossal .beast-brow{display:none}
+.enemy-beast-rig.enemy-sapo-colossal .beast-eye-left{left:103px;bottom:72px;width:9px;height:9px;background:#fff}
+.enemy-beast-rig.enemy-sapo-colossal .beast-eye-right{left:114px;bottom:72px;width:9px;height:9px;background:#fff}
+.enemy-beast-rig.enemy-sapo-colossal .beast-nose{left:111px;bottom:58px;width:10px;height:4px}
+.enemy-beast-rig.enemy-quimera-solar .beast-mane{background:linear-gradient(180deg,#ffe39e,#ab6e21)}
+.enemy-beast-rig.enemy-quimera-solar .beast-body,.enemy-beast-rig.enemy-quimera-solar .beast-head,.enemy-beast-rig.enemy-quimera-solar .beast-back{background:linear-gradient(180deg,#d2ab71,#6f4b25)}
 .enemy-colossus-rig.enemy-golem-de-brasa .colossus-core{background:radial-gradient(circle,#fff0b8,#ff8f4d 58%,#6d2411)}
 .enemy-specter-rig.enemy-rei-espectral .specter-core,.enemy-specter-rig.enemy-lorde-da-cripta .specter-core,.enemy-specter-rig.enemy-soberano-do-paradoxo .specter-core{background:radial-gradient(circle,#eef5ff,#b2c5ff 56%,rgba(89,107,189,.42))}
 .enemy-humanoid-rig.enemy-bruxa-do-brejo .humanoid-cloak,.enemy-humanoid-rig.enemy-feiticeira-morta .humanoid-cloak,.enemy-humanoid-rig.enemy-oraculo-radiante .humanoid-cloak,.enemy-humanoid-rig.enemy-oraculo-do-zero .humanoid-cloak{background:linear-gradient(180deg,#6c4aa0,#2a183f)}
 .enemy-humanoid-rig.enemy-goblin .humanoid-body{background:linear-gradient(180deg,#5da34d,#22341a)}
+.enemy-humanoid-rig.enemy-goblin .humanoid-head{background:#91c76e}
+.enemy-humanoid-rig.enemy-goblin .humanoid-helm{display:none}
+.enemy-humanoid-rig.enemy-goblin .humanoid-face{background:linear-gradient(180deg,rgba(36,67,28,.34),rgba(0,0,0,0))}
 .enemy-humanoid-rig.enemy-cultista-perdido .humanoid-cloak{background:linear-gradient(180deg,#8d4a76,#3a1930)}
 .enemy-winged-rig.enemy-salamandra-rubra .winged-body{background:linear-gradient(180deg,#d76e4a,#5c1d16)}
+.enemy-winged-rig.enemy-morcego-de-pedra .winged-wing-left,.enemy-winged-rig.enemy-morcego-de-pedra .winged-wing-right{background:linear-gradient(180deg,#9099a5,#424952)}
+.enemy-winged-rig.enemy-morcego-de-pedra .winged-body,.enemy-winged-rig.enemy-morcego-de-pedra .winged-head{background:linear-gradient(180deg,#7c8792,#394049)}
+.enemy-winged-rig.enemy-morcego-de-pedra .winged-beak{display:none}
 .enemy-winged-rig.enemy-fenix-sombria .winged-wing-left,.enemy-winged-rig.enemy-fenix-sombria .winged-wing-right{background:linear-gradient(180deg,#ea8c50,#6d1616)}
 .enemy-winged-rig.enemy-anjo-caido .winged-wing-left,.enemy-winged-rig.enemy-anjo-caido .winged-wing-right,.enemy-winged-rig.enemy-imperador-do-eclipse .winged-wing-left,.enemy-winged-rig.enemy-imperador-do-eclipse .winged-wing-right{background:linear-gradient(180deg,#c7d4e6,#5a6674)}
 .enemy-winged-rig.enemy-serafim-do-fim .winged-wing-left,.enemy-winged-rig.enemy-serafim-do-fim .winged-wing-right{background:linear-gradient(180deg,#f5d8cf,#a95a52)}
@@ -1809,11 +1946,7 @@ function getMageRigMarkup(heroClass){
 
 function getHeroSpriteMarkup(targetPlayer = player){
   const heroClass = getHeroSpriteClass(targetPlayer);
-  const rigType = getHeroRigType(targetPlayer);
-  if(rigType === "warrior"){ return getWarriorRigMarkup(heroClass); }
-  if(rigType === "archer"){ return getArcherRigMarkup(heroClass); }
-  if(rigType === "mage"){ return getMageRigMarkup(heroClass); }
-  return `<div id="heroSprite" class="sprite-figure ${heroClass}">${getHeroSpriteIcon(targetPlayer)}</div>`;
+  return `<div id="heroSprite" class="sprite-figure emoji-sprite ${heroClass}">${getHeroSpriteIcon(targetPlayer)}</div>`;
 }
 
 function formatSubclassStatBonuses(subclass){
@@ -2152,6 +2285,76 @@ function getRegionBattleEmblem(regionName){
     Paradoxo: "🌀"
   };
   return emblems[regionName] || "⚔️";
+}
+
+function getEnemySpriteIcon(targetEnemy){
+  const enemyName = targetEnemy?.baseName || targetEnemy?.name || "";
+  const byName = {
+    "Lobo Sombrio": "🐺",
+    Goblin: "👺",
+    "Aranha Gigante": "🕷️",
+    "Morcego de Pedra": "🦇",
+    "Esqueleto Mineiro": "💀",
+    "Slime Toxico": "🧪",
+    "Sentinela Quebrada": "🛡️",
+    "Cultista Perdido": "🔮",
+    "Fantasma Antigo": "👻",
+    "Sapo Colossal": "🐸",
+    "Bruxa do Brejo": "🧙",
+    "Serpente do Lodo": "🐍",
+    "Salamandra Rubra": "🦎",
+    "Golem de Brasa": "🪨",
+    "Fenix Sombria": "🔥",
+    "Cavaleiro Abissal": "⚔️",
+    "Lamia do Eclipse": "🐍",
+    "Colosso do Vazio": "🗿",
+    "Escudeiro de Ferro": "🛡️",
+    "Maga da Muralha": "✨",
+    "Carrasco de Guerra": "🪓",
+    "Guardiao Funebre": "⚰️",
+    "Feiticeira Morta": "🪄",
+    "Ceifador de Ossos": "☠️",
+    "Anjo Caido": "🪽",
+    "Drake Celeste": "🐉",
+    "Executor Astral": "🌠",
+    "Guardiao Aureo": "☀️",
+    "Oraculo Radiante": "🔆",
+    "Quimera Solar": "🦁",
+    "Arauto do Cataclismo": "☄️",
+    "Titan Rachado": "⛰️",
+    "Serafim do Fim": "🌩️",
+    "Guardiao Temporal": "⏳",
+    "Oraculo do Zero": "🌀",
+    "Devorador do Eco": "🌌",
+    "Ent Ancestral": "🌳",
+    "Troll das Profundezas": "🪨",
+    "Rei Espectral": "👻",
+    "Hidra do Lodo": "🐍",
+    "Draco Magmatico": "🌋",
+    "Arauto do Vazio": "🕳️",
+    "General de Aco": "🛡️",
+    "Lorde da Cripta": "⚰️",
+    "Imperador do Eclipse": "🌘",
+    "Avatar do Zenith": "☀️",
+    "Deus da Ruina": "☄️",
+    "Soberano do Paradoxo": "🌀"
+  };
+  if(byName[enemyName]){ return byName[enemyName]; }
+  const archetype = getEnemyRigArchetype(enemyName);
+  const byArchetype = {
+    beast: "🐾",
+    humanoid: "⚔️",
+    arachnid: "🕸️",
+    slime: "🧪",
+    serpent: "🐍",
+    winged: "🪽",
+    specter: "👻",
+    reaper: "☠️",
+    colossus: "🗿",
+    armored: "🛡️",
+    ent: "🌳"
+  };
+  return byArchetype[archetype] || "👹";
 }
 
 function getEnemyStats(template, regionOverride = null, isBoss = false){
@@ -4904,6 +5107,89 @@ function getEquipmentTooltip(item){
   return `${buildEquipmentDescription(item)} Clique com o botao direito para desequipar.`;
 }
 
+function getItemToneClass(item){
+  const toneSource = item?.regionName || item?.region || "neutral";
+  return `tone-${toCssToken(toneSource) || "neutral"}`;
+}
+
+function getItemRarityVisualClass(item){
+  return `item-rarity-${toCssToken(item?.rarity || "comum")}`;
+}
+
+function getWeaponVisualKind(item){
+  if(item?.classRestriction === "Arqueiro"){ return "weapon-bow"; }
+  if(item?.classRestriction === "Mago"){ return "weapon-staff"; }
+  return "weapon-sword";
+}
+
+function getPotionVisualKind(item){
+  if(item?.id === "health_potion"){ return "health"; }
+  if(item?.id === "mana_potion"){ return "mana"; }
+  if(item?.id === "skill_tonic"){ return "skill"; }
+  return "attack";
+}
+
+function getItemSpriteMarkup(item){
+  if(!item){
+    return `<div class="item-sprite chest"><span class="item-part body"></span><span class="item-part lid"></span><span class="item-part lock"></span></div>`;
+  }
+  if(item.type === "consumable"){
+    const kind = getPotionVisualKind(item);
+    return `<div class="item-sprite potion ${kind}"><span class="item-part cork"></span><span class="item-part bottle"></span><span class="item-part liquid"></span></div>`;
+  }
+  if(item.type === "chest"){
+    return `<div class="item-sprite chest"><span class="item-part lid"></span><span class="item-part body"></span><span class="item-part lock"></span><span class="item-part band-left"></span><span class="item-part band-right"></span></div>`;
+  }
+  if(item.type === "equipment"){
+    if(item.slot === "weapon"){
+      const kind = getWeaponVisualKind(item);
+      if(kind === "weapon-bow"){
+        return `<div class="item-sprite ${kind}"><span class="item-part bow"></span><span class="item-part string"></span><span class="item-part arrow"></span></div>`;
+      }
+      if(kind === "weapon-staff"){
+        return `<div class="item-sprite ${kind}"><span class="item-part shaft"></span><span class="item-part orb"></span><span class="item-part rune"></span></div>`;
+      }
+      return `<div class="item-sprite ${kind}"><span class="item-part blade"></span><span class="item-part guard"></span><span class="item-part hilt"></span><span class="item-part pommel"></span></div>`;
+    }
+    if(item.slot === "head"){
+      return `<div class="item-sprite armor-head"><span class="item-part helm"></span><span class="item-part visor"></span><span class="item-part crest"></span></div>`;
+    }
+    if(item.slot === "chest"){
+      return `<div class="item-sprite armor-chest"><span class="item-part pauldron-left"></span><span class="item-part pauldron-right"></span><span class="item-part plate"></span><span class="item-part emblem"></span></div>`;
+    }
+    if(item.slot === "legs"){
+      return `<div class="item-sprite armor-legs"><span class="item-part belt"></span><span class="item-part leg-left"></span><span class="item-part leg-right"></span></div>`;
+    }
+    if(item.slot === "feet"){
+      return `<div class="item-sprite armor-feet"><span class="item-part boot-left"></span><span class="item-part boot-right"></span><span class="item-part sole-left"></span><span class="item-part sole-right"></span></div>`;
+    }
+  }
+  return `<div class="item-sprite chest"><span class="item-part lid"></span><span class="item-part body"></span><span class="item-part lock"></span></div>`;
+}
+
+function getInventoryItemCardMarkup(item, description, actionButton = "", compact = false){
+  const rarityInfo = item?.rarity ? getRarityInfo(item.rarity) : null;
+  const rarityLine = rarityInfo ? `<span class="inventory-tag ${rarityInfo.cssClass}">${rarityInfo.label}</span>` : "";
+  const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
+  const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
+  return `<div class="inventory-item">
+    <div class="inventory-card ${compact ? "compact" : ""}">
+      <div class="inventory-media ${getItemToneClass(item)} ${getItemRarityVisualClass(item)}">
+        ${getItemSpriteMarkup(item)}
+      </div>
+      <div class="inventory-content">
+        <div class="inventory-title-row">
+          <strong>${item?.name || "Item"}</strong>
+          ${quantityLine}
+        </div>
+        <div class="inventory-meta">${rarityLine}${regionLine}</div>
+        <span class="lock-note inventory-subtext">${description || ""}</span>
+        ${actionButton}
+      </div>
+    </div>
+  </div>`;
+}
+
 function createEquipmentItem(dropTemplate, rarity){
   const rarityInfo = getRarityInfo(rarity);
   const baseStats = dropTemplate.baseStats || dropTemplate.stats || {};
@@ -5003,7 +5289,7 @@ function getEquipmentDisplayName(item){
     return `<span class="slot-empty">Espaco vazio</span>`;
   }
   const rarityInfo = getRarityInfo(item.rarity);
-  return `<span class="${rarityInfo.cssClass}">${item.name}</span>`;
+  return `<div class="inventory-media ${getItemToneClass(item)} ${getItemRarityVisualClass(item)}" style="width:46px;height:46px;border-radius:12px;margin-bottom:6px;">${getItemSpriteMarkup(item)}</div><span class="${rarityInfo.cssClass}">${item.name}</span>`;
 }
 
 function getEquipmentSlotClass(item){
@@ -5039,12 +5325,12 @@ function renderForgePanel(){
     const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
-    return `<div class="inventory-item"><strong>${entry.label}: ${entry.item.name}</strong><br><span class="lock-note">${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}</span><div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div></div>`;
+    return getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true);
   }).join("")}</div></div>`;
 }
 
 function renderAlchemistPanel(){
-  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => `<div class="inventory-item"><strong>${item.name}</strong><br><span class="lock-note">${item.description}</span><div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div></div>`).join("")}</div></div>`;
+  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div>`, true)).join("")}</div></div>`;
 }
 
 function getBaseEnemyName(enemyName){
@@ -5162,175 +5448,9 @@ function getEnemyRigWrapperClass(targetEnemy){
   return `combat-entity enemy-entity enemy-${archetype}-entity ${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}`;
 }
 
-function getEnemyPreviewModel(regionName){
-  const preview = getRegionSpawnPreview(regionName);
-  if(!preview.length){ return null; }
-  const top = preview[0];
-  return {
-    name: top.name,
-    baseName: top.name,
-    level: top.level,
-    region: regionName,
-    isBoss: false,
-    previewOnly: true
-  };
-}
-
-function getEnemyBeastRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-beast-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part beast-tail"></div>
-    <div class="enemy-part beast-body"></div>
-    <div class="enemy-part beast-mane"></div>
-    <div class="enemy-part beast-leg beast-leg-back"></div>
-    <div class="enemy-part beast-leg beast-leg-front"></div>
-    <div class="enemy-part beast-head"></div>
-    <div class="enemy-part beast-ear beast-ear-left"></div>
-    <div class="enemy-part beast-ear beast-ear-right"></div>
-    <div class="enemy-part beast-jaw"></div>
-    <div class="enemy-part beast-eye"></div>
-  </div>`;
-}
-
-function getEnemyHumanoidRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-humanoid-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part humanoid-cloak"></div>
-    <div class="enemy-part humanoid-leg humanoid-leg-left"></div>
-    <div class="enemy-part humanoid-leg humanoid-leg-right"></div>
-    <div class="enemy-part humanoid-body"></div>
-    <div class="enemy-part humanoid-belt"></div>
-    <div class="enemy-part humanoid-head"></div>
-    <div class="enemy-part humanoid-helm"></div>
-    <div class="enemy-part humanoid-eye"></div>
-    <div class="enemy-part humanoid-arm humanoid-arm-left"></div>
-    <div class="enemy-part humanoid-arm humanoid-arm-right"></div>
-    <div class="enemy-part humanoid-weapon"></div>
-    <div class="enemy-part humanoid-offhand"></div>
-  </div>`;
-}
-
-function getEnemyArachnidRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-arachnid-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part arachnid-abdomen"></div>
-    <div class="enemy-part arachnid-body"></div>
-    <div class="enemy-part arachnid-eye-cluster"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-l1"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-l2"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-l3"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-l4"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-r1"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-r2"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-r3"></div>
-    <div class="enemy-part arachnid-leg arachnid-leg-r4"></div>
-  </div>`;
-}
-
-function getEnemySlimeRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-slime-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part slime-splash slime-splash-left"></div>
-    <div class="enemy-part slime-splash slime-splash-right"></div>
-    <div class="enemy-part slime-body"></div>
-    <div class="enemy-part slime-core"></div>
-    <div class="enemy-part slime-eye slime-eye-left"></div>
-    <div class="enemy-part slime-eye slime-eye-right"></div>
-  </div>`;
-}
-
-function getEnemySerpentRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-serpent-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part serpent-coil serpent-coil-back"></div>
-    <div class="enemy-part serpent-coil serpent-coil-front"></div>
-    <div class="enemy-part serpent-neck"></div>
-    <div class="enemy-part serpent-head"></div>
-    <div class="enemy-part serpent-crest"></div>
-    <div class="enemy-part serpent-eye"></div>
-    <div class="enemy-part serpent-fang"></div>
-    <div class="enemy-part serpent-extra serpent-extra-left"></div>
-    <div class="enemy-part serpent-extra serpent-extra-right"></div>
-  </div>`;
-}
-
-function getEnemyWingedRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-winged-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part winged-tail"></div>
-    <div class="enemy-part winged-wing winged-wing-left"></div>
-    <div class="enemy-part winged-wing winged-wing-right"></div>
-    <div class="enemy-part winged-body"></div>
-    <div class="enemy-part winged-chest"></div>
-    <div class="enemy-part winged-head"></div>
-    <div class="enemy-part winged-beak"></div>
-    <div class="enemy-part winged-eye"></div>
-    <div class="enemy-part winged-talon winged-talon-left"></div>
-    <div class="enemy-part winged-talon winged-talon-right"></div>
-  </div>`;
-}
-
-function getEnemySpecterRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-specter-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part specter-shroud"></div>
-    <div class="enemy-part specter-core"></div>
-    <div class="enemy-part specter-head"></div>
-    <div class="enemy-part specter-eye specter-eye-left"></div>
-    <div class="enemy-part specter-eye specter-eye-right"></div>
-    <div class="enemy-part specter-arm"></div>
-    <div class="enemy-part specter-weapon"></div>
-    <div class="enemy-part specter-aura"></div>
-  </div>`;
-}
-
-function getEnemyColossusRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-colossus-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part colossus-body"></div>
-    <div class="enemy-part colossus-core"></div>
-    <div class="enemy-part colossus-shoulder colossus-shoulder-left"></div>
-    <div class="enemy-part colossus-shoulder colossus-shoulder-right"></div>
-    <div class="enemy-part colossus-arm colossus-arm-left"></div>
-    <div class="enemy-part colossus-arm colossus-arm-right"></div>
-    <div class="enemy-part colossus-fist colossus-fist-left"></div>
-    <div class="enemy-part colossus-fist colossus-fist-right"></div>
-    <div class="enemy-part colossus-head"></div>
-    <div class="enemy-part colossus-eye"></div>
-    <div class="enemy-part colossus-crown"></div>
-  </div>`;
-}
-
-function getEnemyEntRigMarkup(className){
-  return `<div id="enemySprite" class="sprite-figure enemy-rig enemy-ent-rig ${className}">
-    <div class="enemy-part enemy-shadow-core"></div>
-    <div class="enemy-part ent-root ent-root-left"></div>
-    <div class="enemy-part ent-root ent-root-right"></div>
-    <div class="enemy-part ent-trunk"></div>
-    <div class="enemy-part ent-crown"></div>
-    <div class="enemy-part ent-branch ent-branch-left"></div>
-    <div class="enemy-part ent-branch ent-branch-right"></div>
-    <div class="enemy-part ent-eye ent-eye-left"></div>
-    <div class="enemy-part ent-eye ent-eye-right"></div>
-  </div>`;
-}
-
 function getEnemySpriteMarkup(targetEnemy){
-  const enemyName = targetEnemy?.baseName || targetEnemy?.name || "";
   const className = `${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}`;
-  switch(getEnemyRigArchetype(enemyName)){
-    case "beast": return getEnemyBeastRigMarkup(className);
-    case "arachnid": return getEnemyArachnidRigMarkup(className);
-    case "slime": return getEnemySlimeRigMarkup(className);
-    case "serpent": return getEnemySerpentRigMarkup(className);
-    case "winged": return getEnemyWingedRigMarkup(className);
-    case "specter":
-    case "reaper": return getEnemySpecterRigMarkup(className);
-    case "colossus":
-    case "armored": return getEnemyColossusRigMarkup(className);
-    case "ent": return getEnemyEntRigMarkup(className);
-    default: return getEnemyHumanoidRigMarkup(className);
-  }
+  return `<div id="enemySprite" class="sprite-figure emoji-sprite ${className}">${getEnemySpriteIcon(targetEnemy)}</div>`;
 }
 
 function getHeroCombatFxMarkup(){
@@ -5370,7 +5490,7 @@ function getSceneBackdropMarkup(regionName){
 }
 
 function renderCombatScene(activeEnemy = null, regionName = currentRegion){
-  const sceneEnemy = activeEnemy || getEnemyPreviewModel(regionName);
+  const sceneEnemy = activeEnemy || null;
   const heroClass = getHeroSpriteClass();
   const sceneClass = getRegionSpriteClass(regionName);
   const displayedClassName = getDisplayedClassName();
@@ -5503,29 +5623,6 @@ function renderBestiary(){
         <span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br>
         <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span>
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
-      </div>
-    </div>`;
-}
-
-function renderBattleRegionPreviewCard(){
-  const regionData = regions[currentRegion];
-  const spawnPreview = getRegionSpawnPreview(currentRegion);
-  return `
-    <div class="enemy-card">
-      <div class="enemy-top">
-        <div class="enemy-title">
-          <h3>${currentRegion}</h3>
-          <p class="enemy-subtitle">Nenhum inimigo ativo no momento</p>
-        </div>
-        <div class="sprite-box enemy-sprite-box ${getRegionSpriteClass(currentRegion)}"><div class="sprite-stage"><div class="sprite-ground"></div><div class="sprite-fx"></div><div class="sprite-figure">${getRegionBattleEmblem(currentRegion)}</div></div></div>
-      </div>
-      <div class="enemy-badges">
-        <span class="enemy-badge">Nivel recomendado ${getRegionRequirement(currentRegion)}</span>
-        <span class="enemy-badge">${currentRegion}</span>
-      </div>
-      <span class="lock-note">${regionData.description}</span>
-      <div class="inventory-list" style="margin-top:12px;">
-        ${spawnPreview.map(entry => `<div class="inventory-item"><strong>${entry.name} Lv.${entry.level}</strong><br><span class="lock-note">Chance atual de spawn: ${entry.chance.toFixed(1)}%</span></div>`).join("")}
       </div>
     </div>`;
 }
@@ -6339,9 +6436,6 @@ function updateUI(){
       if(priorityDiff !== 0){ return priorityDiff; }
       return a.name.localeCompare(b.name, "pt-BR");
     }).map(item => {
-      const rarityInfo = item.rarity ? getRarityInfo(item.rarity) : null;
-      const quantityLine = item.qty ? `<span class="lock-note">Quantidade: ${item.qty}</span><br>` : "";
-      const rarityLine = rarityInfo ? `<span class="${rarityInfo.cssClass}">${rarityInfo.label}</span><br>` : "";
       const useButton = item.type === "consumable"
         ? `<button onclick="useConsumable('${item.id}')">Usar</button>`
         : "";
@@ -6357,7 +6451,11 @@ function updateUI(){
       const actionButton = (useButton || equipButton || openButton || sellButton)
         ? `<div class="button-row">${useButton}${equipButton}${openButton}${sellButton}</div>`
         : "";
-      return `<div class="inventory-item"><strong>${item.name}</strong><br>${rarityLine}${quantityLine}<span class="lock-note">${item.type === "equipment" ? buildEquipmentDescription(item) : (item.description || "")}</span>${actionButton}</div>`;
+      return getInventoryItemCardMarkup(
+        item,
+        item.type === "equipment" ? buildEquipmentDescription(item) : (item.description || ""),
+        actionButton
+      );
     }).join("")}</div>` : `<p class="lock-note">Sua mochila esta vazia por enquanto.</p>`}`;
 
   renderActions();
