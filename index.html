@@ -167,7 +167,8 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .hp{background:#4caf50}.mp{background:#2196f3}.xp{background:#ffc107}
 #log{height:180px;overflow-y:auto;background:#111;padding:10px;border-radius:10px}
 .action-btn{position:relative}
-.action-btn[data-tooltip]:hover::after{
+.action-btn[data-tooltip]:hover::after,
+.has-tooltip[data-tooltip]:hover::after{
   content:attr(data-tooltip);
   position:absolute;
   left:50%;
@@ -185,7 +186,8 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
   white-space:normal;
   z-index:10
 }
-.action-btn[data-tooltip]:hover::before{
+.action-btn[data-tooltip]:hover::before,
+.has-tooltip[data-tooltip]:hover::before{
   content:"";
   position:absolute;
   left:50%;
@@ -1142,8 +1144,10 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .progression-item.next{border:1px solid rgba(255,193,7,.45);background:rgba(255,193,7,.08)}
 @media (max-width:640px){
   .attribute-row{flex-direction:column;align-items:flex-start}
-  .action-btn[data-tooltip]:hover::after{left:0;transform:none}
-  .action-btn[data-tooltip]:hover::before{left:18px;transform:none}
+  .action-btn[data-tooltip]:hover::after,
+.has-tooltip[data-tooltip]:hover::after{left:0;transform:none}
+  .action-btn[data-tooltip]:hover::before,
+.has-tooltip[data-tooltip]:hover::before{left:18px;transform:none}
   .enemy-top{flex-direction:column}
   .settings-panel{width:calc(100vw - 36px)}
   .battle-scene{min-height:290px}
@@ -1446,7 +1450,7 @@ const consumableCatalog = {
   mana_potion: { name: "Pocao de Mana", price: 60, description: "Recupera 35% da mana maxima.", useLabel: "Usar", effectType: "restore_mana_percent", value: 0.35 },
   health_potion: { name: "Pocao de Vida", price: 42, description: "Recupera 35% da vida maxima.", useLabel: "Usar", effectType: "restore_hp_percent", value: 0.35 },
   skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 18, turns: 3 },
-  attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 14, turns: 3 }
+  attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque em 20% por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 0.2, turns: 3, isPercent: true }
 };
 
 function createDefaultPlayerEffects(){
@@ -2938,8 +2942,9 @@ function getActiveSetBonuses(){
   const activeSets = [];
   if(!player?.equipment){ return { bonuses: total, activeSets }; }
 
+  const requiredSetSlots = ["head", "chest", "weapon", "legs", "feet"];
   const sets = {};
-  for(const slot of equipmentSlots){
+  for(const slot of requiredSetSlots){
     const item = normalizeEquipmentMetadata(player.equipment?.[slot]);
     if(!item?.setId){ continue; }
     if(!sets[item.setId]){
@@ -2949,7 +2954,7 @@ function getActiveSetBonuses(){
   }
 
   for(const entry of Object.values(sets)){
-    if(entry.slots.size !== equipmentSlots.length){ continue; }
+    if(entry.slots.size !== requiredSetSlots.length){ continue; }
     const item = entry.item;
     const setBonus = getSetBonusValues(item.regionName);
     total.bonusHp += setBonus.bonusHp || 0;
@@ -4002,7 +4007,6 @@ function getActiveAttack(){
 }
 
 function getAttackSkillBonus(){
-  syncInvestedStatsFromCurrentTotals();
   const invested = createDefaultInvestedStats(player.stats?.invested || {});
   const previewGains = getPendingAllocationGains();
   return (invested.skillGain || invested.attackGain || 0) + previewGains.skillGain;
@@ -5611,7 +5615,10 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const rarityLine = rarityInfo ? `<span class="inventory-tag ${rarityInfo.cssClass}">${rarityInfo.label}</span>` : "";
   const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
-  return `<div class="inventory-item">
+  const tooltipText = description || "";
+  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}" title="${tooltipText}"` : ` class="inventory-item"`;
+  const shouldShowInlineDescription = item?.type !== "equipment";
+  return `<div${tooltipAttrs}>
     <div class="simple-item-line">
       <div class="simple-item-symbol">
         ${getInventoryItemSymbol(item)}
@@ -5622,7 +5629,7 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
           ${quantityLine}
         </div>
         <div class="inventory-meta">${rarityLine}${regionLine}</div>
-        <span class="lock-note inventory-subtext">${description || ""}</span>
+        ${shouldShowInlineDescription ? `<span class="lock-note inventory-subtext">${description || ""}</span>` : ""}
         ${actionButton}
       </div>
     </div>
@@ -6275,8 +6282,13 @@ async function useConsumable(itemId){
   }
   if(config.effectType === "buff_attack"){
     playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, config.turns);
-    playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, config.value);
-    log(`Voce usou ${config.name} e ganhou +${config.value} de dano de ataque por ${config.turns} turnos.`);
+    if(config.isPercent){
+      playerEffects.attackBuffPercent = Math.max(playerEffects.attackBuffPercent, config.value);
+      log(`Voce usou ${config.name} e ganhou +${Math.floor(config.value * 100)}% de dano de ataque por ${config.turns} turnos.`);
+    }else{
+      playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, config.value);
+      log(`Voce usou ${config.name} e ganhou +${config.value} de dano de ataque por ${config.turns} turnos.`);
+    }
   }
 
   updateUI();
@@ -6304,10 +6316,6 @@ function equipItem(itemUid){
     return;
   }
   const equipped = player.equipment?.[item.slot] || null;
-  if(equipped && getRarityRank(item.rarity) <= getRarityRank(equipped.rarity)){
-    log("Voce so pode trocar o item atual por outro de raridade maior.");
-    return;
-  }
   removeInventoryUnit(itemIndex);
   if(equipped){
     addInventoryItem(equipped);
@@ -6915,7 +6923,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
@@ -7632,20 +7640,8 @@ function chooseBossAction(){
   }
   const ranked = availableAbilities
     .map(ability => ({ ability, score: getBossActionScore(ability) }))
-    .filter(entry => entry.score > -100)
     .sort((a, b) => b.score - a.score);
-  if(!ranked.length){
-    return null;
-  }
-  const top = ranked[0];
-  const fallbackScore = getBossFallbackOnlyScore(enemy.mp, {});
-  if(top.ability.type === "buff"){
-    return top.score > fallbackScore + 8 ? top.ability : null;
-  }
-  if(availableAbilities.length === 1){
-    return top.score >= fallbackScore + 2 ? top.ability : null;
-  }
-  return top.score >= fallbackScore - 2 ? top.ability : null;
+  return ranked[0]?.ability || availableAbilities[0] || null;
 }
 
 function resolveBossAction(ability){
@@ -7806,9 +7802,7 @@ async function enemyTurn(){
   }else{
     const usesLegacyBossFallbackSkill = enemy.isBoss && (!enemy.bossAbilities || !enemy.bossAbilities.length);
     const canUseBossSkill = usesLegacyBossFallbackSkill && enemy.skillCost > 0 && enemy.mp >= enemy.skillCost;
-    const fallbackSkillScore = canUseBossSkill ? getBossFallbackSkillScore(enemy.mp, {}) : -1;
-    const basicScore = getBossBasicAttackScore({});
-    const shouldCastFallbackSkill = canUseBossSkill && fallbackSkillScore >= basicScore + 4;
+    const shouldCastFallbackSkill = canUseBossSkill;
     if(shouldCastFallbackSkill){
       enemy.mp -= enemy.skillCost;
       dmg = enemy.skillDamage + Math.floor(Math.random() * 6);
@@ -7940,7 +7934,6 @@ function adjustAttribute(attribute, amount){
 }
 
 function getTotalInvestedPoints(){
-  syncInvestedStatsFromCurrentTotals();
   const invested = createDefaultInvestedStats(player?.stats?.invested || {});
   return (Number(invested.vitality) || 0) + (Number(invested.wisdom) || 0) + (Number(invested.strength) || 0);
 }
@@ -7992,21 +7985,21 @@ function syncInvestedStatsFromCurrentTotals(){
 }
 
 function getInvestedSummary(){
-  syncInvestedStatsFromCurrentTotals();
   const invested = createDefaultInvestedStats(player?.stats?.invested || {});
-  const vitalityPoints = Number(invested.vitality) || 0;
-  const wisdomPoints = Number(invested.wisdom) || 0;
-  const strengthPoints = Number(invested.strength) || 0;
+  const previewGains = getPendingAllocationGains();
+  const vitalityPoints = (Number(invested.vitality) || 0) + (Number(allocation?.vitality) || 0);
+  const wisdomPoints = (Number(invested.wisdom) || 0) + (Number(allocation?.wisdom) || 0);
+  const strengthPoints = (Number(invested.strength) || 0) + (Number(allocation?.strength) || 0);
   const trackedTotal = vitalityPoints + wisdomPoints + strengthPoints;
   const totalLevelPoints = Math.max(0, (player?.level || 1) - 1);
   return {
     vitalityPoints,
     wisdomPoints,
     strengthPoints,
-    hpGain: Number(invested.hpGain) || 0,
-    mpGain: Number(invested.mpGain) || 0,
-    attackGain: Number(invested.attackGain) || 0,
-    skillGain: Number(invested.skillGain ?? invested.attackGain) || 0,
+    hpGain: (Number(invested.hpGain) || 0) + (previewGains.hpGain || 0),
+    mpGain: (Number(invested.mpGain) || 0) + (previewGains.mpGain || 0),
+    attackGain: (Number(invested.attackGain) || 0) + (previewGains.attackGain || 0),
+    skillGain: (Number(invested.skillGain ?? invested.attackGain) || 0) + (previewGains.skillGain || 0),
     trackedTotal,
     totalLevelPoints,
     untrackedPoints: Math.max(0, totalLevelPoints - trackedTotal)
