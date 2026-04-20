@@ -27,7 +27,7 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .hero-portrait-copy{display:flex;flex-direction:column;gap:6px}
 .hero-portrait-copy strong{font-size:18px}
 .coin-badge{padding:8px 14px;border-radius:999px;background:#f6c445;color:#2b2100;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22)}
-.class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.class-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .class-card{padding:18px;border:none;border-radius:16px;background:linear-gradient(160deg,#4d4d4d,#2f2f2f);color:#fff;text-align:left;box-shadow:0 10px 20px rgba(0,0,0,.18);transition:transform .18s ease,box-shadow .18s ease}
 .class-card:hover{transform:translateY(-3px);box-shadow:0 14px 24px rgba(0,0,0,.24)}
 .class-card .class-icon{font-size:38px;display:block;margin-bottom:8px}
@@ -40,6 +40,7 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .class-warrior{background:linear-gradient(160deg,#68533a,#32261b)}
 .class-archer{background:linear-gradient(160deg,#45644b,#1e3022)}
 .class-mage{background:linear-gradient(160deg,#35506c,#1d263b)}
+.class-nature{background:linear-gradient(160deg,#466741,#20301c)}
 .saved-campaign{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
 .death-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .panel-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -222,12 +223,16 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .hero-arcanista,.hero-arquimago,.hero-corrompido{color:#d6c4ff;text-shadow:0 0 16px rgba(171,112,255,.24)}
 .hero-atirador,.hero-atirador-arcano,.hero-sniper{color:#c8f2c7;text-shadow:0 0 14px rgba(136,223,136,.2)}
 .hero-cacador,.hero-espreitador,.hero-guarda-florestal{color:#cde8ab;text-shadow:0 0 14px rgba(153,214,102,.22)}
+.hero-adepto-da-natureza,.hero-druida,.hero-druida-sombrio,.hero-avatar-da-natureza,.hero-espirito-da-floresta,.hero-fada-monarca,.hero-protetor-da-floresta{color:#d6efbc;text-shadow:0 0 14px rgba(153,214,102,.22)}
 .hero-sprite-box.hero-guerreiro,.hero-sprite-box.hero-cavaleiro,.hero-sprite-box.hero-paladino,.hero-sprite-box.hero-berserker,.hero-sprite-box.hero-espadachim,.hero-sprite-box.hero-samurai,.hero-sprite-box.hero-ninja{background:
 radial-gradient(circle at 50% 18%,rgba(255,210,160,.16),rgba(255,210,160,0) 44%),
 linear-gradient(180deg,rgba(108,43,31,.28),rgba(28,18,16,.34))}
 .hero-sprite-box.hero-arqueiro,.hero-sprite-box.hero-atirador,.hero-sprite-box.hero-atirador-arcano,.hero-sprite-box.hero-sniper,.hero-sprite-box.hero-cacador,.hero-sprite-box.hero-espreitador,.hero-sprite-box.hero-guarda-florestal{background:
 radial-gradient(circle at 50% 18%,rgba(170,255,167,.14),rgba(170,255,167,0) 44%),
 linear-gradient(180deg,rgba(29,78,39,.26),rgba(17,28,17,.34))}
+.hero-sprite-box.hero-adepto-da-natureza,.hero-sprite-box.hero-druida,.hero-sprite-box.hero-druida-sombrio,.hero-sprite-box.hero-avatar-da-natureza,.hero-sprite-box.hero-espirito-da-floresta,.hero-sprite-box.hero-fada-monarca,.hero-sprite-box.hero-protetor-da-floresta{background:
+radial-gradient(circle at 50% 18%,rgba(198,255,170,.16),rgba(198,255,170,0) 44%),
+linear-gradient(180deg,rgba(45,83,39,.28),rgba(17,28,17,.34))}
 .hero-sprite-box.hero-mago,.hero-sprite-box.hero-elementalista,.hero-sprite-box.hero-mago-incendiario,.hero-sprite-box.hero-mago-frigido,.hero-sprite-box.hero-arcanista,.hero-sprite-box.hero-arquimago,.hero-sprite-box.hero-corrompido{background:
 radial-gradient(circle at 50% 18%,rgba(177,199,255,.18),rgba(177,199,255,0) 44%),
 linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
@@ -728,6 +733,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .hero-entity .sprite-fx{transform:scaleX(-1);transform-origin:center center}
 .hero-entity.hero-guerreiro .entity-aura,.hero-entity.hero-cavaleiro .entity-aura,.hero-entity.hero-paladino .entity-aura,.hero-entity.hero-berserker .entity-aura,.hero-entity.hero-espadachim .entity-aura,.hero-entity.hero-samurai .entity-aura,.hero-entity.hero-ninja .entity-aura{background:radial-gradient(circle,rgba(255,198,126,.46),rgba(255,198,126,0) 72%)}
 .hero-entity.hero-arqueiro .entity-aura,.hero-entity.hero-atirador .entity-aura,.hero-entity.hero-atirador-arcano .entity-aura,.hero-entity.hero-sniper .entity-aura,.hero-entity.hero-cacador .entity-aura,.hero-entity.hero-espreitador .entity-aura,.hero-entity.hero-guarda-florestal .entity-aura{background:radial-gradient(circle,rgba(156,255,173,.38),rgba(156,255,173,0) 72%)}
+.hero-entity.hero-adepto-da-natureza .entity-aura,.hero-entity.hero-druida .entity-aura,.hero-entity.hero-druida-sombrio .entity-aura,.hero-entity.hero-avatar-da-natureza .entity-aura,.hero-entity.hero-espirito-da-floresta .entity-aura,.hero-entity.hero-fada-monarca .entity-aura,.hero-entity.hero-protetor-da-floresta .entity-aura{background:radial-gradient(circle,rgba(175,244,144,.42),rgba(175,244,144,0) 72%)}
 .hero-entity.hero-mago .entity-aura,.hero-entity.hero-elementalista .entity-aura,.hero-entity.hero-mago-incendiario .entity-aura,.hero-entity.hero-mago-frigido .entity-aura,.hero-entity.hero-arcanista .entity-aura,.hero-entity.hero-arquimago .entity-aura,.hero-entity.hero-corrompido .entity-aura{background:radial-gradient(circle,rgba(190,169,255,.46),rgba(190,169,255,0) 72%)}
 .hero-entity.hero-paladino .entity-aura,.hero-entity.hero-arquimago .entity-aura,.hero-entity.hero-sniper .entity-aura{opacity:.62}
 .hero-entity.hero-paladino .entity-aura{background:radial-gradient(circle,rgba(255,241,178,.56),rgba(255,241,178,0) 72%)}
@@ -745,6 +751,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .enemy-entity.enemy-boss .entity-aura{width:148px;height:76px;opacity:.56;animation:bossAuraPulse 3.2s ease-in-out infinite}
 .hero-entity.hero-guerreiro.attacking,.hero-entity.hero-cavaleiro.attacking,.hero-entity.hero-paladino.attacking,.hero-entity.hero-berserker.attacking,.hero-entity.hero-espadachim.attacking,.hero-entity.hero-samurai.attacking,.hero-entity.hero-ninja.attacking{animation:combatHeroBladeRush .34s ease-in-out}
 .hero-entity.hero-arqueiro.attacking,.hero-entity.hero-atirador.attacking,.hero-entity.hero-atirador-arcano.attacking,.hero-entity.hero-sniper.attacking,.hero-entity.hero-cacador.attacking,.hero-entity.hero-espreitador.attacking,.hero-entity.hero-guarda-florestal.attacking{animation:combatHeroArcherDraw .42s ease-out}
+.hero-entity.hero-adepto-da-natureza.attacking,.hero-entity.hero-druida.attacking,.hero-entity.hero-druida-sombrio.attacking,.hero-entity.hero-avatar-da-natureza.attacking,.hero-entity.hero-espirito-da-floresta.attacking,.hero-entity.hero-fada-monarca.attacking,.hero-entity.hero-protetor-da-floresta.attacking{animation:combatHeroArcherDraw .42s ease-out}
 .hero-entity.casting{animation:combatHeroCast .48s ease-out}
 .hero-entity.buffing{animation:combatHeroBuff .52s ease-out}
 .hero-entity.hit{animation:combatHeroHit .22s linear}
@@ -772,6 +779,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .sprite-fx .fx-enemy-buff{right:32px;top:18px;width:104px;height:104px;border-radius:50%;border:2px solid rgba(255,214,138,.6);background:radial-gradient(circle,rgba(255,214,138,.28),rgba(255,214,138,.12),rgba(255,214,138,0))}
 .hero-entity.attacking.hero-guerreiro .fx-sword-slash,.hero-entity.attacking.hero-cavaleiro .fx-sword-slash,.hero-entity.attacking.hero-paladino .fx-sword-slash,.hero-entity.attacking.hero-berserker .fx-sword-slash,.hero-entity.attacking.hero-espadachim .fx-sword-slash,.hero-entity.attacking.hero-samurai .fx-sword-slash,.hero-entity.attacking.hero-ninja .fx-sword-slash{animation:combatSwordArc .34s ease-out}
 .hero-entity.attacking.hero-arqueiro .fx-arrow-shot,.hero-entity.attacking.hero-atirador .fx-arrow-shot,.hero-entity.attacking.hero-atirador-arcano .fx-arrow-shot,.hero-entity.attacking.hero-sniper .fx-arrow-shot,.hero-entity.attacking.hero-cacador .fx-arrow-shot,.hero-entity.attacking.hero-espreitador .fx-arrow-shot,.hero-entity.attacking.hero-guarda-florestal .fx-arrow-shot{animation:combatArrowFlight .42s cubic-bezier(.14,.7,.22,1)}
+.hero-entity.attacking.hero-adepto-da-natureza .fx-arrow-shot,.hero-entity.attacking.hero-druida .fx-arrow-shot,.hero-entity.attacking.hero-druida-sombrio .fx-arrow-shot,.hero-entity.attacking.hero-avatar-da-natureza .fx-arrow-shot,.hero-entity.attacking.hero-espirito-da-floresta .fx-arrow-shot,.hero-entity.attacking.hero-fada-monarca .fx-arrow-shot,.hero-entity.attacking.hero-protetor-da-floresta .fx-arrow-shot{animation:combatArrowFlight .42s cubic-bezier(.14,.7,.22,1);background:linear-gradient(90deg,#ebffd7,#8fd46b);box-shadow:0 0 14px rgba(143,212,107,.42)}
 .hero-entity.attacking.hero-atirador-arcano .fx-arrow-shot,.hero-entity.attacking.hero-sniper .fx-arrow-shot{box-shadow:0 0 14px rgba(194,153,255,.48);background:linear-gradient(90deg,#f7efff,#c49dff)}
 .hero-entity.casting.hero-mago .fx-magic-orb,.hero-entity.casting.hero-elementalista .fx-magic-orb,.hero-entity.casting.hero-mago-incendiario .fx-magic-orb,.hero-entity.casting.hero-mago-frigido .fx-magic-orb,.hero-entity.casting.hero-arcanista .fx-magic-orb,.hero-entity.casting.hero-arquimago .fx-magic-orb,.hero-entity.casting.hero-corrompido .fx-magic-orb{animation:combatOrbFlight .48s ease-out}
 .hero-entity.casting .fx-magic-tail{animation:combatOrbTrail .48s ease-out}
@@ -1169,7 +1177,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 <p><span class="stat-hp">Vida 120</span></p>
 <p><span class="stat-mp">Mana 60</span></p>
 <p><span class="stat-atk">Dano basico 18</span></p>
-<small>Alta resistencia, pouca mana e o ataque basico mais forte entre as tres classes.</small>
+<small>Alta resistencia, pouca mana e o ataque basico mais forte entre as classes iniciais.</small>
 </button>
 <button class="class-card class-archer" onclick="selectClass('Arqueiro')">
 <span class="class-icon">&#x1F3F9;</span>
@@ -1177,7 +1185,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 <p><span class="stat-hp">Vida 100</span></p>
 <p><span class="stat-mp">Mana 80</span></p>
 <p><span class="stat-atk">Dano basico 16</span></p>
-<small>Classe equilibrada, com boa mobilidade e o melhor ganho ofensivo por ponto.</small>
+<small>Classe equilibrada, com boa mobilidade e um kit voltado para precisao, criticos e pressao constante.</small>
 </button>
 <button class="class-card class-mage" onclick="selectClass('Mago')">
 <span class="class-icon">&#x1F52E;</span>
@@ -1185,7 +1193,15 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 <p><span class="stat-hp">Vida 80</span></p>
 <p><span class="stat-mp">Mana 100</span></p>
 <p><span class="stat-atk">Dano basico 14</span></p>
-<small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes.</small>
+<small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes iniciais.</small>
+</button>
+<button class="class-card class-nature" onclick="selectClass('Adepto da Natureza')">
+<span class="class-icon">&#x1F33F;</span>
+<h4>Adepto da Natureza</h4>
+<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-mp">Mana 100</span></p>
+<p><span class="stat-atk">Dano basico 12</span></p>
+<small>Classe natural equilibrada, preparada para futuras rotas de suporte, magia da floresta e controle vivo.</small>
 </button>
 </div>
 <div id="savedCampaign" class="saved-campaign" style="display:none;"></div>
@@ -1226,10 +1242,15 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 const SAVE_KEY = "rpg_turnos_campaign_v1";
 const UI_SETTINGS_KEY = "rpg_turnos_ui_settings_v1";
 const MAX_LEVEL = 100;
+const regionMusicTracks = {
+  Floresta: { src: "assets/audio/music/gossamer-cache.mp3", label: "Gossamer Cache" }
+};
 let player, enemy;
+let musicFadeInterval = null;
+let musicFadeTargetVolume = 0;
 let pendingLevelUps = 0;
 let levelUpPoints = 0;
-let allocation = { hp: 0, mp: 0, attack: 0 };
+let allocation = { strength: 0, wisdom: 0, vitality: 0 };
 let isProcessingTurn = false;
 let currentRegion = "Floresta";
 let needsNewEnemy = false;
@@ -1249,6 +1270,8 @@ let displayState = {
 };
 let uiSettings = loadUiSettings();
 let dungeonMultiplayer = createDungeonMultiplayerState();
+let regionMusicAudio = null;
+let currentMusicRegion = null;
 const rarityOrder = ["comum", "incomum", "rara", "ultra_rara", "lendaria"];
 const rarityData = {
   comum: { label: "Comum", cssClass: "rarity-comum", weight: 62 },
@@ -1268,7 +1291,8 @@ const slotLabels = { head: "Cabeca", chest: "Peito", weapon: "Arma", legs: "Pern
 const classIcons = {
   Guerreiro: "&#x1F6E1;&#xFE0F;",
   Arqueiro: "&#x1F3F9;",
-  Mago: "&#x1F52E;"
+  Mago: "&#x1F52E;",
+  "Adepto da Natureza": "&#x1F33F;"
 };
 const subclassIcons = {
   cavaleiro: "&#x1F6E1;&#xFE0F;",
@@ -1288,7 +1312,13 @@ const subclassIcons = {
   atirador_arcano: "&#x2728;",
   sniper: "&#x1F4A5;",
   espreitador: "&#x1F576;&#xFE0F;",
-  guarda_florestal: "&#x1F333;"
+  guarda_florestal: "&#x1F333;",
+  druida: "&#x1F332;",
+  espirito_da_floresta: "&#x1F9DA;",
+  druida_sombrio: "&#x1F344;",
+  avatar_da_natureza: "&#x1F343;",
+  fada_monarca: "&#x1F338;",
+  protetor_da_floresta: "&#x1F6E1;&#xFE0F;"
 };
 const combatArtAssets = {
   heroes: {},
@@ -1498,10 +1528,12 @@ function loadUiSettings(){
     const saved = JSON.parse(localStorage.getItem(UI_SETTINGS_KEY) || "{}");
     return {
       enemyBarSpeed: saved.enemyBarSpeed || "rapida",
-      disableRespawnTimer: !!saved.disableRespawnTimer
+      disableRespawnTimer: !!saved.disableRespawnTimer,
+      musicVolume: typeof saved.musicVolume === "number" ? Math.min(1, Math.max(0, saved.musicVolume)) : 0.5,
+      musicMuted: !!saved.musicMuted
     };
   }catch{
-    return { enemyBarSpeed: "rapida", disableRespawnTimer: false };
+    return { enemyBarSpeed: "rapida", disableRespawnTimer: false, musicVolume: 0.5, musicMuted: false };
   }
 }
 
@@ -1513,6 +1545,123 @@ function saveUiSettings(){
 function toggleSettingsPanel(){
   isSettingsOpen = !isSettingsOpen;
   renderSettingsPanel();
+}
+
+function ensureRegionMusicAudio(){
+  if(regionMusicAudio){ return regionMusicAudio; }
+  regionMusicAudio = new Audio();
+  regionMusicAudio.loop = true;
+  regionMusicAudio.preload = "auto";
+  applyMusicSettings();
+  return regionMusicAudio;
+}
+
+function clearMusicFade(){
+  if(musicFadeInterval){
+    clearInterval(musicFadeInterval);
+    musicFadeInterval = null;
+  }
+}
+
+function getTargetMusicVolume(){
+  if(uiSettings.musicMuted){ return 0; }
+  return Math.min(1, Math.max(0, uiSettings.musicVolume ?? 0.5));
+}
+
+function startRegionMusicFadeIn(){
+  const audio = ensureRegionMusicAudio();
+  const targetVolume = getTargetMusicVolume();
+  musicFadeTargetVolume = targetVolume;
+  clearMusicFade();
+  if(targetVolume <= 0){
+    audio.volume = 0;
+    return;
+  }
+  const startingVolume = Math.min(targetVolume, 0.03);
+  audio.volume = startingVolume;
+  musicFadeInterval = setInterval(() => {
+    const liveTarget = getTargetMusicVolume();
+    musicFadeTargetVolume = liveTarget;
+    if(liveTarget <= 0){
+      audio.volume = 0;
+      clearMusicFade();
+      return;
+    }
+    const nextVolume = Math.min(liveTarget, audio.volume + Math.max(0.008, liveTarget / 18));
+    audio.volume = nextVolume;
+    if(nextVolume >= liveTarget - 0.001){
+      audio.volume = liveTarget;
+      clearMusicFade();
+    }
+  }, 220);
+}
+
+function applyMusicSettings(){
+  const audio = ensureRegionMusicAudio();
+  const targetVolume = getTargetMusicVolume();
+  musicFadeTargetVolume = targetVolume;
+  if(targetVolume <= 0){
+    audio.volume = 0;
+    clearMusicFade();
+    return;
+  }
+  if(musicFadeInterval){
+    if(audio.volume > targetVolume){
+      audio.volume = targetVolume;
+    }
+    return;
+  }
+  audio.volume = targetVolume;
+}
+
+function setMusicVolume(nextVolume){
+  uiSettings.musicVolume = Math.min(1, Math.max(0, nextVolume));
+  applyMusicSettings();
+  saveUiSettings();
+}
+
+function adjustMusicVolume(delta){
+  setMusicVolume((uiSettings.musicVolume ?? 0.5) + delta);
+}
+
+function toggleMusicMute(){
+  uiSettings.musicMuted = !uiSettings.musicMuted;
+  applyMusicSettings();
+  saveUiSettings();
+}
+
+function syncRegionMusic(forceRestart = false){
+  const track = regionMusicTracks[currentRegion] || null;
+  const audio = ensureRegionMusicAudio();
+  if(!track){
+    clearMusicFade();
+    if(!audio.paused){
+      audio.pause();
+    }
+    audio.volume = 0;
+    currentMusicRegion = null;
+    return;
+  }
+  const shouldRestart = forceRestart || currentMusicRegion !== currentRegion || !audio.src || !audio.src.endsWith(track.src.replace(/\\/g, "/"));
+  if(shouldRestart){
+    clearMusicFade();
+    audio.src = track.src;
+    currentMusicRegion = currentRegion;
+    audio.currentTime = 0;
+  }
+  const targetVolume = getTargetMusicVolume();
+  if(!shouldRestart){
+    applyMusicSettings();
+  }else{
+    audio.volume = targetVolume <= 0 ? 0 : Math.min(targetVolume, 0.03);
+  }
+  const playAttempt = audio.play();
+  if(playAttempt?.catch){
+    playAttempt.catch(() => {});
+  }
+  if(shouldRestart){
+    startRegionMusicFadeIn();
+  }
 }
 
 function setEnemyBarSpeed(speed){
@@ -1553,6 +1702,15 @@ function renderSettingsPanel(){
         <button class="${!uiSettings.disableRespawnTimer ? "active" : ""}" onclick="setDisableRespawnTimer(false)">Normal</button>
       </div>
       <span class="settings-note">Opcao de teste para renascer sem tempo de espera.</span>
+    </div>
+    <div style="margin-top:14px;">
+      <span class="lock-note">Volume da musica</span>
+      <div class="settings-options">
+        <button onclick="adjustMusicVolume(-0.1)">Diminuir</button>
+        <button onclick="adjustMusicVolume(0.1)">Aumentar</button>
+        <button class="${uiSettings.musicMuted ? "active" : ""}" onclick="toggleMusicMute()">${uiSettings.musicMuted ? "Desmutar" : "Mutar"}</button>
+      </div>
+      <span class="settings-note">Volume atual: ${Math.round((uiSettings.musicVolume ?? 0.5) * 100)}%${uiSettings.musicMuted ? " | Mutado" : ""}</span>
     </div>`;
 }
 
@@ -1614,20 +1772,22 @@ const classes = {
   Guerreiro: {
     hp: 120,
     mp: 60,
-    attack: 18,
-    growth: { hp: 39, mp: 20, attack: 4 }
+    attack: 18
   },
   Arqueiro: {
     hp: 100,
     mp: 80,
-    attack: 16,
-    growth: { hp: 26, mp: 20, attack: 6 }
+    attack: 16
   },
   Mago: {
     hp: 80,
     mp: 100,
-    attack: 14,
-    growth: { hp: 26, mp: 30, attack: 4 }
+    attack: 14
+  },
+  "Adepto da Natureza": {
+    hp: 100,
+    mp: 100,
+    attack: 12
   }
 };
 
@@ -1858,7 +2018,7 @@ const subclassChoicesByClass = {
   Arqueiro: {
     tier30: [
       { id: "atirador", name: "Atirador", description: "Especialista em tiros tecnicos, precisao e burst em alvo unico.", bonusHp: 0, bonusMp: 50, bonusAttack: 15, skillPower: 15 },
-      { id: "cacador", name: "Cacador", description: "Predador oportunista focado em rajadas, esquiva e recompensas.", bonusHp: 100, bonusMp: 0, bonusAttack: 15, skillPower: 0 }
+      { id: "cacador", name: "Cacador", description: "Predador oportunista focado em rajadas, esquiva e recompensas.", bonusHp: 100, bonusMp: 0, bonusAttack: 20, skillPower: 0 }
     ],
     tier60: {
       atirador: [
@@ -1868,6 +2028,22 @@ const subclassChoicesByClass = {
       cacador: [
         { id: "espreitador", name: "Espreitador", description: "Predador furtivo com equilibrio entre mana e dano oportunista.", bonusHp: 0, bonusMp: 100, bonusAttack: 30, skillPower: 15 },
         { id: "guarda_florestal", name: "Guarda Florestal", description: "Sentinela resistente que domina tiros de controle e sobrevivencia.", bonusHp: 500, bonusMp: 0, bonusAttack: 25, skillPower: 0 }
+      ]
+    }
+  },
+  "Adepto da Natureza": {
+    tier30: [
+      { id: "druida", name: "Druida", description: "Rota ancestral ligada a formas naturais, vigor e controle vivo.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
+      { id: "espirito_da_floresta", name: "Espirito da Floresta", description: "Rota eterea da mata, focada em magia natural, ritmo e encanto.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
+    ],
+    tier60: {
+      druida: [
+        { id: "druida_sombrio", name: "Druida Sombrio", description: "Canaliza o lado decadente da natureza e da corrupcao viva.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
+        { id: "avatar_da_natureza", name: "Avatar da Natureza", description: "Manifestacao do ciclo natural em forma de poder bruto e resiliencia.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
+      ],
+      espirito_da_floresta: [
+        { id: "fada_monarca", name: "Fada Monarca", description: "Soberania feerica, magia refinada e dominio dos encantos da floresta.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
+        { id: "protetor_da_floresta", name: "Protetor da Floresta", description: "Guardiao espiritual da mata, firmeza viva e defesa natural.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
       ]
     }
   }
@@ -2180,7 +2356,7 @@ function buildArcherTrees(){
       activeSkills.push({ level: 60, id: "executar", name: "Executar", type: "archer_execute" });
     }
     if(tier60 === "atirador_arcano" && player.level >= 80){
-      activeSkills.push({ level: 80, id: "sobrecarregar", name: "Sobrecarregar", type: "archer_overcharge" });
+      activeSkills.push({ level: 80, id: "sobreaquecer", name: "Sobreaquecer", type: "archer_overcharge" });
     }
     if(tier60 === "sniper" && player.level >= 80){
       activeSkills.push({ level: 80, id: "ponto_fraco", name: "Ponto Fraco", type: "archer_weak_spot" });
@@ -2237,9 +2413,24 @@ function buildArcherTrees(){
   return { activeSkills, passiveSkills };
 }
 
+function buildNatureTrees(){
+  return { activeSkills: [], passiveSkills: [] };
+}
+
 function getClassTrees(){
   if(!player){ return { activeSkills: [], passiveSkills: [] }; }
-  const trees = player.class === "Guerreiro" ? buildWarriorTrees() : player.class === "Mago" ? buildMageTrees() : buildArcherTrees();
+  let trees;
+  if(player.class === "Guerreiro"){
+    trees = buildWarriorTrees();
+  }else if(player.class === "Mago"){
+    trees = buildMageTrees();
+  }else if(player.class === "Arqueiro"){
+    trees = buildArcherTrees();
+  }else if(player.class === "Adepto da Natureza"){
+    trees = buildNatureTrees();
+  }else{
+    trees = { activeSkills: [], passiveSkills: [] };
+  }
   trees.activeSkills.sort((a, b) => a.level - b.level);
   trees.passiveSkills.sort((a, b) => a.level - b.level);
   return trees;
@@ -2259,7 +2450,6 @@ function selectClass(name){
     mp: base.mp,
     attack: base.attack,
     baseAttack: base.attack,
-    growth: base.growth,
     activeSkills: [],
     passiveSkills: [],
     inventory: [],
@@ -2275,6 +2465,7 @@ function selectClass(name){
   playerEffects = createDefaultPlayerEffects();
   document.getElementById("classSelect").style.display = "none";
   document.getElementById("game").style.display = "block";
+  syncRegionMusic(true);
   needsNewEnemy = true;
   spawnEnemy();
   updateUI();
@@ -2282,10 +2473,12 @@ function selectClass(name){
 
 function chooseWeightedEnemy(enemyList, options = {}){
   const { regionName = currentRegion, applyLevelAdjustment = true } = options;
-  const weightedEntries = enemyList.map(enemyData => ({
-    enemyData,
-    weight: applyLevelAdjustment ? getAdjustedEnemySpawnWeight(enemyData, regionName) : Math.max(0, enemyData.weight || 0)
-  }));
+  const weightedEntries = applyLevelAdjustment
+    ? getAdjustedRegionSpawnWeights(enemyList, regionName)
+    : enemyList.map(enemyData => ({
+      enemyData,
+      weight: Math.max(0, enemyData.weight || 0)
+    }));
   const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0);
   let roll = Math.random() * totalWeight;
   for(const entry of weightedEntries){
@@ -2314,6 +2507,34 @@ function getAdjustedEnemySpawnWeight(enemyData, regionName = currentRegion){
   return Math.max(1, enemyData.weight / penalty);
 }
 
+function getAdjustedRegionSpawnWeights(enemyList, regionName = currentRegion){
+  const rawEntries = enemyList.map(enemyData => ({
+    enemyData,
+    baseWeight: Math.max(0, enemyData.weight || 0),
+    weight: getAdjustedEnemySpawnWeight(enemyData, regionName)
+  }));
+  const rareEntry = rawEntries.find(entry => getEnemyRarity(regionName, entry.enemyData.name, false).key === "rara");
+  if(!rareEntry){
+    return rawEntries;
+  }
+  const baseTotal = rawEntries.reduce((sum, entry) => sum + entry.baseWeight, 0) || 1;
+  const rawTotal = rawEntries.reduce((sum, entry) => sum + entry.weight, 0) || 1;
+  const baseRareChance = rareEntry.baseWeight / baseTotal;
+  const rawRareChance = rareEntry.weight / rawTotal;
+  const rareLead = player.level - rareEntry.enemyData.level;
+  let revealProgress = 0;
+  if(rareLead >= 1){
+    revealProgress = Math.min(1, rareLead / 3);
+  }
+  const allowedRareChance = baseRareChance + ((rawRareChance - baseRareChance) * revealProgress);
+  if(rawRareChance <= allowedRareChance || allowedRareChance >= 0.999){
+    return rawEntries;
+  }
+  const otherWeight = Math.max(0.0001, rawTotal - rareEntry.weight);
+  rareEntry.weight = Math.max(1, (allowedRareChance * otherWeight) / Math.max(0.0001, 1 - allowedRareChance));
+  return rawEntries;
+}
+
 function getRegionSpawnPreview(regionName){
   const regionData = regions[regionName];
   if(!regionData?.enemies?.length){
@@ -2328,10 +2549,7 @@ function getRegionSpawnPreview(regionName){
       }));
     }
   }
-  const weightedEntries = regionData.enemies.map(enemyData => ({
-    enemyData,
-    weight: getAdjustedEnemySpawnWeight(enemyData, regionName)
-  }));
+  const weightedEntries = getAdjustedRegionSpawnWeights(regionData.enemies, regionName);
   const totalWeight = weightedEntries.reduce((sum, entry) => sum + entry.weight, 0) || 1;
   return weightedEntries.map(entry => ({
     ...entry.enemyData,
@@ -2826,7 +3044,6 @@ function normalizePlayerState(){
   player.stats.migrations = player.stats.migrations || {};
   player.stats.regionKills = player.stats.regionKills || {};
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
-  player.growth = { ...(classDefaults.growth || player.growth || { hp: 0, mp: 0, attack: 0 }) };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   if(!player.stats.migrations.baseHpRebalance_v1){
     const oldBaseHpByClass = { Guerreiro: 140, Arqueiro: 120, Mago: 100 };
@@ -2839,7 +3056,7 @@ function normalizePlayerState(){
     }
     player.stats.migrations.baseHpRebalance_v1 = true;
   }
-  player.stats.invested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
+  player.stats.invested = createDefaultInvestedStats(player.stats.invested);
   const legacySubclass = player.subclass?.id || player.subclass || null;
   player.subclass = null;
   const subclassState = getPlayerSubclassState(player);
@@ -2848,29 +3065,51 @@ function normalizePlayerState(){
       subclassState.tier30 = legacySubclass;
     }
   }
-  const classBase = player.baseStats || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0, growth: player.growth || { hp: 0, mp: 0, attack: 0 } };
-  const inferredInvested = {
-    hp: Math.max(0, Math.round(((player.maxHp || classBase.hp) - classBase.hp) / Math.max(1, player.growth.hp))),
-    mp: Math.max(0, Math.round(((player.maxMp || classBase.mp) - classBase.mp) / Math.max(1, player.growth.mp))),
-    attack: Math.max(0, Math.round(((player.attack || classBase.attack) - classBase.attack) / Math.max(1, player.growth.attack)))
-  };
-  const savedInvested = player.stats.invested || { hp: 0, mp: 0, attack: 0 };
-  const savedTotal = (Number(savedInvested.hp) || 0) + (Number(savedInvested.mp) || 0) + (Number(savedInvested.attack) || 0);
-  const inferredTotal = inferredInvested.hp + inferredInvested.mp + inferredInvested.attack;
-  if(inferredTotal > 0 && (savedTotal <= 0 || savedTotal !== inferredTotal)){
-    player.stats.invested = inferredInvested;
-  }
+  syncInvestedStatsFromCurrentTotals();
   player.activeSkills = getClassTrees().activeSkills;
   player.passiveSkills = getClassTrees().passiveSkills;
   playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
 }
 
+function getAttributePointGain(attribute, targetLevel = player?.level || 1){
+  const level = Math.max(1, Math.floor(targetLevel || 1));
+  if(attribute === "strength"){
+    return Math.floor(5 + (level * 0.15));
+  }
+  if(attribute === "wisdom"){
+    return Math.floor(10 + (1.5 * level));
+  }
+  return Math.floor(10 + (1.8 * level));
+}
+
+function getPendingAllocationGains(targetLevel = player?.level || 1){
+  return {
+    hpGain: (allocation.vitality || 0) * getAttributePointGain("vitality", targetLevel),
+    mpGain: (allocation.wisdom || 0) * getAttributePointGain("wisdom", targetLevel),
+    attackGain: (allocation.strength || 0) * getAttributePointGain("strength", targetLevel),
+    skillGain: (allocation.strength || 0) * getAttributePointGain("strength", targetLevel)
+  };
+}
+
+function createDefaultInvestedStats(saved = {}){
+  return {
+    vitality: Number(saved.vitality ?? saved.hp ?? 0) || 0,
+    wisdom: Number(saved.wisdom ?? saved.mp ?? 0) || 0,
+    strength: Number(saved.strength ?? saved.attack ?? 0) || 0,
+    hpGain: Number(saved.hpGain) || 0,
+    mpGain: Number(saved.mpGain) || 0,
+    attackGain: Number(saved.attackGain) || 0,
+    skillGain: Number(saved.skillGain ?? saved.attackGain) || 0
+  };
+}
+
 function getPreviewStats(){
   const passives = getPassiveModifiers();
+  const pendingGains = getPendingAllocationGains();
   return {
-    maxHp: player.maxHp + passives.bonusHp + allocation.hp * player.growth.hp,
-    maxMp: player.maxMp + passives.bonusMp + allocation.mp * player.growth.mp,
-    attack: player.attack + passives.bonusAttack + allocation.attack * player.growth.attack
+    maxHp: player.maxHp + passives.bonusHp + pendingGains.hpGain,
+    maxMp: player.maxMp + passives.bonusMp + pendingGains.mpGain,
+    attack: player.attack + passives.bonusAttack + pendingGains.attackGain
   };
 }
 
@@ -2938,6 +3177,7 @@ function getPassiveModifiers(){
     preciousMana: false,
     manaToLifePercent: 0
   };
+  const pendingGains = getPendingAllocationGains();
   const subclassState = getPlayerSubclassState();
   const tier30 = subclassState.tier30;
   const tier60 = subclassState.tier60;
@@ -3031,10 +3271,10 @@ function getPassiveModifiers(){
   base.skillPower += activeSetBonuses.skillPower || 0;
   base.totalDamagePercent += activeSetBonuses.totalDamagePercent || 0;
   if(activeSetBonuses.bonusMpPercent > 0){
-    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * activeSetBonuses.bonusMpPercent);
+    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * activeSetBonuses.bonusMpPercent);
   }
   if(base.bonusMpPercentAccessory > 0){
-    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.bonusMpPercentAccessory);
+    base.bonusMp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * base.bonusMpPercentAccessory);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
     const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
@@ -3049,13 +3289,13 @@ function getPassiveModifiers(){
     base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.1);
   }
   if(base.manaToLifePercent > 0){
-    base.bonusHp += Math.floor((player.maxMp + base.bonusMp + allocation.mp * player.growth.mp) * base.manaToLifePercent);
+    base.bonusHp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * base.manaToLifePercent);
   }
   if(activeSetBonuses.bonusHpPercent > 0){
-    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + allocation.hp * player.growth.hp) * activeSetBonuses.bonusHpPercent);
+    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + pendingGains.hpGain) * activeSetBonuses.bonusHpPercent);
   }
   if(base.bonusHpPercentAccessory > 0){
-    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + allocation.hp * player.growth.hp) * base.bonusHpPercentAccessory);
+    base.bonusHp += Math.floor((player.maxHp + base.bonusHp + pendingGains.hpGain) * base.bonusHpPercentAccessory);
   }
   return base;
 }
@@ -3676,6 +3916,7 @@ async function dungeonAttack(){
     updateUI();
     return;
   }
+  applyTurnStartPassives();
   await playSpriteAttackAnimation("hero", player.class === "Mago" ? "cast" : "attack", result.damage > 0, player.class === "Mago" ? Math.min(result.missiles || 1, 3) : 1, 70, 82);
   playerEffects.lastActionType = "basic_attack";
   decayPlayerBuffs();
@@ -3710,6 +3951,7 @@ async function dungeonUseSkill(index){
     updateUI();
     return;
   }
+  applyTurnStartPassives();
   displayState.playerMp = player.mp;
   updateUI();
   await wait(80);
@@ -3760,9 +4002,10 @@ function getActiveAttack(){
 }
 
 function getAttackSkillBonus(){
-  const confirmedAttackGain = (player.stats?.invested?.attack || 0) * player.growth.attack;
-  const previewAttackGain = (allocation.attack || 0) * player.growth.attack;
-  return confirmedAttackGain + previewAttackGain;
+  syncInvestedStatsFromCurrentTotals();
+  const invested = createDefaultInvestedStats(player.stats?.invested || {});
+  const previewGains = getPendingAllocationGains();
+  return (invested.skillGain || invested.attackGain || 0) + previewGains.skillGain;
 }
 
 function getSkillPowerBonus(){
@@ -3920,7 +4163,6 @@ function applyEndOfTurnRecovery(){
 }
 
 async function handlePlayerTurnStartEffects(){
-  applyTurnStartPassives();
   if(playerEffects.burnTurns > 0 && playerEffects.burnDamagePerTurn > 0){
     const burnReduction = getPassiveModifiers().burnDamageReductionPercent || 0;
     const burnDamage = Math.max(0, Math.floor(playerEffects.burnDamagePerTurn * (1 - burnReduction)));
@@ -3945,6 +4187,7 @@ async function handlePlayerTurnStartEffects(){
   }
   if(playerEffects.skipNextTurn){
     playerEffects.skipNextTurn = false;
+    applyTurnStartPassives();
     log("O boss controlou o ritmo da luta e voce perdeu o turno.");
     decayPlayerBuffs();
     applyEndOfTurnRecovery();
@@ -4156,7 +4399,7 @@ function getSkillInfo(){
     if(skill.type === "archer_headshot"){
       const focusActive = playerEffects.guaranteedHitTurns > 0;
       const focusDamageBonus = subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0;
-      const baseDamage = 30 + attack + skillPower;
+      const baseDamage = 30 + Math.floor(0.7 * attack) + Math.floor(0.9 * skillPower);
       const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
       const cost = 60 + Math.floor(0.3 * player.level);
       const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.7 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
@@ -4191,7 +4434,7 @@ function getSkillInfo(){
       return { ...skill, cost: 80, damage, skipChance: 0.3, nextBarrageBonus, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.${bonusCurrentHpDamage ? " O dano inclui 8% da vida atual do inimigo." : ""}${nextBarrageBonus ? " Se prender o alvo, sua proxima Rajada de Flechas causara 15% de dano adicional." : ""}` };
     }
     if(skill.type === "archer_arcane_shot"){
-      const damage = 60 + Math.floor(1.1 * skillPower) + Math.floor(0.6 * maxMp);
+      const damage = 60 + Math.floor(1.6 * skillPower) + Math.floor(0.3 * maxMp);
       return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano arcano.` };
     }
     if(skill.type === "archer_execute"){
@@ -4211,7 +4454,7 @@ function getSkillInfo(){
     }
     if(skill.type === "archer_overcharge"){
       const currentMana = player.mp;
-      const damage = 80 + Math.floor(0.6 * skillPower) + Math.floor(0.6 * currentMana);
+      const damage = 80 + Math.floor(1.6 * skillPower) + Math.floor(0.6 * currentMana);
       return { ...skill, cost: currentMana, damage, description: `${skill.name}: gasta toda a mana atual (${currentMana}) e causa ${damage} de dano.` };
     }
     if(skill.type === "archer_weak_spot"){
@@ -4826,11 +5069,7 @@ function applyFirstDamageSkillBonus(damage, isDamageSkill){
 }
 
 function useSkillCost(skillInfo){
-  if(playerEffects.firstSkillFreeAvailable){
-    playerEffects.firstSkillFreeAvailable = false;
-    return 0;
-  }
-  return skillInfo.cost;
+  return playerEffects.firstSkillFreeAvailable ? 0 : skillInfo.cost;
 }
 
 function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
@@ -4843,6 +5082,9 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     if(player.hp <= hpCost){
       return { blocked: true, message: "Vida insuficiente para usar essa habilidade!" };
     }
+  }
+  if(playerEffects.firstSkillFreeAvailable){
+    playerEffects.firstSkillFreeAvailable = false;
   }
   player.mp -= cost;
   if(skillInfo.hpCostPercent){
@@ -6266,6 +6508,7 @@ function setMode(mode){
     leaveDungeonRoom(true);
   }
   currentMode = mode;
+  syncRegionMusic();
   updateUI();
 }
 
@@ -6513,6 +6756,7 @@ function continueCampaign(){
   if(isDead && deadUntil && Date.now() >= deadUntil){
     deadUntil = Date.now();
   }
+  syncRegionMusic(true);
   log("Campanha retomada.");
   updateUI();
 }
@@ -6545,6 +6789,7 @@ function changeRegion(region){
   }
   currentRegion = region;
   log(`Voce viajou para a ${region}.`);
+  syncRegionMusic(true);
   needsNewEnemy = true;
   enemy = null;
   updateUI();
@@ -6625,9 +6870,9 @@ function updateUI(){
       <div class="camp-stat"><strong>Dano de habilidade</strong><span>${getSkillPowerBonus()}</span></div>
       <div class="camp-stat"><strong>Dano resistido</strong><span>${getPassiveModifiers().flatReduction}</span></div>
       <div class="camp-stat"><strong>XP</strong><span>${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
-      <div class="camp-stat"><strong>Pontos em Vida</strong><span>${investedSummary.hpPoints}</span></div>
-      <div class="camp-stat"><strong>Pontos em Mana</strong><span>${investedSummary.mpPoints}</span></div>
-      <div class="camp-stat"><strong>Pontos em Ataque</strong><span>${investedSummary.attackPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Vitalidade</strong><span>${investedSummary.vitalityPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Sabedoria</strong><span>${investedSummary.wisdomPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Forca</strong><span>${investedSummary.strengthPoints}</span></div>
     </div>
     <div class="inventory-item">
       <strong>Equipamentos</strong>
@@ -6670,7 +6915,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vida: ${investedSummary.hpPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Mana: ${investedSummary.mpPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Ataque: ${investedSummary.attackPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
@@ -6892,27 +7137,27 @@ function renderLevelUpPanel(){
     <h3>Subiu de nivel!</h3>
     <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
     <div class="attribute-row">
-      <div><strong>Vida maxima</strong><br><small>+${player.growth.hp} HP por ponto</small></div>
+      <div><strong>Vitalidade</strong><br><small>+${getAttributePointGain("vitality")} HP maxima por ponto</small></div>
       <div class="attribute-controls">
-        <button onclick="adjustAttribute('hp', -1)" ${allocation.hp === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.hp}</span>
-        <button onclick="adjustAttribute('hp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+        <button onclick="adjustAttribute('vitality', -1)" ${(allocation.vitality || 0) === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.vitality || 0}</span>
+        <button onclick="adjustAttribute('vitality', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
       </div>
     </div>
     <div class="attribute-row">
-      <div><strong>Mana maxima</strong><br><small>+${player.growth.mp} MP por ponto</small></div>
+      <div><strong>Sabedoria</strong><br><small>+${getAttributePointGain("wisdom")} MP maxima por ponto</small></div>
       <div class="attribute-controls">
-        <button onclick="adjustAttribute('mp', -1)" ${allocation.mp === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.mp}</span>
-        <button onclick="adjustAttribute('mp', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+        <button onclick="adjustAttribute('wisdom', -1)" ${(allocation.wisdom || 0) === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.wisdom || 0}</span>
+        <button onclick="adjustAttribute('wisdom', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
       </div>
     </div>
     <div class="attribute-row">
-      <div><strong>Ataque</strong><br><small>+${player.growth.attack} ATQ e +${player.growth.attack} dano de habilidade</small></div>
+      <div><strong>Forca</strong><br><small>+${getAttributePointGain("strength")} ATQ e +${getAttributePointGain("strength")} dano de habilidade por ponto</small></div>
       <div class="attribute-controls">
-        <button onclick="adjustAttribute('attack', -1)" ${allocation.attack === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.attack}</span>
-        <button onclick="adjustAttribute('attack', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+        <button onclick="adjustAttribute('strength', -1)" ${(allocation.strength || 0) === 0 ? "disabled" : ""}>-</button>
+        <span class="attribute-value">${allocation.strength || 0}</span>
+        <button onclick="adjustAttribute('strength', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
       </div>
     </div>
     <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
@@ -7036,6 +7281,7 @@ async function attack(){
     updateUI();
     return;
   }
+  applyTurnStartPassives();
   log(result.message);
   playerEffects.lastActionType = "basic_attack";
   if(player.class === "Mago" && result.hitDamages?.length){
@@ -7085,6 +7331,7 @@ async function useSkill(index){
     updateUI();
     return;
   }
+  applyTurnStartPassives();
   log(result.message);
   displayState.playerMp = player.mp;
   updateUI();
@@ -7114,6 +7361,7 @@ async function passTurn(){
   if(await handlePlayerTurnStartEffects()){
     return;
   }
+  applyTurnStartPassives();
   log("Voce passou o turno.");
   playerEffects.lastActionType = "pass_turn";
   decayPlayerBuffs();
@@ -7693,8 +7941,8 @@ function adjustAttribute(attribute, amount){
 
 function getTotalInvestedPoints(){
   syncInvestedStatsFromCurrentTotals();
-  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
-  return (Number(invested.hp) || 0) + (Number(invested.mp) || 0) + (Number(invested.attack) || 0);
+  const invested = createDefaultInvestedStats(player?.stats?.invested || {});
+  return (Number(invested.vitality) || 0) + (Number(invested.wisdom) || 0) + (Number(invested.strength) || 0);
 }
 
 function getTrainerRespecCost(){
@@ -7702,48 +7950,63 @@ function getTrainerRespecCost(){
 }
 
 function syncInvestedStatsFromCurrentTotals(){
-  if(!player || !player.stats || !player.growth){
+  if(!player || !player.stats){
     return;
   }
   const baseStats = player.baseStats || classes[player.class];
   if(!baseStats){
     return;
   }
-  const inferredInvested = {
-    hp: Math.max(0, Math.round(((player.maxHp || baseStats.hp) - baseStats.hp) / Math.max(1, player.growth.hp))),
-    mp: Math.max(0, Math.round(((player.maxMp || baseStats.mp) - baseStats.mp) / Math.max(1, player.growth.mp))),
-    attack: Math.max(0, Math.round(((player.attack || baseStats.attack) - baseStats.attack) / Math.max(1, player.growth.attack)))
-  };
+  const invested = createDefaultInvestedStats(player.stats.invested || {});
+  const hpGain = Math.max(0, (player.maxHp || baseStats.hp) - baseStats.hp);
+  const mpGain = Math.max(0, (player.maxMp || baseStats.mp) - baseStats.mp);
+  const attackGain = Math.max(0, (player.attack || baseStats.attack) - baseStats.attack);
+  invested.hpGain = hpGain;
+  invested.mpGain = mpGain;
+  invested.attackGain = attackGain;
+  invested.skillGain = attackGain;
+  const vitalityValue = Math.max(1, getAttributePointGain("vitality"));
+  const wisdomValue = Math.max(1, getAttributePointGain("wisdom"));
+  const strengthValue = Math.max(1, getAttributePointGain("strength"));
+  if((invested.vitality || 0) <= 0 && hpGain > 0){
+    invested.vitality = Math.max(0, Math.round(hpGain / vitalityValue));
+  }
+  if((invested.wisdom || 0) <= 0 && mpGain > 0){
+    invested.wisdom = Math.max(0, Math.round(mpGain / wisdomValue));
+  }
+  if((invested.strength || 0) <= 0 && attackGain > 0){
+    invested.strength = Math.max(0, Math.round(attackGain / strengthValue));
+  }
   const maxSpendable = Math.max(0, (player.level || 1) - 1);
-  const totalInferred = inferredInvested.hp + inferredInvested.mp + inferredInvested.attack;
-  if(totalInferred > maxSpendable){
-    let overflow = totalInferred - maxSpendable;
-    for(const key of ["attack", "mp", "hp"]){
+  let totalTracked = (invested.vitality || 0) + (invested.wisdom || 0) + (invested.strength || 0);
+  if(totalTracked > maxSpendable){
+    let overflow = totalTracked - maxSpendable;
+    for(const key of ["strength", "wisdom", "vitality"]){
       if(overflow <= 0){ break; }
-      const reducible = Math.min(inferredInvested[key], overflow);
-      inferredInvested[key] -= reducible;
+      const reducible = Math.min(invested[key] || 0, overflow);
+      invested[key] -= reducible;
       overflow -= reducible;
     }
   }
-  player.stats.invested = inferredInvested;
+  player.stats.invested = invested;
 }
 
 function getInvestedSummary(){
   syncInvestedStatsFromCurrentTotals();
-  const invested = player?.stats?.invested || { hp: 0, mp: 0, attack: 0 };
-  const hpPoints = Number(invested.hp) || 0;
-  const mpPoints = Number(invested.mp) || 0;
-  const attackPoints = Number(invested.attack) || 0;
-  const trackedTotal = hpPoints + mpPoints + attackPoints;
+  const invested = createDefaultInvestedStats(player?.stats?.invested || {});
+  const vitalityPoints = Number(invested.vitality) || 0;
+  const wisdomPoints = Number(invested.wisdom) || 0;
+  const strengthPoints = Number(invested.strength) || 0;
+  const trackedTotal = vitalityPoints + wisdomPoints + strengthPoints;
   const totalLevelPoints = Math.max(0, (player?.level || 1) - 1);
   return {
-    hpPoints,
-    mpPoints,
-    attackPoints,
-    hpGain: hpPoints * player.growth.hp,
-    mpGain: mpPoints * player.growth.mp,
-    attackGain: attackPoints * player.growth.attack,
-    skillGain: attackPoints * player.growth.attack,
+    vitalityPoints,
+    wisdomPoints,
+    strengthPoints,
+    hpGain: Number(invested.hpGain) || 0,
+    mpGain: Number(invested.mpGain) || 0,
+    attackGain: Number(invested.attackGain) || 0,
+    skillGain: Number(invested.skillGain ?? invested.attackGain) || 0,
     trackedTotal,
     totalLevelPoints,
     untrackedPoints: Math.max(0, totalLevelPoints - trackedTotal)
@@ -7786,9 +8049,9 @@ function resetInvestedStatsAtCamp(){
   player.maxHp = baseStats?.hp || player.maxHp;
   player.maxMp = baseStats?.mp || player.maxMp;
   player.attack = baseStats?.attack || player.attack;
-  player.stats.invested = { hp: 0, mp: 0, attack: 0 };
+  player.stats.invested = createDefaultInvestedStats();
   levelUpPoints = totalInvested;
-  allocation = { hp: 0, mp: 0, attack: 0 };
+  allocation = { strength: 0, wisdom: 0, vitality: 0 };
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
@@ -7806,15 +8069,23 @@ function resetInvestedStatsAtCamp(){
 function finishLevelUp(){
   if(levelUpPoints > 0){ return; }
 
-  const spentHp = Number(allocation.hp) || 0;
-  const spentMp = Number(allocation.mp) || 0;
-  const spentAttack = Number(allocation.attack) || 0;
-  const hpGain = spentHp * player.growth.hp;
-  const mpGain = spentMp * player.growth.mp;
-  const attackGain = spentAttack * player.growth.attack;
-  player.stats.invested.hp += spentHp;
-  player.stats.invested.mp += spentMp;
-  player.stats.invested.attack += spentAttack;
+  player.stats.invested = createDefaultInvestedStats(player.stats.invested || {});
+  const spentVitality = Number(allocation.vitality) || 0;
+  const spentWisdom = Number(allocation.wisdom) || 0;
+  const spentStrength = Number(allocation.strength) || 0;
+  const vitalityGainPerPoint = getAttributePointGain("vitality");
+  const wisdomGainPerPoint = getAttributePointGain("wisdom");
+  const strengthGainPerPoint = getAttributePointGain("strength");
+  const hpGain = spentVitality * vitalityGainPerPoint;
+  const mpGain = spentWisdom * wisdomGainPerPoint;
+  const attackGain = spentStrength * strengthGainPerPoint;
+  player.stats.invested.vitality += spentVitality;
+  player.stats.invested.wisdom += spentWisdom;
+  player.stats.invested.strength += spentStrength;
+  player.stats.invested.hpGain += hpGain;
+  player.stats.invested.mpGain += mpGain;
+  player.stats.invested.attackGain += attackGain;
+  player.stats.invested.skillGain += attackGain;
   player.maxHp += hpGain;
   player.maxMp += mpGain;
   player.attack += attackGain;
@@ -7824,9 +8095,9 @@ function finishLevelUp(){
   displayState.playerMp = player.mp;
   displayState.playerXp = player.xp;
   pendingLevelUps = 0;
-  allocation = { hp: 0, mp: 0, attack: 0 };
+  allocation = { strength: 0, wisdom: 0, vitality: 0 };
   isProcessingTurn = false;
-  log(`Atributos atualizados: +${hpGain} HP max, +${mpGain} MP max, +${attackGain} ATQ.`);
+  log(`Atributos atualizados: +${hpGain} HP max, +${mpGain} MP max, +${attackGain} ATQ e +${attackGain} dano de habilidade.`);
   enemy = null;
   needsNewEnemy = true;
   currentMode = "battle";
