@@ -139,6 +139,9 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .camp-stat{padding:12px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
 .camp-stat strong{display:block;font-size:12px;color:#d7d7d7;text-transform:uppercase;letter-spacing:.04em}
 .camp-stat span{display:block;margin-top:6px;font-size:22px;font-weight:700}
+.inner-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.inner-tab{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff}
+.inner-tab.active{background:linear-gradient(135deg,#f5c451,#f08d36);color:#1d1205;font-weight:800}
 .equipment-layout{display:grid;grid-template-columns:126px minmax(0,1fr);gap:12px;align-items:center;margin-top:12px}
 .equipment-body{position:relative;min-height:320px;padding:18px 14px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03))}
 .equipment-stack{position:relative;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-height:320px}
@@ -1260,6 +1263,8 @@ let currentRegion = "Floresta";
 let needsNewEnemy = false;
 let currentMode = "battle";
 let bestiaryRegionFilter = null;
+let selectedTrophyCategory = "Todas";
+let campTab = "status";
 let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
@@ -1428,18 +1433,18 @@ const bossAccessoryProfiles = {
   Paradoxo: { id: "o_fim", name: "O Fim", baseStats: { totalDamagePercent: 1 } }
 };
 const regionCombatProfiles = {
-  Floresta: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
-  Caverna: { armorScale: 0, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 0 },
-  Ruinas: { armorScale: 0.12, armorFlat: 0, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.02, bossAttackMultiplier: 1.02, bossSkillMultiplier: 1.03, bossManaMultiplier: 1.02, bossArmorBonus: 0 },
-  Pantano: { armorScale: 0.14, armorFlat: 1, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.04, bossAttackMultiplier: 1.04, bossSkillMultiplier: 1.05, bossManaMultiplier: 1.03, bossArmorBonus: 1 },
-  Vulcao: { armorScale: 0.34, armorFlat: 10, maxHpStrikePercent: 0.025, hpMultiplier: 1.62, attackMultiplier: 1.46, bossHpMultiplier: 1.42, bossAttackMultiplier: 1.36, bossSkillMultiplier: 1.4, bossManaMultiplier: 1.18, bossArmorBonus: 5 },
-  Abismo: { armorScale: 0.44, armorFlat: 14, maxHpStrikePercent: 0.04, hpMultiplier: 1.92, attackMultiplier: 1.68, bossHpMultiplier: 1.58, bossAttackMultiplier: 1.5, bossSkillMultiplier: 1.56, bossManaMultiplier: 1.22, bossArmorBonus: 7 },
-  Fortaleza: { armorScale: 0.56, armorFlat: 20, maxHpStrikePercent: 0.055, hpMultiplier: 2.28, attackMultiplier: 1.92, bossHpMultiplier: 1.78, bossAttackMultiplier: 1.68, bossSkillMultiplier: 1.74, bossManaMultiplier: 1.26, bossArmorBonus: 10 },
-  Necropole: { armorScale: 0.68, armorFlat: 28, maxHpStrikePercent: 0.07, hpMultiplier: 2.7, attackMultiplier: 2.18, bossHpMultiplier: 2.0, bossAttackMultiplier: 1.88, bossSkillMultiplier: 1.96, bossManaMultiplier: 1.3, bossArmorBonus: 13 },
-  Citadela: { armorScale: 0.82, armorFlat: 38, maxHpStrikePercent: 0.085, hpMultiplier: 3.16, attackMultiplier: 2.46, bossHpMultiplier: 2.24, bossAttackMultiplier: 2.08, bossSkillMultiplier: 2.18, bossManaMultiplier: 1.35, bossArmorBonus: 17 },
-  Panteao: { armorScale: 0.98, armorFlat: 50, maxHpStrikePercent: 0.105, hpMultiplier: 3.7, attackMultiplier: 2.78, bossHpMultiplier: 2.52, bossAttackMultiplier: 2.32, bossSkillMultiplier: 2.42, bossManaMultiplier: 1.4, bossArmorBonus: 22 },
-  Cataclismo: { armorScale: 1.18, armorFlat: 64, maxHpStrikePercent: 0.13, hpMultiplier: 4.34, attackMultiplier: 3.16, bossHpMultiplier: 2.86, bossAttackMultiplier: 2.62, bossSkillMultiplier: 2.72, bossManaMultiplier: 1.46, bossArmorBonus: 28 },
-  Paradoxo: { armorScale: 1.36, armorFlat: 82, maxHpStrikePercent: 0.15, hpMultiplier: 4.94, attackMultiplier: 3.55, bossHpMultiplier: 3.14, bossAttackMultiplier: 2.88, bossSkillMultiplier: 3.02, bossManaMultiplier: 1.52, bossArmorBonus: 34 }
+  Floresta: { armorScale: 0.1, armorFlat: 1, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 1 },
+  Caverna: { armorScale: 0.14, armorFlat: 2, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1, bossAttackMultiplier: 1, bossSkillMultiplier: 1, bossManaMultiplier: 1, bossArmorBonus: 2 },
+  Ruinas: { armorScale: 0.2, armorFlat: 3, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.02, bossAttackMultiplier: 1.02, bossSkillMultiplier: 1.03, bossManaMultiplier: 1.02, bossArmorBonus: 3 },
+  Pantano: { armorScale: 0.24, armorFlat: 5, maxHpStrikePercent: 0, hpMultiplier: 1, attackMultiplier: 1, bossHpMultiplier: 1.04, bossAttackMultiplier: 1.04, bossSkillMultiplier: 1.05, bossManaMultiplier: 1.03, bossArmorBonus: 4 },
+  Vulcao: { armorScale: 0.46, armorFlat: 16, maxHpStrikePercent: 0.025, hpMultiplier: 1.62, attackMultiplier: 1.46, bossHpMultiplier: 1.42, bossAttackMultiplier: 1.36, bossSkillMultiplier: 1.4, bossManaMultiplier: 1.18, bossArmorBonus: 8 },
+  Abismo: { armorScale: 0.58, armorFlat: 22, maxHpStrikePercent: 0.04, hpMultiplier: 1.92, attackMultiplier: 1.68, bossHpMultiplier: 1.58, bossAttackMultiplier: 1.5, bossSkillMultiplier: 1.56, bossManaMultiplier: 1.22, bossArmorBonus: 11 },
+  Fortaleza: { armorScale: 0.72, armorFlat: 30, maxHpStrikePercent: 0.055, hpMultiplier: 2.28, attackMultiplier: 1.92, bossHpMultiplier: 1.78, bossAttackMultiplier: 1.68, bossSkillMultiplier: 1.74, bossManaMultiplier: 1.26, bossArmorBonus: 15 },
+  Necropole: { armorScale: 0.86, armorFlat: 40, maxHpStrikePercent: 0.07, hpMultiplier: 2.7, attackMultiplier: 2.18, bossHpMultiplier: 2.0, bossAttackMultiplier: 1.88, bossSkillMultiplier: 1.96, bossManaMultiplier: 1.3, bossArmorBonus: 19 },
+  Citadela: { armorScale: 1.02, armorFlat: 54, maxHpStrikePercent: 0.085, hpMultiplier: 3.16, attackMultiplier: 2.46, bossHpMultiplier: 2.24, bossAttackMultiplier: 2.08, bossSkillMultiplier: 2.18, bossManaMultiplier: 1.35, bossArmorBonus: 24 },
+  Panteao: { armorScale: 1.22, armorFlat: 70, maxHpStrikePercent: 0.105, hpMultiplier: 3.7, attackMultiplier: 2.78, bossHpMultiplier: 2.52, bossAttackMultiplier: 2.32, bossSkillMultiplier: 2.42, bossManaMultiplier: 1.4, bossArmorBonus: 31 },
+  Cataclismo: { armorScale: 1.46, armorFlat: 90, maxHpStrikePercent: 0.13, hpMultiplier: 4.34, attackMultiplier: 3.16, bossHpMultiplier: 2.86, bossAttackMultiplier: 2.62, bossSkillMultiplier: 2.72, bossManaMultiplier: 1.46, bossArmorBonus: 39 },
+  Paradoxo: { armorScale: 1.68, armorFlat: 112, maxHpStrikePercent: 0.15, hpMultiplier: 4.94, attackMultiplier: 3.55, bossHpMultiplier: 3.14, bossAttackMultiplier: 2.88, bossSkillMultiplier: 3.02, bossManaMultiplier: 1.52, bossArmorBonus: 48 }
 };
 const enemyDropSlotGroups = [
   ["feet", "chest"],
@@ -1449,7 +1454,7 @@ const enemyDropSlotGroups = [
 const consumableCatalog = {
   mana_potion: { name: "Pocao de Mana", price: 60, description: "Recupera 35% da mana maxima.", useLabel: "Usar", effectType: "restore_mana_percent", value: 0.35 },
   health_potion: { name: "Pocao de Vida", price: 42, description: "Recupera 35% da vida maxima.", useLabel: "Usar", effectType: "restore_hp_percent", value: 0.35 },
-  skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 18, turns: 3 },
+  skill_tonic: { name: "Tonico Arcano", price: 75, description: "Aumenta o dano de habilidade em 20% por 3 turnos.", useLabel: "Usar", effectType: "buff_skill", value: 0.2, turns: 3, isPercent: true },
   attack_tonic: { name: "Tonico de Guerra", price: 75, description: "Aumenta o dano de ataque em 20% por 3 turnos.", useLabel: "Usar", effectType: "buff_attack", value: 0.2, turns: 3, isPercent: true }
 };
 
@@ -1505,7 +1510,12 @@ function createDefaultPlayerEffects(){
     incomingDamageBonusTurns: 0,
     incomingDamageBonusPercent: 0,
     lastActionType: "",
-    lastActionTurn: 0
+    lastActionTurn: 0,
+    natureCadence: 0,
+    natureCrownedTurns: 0,
+    natureTrueFormTurns: 0,
+    natureShieldBonusTurns: 0,
+    natureShieldBonusPercent: 0
   };
 }
 
@@ -1521,6 +1531,7 @@ function createDungeonMultiplayerState(){
     enemyAttackTimer: null,
     turnOrder: [],
     turnIndex: 0,
+    dungeonStepIndex: 0,
     round: 1,
     enemySkipTurn: false,
     battleActive: false
@@ -1919,13 +1930,8 @@ const regions = {
 };
 
 const dungeonData = {
-  minLevel: 12,
-  description: "Uma investida online para ate 3 jogadores, com turnos em ordem e derrota se qualquer aliado cair.",
-  enemies: [
-    { name: "Carcereiro Abissal", level: 18, weight: 58, hp: 190, attack: 18 },
-    { name: "Aracnida Rainha", level: 24, weight: 28, hp: 240, attack: 22 },
-    { name: "Devorador do Eco", level: 32, weight: 14, hp: 310, attack: 27 }
-  ]
+  minLevel: 0,
+  description: "Uma investida online para ate 3 jogadores, seguindo a ordem completa dos inimigos e chefes do jogo."
 };
 
 const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela", "Panteao", "Cataclismo", "Paradoxo"];
@@ -2037,17 +2043,17 @@ const subclassChoicesByClass = {
   },
   "Adepto da Natureza": {
     tier30: [
-      { id: "druida", name: "Druida", description: "Rota ancestral ligada a formas naturais, vigor e controle vivo.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
-      { id: "espirito_da_floresta", name: "Espirito da Floresta", description: "Rota eterea da mata, focada em magia natural, ritmo e encanto.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
+      { id: "druida", name: "Druida", description: "Rota ancestral ligada a formas naturais, vigor e controle vivo.", bonusHp: 100, bonusMp: 0, bonusAttack: 10, skillPower: 5 },
+      { id: "espirito_da_floresta", name: "Espirito da Floresta", description: "Rota eterea da mata, focada em magia natural, ritmo e encanto.", bonusHp: 0, bonusMp: 100, bonusAttack: 5, skillPower: 15 }
     ],
     tier60: {
       druida: [
-        { id: "druida_sombrio", name: "Druida Sombrio", description: "Canaliza o lado decadente da natureza e da corrupcao viva.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
-        { id: "avatar_da_natureza", name: "Avatar da Natureza", description: "Manifestacao do ciclo natural em forma de poder bruto e resiliencia.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
+        { id: "druida_sombrio", name: "Druida Sombrio", description: "Canaliza o lado decadente da natureza e da corrupcao viva.", bonusHp: 0, bonusMp: 200, bonusAttack: 20, skillPower: 30 },
+        { id: "avatar_da_natureza", name: "Avatar da Natureza", description: "Manifestacao do ciclo natural em forma de poder bruto e resiliencia.", bonusHp: 400, bonusMp: 0, bonusAttack: 20, skillPower: 15 }
       ],
       espirito_da_floresta: [
-        { id: "fada_monarca", name: "Fada Monarca", description: "Soberania feerica, magia refinada e dominio dos encantos da floresta.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 },
-        { id: "protetor_da_floresta", name: "Protetor da Floresta", description: "Guardiao espiritual da mata, firmeza viva e defesa natural.", bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0 }
+        { id: "fada_monarca", name: "Fada Monarca", description: "Soberania feerica, magia refinada e dominio dos encantos da floresta.", bonusHp: 0, bonusMp: 400, bonusAttack: 0, skillPower: 35 },
+        { id: "protetor_da_floresta", name: "Protetor da Floresta", description: "Guardiao espiritual da mata, firmeza viva e defesa natural.", bonusHp: 400, bonusMp: 0, bonusAttack: 15, skillPower: 20 }
       ]
     }
   }
@@ -2354,7 +2360,7 @@ function buildArcherTrees(){
       activeSkills.push({ level: 50, id: "tiro_perfurante", name: "Tiro Perfurante", type: "archer_piercing_shot" });
     }
     if(tier60 === "atirador_arcano" && player.level >= 60){
-      activeSkills.push({ level: 60, id: "disparo_arcano", name: "Disparo Arcano", type: "archer_arcane_shot" });
+      activeSkills.push({ level: 60, id: "emergencia_arcana", name: "Emergencia Arcana", type: "archer_arcane_shot" });
     }
     if(tier60 === "sniper" && player.level >= 60){
       activeSkills.push({ level: 60, id: "executar", name: "Executar", type: "archer_execute" });
@@ -2418,7 +2424,71 @@ function buildArcherTrees(){
 }
 
 function buildNatureTrees(){
-  return { activeSkills: [], passiveSkills: [] };
+  const subclassState = getPlayerSubclassState();
+  const tier30 = subclassState.tier30;
+  const tier60 = subclassState.tier60;
+  const activeSkills = [
+    { level: 1, id: "semente_viva", name: "Semente Viva", type: "nature_living_seed" },
+    { level: 20, id: "raizes", name: "Raizes", type: "nature_roots" }
+  ];
+  if(tier30 === "druida" && player.level >= 30){
+    activeSkills.push({ level: 30, id: "flor_do_pantano", name: "Flor do Pantano", type: "nature_swamp_flower" });
+    if(player.level >= 50){
+      activeSkills.push({ level: 50, id: "colheita", name: "Colheita", type: "nature_harvest" });
+    }
+    if(tier60 === "druida_sombrio" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "apodrecer", name: "Apodrecer", type: "nature_decay" });
+    }
+    if(tier60 === "avatar_da_natureza" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "forma_verdadeira", name: "Forma Verdadeira", type: "nature_true_form" });
+    }
+    if(tier60 === "druida_sombrio" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "colapso_do_brejo", name: "Colapso do Brejo", type: "nature_swamp_collapse" });
+    }
+    if(tier60 === "avatar_da_natureza" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "esmagar_invasor", name: "Esmagar Invasor", type: "nature_crush_invader" });
+    }
+  }
+  if(tier30 === "espirito_da_floresta" && player.level >= 30){
+    activeSkills.push({ level: 30, id: "encanto_da_brisa", name: "Encanto da Brisa", type: "nature_breeze_charm" });
+    if(player.level >= 50){
+      activeSkills.push({ level: 50, id: "cancao_ancestral", name: "Cancao Ancestral", type: "nature_ancestral_song" });
+    }
+    if(tier60 === "fada_monarca" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "decreto_da_rainha", name: "Decreto da Rainha", type: "nature_queen_decree" });
+    }
+    if(tier60 === "protetor_da_floresta" && player.level >= 60){
+      activeSkills.push({ level: 60, id: "casulo_de_vinhas", name: "Casulo de Vinhas", type: "nature_vine_cocoon" });
+    }
+    if(tier60 === "fada_monarca" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "coroar", name: "Coroar", type: "nature_crown" });
+    }
+    if(tier60 === "protetor_da_floresta" && player.level >= 80){
+      activeSkills.push({ level: 80, id: "jogar_espinhos", name: "Jogar Espinhos", type: "nature_throw_thorns" });
+    }
+  }
+  const passiveSkills = [
+    { level: 10, id: "ciclo_natural", name: "Ciclo Natural", type: "nature_cycle" }
+  ];
+  if(tier30 === "druida" && player.level >= 40){
+    passiveSkills.push({ level: 40, id: "seiva", name: "Seiva", type: "nature_sap" });
+  }
+  if(tier30 === "espirito_da_floresta" && player.level >= 40){
+    passiveSkills.push({ level: 40, id: "aura_feerica", name: "Aura Feerica", type: "nature_fairy_aura" });
+  }
+  if(tier60 === "druida_sombrio" && player.level >= 70){
+    passiveSkills.push({ level: 70, id: "podridao", name: "Podridao", type: "nature_dot_mastery" });
+  }
+  if(tier60 === "avatar_da_natureza" && player.level >= 70){
+    passiveSkills.push({ level: 70, id: "casca_ancestral", name: "Casca Ancestral", type: "nature_ancestral_bark" });
+  }
+  if(tier60 === "fada_monarca" && player.level >= 70){
+    passiveSkills.push({ level: 70, id: "asas_da_realeza", name: "Asas da Realeza", type: "nature_royal_wings" });
+  }
+  if(tier60 === "protetor_da_floresta" && player.level >= 70){
+    passiveSkills.push({ level: 70, id: "juramento_do_bosque", name: "Juramento do Bosque", type: "nature_forest_oath" });
+  }
+  return { activeSkills, passiveSkills };
 }
 
 function getClassTrees(){
@@ -2462,7 +2532,10 @@ function selectClass(name){
       bossesDefeated: 0,
       coinsEarned: 0,
       deaths: 0,
-      regionKills: {}
+      regionKills: {},
+      regionBossKills: {},
+      dungeonClears: 0,
+      dungeonBestStep: 0
     }
   };
   normalizePlayerState();
@@ -2818,12 +2891,16 @@ function getSkillAnimationStyle(skillInfo){
     "mage_blizzard",
     "mage_demon_form",
     "archer_focus",
-    "archer_camouflage"
+    "archer_camouflage",
+    "nature_ancestral_song",
+    "nature_true_form",
+    "nature_vine_cocoon",
+    "nature_crown"
   ]);
   if(buffTypes.has(skillInfo.type)){
     return "buff";
   }
-  return player.class === "Mago" || skillInfo.type.startsWith("mage_") ? "cast" : "attack";
+  return player.class === "Mago" || skillInfo.type.startsWith("mage_") || skillInfo.type.startsWith("nature_") ? "cast" : "attack";
 }
 
 function getEnemyTemplateByName(enemyName){
@@ -2836,9 +2913,9 @@ function getEnemyTemplateByName(enemyName){
       return { ...regionData.boss, region: regionName, isBoss: true };
     }
   }
-  const dungeonEnemy = dungeonData.enemies.find(template => template.name === enemyName);
+  const dungeonEnemy = getDungeonSequence().find(entry => entry.template.name === enemyName);
   if(dungeonEnemy){
-    return { ...dungeonEnemy, region: "Dungeon", isBoss: false };
+    return { ...dungeonEnemy.template, region: dungeonEnemy.regionName, isBoss: dungeonEnemy.isBoss };
   }
   return null;
 }
@@ -2987,6 +3064,12 @@ function recordRegionEnemyKill(regionName, enemyName){
   player.stats.regionKills[regionName][enemyName] = (player.stats.regionKills[regionName][enemyName] || 0) + 1;
 }
 
+function recordRegionBossKill(regionName){
+  if(!player?.stats || !regionName || !regions[regionName]){ return; }
+  player.stats.regionBossKills = player.stats.regionBossKills || {};
+  player.stats.regionBossKills[regionName] = (player.stats.regionBossKills[regionName] || 0) + 1;
+}
+
 function getBossUnlockProgress(regionName){
   const regionData = regions[regionName];
   if(!regionData){
@@ -3044,10 +3127,16 @@ function normalizePlayerState(){
     bossesDefeated: 0,
     coinsEarned: 0,
     deaths: 0,
-    regionKills: {}
+    regionKills: {},
+    regionBossKills: {},
+    dungeonClears: 0,
+    dungeonBestStep: 0
   };
   player.stats.migrations = player.stats.migrations || {};
   player.stats.regionKills = player.stats.regionKills || {};
+  player.stats.regionBossKills = player.stats.regionBossKills || {};
+  player.stats.dungeonClears = player.stats.dungeonClears || 0;
+  player.stats.dungeonBestStep = player.stats.dungeonBestStep || 0;
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   if(!player.stats.migrations.baseHpRebalance_v1){
@@ -3243,6 +3332,25 @@ function getPassiveModifiers(){
     if(passive.type === "coin_bonus"){
       base.coinBonus += tier30 === "cacador" && player.level >= 42 ? 0.15 : 0;
     }
+    if(passive.type === "nature_cycle" && tier30 === "espirito_da_floresta" && player.level >= 30){
+      // Applied after all attack bonuses are known.
+    }
+    if(passive.type === "nature_fairy_aura"){
+      // Applied after class, equipment and set bonuses are known.
+    }
+    if(passive.type === "nature_sap" && tier60 === "avatar_da_natureza" && player.level >= 60){
+      base.bonusHp += Math.floor((player.maxHp + pendingGains.hpGain) * 0.12);
+    }
+    if(passive.type === "nature_ancestral_bark"){
+      const factor = playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5;
+      base.flatReduction += Math.floor(4 + factor * player.level);
+    }
+    if(passive.type === "nature_royal_wings"){
+      base.enemyMissChance += playerEffects.natureCrownedTurns > 0 ? 0.6 : 0.2;
+    }
+    if(passive.type === "nature_forest_oath"){
+      base.reflectPercent += playerEffects.shieldValue > 0 ? 0.3 : 0;
+    }
   }
   for(const subclass of getChosenSubclassDefs()){
     base.bonusHp += subclass.bonusHp || 0;
@@ -3293,6 +3401,19 @@ function getPassiveModifiers(){
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_mana_to_life") && tier60 === "mago_incendiario" && player.level >= 60){
     base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.1);
   }
+  if(getUnlockedPassiveSkills().some(passive => passive.type === "nature_cycle") && tier30 === "espirito_da_floresta" && player.level >= 30){
+    base.skillPower += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * 0.3);
+  }
+  if(getUnlockedPassiveSkills().some(passive => passive.type === "nature_fairy_aura")){
+    const perStack = tier60 === "fada_monarca" && player.level >= 60 ? 0.06 : 0.04;
+    const cadenceStacks = Math.min(3, playerEffects.natureCadence || 0);
+    if(cadenceStacks > 0){
+      base.skillPower += Math.floor((player.attack + base.bonusAttack + base.skillPower + pendingGains.attackGain) * perStack * cadenceStacks);
+    }
+  }
+  if(playerEffects.natureCrownedTurns > 0){
+    base.skillPower += Math.floor((player.attack + base.bonusAttack + base.skillPower + pendingGains.attackGain) * 0.3);
+  }
   if(base.manaToLifePercent > 0){
     base.bonusHp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * base.manaToLifePercent);
   }
@@ -3341,6 +3462,7 @@ function getTrophies(){
     { category: "Combate", name: "Exterminador", done: player.stats.enemiesDefeated >= 100, description: "Derrote 100 inimigos." },
     { category: "Chefes", name: "Matador de Chefes", done: player.stats.bossesDefeated >= 1, description: "Derrote 1 chefao." },
     { category: "Chefes", name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
+    { category: "Chefes", name: "Dominador Regional", done: Object.keys(regions).every(region => (player.stats.regionBossKills?.[region] || 0) > 0), description: "Derrote o chefao de todas as regioes ao menos uma vez." },
     { category: "Economia", name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
     { category: "Economia", name: "Magnata do Vilarejo", done: player.stats.coinsEarned >= 2500, description: "Acumule 2500 moedas ao longo da campanha." },
     { category: "Equipamentos", name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
@@ -3349,16 +3471,22 @@ function getTrophies(){
     { category: "Equipamentos", name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
     { category: "Progressao", name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
     { category: "Progressao", name: "Forma Final", done: getSubclassCount() >= 2, description: "Escolha sua segunda subclasse." },
-    { category: "Progressao", name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance nivel suficiente para entrar na Fortaleza." },
-    { category: "Progressao", name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance nivel suficiente para entrar na Citadela." },
-    { category: "Progressao", name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance nivel suficiente para entrar no Panteao." },
-    { category: "Progressao", name: "Fim do Mundo", done: player.level >= 76, description: "Alcance nivel suficiente para entrar em Cataclismo." },
-    { category: "Progressao", name: "Alem do Cataclismo", done: player.level >= 84, description: "Alcance nivel suficiente para entrar no Paradoxo." },
+    { category: "Progressao", name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance o nivel 44." },
+    { category: "Progressao", name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance o nivel 60." },
+    { category: "Progressao", name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance o nivel 68." },
+    { category: "Progressao", name: "Fim do Mundo", done: player.level >= 76, description: "Alcance o nivel 76." },
+    { category: "Progressao", name: "Alem do Cataclismo", done: player.level >= 84, description: "Alcance o nivel 84." },
     { category: "Sobrevivencia", name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
     { category: "Sobrevivencia", name: "Veterano de Guerra", done: player.stats.deaths >= 5, description: "Caia 5 vezes e continue a jornada." },
     { category: "Progressao", name: "Mestre do Vazio", done: player.level >= 60, description: "Alcance o nivel 60." },
     { category: "Progressao", name: "Ascensao Heroica", done: player.level >= 80, description: "Alcance o nivel 80." },
-    { category: "Progressao", name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." }
+    { category: "Progressao", name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." },
+    { category: "Dungeon", name: "Primeira Incursao", done: (player.stats.dungeonBestStep || 0) >= 1, description: "Derrote o primeiro inimigo da dungeon online." },
+    { category: "Dungeon", name: "Meio Caminho", done: (player.stats.dungeonBestStep || 0) >= Math.floor(getDungeonSequence().length / 2), description: "Alcance metade da sequencia fixa da dungeon." },
+    { category: "Dungeon", name: "Fim da Incursao", done: (player.stats.dungeonClears || 0) >= 1, description: "Conclua a dungeon inteira uma vez." },
+    { category: "Dungeon", name: "Grupo Persistente", done: (player.stats.dungeonClears || 0) >= 3, description: "Conclua a dungeon inteira 3 vezes." },
+    { category: "Colecao", name: "Arsenal Completo", done: getCollectedEquipmentCount() >= 20, description: "Junte 20 equipamentos entre inventario e equipamento atual." },
+    { category: "Colecao", name: "Lenda Reluzente", done: getLegendaryEquipmentCount() >= 3, description: "Obtenha 3 equipamentos lendarios." }
   ];
 }
 
@@ -3384,8 +3512,21 @@ function getTrophyCategorySummary(){
   });
 }
 
+function setTrophyCategory(category){
+  selectedTrophyCategory = category || "Todas";
+  updateUI();
+}
+
+function getVisibleTrophyCategories(){
+  const grouped = getTrophyCategories();
+  if(selectedTrophyCategory === "Todas" || !grouped[selectedTrophyCategory]){
+    return grouped;
+  }
+  return { [selectedTrophyCategory]: grouped[selectedTrophyCategory] };
+}
+
 function renderTrophyGroups(){
-  return Object.entries(getTrophyCategories()).map(([category, trophies]) => {
+  return Object.entries(getVisibleTrophyCategories()).map(([category, trophies]) => {
     const completed = trophies.filter(trophy => trophy.done).length;
     return `<div class="trophy-category"><div class="panel-header"><strong>${category}</strong><span class="coin-badge">${completed}/${trophies.length}</span></div><div class="trophy-list">${trophies.map(trophy => `<div class="trophy-item ${trophy.done ? "" : "locked"}"><strong>${trophy.name}</strong><br><span class="lock-note">${trophy.description}</span></div>`).join("")}</div></div>`;
   }).join("");
@@ -3396,10 +3537,74 @@ function renderTrophySummaryPanel(){
   const overall = getTrophyCompletion();
   return `
     <h3>Resumo das conquistas</h3>
+    <div class="button-row">
+      <button class="region-chip ${selectedTrophyCategory === "Todas" ? "active" : ""}" onclick="setTrophyCategory('Todas')">Todas</button>
+      ${categorySummary.map(entry => `<button class="region-chip ${selectedTrophyCategory === entry.category ? "active" : ""}" onclick="setTrophyCategory('${entry.category}')">${entry.category}</button>`).join("")}
+    </div>
     <div class="trophy-summary-grid">
       ${categorySummary.map(entry => `<div class="trophy-summary-card"><strong>${entry.category}</strong><span>${entry.percent}%</span><small>${entry.completed}/${entry.total} concluidas</small></div>`).join("")}
       <div class="trophy-summary-card"><strong>Total geral</strong><span>${overall}%</span><small>${getTrophies().filter(trophy => trophy.done).length}/${getTrophies().length} conquistas</small></div>
     </div>`;
+}
+
+function setCampTab(tab){
+  campTab = ["status", "equipamentos", "habilidades"].includes(tab) ? tab : "status";
+  updateUI();
+}
+
+function renderCampTabs(){
+  const tabs = [
+    { id: "status", label: "Status do heroi" },
+    { id: "equipamentos", label: "Equipamentos" },
+    { id: "habilidades", label: "Habilidades" }
+  ];
+  return `<div class="inner-tabs">${tabs.map(tab => `<button class="inner-tab ${campTab === tab.id ? "active" : ""}" onclick="setCampTab('${tab.id}')">${tab.label}</button>`).join("")}</div>`;
+}
+
+function renderCampContent(campEntries, previewStats, investedSummary, classBaseData, subclassBonuses, activeSetData, xpToNextLevel){
+  if(campTab === "equipamentos"){
+    return `
+      ${renderCampTabs()}
+      <div class="inventory-item">
+        <strong>Equipamentos</strong>
+        ${renderEquipmentShowcase()}
+      </div>
+      <div class="inventory-item" style="margin-top:12px;"><strong>Sets ativos</strong><br><span class="lock-note">${activeSetData.activeSets.length ? activeSetData.activeSets.map(setEntry => `${setEntry.setName}: ${setEntry.text}`).join(" | ") : "Nenhum set completo equipado."}</span></div>`;
+  }
+  if(campTab === "habilidades"){
+    return `
+      ${renderCampTabs()}
+      <div class="inventory-list">
+        <div class="inventory-item">
+          <strong>Habilidades ativas</strong>
+          <div class="inventory-list">
+            ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+          </div>
+        </div>
+        <div class="inventory-item">
+          <strong>Habilidades passivas</strong>
+          <div class="inventory-list">
+            ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+          </div>
+        </div>
+        <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio mais proximo" : "Desbloqueio futuro"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
+      </div>`;
+  }
+  return `
+    ${renderCampTabs()}
+    <div class="camp-stats">
+      <div class="camp-stat"><strong>Vida</strong><span>${player.hp}/${previewStats.maxHp}</span></div>
+      <div class="camp-stat"><strong>Mana</strong><span>${player.mp}/${previewStats.maxMp}</span></div>
+      <div class="camp-stat"><strong>Ataque base</strong><span>${getActiveAttack()}</span></div>
+      <div class="camp-stat"><strong>Dano de habilidade</strong><span>${getSkillPowerBonus()}</span></div>
+      <div class="camp-stat"><strong>Dano resistido</strong><span>${getPassiveModifiers().flatReduction}</span></div>
+      <div class="camp-stat"><strong>XP</strong><span>${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
+      <div class="camp-stat"><strong>Pontos em Vitalidade</strong><span>${investedSummary.vitalityPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Sabedoria</strong><span>${investedSummary.wisdomPoints}</span></div>
+      <div class="camp-stat"><strong>Pontos em Forca</strong><span>${investedSummary.strengthPoints}</span></div>
+    </div>
+    ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Rota de subclasse</strong><div class="subclass-route">${getChosenSubclassDefs().map((subclass, index, arr) => `<span class="subclass-chip active">${index === arr.length - 1 ? "Atual: " : "Escolhida: "}${subclass.name}</span>`).join("")} </div><div class="subclass-summary"><strong>Bonus recebidos</strong><div class="subclass-bonus-list">${getChosenSubclassDefs().map(subclass => `<div class="inventory-item"><strong>${subclass.name}</strong><br><span class="lock-note">${subclass.description}</span><br><span class="status-on">${formatSubclassStatBonuses(subclass)}</span></div>`).join("")}</div><div class="inventory-item" style="margin-top:10px;"><strong>Total acumulado</strong><br><span class="status-on">${formatSubclassStatBonuses(getTotalSubclassBonuses())}</span></div></div></div>` : `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">Ainda nao escolhida. Sua primeira escolha acontece no nivel 30 e a segunda no nivel 60.</span></div>`}
+    <div class="inventory-item" style="margin-top:12px;"><strong>Spoiler de subclasses</strong><br><span class="lock-note">Aqui voce ja consegue ver os nomes das rotas futuras da sua classe.</span><div class="inventory-list">${renderSubclassSpoilers()}</div></div>`;
 }
 
 function isDungeonMode(){
@@ -3408,6 +3613,47 @@ function isDungeonMode(){
 
 function getDungeonRequirement(){
   return dungeonData.minLevel;
+}
+
+function getDungeonSequence(){
+  return Object.entries(regions).flatMap(([regionName, regionData]) => [
+    ...regionData.enemies.map(template => ({ regionName, template, isBoss: false })),
+    { regionName, template: regionData.boss, isBoss: true }
+  ]);
+}
+
+function getDungeonStepEntry(stepIndex = dungeonMultiplayer.dungeonStepIndex || 0){
+  const sequence = getDungeonSequence();
+  return sequence[Math.min(Math.max(0, stepIndex), Math.max(0, sequence.length - 1))] || null;
+}
+
+function getDungeonPartyScale(){
+  return Math.max(1, getDungeonRoomMembers().length || 1);
+}
+
+function createDungeonEnemyAtStep(stepIndex = dungeonMultiplayer.dungeonStepIndex || 0){
+  const entry = getDungeonStepEntry(stepIndex);
+  if(!entry){ return null; }
+  const partyScale = getDungeonPartyScale();
+  const scaledTemplate = {
+    ...entry.template,
+    level: Math.max(1, entry.template.level * partyScale)
+  };
+  const dungeonEnemy = createEnemyFromTemplate(scaledTemplate, entry.isBoss, entry.regionName);
+  dungeonEnemy.dungeonStepIndex = stepIndex;
+  dungeonEnemy.dungeonSourceRegion = entry.regionName;
+  dungeonEnemy.name = `${entry.template.name} Lv.${scaledTemplate.level}`;
+  return dungeonEnemy;
+}
+
+function getDungeonProgressText(){
+  const sequence = getDungeonSequence();
+  const currentStep = Math.min((dungeonMultiplayer.dungeonStepIndex || 0) + 1, sequence.length);
+  const entry = getDungeonStepEntry();
+  if(!entry){
+    return "Sequencia completa.";
+  }
+  return `Etapa ${currentStep}/${sequence.length}: ${entry.template.name} (${entry.regionName})`;
 }
 
 function isDungeonConnected(){
@@ -3472,6 +3718,7 @@ function broadcastDungeonState(){
     enemy: enemy ? { ...enemy } : null,
     turnOrder: [...dungeonMultiplayer.turnOrder],
     turnIndex: dungeonMultiplayer.turnIndex,
+    dungeonStepIndex: dungeonMultiplayer.dungeonStepIndex,
     round: dungeonMultiplayer.round,
     enemySkipTurn: !!dungeonMultiplayer.enemySkipTurn,
     battleActive: !!dungeonMultiplayer.battleActive
@@ -3557,6 +3804,8 @@ function getDungeonStatusText(){
 function renderDungeonRoomControls(){
   const canStart = isDungeonHost() && getDungeonRoomMembers().length >= 2 && !enemy && !isDead && player.hp > 0;
   const canManageRoom = !isDead && player.hp > 0;
+  const sequence = getDungeonSequence();
+  const nextEntry = getDungeonStepEntry();
   return `
     <div class="inventory-list">
       <div class="inventory-item">
@@ -3570,6 +3819,12 @@ function renderDungeonRoomControls(){
           ${isDungeonConnected() ? `<button onclick="leaveDungeonRoom()">Sair da sala</button>` : ""}
         </div>
         ${isDungeonHost() ? `<div class="button-row"><button onclick="startDungeonRaid()" ${canStart ? "" : "disabled"}>Iniciar dungeon</button></div><span class="lock-note">${getDungeonRoomMembers().length < 2 ? "Conecte pelo menos mais 1 jogador para comecar." : "Sala pronta para a batalha."}</span>` : ""}
+      </div>
+      <div class="inventory-item">
+        <strong>Progressao da dungeon</strong><br>
+        <span class="lock-note">${getDungeonProgressText()}</span><br>
+        <span class="lock-note">Ordem fixa: inimigos e chefao de cada regiao, da Floresta ate o Paradoxo. Proximo: ${nextEntry ? `${nextEntry.template.name} de ${nextEntry.regionName}` : "fim da sequencia"}.</span><br>
+        <span class="lock-note">Total da rota: ${sequence.length} encontros. O nivel de cada inimigo e multiplicado pela quantidade de herois conectados.</span>
       </div>
       <div class="inventory-item">
         <strong>Equipe</strong>
@@ -3683,7 +3938,7 @@ function handleDungeonHostMessage(connection, data){
       broadcastToDungeonPeers({ type: "log", message: data.message });
     }
     if(enemy && data.damage){
-      applyDamageToEnemy(data.damage, { ignoreArmor: !!data.ignoreArmor });
+      applyDungeonDamageToEnemy(data.damage, { ignoreArmor: !!data.ignoreArmor, ignoreShield: !!data.ignoreShield });
       displayState.enemyHp = enemy.hp;
     }
     if(enemy && data.freezeNext){
@@ -3713,14 +3968,16 @@ function handleDungeonGuestMessage(data){
   }
   if(data.type === "state"){
     const wasBattleActive = dungeonMultiplayer.battleActive;
+    const previousEnemyStep = enemy?.dungeonStepIndex;
     dungeonMultiplayer.roomCode = data.roomCode || dungeonMultiplayer.roomCode;
     dungeonMultiplayer.party = data.party || {};
     dungeonMultiplayer.turnOrder = data.turnOrder || [];
     dungeonMultiplayer.turnIndex = data.turnIndex || 0;
     dungeonMultiplayer.round = data.round || 1;
+    dungeonMultiplayer.dungeonStepIndex = data.dungeonStepIndex || 0;
     dungeonMultiplayer.enemySkipTurn = !!data.enemySkipTurn;
     dungeonMultiplayer.battleActive = !!data.battleActive;
-    if(dungeonMultiplayer.battleActive && !wasBattleActive){
+    if(dungeonMultiplayer.battleActive && (!wasBattleActive || (data.enemy && previousEnemyStep !== data.enemy.dungeonStepIndex))){
       resetCombatEffects();
     }
     syncDungeonEnemyState(data.enemy || null);
@@ -3732,7 +3989,12 @@ function handleDungeonGuestMessage(data){
     return;
   }
   if(data.type === "enemy_attack"){
-    processDungeonIncomingDamage(data.damage, data.message);
+    processDungeonIncomingDamage(data.damage, data.message, data.targetId, data.targetName);
+    return;
+  }
+  if(data.type === "raid_reward"){
+    grantDungeonRaidRewards(data.rewards);
+    updateUI();
     return;
   }
   if(data.type === "victory"){
@@ -3740,6 +4002,8 @@ function handleDungeonGuestMessage(data){
     dungeonMultiplayer.battleActive = false;
     dungeonMultiplayer.turnOrder = [];
     dungeonMultiplayer.turnIndex = 0;
+    dungeonMultiplayer.dungeonStepIndex = 0;
+    player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
     grantDungeonRaidRewards(data.rewards);
     log(data.message);
     updateUI();
@@ -3749,6 +4013,7 @@ function handleDungeonGuestMessage(data){
     dungeonMultiplayer.battleActive = false;
     dungeonMultiplayer.turnOrder = [];
     dungeonMultiplayer.turnIndex = 0;
+    dungeonMultiplayer.dungeonStepIndex = 0;
     syncDungeonEnemyState(null);
     if(player.hp <= 0 || isDead){
       handleDeath(data.message || "Voce caiu na dungeon.");
@@ -3765,8 +4030,9 @@ function handleDungeonGuestMessage(data){
 
 function startDungeonRaid(){
   if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || enemy || isDead || player.hp <= 0){ return; }
-  const template = chooseWeightedEnemy(dungeonData.enemies, { regionName: "Dungeon" });
-  enemy = createEnemyFromTemplate(template, false);
+  dungeonMultiplayer.dungeonStepIndex = 0;
+  enemy = createDungeonEnemyAtStep(0);
+  if(!enemy){ return; }
   resetCombatEffects();
   displayState.enemyHp = enemy.hp;
   needsNewEnemy = false;
@@ -3781,29 +4047,71 @@ function startDungeonRaid(){
   updateUI();
 }
 
+function applyDungeonDamageToEnemy(rawDamage, options = {}){
+  if(!enemy){ return 0; }
+  let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  if(damage > 0 && enemy.shieldValue > 0 && !options.ignoreShield){
+    const absorbedByShield = Math.min(enemy.shieldValue, damage);
+    enemy.shieldValue -= absorbedByShield;
+    damage -= absorbedByShield;
+    log(`${enemy.baseName} absorveu ${absorbedByShield} de dano com o escudo.`);
+    if(enemy.shieldValue <= 0){
+      enemy.shieldValue = 0;
+      enemy.shieldTurns = 0;
+      log(`O escudo de ${enemy.baseName} se partiu.`);
+    }
+  }
+  enemy.hp -= damage;
+  return damage;
+}
+
 function grantDungeonRaidRewards(rewards){
   if(!rewards){ return; }
   player.coins += rewards.coins;
   player.stats.coinsEarned += rewards.coins;
   player.stats.enemiesDefeated++;
+  player.stats.dungeonBestStep = Math.max(player.stats.dungeonBestStep || 0, rewards.step || 0);
   gainXP(rewards.xp);
 }
 
 function handleDungeonRaidVictory(){
   if(!enemy){ return; }
+  const defeatedEnemy = enemy;
+  const defeatedStep = dungeonMultiplayer.dungeonStepIndex || 0;
+  const sequence = getDungeonSequence();
   const rewards = {
     xp: 40 + enemy.level * 9,
-    coins: 14 + enemy.level * 4
+    coins: 14 + enemy.level * 4,
+    step: defeatedStep + 1
   };
-  const enemyName = enemy.name;
+  grantDungeonRaidRewards(rewards);
+  if(defeatedEnemy.isBoss){
+    player.stats.bossesDefeated++;
+  }
+  if(defeatedStep < sequence.length - 1){
+    dungeonMultiplayer.dungeonStepIndex = defeatedStep + 1;
+    enemy = createDungeonEnemyAtStep(dungeonMultiplayer.dungeonStepIndex);
+    resetCombatEffects();
+    displayState.enemyHp = enemy.hp;
+    dungeonMultiplayer.turnIndex = 0;
+    dungeonMultiplayer.round++;
+    const message = `${defeatedEnemy.name} foi derrotado! Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas. Proximo encontro: ${enemy.name}.`;
+    log(message);
+    broadcastToDungeonPeers({ type: "log", message });
+    broadcastToDungeonPeers({ type: "raid_reward", rewards });
+    broadcastDungeonState();
+    updateUI();
+    return;
+  }
   enemy = null;
   dungeonMultiplayer.battleActive = false;
   dungeonMultiplayer.turnOrder = [];
   dungeonMultiplayer.turnIndex = 0;
+  dungeonMultiplayer.dungeonStepIndex = 0;
   displayState.enemyHp = null;
   needsNewEnemy = true;
-  grantDungeonRaidRewards(rewards);
-  const message = `${enemyName} foi derrotado! Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas.`;
+  player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
+  const message = `${defeatedEnemy.name} caiu! A dungeon inteira foi concluida. Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas.`;
   log(message);
   broadcastToDungeonPeers({ type: "victory", rewards, message });
   broadcastDungeonState();
@@ -3825,6 +4133,7 @@ function handleDungeonRaidDefeat(message){
     leaveDungeonRoom(true);
   }
   currentMode = "battle";
+  dungeonMultiplayer.dungeonStepIndex = 0;
   log(message);
   updateUI();
 }
@@ -3843,10 +4152,12 @@ function advanceDungeonTurn(){
     broadcastToDungeonPeers({ type: "log", message: `${enemy.name} perdeu o turno.` });
     return;
   }
+  const targetId = dungeonMultiplayer.turnOrder[Math.floor(Math.random() * dungeonMultiplayer.turnOrder.length)];
+  const targetName = dungeonMultiplayer.party[targetId]?.name || "um heroi";
   const damage = enemy.attack + Math.floor(Math.random() * 5);
-  const message = `${enemy.name} atacou o grupo e causou ${damage} de dano.`;
-  processDungeonIncomingDamage(damage, message);
-  broadcastToDungeonPeers({ type: "enemy_attack", damage, message });
+  const message = `${enemy.name} atacou ${targetName} e causou ${damage} de dano.`;
+  processDungeonIncomingDamage(damage, message, targetId, targetName);
+  broadcastToDungeonPeers({ type: "enemy_attack", damage, message, targetId, targetName });
   if(player.hp <= 0){
     return;
   }
@@ -3854,9 +4165,15 @@ function advanceDungeonTurn(){
   dungeonMultiplayer.round++;
 }
 
-function processDungeonIncomingDamage(baseDamage, message){
+function processDungeonIncomingDamage(baseDamage, message, targetId = null, targetName = ""){
   if(message){
     log(message);
+  }
+  const myDungeonId = dungeonMultiplayer.peer?.id || "local";
+  if(targetId && targetId !== myDungeonId){
+    log(`${targetName || "Outro heroi"} foi o alvo do inimigo desta vez.`);
+    updateUI();
+    return;
   }
   const result = applyIncomingDamage(baseDamage);
   pulseSpriteClass("enemySpriteBox", "attacking", 240);
@@ -3976,11 +4293,19 @@ async function dungeonUseSkill(index){
 }
 
 function getRegionRequirement(region){
-  return regions[region].minLevel || 1;
+  const regionNames = Object.keys(regions);
+  const index = regionNames.indexOf(region);
+  if(index <= 0){ return "nenhum requisito"; }
+  const previousRegion = regionNames[index - 1];
+  return `derrotar ${regions[previousRegion].boss.name}`;
 }
 
 function isRegionUnlockedForBattle(region){
-  return player.level >= getRegionRequirement(region);
+  const regionNames = Object.keys(regions);
+  const index = regionNames.indexOf(region);
+  if(index <= 0){ return true; }
+  const previousRegion = regionNames[index - 1];
+  return !!player?.stats?.regionBossKills?.[previousRegion];
 }
 
 function grantNextLevelForTest(){
@@ -4103,7 +4428,7 @@ function getEnemyMissChance(){
 
 function decayPlayerBuffs(){
   const previousInvulnerableTurns = playerEffects.invulnerableTurns;
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "burnTurns", "healReductionTurns", "damageDownTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "burnTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns"]){
     if(playerEffects[buffName] > 0){
       playerEffects[buffName]--;
     }
@@ -4123,6 +4448,7 @@ function decayPlayerBuffs(){
   if(playerEffects.burnTurns <= 0){ playerEffects.burnDamagePerTurn = 0; }
   if(playerEffects.healReductionTurns <= 0){ playerEffects.healReductionPercent = 0; }
   if(playerEffects.damageDownTurns <= 0){ playerEffects.damageDownPercent = 0; }
+  if(playerEffects.natureShieldBonusTurns <= 0){ playerEffects.natureShieldBonusPercent = 0; }
   if(previousInvulnerableTurns > 0 && playerEffects.invulnerableTurns <= 0 && playerEffects.storedFaithDamage > 0 && enemy){
     const explosionDamage = Math.floor(playerEffects.storedFaithDamage * 0.5);
     if(explosionDamage > 0){
@@ -4148,11 +4474,157 @@ function getPlayerHealReductionPercent(){
 }
 
 function healPlayer(amount){
-  const adjustedAmount = Math.max(0, Math.floor(amount * (1 - getPlayerHealReductionPercent())));
+  let healBonus = 0;
+  if(player.class === "Adepto da Natureza" && getUnlockedPassiveSkills().some(passive => passive.type === "nature_fairy_aura") && (playerEffects.natureCadence || 0) >= 3){
+    healBonus += getPlayerSubclassState().tier60 === "fada_monarca" && player.level >= 60 ? 0.1 : 0.05;
+  }
+  if(player.class === "Adepto da Natureza" && playerEffects.natureCrownedTurns > 0){
+    healBonus += 0.2;
+  }
+  const adjustedAmount = Math.max(0, Math.floor(amount * (1 + healBonus) * (1 - getPlayerHealReductionPercent())));
   const hpBefore = player.hp;
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp + adjustedAmount);
   displayState.playerHp = player.hp;
-  return player.hp - hpBefore;
+  const healed = player.hp - hpBefore;
+  if(healed > 0){
+    grantNatureCadence();
+  }
+  return healed;
+}
+
+function grantNatureCadence(){
+  if(player?.class !== "Adepto da Natureza"){ return; }
+  if(!getUnlockedPassiveSkills().some(passive => passive.type === "nature_fairy_aura")){ return; }
+  playerEffects.natureCadence = Math.min(3, (playerEffects.natureCadence || 0) + 1);
+}
+
+function grantPlayerShield(amount, turns = 0){
+  let shield = Math.max(0, Math.floor(amount));
+  if(shield <= 0){ return 0; }
+  let shieldBonus = 0;
+  if(player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_forest_oath")){
+    shieldBonus += 0.06;
+  }
+  if(player?.class === "Adepto da Natureza" && getPlayerSubclassState().tier60 === "protetor_da_floresta" && hasUnlockedPassiveType("nature_fairy_aura") && (playerEffects.natureCadence || 0) >= 3){
+    shieldBonus += 0.1;
+  }
+  if(shieldBonus > 0){
+    shield += Math.floor(shield * shieldBonus);
+  }
+  if(playerEffects.natureShieldBonusTurns > 0 && playerEffects.natureShieldBonusPercent > 0){
+    shield += Math.floor(shield * playerEffects.natureShieldBonusPercent);
+  }
+  playerEffects.shieldValue += shield;
+  playerEffects.shieldTurns = Math.max(playerEffects.shieldTurns || 0, turns || 0);
+  grantNatureCadence();
+  return shield;
+}
+
+function hasUnlockedPassiveType(type){
+  return getUnlockedPassiveSkills().some(passive => passive.type === type);
+}
+
+function getNatureDotMultiplier(){
+  return player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_dot_mastery") ? 1.3 : 1;
+}
+
+function applyNatureMark(turns, damage = 0, enemyDamageDown = 0){
+  if(!enemy){ return; }
+  enemy.natureMarkTurns = Math.max(enemy.natureMarkTurns || 0, Math.max(0, Math.floor(turns)));
+  enemy.natureMarkDamage = Math.max(enemy.natureMarkDamage || 0, Math.max(0, Math.floor(damage)));
+  if(enemyDamageDown > 0){
+    enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, enemyDamageDown);
+    enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, enemy.natureMarkTurns || turns);
+  }
+}
+
+function applyNatureRoot(turns = 2, armorDownPercent = 0){
+  if(!enemy){ return; }
+  enemy.rootedTurns = Math.max(enemy.rootedTurns || 0, Math.max(0, Math.floor(turns)));
+  if(armorDownPercent > 0){
+    enemy.armorDownPercent = Math.max(enemy.armorDownPercent || 0, armorDownPercent);
+    enemy.armorDownTurns = Math.max(enemy.armorDownTurns || 0, enemy.rootedTurns || turns);
+  }
+}
+
+function applyNaturePoison(damage, turns){
+  if(!enemy){ return; }
+  enemy.naturePoisonDamage = Math.max(enemy.naturePoisonDamage || 0, Math.max(0, Math.floor(damage)));
+  enemy.naturePoisonTurns = Math.max(enemy.naturePoisonTurns || 0, Math.max(0, Math.floor(turns)));
+}
+
+function applyNatureDecay(damage, turns){
+  if(!enemy){ return; }
+  enemy.natureDecayDamage = Math.max(enemy.natureDecayDamage || 0, Math.max(0, Math.floor(damage)));
+  enemy.natureDecayTurns = Math.max(enemy.natureDecayTurns || 0, Math.max(0, Math.floor(turns)));
+}
+
+function enemyHasNatureDot(){
+  return !!enemy && (
+    (enemy.natureMarkTurns > 0 && enemy.natureMarkDamage > 0) ||
+    (enemy.naturePoisonTurns > 0 && enemy.naturePoisonDamage > 0) ||
+    (enemy.natureDecayTurns > 0 && enemy.natureDecayDamage > 0)
+  );
+}
+
+function consumeNatureDotsForDamage(includeAllDots = false){
+  if(!enemy){ return 0; }
+  let damage = 0;
+  if(enemy.natureMarkTurns > 0){
+    damage += Math.floor((enemy.natureMarkDamage || 0) * enemy.natureMarkTurns);
+    enemy.natureMarkTurns = 0;
+    enemy.natureMarkDamage = 0;
+  }
+  if(includeAllDots && enemy.naturePoisonTurns > 0){
+    damage += Math.floor((enemy.naturePoisonDamage || 0) * enemy.naturePoisonTurns);
+    enemy.naturePoisonTurns = 0;
+    enemy.naturePoisonDamage = 0;
+  }
+  if(includeAllDots && enemy.natureDecayTurns > 0){
+    damage += Math.floor((enemy.natureDecayDamage || 0) * enemy.natureDecayTurns);
+    enemy.natureDecayTurns = 0;
+    enemy.natureDecayDamage = 0;
+  }
+  return Math.floor(damage * getNatureDotMultiplier());
+}
+
+function applyNatureDotTick(label, damageKey, turnsKey, canTriggerSap = true){
+  if(!enemy || !(enemy[turnsKey] > 0) || !(enemy[damageKey] > 0)){ return 0; }
+  const tickDamage = Math.floor(enemy[damageKey] * getNatureDotMultiplier());
+  enemy.hp -= tickDamage;
+  enemy[turnsKey]--;
+  log(`${enemy.baseName} sofreu ${tickDamage} de dano por ${label}.`);
+  if(canTriggerSap && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_sap")){
+    const healed = healPlayer(Math.floor(tickDamage * 0.08));
+    if(healed > 0){
+      log(`Seiva restaurou ${healed} de vida.`);
+    }
+  }
+  if(enemy[turnsKey] <= 0){
+    enemy[damageKey] = 0;
+  }
+  return tickDamage;
+}
+
+async function processNatureDotTicks(){
+  if(!enemy){ return false; }
+  const decayTriggersSap = getPlayerSubclassState().tier60 === "druida_sombrio" && player.level >= 60;
+  const total =
+    applyNatureDotTick("Marca Natural", "natureMarkDamage", "natureMarkTurns", true) +
+    applyNatureDotTick("Veneno", "naturePoisonDamage", "naturePoisonTurns", true) +
+    applyNatureDotTick("Apodrecimento", "natureDecayDamage", "natureDecayTurns", decayTriggersSap);
+  if(enemy.natureMarkTurns > 0 && !(enemy.natureMarkDamage > 0)){
+    enemy.natureMarkTurns--;
+  }
+  if(total > 0){
+    updateUI();
+    await wait(220);
+    if(enemy.hp <= 0){
+      handleEnemyDefeat();
+      return true;
+    }
+  }
+  return false;
 }
 
 function applyEndOfTurnRecovery(){
@@ -4403,7 +4875,9 @@ function getSkillInfo(){
     if(skill.type === "archer_headshot"){
       const focusActive = playerEffects.guaranteedHitTurns > 0;
       const focusDamageBonus = subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0;
-      const baseDamage = 30 + Math.floor(0.7 * attack) + Math.floor(0.9 * skillPower);
+      const baseDamage = subclassState.tier60 === "atirador_arcano" && player.level >= 60
+        ? 60 + Math.floor(1.1 * skillPower) + Math.floor(0.6 * maxMp)
+        : 30 + Math.floor(0.7 * attack) + Math.floor(0.9 * skillPower);
       const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
       const cost = 60 + Math.floor(0.3 * player.level);
       const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.7 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
@@ -4438,8 +4912,9 @@ function getSkillInfo(){
       return { ...skill, cost: 80, damage, skipChance: 0.3, nextBarrageBonus, description: `${skill.name}: consome 80 MP, causa ${damage} de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.${bonusCurrentHpDamage ? " O dano inclui 8% da vida atual do inimigo." : ""}${nextBarrageBonus ? " Se prender o alvo, sua proxima Rajada de Flechas causara 15% de dano adicional." : ""}` };
     }
     if(skill.type === "archer_arcane_shot"){
-      const damage = 60 + Math.floor(1.6 * skillPower) + Math.floor(0.3 * maxMp);
-      return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano arcano.` };
+      const missingMana = Math.max(0, maxMp - player.mp);
+      const damage = 60 + skillPower + Math.floor(0.75 * missingMana);
+      return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano arcano. O dano aumenta conforme sua mana atual estiver abaixo da mana maxima.` };
     }
     if(skill.type === "archer_execute"){
       const damage = 60 + Math.floor(1.1 * attack) + Math.floor(0.9 * skillPower);
@@ -4474,6 +4949,88 @@ function getSkillInfo(){
       const totalDamage = 120 + Math.floor(1.2 * attack) + Math.floor(1.2 * skillPower);
       const dotDamage = Math.floor(totalDamage / 3);
       return { ...skill, cost: 80, damage: 0, totalDamage, dotDamage, dotTurns: 3, description: `${skill.name}: consome 80 MP e faz o alvo sofrer ${dotDamage} de dano por rodada durante 3 rodadas (${dotDamage * 3} no total).` };
+    }
+    if(skill.type === "nature_living_seed"){
+      const markTurns = subclassState.tier30 === "druida" && player.level >= 30 ? 4 : 3;
+      const markDamage = subclassState.tier30 === "druida" && player.level >= 30 ? Math.floor(0.2 * skillPower * markTurns) : 0;
+      const enemyDamageDown = subclassState.tier30 === "espirito_da_floresta" && player.level >= 30 ? 0.08 * markTurns : 0;
+      const cost = 20 + Math.floor(0.5 * player.level);
+      const damage = 10 + Math.floor(0.7 * attack) + Math.floor(0.3 * skillPower);
+      return { ...skill, cost, damage, markTurns, markDamage, enemyDamageDown, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e marca o alvo por ${markTurns} turnos.${markDamage ? ` A marca tambem causa ${markDamage} por turno.` : ""}${enemyDamageDown ? ` A marca reduz o dano do inimigo em ${Math.floor(enemyDamageDown * 100)}%.` : ""}` };
+    }
+    if(skill.type === "nature_roots"){
+      const rootChance = subclassState.tier30 === "druida" && player.level >= 30 ? 0.6 : 0.45;
+      const armorDownPercent = subclassState.tier30 === "espirito_da_floresta" && player.level >= 30 ? 0.5 : 0;
+      const cost = 30 + Math.floor(0.6 * player.level);
+      const damage = 20 + Math.floor(0.8 * attack) + Math.floor(0.8 * skillPower);
+      return { ...skill, cost, damage, rootChance, armorDownPercent, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem ${Math.floor(rootChance * 100)}% de chance de enraizar.${armorDownPercent ? " Se enraizar, tambem reduz 50% da armadura." : ""}` };
+    }
+    if(skill.type === "nature_swamp_flower"){
+      const isAvatar = subclassState.tier60 === "avatar_da_natureza" && player.level >= 60;
+      const poisonTurns = isAvatar ? 3 : subclassState.tier60 === "druida_sombrio" && player.level >= 60 ? 7 : 4;
+      const cost = 20 + Math.floor(0.4 * player.level);
+      const damage = 10 + Math.floor((isAvatar ? 1.3 : 0.8) * attack) + Math.floor(0.8 * skillPower);
+      return { ...skill, cost, damage, poisonTurns, poisonDamage: Math.floor(0.4 * skillPower), description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano. Se o alvo estiver enraizado, aplica veneno de ${Math.floor(0.4 * skillPower)} por ${poisonTurns} turnos.` };
+    }
+    if(skill.type === "nature_breeze_charm"){
+      const isMonarch = subclassState.tier60 === "fada_monarca" && player.level >= 60;
+      const skipChance = (isMonarch ? 0.3 : 0.2) + (playerEffects.natureCrownedTurns > 0 ? 0.2 : 0);
+      const rootChance = (isMonarch ? 0.3 : 0.2) + (playerEffects.natureCrownedTurns > 0 ? 0.2 : 0);
+      const cost = 30 + Math.floor(0.3 * player.level);
+      const damage = 20 + Math.floor(1.1 * skillPower);
+      return { ...skill, cost, damage, skipChance, rootChance, shieldFromDamagePercent: subclassState.tier60 === "protetor_da_floresta" && player.level >= 60 ? 1 : 0, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem ${Math.floor(skipChance * 100)}% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.` };
+    }
+    if(skill.type === "nature_harvest"){
+      const cost = 40 + Math.floor(0.3 * player.level);
+      const damage = 30 + Math.floor(1.2 * attack);
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e consome efeitos naturais ativos para explodir o dano restante.` };
+    }
+    if(skill.type === "nature_ancestral_song"){
+      const rooted = enemy?.rootedTurns > 0;
+      const cost = 40 + Math.floor(0.4 * player.level);
+      const heal = Math.floor((rooted ? 2 : 1.4) * skillPower);
+      const shield = subclassState.tier60 === "protetor_da_floresta" && player.level >= 60 ? Math.floor((rooted ? 2.2 : 1.6) * skillPower) : 0;
+      return { ...skill, cost, heal, shield, enemyDamageDownPercent: subclassState.tier60 === "fada_monarca" && player.level >= 60 ? 0.12 : 0, description: `${skill.name}: consome ${cost} MP e cura ${heal}.${shield ? ` Tambem concede ${shield} de escudo.` : ""}` };
+    }
+    if(skill.type === "nature_decay"){
+      const cost = 40 + Math.floor(0.5 * player.level);
+      const damage = 50 + Math.floor(1.2 * attack);
+      return { ...skill, cost, damage, decayTurns: 5, decayDamage: enemy ? Math.max(1, Math.floor(enemy.maxHp * 0.015)) : 0, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica apodrecimento por 5 turnos.` };
+    }
+    if(skill.type === "nature_true_form"){
+      return { ...skill, cost: maxMp, turns: 5, attackPercent: 0.26, damageReductionPercent: 0.18, description: `${skill.name}: consome toda a mana maxima, aumenta ataque em 26%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.` };
+    }
+    if(skill.type === "nature_queen_decree"){
+      const factor = (playerEffects.natureCadence || 0) >= 3 ? 2.9 : 2;
+      const damage = Math.floor(factor * skillPower);
+      return { ...skill, cost: 90, damage, description: `${skill.name}: consome 90 MP e causa ${damage} de dano. Com 3 Cadencias, o fator sobe para 2.9.` };
+    }
+    if(skill.type === "nature_vine_cocoon"){
+      const cost = 60 + Math.floor(0.6 * player.level);
+      const shield = Math.floor(1.4 * attack + 1.4 * skillPower);
+      return { ...skill, cost, shield, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo.` };
+    }
+    if(skill.type === "nature_swamp_collapse"){
+      const cost = Math.floor(maxMp * 0.85);
+      const damage = Math.floor(1.8 * attack + 1.8 * skillPower);
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano. Se o alvo nao tiver DOT natural, aplica marca, veneno e apodrecimento por 4 turnos.` };
+    }
+    if(skill.type === "nature_crush_invader"){
+      const cost = 300 + Math.floor(0.8 * player.level);
+      let damage = Math.floor(2 * attack);
+      if(enemy?.rootedTurns > 0){ damage += Math.floor(0.6 * attack); }
+      if(playerEffects.natureTrueFormTurns > 0){ damage += Math.floor(attack); }
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com bonus contra alvo enraizado e na Forma Verdadeira.` };
+    }
+    if(skill.type === "nature_crown"){
+      const cost = 300 + Math.floor(2 * player.level);
+      return { ...skill, cost, turns: 5, skillPercent: 0.3, healPercent: 0.2, chanceBonus: 0.2, description: `${skill.name}: consome ${cost} MP e fica coroada por 5 turnos, com +30% poder de habilidade, +20% curas e +20% nas chances de controle.` };
+    }
+    if(skill.type === "nature_throw_thorns"){
+      const cost = Math.floor(4 * player.level);
+      const shield = playerEffects.shieldValue || 0;
+      const damage = Math.floor(shield * 2);
+      return { ...skill, cost, hpCostPercent: 0.2, damage, consumeShield: true, ignoreArmor: true, ignoreShield: true, description: `${skill.name}: consome ${cost} MP, 20% da vida maxima e todo seu escudo atual para causar ${damage} de dano ignorando armadura e escudo.` };
     }
     return { ...skill, cost: 0, description: skill.name };
   });
@@ -4546,14 +5103,28 @@ function getActiveSkillPreviewDescription(skill){
     archer_barrage: "Sequencia de disparos basicos, com evolucoes diferentes para cada rota do cacador.",
     archer_piercing_shot: "Tiro direto para atravessar escudo e armadura.",
     archer_trap: "Ferramenta de controle que pode travar o turno do inimigo e criar vantagem.",
-    archer_arcane_shot: "Disparo que mistura habilidade e mana maxima em burst magico.",
+    archer_arcane_shot: "Emergencia Arcana transforma mana faltante em dano, perfeita quando o Atirador Arcano esta pressionado.",
     archer_execute: "Finalizador de alvo unico que escala muito contra inimigos enfraquecidos.",
     archer_surprise: "Ataque oportunista que cresce bastante se voce veio de camuflagem.",
     archer_tranquilizer: "Tiro utilitario que causa dano e reduz o potencial ofensivo do inimigo.",
     archer_overcharge: "Explosao arcana de custo alto para fechar lutas rapidamente.",
     archer_weak_spot: "Ataque preciso que explora a vida atual do inimigo para causar burst.",
     archer_aim_leg: "Controle fino que reduz ataque, corta armadura e ainda pode travar o alvo.",
-    archer_cutting_shot: "Disparo em dano ao longo do tempo, excelente para lutas compridas."
+    archer_cutting_shot: "Disparo em dano ao longo do tempo, excelente para lutas compridas.",
+    nature_living_seed: "Ataque natural que marca o alvo e prepara bonus de dano, mana e efeitos de rota.",
+    nature_roots: "Controle de raiz com dano hibrido; em algumas rotas tambem quebra armadura.",
+    nature_swamp_flower: "Golpe venenoso que fica mais perigoso contra alvo enraizado.",
+    nature_breeze_charm: "Magia feerica de dano e controle, com chance de pular turno e enraizar alvo marcado.",
+    nature_harvest: "Consome efeitos naturais no inimigo para concentrar o dano restante.",
+    nature_ancestral_song: "Cura principal do Espirito da Floresta, melhorada contra alvos enraizados.",
+    nature_decay: "Aplica apodrecimento, um dano ao longo do tempo baseado na vida maxima do inimigo.",
+    nature_true_form: "Forma de combate que troca toda a mana por ataque, reducao de dano e ataques basicos fortalecidos.",
+    nature_queen_decree: "Dano de habilidade puro que cresce muito quando a Fada esta com Cadencia cheia.",
+    nature_vine_cocoon: "Escudo direto baseado em ataque e poder de habilidade.",
+    nature_swamp_collapse: "Explode o alvo e, se ele estiver limpo, aplica varios efeitos naturais de uma vez.",
+    nature_crush_invader: "Ataque pesado do Avatar que cresce contra alvo enraizado e durante a Forma Verdadeira.",
+    nature_crown: "Buff supremo da Fada Monarca para poder de habilidade, cura e controle.",
+    nature_throw_thorns: "Converte todo o escudo atual em dano que atravessa defesas."
   };
   return previews[skill.type] || "Habilidade importante da sua progressao. Quando desbloqueada, a descricao completa aparece aqui com valores atualizados.";
 }
@@ -4584,7 +5155,14 @@ function getPassivePreviewDescription(skill){
     archer_sniper_bonus_crit: "Passiva de critico avancado, fazendo o excedente acima de 100% virar dano critico.",
     archer_enemy_skip_chance: "Passiva de pressão que pode fazer o inimigo perder o turno.",
     archer_flat_reduction_level: "Passiva defensiva de redução fixa por nivel.",
-    coin_bonus: "Passiva voltada para aumentar suas recompensas em moedas."
+    coin_bonus: "Passiva voltada para aumentar suas recompensas em moedas.",
+    nature_cycle: "Passiva que recompensa bater em alvos marcados pela Semente Viva.",
+    nature_sap: "Passiva de sustentacao que transforma danos naturais recorrentes em cura.",
+    nature_fairy_aura: "Passiva de Cadencia: curas e escudos empilham poder de habilidade.",
+    nature_dot_mastery: "Passiva que aumenta todos os danos ao longo do tempo naturais.",
+    nature_ancestral_bark: "Passiva defensiva de resistencia fixa, melhorada durante a Forma Verdadeira.",
+    nature_royal_wings: "Passiva de esquiva da Fada Monarca, muito mais forte quando coroada.",
+    nature_forest_oath: "Passiva de escudo do Protetor, aumentando escudos e refletindo dano absorvido."
   };
   return previews[skill.type] || "Passiva importante da rota escolhida. Quando desbloqueada, o texto aqui passa a mostrar o efeito real no seu nivel atual.";
 }
@@ -4707,6 +5285,32 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "coin_bonus"){
     return `${skill.name}: aumenta as moedas obtidas em 15%.`;
   }
+  if(skill.type === "nature_cycle"){
+    const damageBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 16 : 10;
+    const extra = getPlayerSubclassState().tier30 === "espirito_da_floresta" && player.level >= 30 ? " Tambem converte 30% do ataque basico em poder de habilidade." : "";
+    return `${skill.name}: alvos marcados recebem ${damageBonus}% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.${extra}`;
+  }
+  if(skill.type === "nature_sap"){
+    return `${skill.name}: dano de marca e veneno cura 8% do dano causado.${getPlayerSubclassState().tier60 === "avatar_da_natureza" ? " Tambem aumenta sua vida maxima em 12%." : ""}${getPlayerSubclassState().tier60 === "druida_sombrio" ? " Tambem considera apodrecimento." : ""}`;
+  }
+  if(skill.type === "nature_fairy_aura"){
+    const stackPower = getPlayerSubclassState().tier60 === "fada_monarca" ? 6 : 4;
+    const healBonus = getPlayerSubclassState().tier60 === "fada_monarca" ? 10 : 5;
+    return `${skill.name}: curar ou ganhar escudo concede Cadencia. Cada acumulo da ${stackPower}% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam ${healBonus}%.`;
+  }
+  if(skill.type === "nature_dot_mastery"){
+    return `${skill.name}: aumenta marca, veneno e apodrecimento em 30%.`;
+  }
+  if(skill.type === "nature_ancestral_bark"){
+    const reduction = Math.floor(4 + (playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5) * player.level);
+    return `${skill.name}: reduz ${reduction} de dano recebido por ataque${playerEffects.natureTrueFormTurns > 0 ? " durante a Forma Verdadeira" : ""}.`;
+  }
+  if(skill.type === "nature_royal_wings"){
+    return `${skill.name}: concede ${playerEffects.natureCrownedTurns > 0 ? 60 : 20}% de chance de esquiva${playerEffects.natureCrownedTurns > 0 ? " enquanto coroada" : ""}.`;
+  }
+  if(skill.type === "nature_forest_oath"){
+    return `${skill.name}: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo.`;
+  }
   return skill.description;
 }
 
@@ -4760,6 +5364,15 @@ function getActiveBuffs(){
   }
   if(playerEffects.arcaneCharges > 0){
     buffs.push(`Cargas arcanas ${playerEffects.arcaneCharges} | ${playerEffects.arcaneChargeTurns} turno(s)`);
+  }
+  if(playerEffects.natureCadence > 0){
+    buffs.push(`Cadencia ${playerEffects.natureCadence}/3`);
+  }
+  if(playerEffects.natureTrueFormTurns > 0){
+    buffs.push(`Forma Verdadeira | ${playerEffects.natureTrueFormTurns} turno(s)`);
+  }
+  if(playerEffects.natureCrownedTurns > 0){
+    buffs.push(`Coroada | ${playerEffects.natureCrownedTurns} turno(s)`);
   }
   if(playerEffects.nextDamageBonusPercent > 0){
     buffs.push(`Proximo dano +${Math.floor(playerEffects.nextDamageBonusPercent * 100)}%`);
@@ -4836,6 +5449,21 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
   let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  if(damage > 0 && player.class === "Adepto da Natureza" && enemy.natureMarkTurns > 0){
+    const markBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 0.16 : 0.1;
+    const bonusDamage = Math.floor(damage * markBonus);
+    damage += bonusDamage;
+    if(bonusDamage > 0){
+      log(`Ciclo Natural adicionou ${bonusDamage} de dano contra o alvo marcado.`);
+    }
+    if(options.skillCost > 0){
+      const refund = Math.floor(options.skillCost * 0.1);
+      if(refund > 0){
+        player.mp = Math.min(getCurrentCaps().maxMp, player.mp + refund);
+        log(`Ciclo Natural restaurou ${refund} de mana.`);
+      }
+    }
+  }
   if(damage > 0 && playerEffects.enemyMaxHpBonusTurns > 0 && playerEffects.enemyMaxHpBonusDamagePercent > 0){
     damage += Math.floor(enemy.maxHp * playerEffects.enemyMaxHpBonusDamagePercent);
   }
@@ -4938,6 +5566,13 @@ function applyIncomingDamage(baseDamage, options = {}){
     absorbed = Math.min(damage, playerEffects.shieldValue);
     playerEffects.shieldValue -= absorbed;
     damage -= absorbed;
+    if(absorbed > 0 && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_forest_oath") && enemy){
+      const reflectDamage = Math.floor(absorbed * 0.3);
+      if(reflectDamage > 0){
+        applyDamageToEnemy(reflectDamage);
+        log(`Juramento do Bosque refletiu ${reflectDamage} de dano pelo escudo.`);
+      }
+    }
   }
   let manaAbsorbed = 0;
   const passiveModifiers = getPassiveModifiers();
@@ -5044,6 +5679,9 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
   }
   let damage = getActiveAttack() + Math.floor(Math.random() * 6);
+  if(player.class === "Adepto da Natureza" && playerEffects.natureTrueFormTurns > 0){
+    damage = Math.floor(getActiveAttack() * 1.7) + Math.floor(Math.random() * 6);
+  }
   let criticalText = "";
   if(player.class === "Arqueiro"){
     const criticalHit = rollArcherCriticalOutcome(0);
@@ -5431,6 +6069,148 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       playerEffects.nextDamageBonusPercent = Math.max(playerEffects.nextDamageBonusPercent, skillInfo.nextDamageBonus);
     }
     message = `${actorName} usou ${skillInfo.name} e ganhou ${Math.floor(skillInfo.dodge * 100)}% de esquiva adicional por ${skillInfo.turns} turnos.${skillInfo.nextDamageBonus ? " O proximo dano causado sera fortalecido." : ""}`;
+  }
+  if(skillInfo.type === "nature_living_seed"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(applyToTarget && enemy){
+      applyNatureMark(skillInfo.markTurns, skillInfo.markDamage, skillInfo.enemyDamageDown);
+    }
+    message = `${actorName} usou ${skillInfo.name}, causou ${damage} de dano e marcou o alvo por ${skillInfo.markTurns} turnos.`;
+  }
+  if(skillInfo.type === "nature_roots"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(applyToTarget && enemy && Math.random() < skillInfo.rootChance){
+      applyNatureRoot(3, skillInfo.armorDownPercent || 0);
+      message = `${actorName} usou ${skillInfo.name}, causou ${damage} de dano e enraizou o inimigo.`;
+    }else{
+      message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    }
+  }
+  if(skillInfo.type === "nature_swamp_flower"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    const targetRooted = applyToTarget && enemy?.rootedTurns > 0;
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(targetRooted){
+      applyNaturePoison(skillInfo.poisonDamage, skillInfo.poisonTurns);
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${targetRooted ? ` O veneno causara ${skillInfo.poisonDamage} por ${skillInfo.poisonTurns} turnos.` : ""}`;
+  }
+  if(skillInfo.type === "nature_breeze_charm"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    const targetMarked = applyToTarget && enemy?.natureMarkTurns > 0;
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(applyToTarget && enemy && Math.random() < skillInfo.skipChance){
+      enemy.skipNextAttack = true;
+      freezeApplied = true;
+    }
+    if(targetMarked && Math.random() < skillInfo.rootChance){
+      applyNatureRoot(3, 0);
+      message = `${actorName} usou ${skillInfo.name}, causou ${damage} de dano e enraizou o alvo marcado.`;
+    }else{
+      message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+    }
+    if(skillInfo.shieldFromDamagePercent > 0 && targetMarked){
+      const shield = grantPlayerShield(Math.floor(damage * skillInfo.shieldFromDamagePercent));
+      if(shield > 0){ message += ` Voce recebeu ${shield} de escudo.`; }
+    }
+    if(freezeApplied){ message += " O inimigo pode perder o proximo turno."; }
+  }
+  if(skillInfo.type === "nature_harvest"){
+    const includeAllDots = getPlayerSubclassState().tier60 === "druida_sombrio" && player.level >= 60;
+    let extraDotDamage = 0;
+    if(applyToTarget && enemy){
+      if(enemy.natureMarkTurns > 0){
+        extraDotDamage += includeAllDots && enemy.natureMarkDamage > 0
+          ? Math.floor(enemy.natureMarkDamage * enemy.natureMarkTurns)
+          : Math.floor(0.3 * getSkillPowerBonus() * enemy.natureMarkTurns);
+        enemy.natureMarkTurns = 0;
+        enemy.natureMarkDamage = 0;
+      }
+      if(includeAllDots){
+        extraDotDamage += Math.floor((enemy.naturePoisonDamage || 0) * (enemy.naturePoisonTurns || 0));
+        extraDotDamage += Math.floor((enemy.natureDecayDamage || 0) * (enemy.natureDecayTurns || 0));
+        enemy.naturePoisonTurns = 0;
+        enemy.naturePoisonDamage = 0;
+        enemy.natureDecayTurns = 0;
+        enemy.natureDecayDamage = 0;
+      }
+      extraDotDamage = Math.floor(extraDotDamage * getNatureDotMultiplier());
+    }
+    damage = applyFirstDamageSkillBonus(skillInfo.damage + extraDotDamage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(getPlayerSubclassState().tier60 === "avatar_da_natureza" && player.level >= 60){
+      const shield = grantPlayerShield(Math.floor(damage * 0.7));
+      message = `${actorName} usou ${skillInfo.name}, colheu os efeitos naturais e causou ${damage} de dano, ganhando ${shield} de escudo.`;
+    }else{
+      message = `${actorName} usou ${skillInfo.name}, colheu os efeitos naturais e causou ${damage} de dano.`;
+    }
+  }
+  if(skillInfo.type === "nature_ancestral_song"){
+    const healed = healPlayer(skillInfo.heal);
+    let shield = 0;
+    if(skillInfo.shield > 0){
+      shield = grantPlayerShield(skillInfo.shield);
+    }
+    if(applyToTarget && enemy && skillInfo.enemyDamageDownPercent > 0){
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyDamageDownPercent);
+      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, 3);
+    }
+    message = `${actorName} usou ${skillInfo.name} e recuperou ${healed} de vida.${shield ? ` Tambem recebeu ${shield} de escudo.` : ""}${skillInfo.enemyDamageDownPercent ? " O dano do inimigo foi reduzido por 3 turnos." : ""}`;
+  }
+  if(skillInfo.type === "nature_decay"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(applyToTarget && enemy){
+      applyNatureDecay(skillInfo.decayDamage, skillInfo.decayTurns);
+    }
+    message = `${actorName} usou ${skillInfo.name}, causou ${damage} de dano e aplicou apodrecimento.`;
+  }
+  if(skillInfo.type === "nature_true_form"){
+    playerEffects.natureTrueFormTurns = Math.max(playerEffects.natureTrueFormTurns, skillInfo.turns);
+    playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, skillInfo.turns);
+    playerEffects.attackBuffPercent = Math.max(playerEffects.attackBuffPercent, skillInfo.attackPercent);
+    playerEffects.percentReductionTurns = Math.max(playerEffects.percentReductionTurns, skillInfo.turns);
+    playerEffects.percentReduction = Math.max(playerEffects.percentReduction, skillInfo.damageReductionPercent);
+    message = `${actorName} assumiu a ${skillInfo.name} por ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "nature_queen_decree"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "nature_vine_cocoon"){
+    const shield = grantPlayerShield(skillInfo.shield);
+    message = `${actorName} usou ${skillInfo.name} e recebeu ${shield} de escudo.`;
+  }
+  if(skillInfo.type === "nature_swamp_collapse"){
+    const hadDot = enemyHasNatureDot();
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    if(applyToTarget && enemy && !hadDot){
+      applyNatureMark(4, Math.floor(0.2 * getSkillPowerBonus() * 4), 0);
+      applyNaturePoison(Math.floor(0.4 * getSkillPowerBonus()), 4);
+      applyNatureDecay(Math.max(1, Math.floor(enemy.maxHp * 0.015)), 4);
+    }
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${!hadDot ? " O alvo recebeu marca, veneno e apodrecimento." : ""}`;
+  }
+  if(skillInfo.type === "nature_crush_invader"){
+    damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
+    damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
+    message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
+  }
+  if(skillInfo.type === "nature_crown"){
+    playerEffects.natureCrownedTurns = Math.max(playerEffects.natureCrownedTurns, skillInfo.turns);
+    message = `${actorName} usou ${skillInfo.name} e ficou coroada por ${skillInfo.turns} turnos.`;
+  }
+  if(skillInfo.type === "nature_throw_thorns"){
+    const consumedShield = playerEffects.shieldValue || 0;
+    damage = applyFirstDamageSkillBonus(Math.floor(consumedShield * 2), true);
+    playerEffects.shieldValue = 0;
+    playerEffects.shieldTurns = 0;
+    damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: true, ignoreShield: true, skillCost: cost }) : damage;
+    message = `${actorName} consumiu ${consumedShield} de escudo com ${skillInfo.name} e causou ${damage} de dano.`;
   }
   playerEffects.lastActionType = skillInfo.type;
   return { blocked: false, message, damage, freeTurn, freezeApplied };
@@ -6002,7 +6782,7 @@ function renderBattleRegionPreviewCard(){
           <p class="enemy-subtitle">Nenhum inimigo ativo. Explore a area e procure seu proximo combate.</p>
         </div>
         <div class="enemy-badges">
-          <span class="enemy-badge">Nivel recomendado ${getRegionRequirement(currentRegion)}</span>
+          <span class="enemy-badge">Nivel medio ${getRegionAverageLevel(currentRegion)}</span>
           <span class="enemy-badge">${currentRegion}</span>
         </div>
       </div>
@@ -6277,8 +7057,13 @@ async function useConsumable(itemId){
   }
   if(config.effectType === "buff_skill"){
     playerEffects.skillBuffTurns = Math.max(playerEffects.skillBuffTurns, config.turns);
-    playerEffects.skillBuffAmount = Math.max(playerEffects.skillBuffAmount, config.value);
-    log(`Voce usou ${config.name} e ganhou +${config.value} de dano de habilidade por ${config.turns} turnos.`);
+    if(config.isPercent){
+      playerEffects.skillBuffPercent = Math.max(playerEffects.skillBuffPercent, config.value);
+      log(`Voce usou ${config.name} e ganhou +${Math.floor(config.value * 100)}% de dano de habilidade por ${config.turns} turnos.`);
+    }else{
+      playerEffects.skillBuffAmount = Math.max(playerEffects.skillBuffAmount, config.value);
+      log(`Voce usou ${config.name} e ganhou +${config.value} de dano de habilidade por ${config.turns} turnos.`);
+    }
   }
   if(config.effectType === "buff_attack"){
     playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, config.turns);
@@ -6387,8 +7172,8 @@ function fleeBattle(){
   updateUI();
 }
 
-function createEnemyFromTemplate(template, isBoss = false){
-  const origin = isDungeonMode() ? "Dungeon" : currentRegion;
+function createEnemyFromTemplate(template, isBoss = false, originOverride = null){
+  const origin = originOverride || (isDungeonMode() ? "Dungeon" : currentRegion);
   const stats = getEnemyStats(template, origin, isBoss);
   const bossProfile = getBossDifficultyProfile(origin, isBoss);
   const rarity = getEnemyRarity(origin, template.name, isBoss);
@@ -6404,8 +7189,8 @@ function createEnemyFromTemplate(template, isBoss = false){
     maxHp: stats.maxHp,
     hp: stats.maxHp,
     attack: stats.attack,
-    armor: isDungeonMode() ? 0 : stats.armor,
-    maxHpStrikePercent: isDungeonMode() ? 0 : stats.maxHpStrikePercent,
+    armor: isDungeonMode() && !originOverride ? 0 : stats.armor,
+    maxHpStrikePercent: isDungeonMode() && !originOverride ? 0 : stats.maxHpStrikePercent,
     isBoss,
     rarityKey: rarity.key,
     rarityLabel: rarity.label,
@@ -6425,6 +7210,13 @@ function createEnemyFromTemplate(template, isBoss = false){
     dotDamagePerTurn: 0,
     dotTurns: 0,
     dotSourceName: "",
+    natureMarkTurns: 0,
+    natureMarkDamage: 0,
+    naturePoisonTurns: 0,
+    naturePoisonDamage: 0,
+    natureDecayTurns: 0,
+    natureDecayDamage: 0,
+    rootedTurns: 0,
     shieldValue: 0,
     shieldTurns: 0,
     healReductionPercent: 0,
@@ -6474,8 +7266,8 @@ function ensureEnemy(){
 
 function challengeBoss(){
   if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead || !!enemy){ return; }
-  if(player.level < getRegionRequirement(currentRegion)){
-    log(`Voce precisa estar no nivel ${getRegionRequirement(currentRegion)} para desafiar esta area.`);
+  if(!isRegionUnlockedForBattle(currentRegion)){
+    log(`A regiao ${currentRegion} exige ${getRegionRequirement(currentRegion)}.`);
     return;
   }
   const unlockProgress = getBossUnlockProgress(currentRegion);
@@ -6504,11 +7296,6 @@ function setMode(mode){
       : mode === "dungeon" ? "A dungeon so pode ser acessada fora de combate."
       : "O bestiario so pode ser acessado fora de combate."
     );
-    updateUI();
-    return;
-  }
-  if(mode === "dungeon" && player.level < getDungeonRequirement()){
-    log(`A dungeon exige nivel ${getDungeonRequirement()}.`);
     updateUI();
     return;
   }
@@ -6791,8 +7578,8 @@ function changeRegion(region){
     log("Voce nao pode trocar de regiao durante um combate.");
     return;
   }
-  if(player.level < getRegionRequirement(region)){
-    log(`A regiao ${region} exige nivel ${getRegionRequirement(region)}.`);
+  if(!isRegionUnlockedForBattle(region)){
+    log(`A regiao ${region} exige ${getRegionRequirement(region)}.`);
     return;
   }
   currentRegion = region;
@@ -6854,7 +7641,7 @@ function updateUI(){
     <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
     <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>
     <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario</button>
-    <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() || player.level < getDungeonRequirement() ? "disabled" : ""}>Dungeon</button>`;
+    <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon</button>`;
 
   document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon"].includes(currentMode) && enemy
     ? renderEnemyCombatCard(enemy, shownEnemyHp)
@@ -6871,39 +7658,7 @@ function updateUI(){
     <div class="trophy-list">${renderTrophyGroups()}</div>`
     : currentMode === "camp" ? `
     <h3>Acampamento</h3>
-    <div class="camp-stats">
-      <div class="camp-stat"><strong>Vida</strong><span>${player.hp}/${previewStats.maxHp}</span></div>
-      <div class="camp-stat"><strong>Mana</strong><span>${player.mp}/${previewStats.maxMp}</span></div>
-      <div class="camp-stat"><strong>Ataque base</strong><span>${getActiveAttack()}</span></div>
-      <div class="camp-stat"><strong>Dano de habilidade</strong><span>${getSkillPowerBonus()}</span></div>
-      <div class="camp-stat"><strong>Dano resistido</strong><span>${getPassiveModifiers().flatReduction}</span></div>
-      <div class="camp-stat"><strong>XP</strong><span>${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}</span></div>
-      <div class="camp-stat"><strong>Pontos em Vitalidade</strong><span>${investedSummary.vitalityPoints}</span></div>
-      <div class="camp-stat"><strong>Pontos em Sabedoria</strong><span>${investedSummary.wisdomPoints}</span></div>
-      <div class="camp-stat"><strong>Pontos em Forca</strong><span>${investedSummary.strengthPoints}</span></div>
-    </div>
-    <div class="inventory-item">
-      <strong>Equipamentos</strong>
-      ${renderEquipmentShowcase()}
-    </div>
-    <div class="inventory-list">
-      <div class="inventory-item">
-        <strong>Habilidades ativas</strong>
-        <div class="inventory-list">
-          ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
-        </div>
-      </div>
-      <div class="inventory-item">
-        <strong>Habilidades passivas</strong>
-        <div class="inventory-list">
-          ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
-        </div>
-      </div>
-      ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Rota de subclasse</strong><div class="subclass-route">${getChosenSubclassDefs().map((subclass, index, arr) => `<span class="subclass-chip active">${index === arr.length - 1 ? "Atual: " : "Escolhida: "}${subclass.name}</span>`).join("")} </div><div class="subclass-summary"><strong>Bonus recebidos</strong><div class="subclass-bonus-list">${getChosenSubclassDefs().map(subclass => `<div class="inventory-item"><strong>${subclass.name}</strong><br><span class="lock-note">${subclass.description}</span><br><span class="status-on">${formatSubclassStatBonuses(subclass)}</span></div>`).join("")}</div><div class="inventory-item" style="margin-top:10px;"><strong>Total acumulado</strong><br><span class="status-on">${formatSubclassStatBonuses(getTotalSubclassBonuses())}</span></div></div></div>` : `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">Ainda nao escolhida. Sua primeira escolha acontece no nivel 30 e a segunda no nivel 60.</span></div>`}
-      <div class="inventory-item"><strong>Spoiler de subclasses</strong><br><span class="lock-note">Aqui voce ja consegue ver os nomes das rotas futuras da sua classe.</span><div class="inventory-list">${renderSubclassSpoilers()}</div></div>
-      <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio mais proximo" : "Desbloqueio futuro"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
-      <div class="inventory-item"><strong>Sets ativos</strong><br><span class="lock-note">${activeSetData.activeSets.length ? activeSetData.activeSets.map(setEntry => `${setEntry.setName}: ${setEntry.text}`).join(" | ") : "Nenhum set completo equipado."}</span></div>
-    </div>`
+    ${renderCampContent(campEntries, previewStats, investedSummary, classBaseData, subclassBonuses, activeSetData, xpToNextLevel)}`
     : currentMode === "bestiary" ? `
     <h3>Bestiario</h3>
     <div class="inventory-list">${renderBestiary()}</div>`
@@ -6918,11 +7673,11 @@ function updateUI(){
     ${renderAlchemistPanel()}${renderForgePanel()}`;
 
   const regionButtons = Object.keys(regions).map(region => `
-    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer nivel ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || player.level < getRegionRequirement(region) || !!enemy ? "disabled" : ""}>${region}</button>
+    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || !isRegionUnlockedForBattle(region) || !!enemy ? "disabled" : ""}>${region}</button>
   `).join("");
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer nivel ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? `${dungeonData.description} Requer nivel ${getDungeonRequirement()}.` : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
+    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? dungeonData.description : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
     ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
@@ -7392,6 +8147,7 @@ function handleEnemyDefeat(){
   player.stats.coinsEarned += coinsEarned;
   if(enemy.isBoss){
     player.stats.bossesDefeated++;
+    recordRegionBossKill(defeatedRegion);
   }else{
     recordRegionEnemyKill(defeatedRegion, enemy.baseName);
     player.stats.enemiesDefeated++;
@@ -7733,6 +8489,9 @@ async function enemyTurn(){
       return;
     }
   }
+  if(await processNatureDotTicks()){
+    return;
+  }
   if(enemy.healReductionTurns > 0){
     enemy.healReductionTurns--;
     if(enemy.healReductionTurns <= 0){
@@ -7747,6 +8506,9 @@ async function enemyTurn(){
   }
   if(enemy.noShieldTurns > 0){
     enemy.noShieldTurns--;
+  }
+  if(enemy.rootedTurns > 0){
+    enemy.rootedTurns--;
   }
   log(`${enemy.name} prepara um ataque!`);
   await wait(220);
@@ -7985,6 +8747,7 @@ function syncInvestedStatsFromCurrentTotals(){
 }
 
 function getInvestedSummary(){
+  syncInvestedStatsFromCurrentTotals();
   const invested = createDefaultInvestedStats(player?.stats?.invested || {});
   const previewGains = getPendingAllocationGains();
   const vitalityPoints = (Number(invested.vitality) || 0) + (Number(allocation?.vitality) || 0);
