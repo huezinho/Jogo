@@ -149,6 +149,45 @@ const dungeonData = {
   description: "Uma investida online para ate 3 jogadores, seguindo a ordem completa dos inimigos e chefes do jogo."
 };
 
+const enemyMaterialDrops = {
+  "Lobo Sombrio": { id: "parte_lobo_sombrio", name: "Pelo do Lobo Sombrio", description: "Pelagem escura usada pelo artesao da Floresta." },
+  "Goblin": { id: "parte_goblin", name: "Orelha de Goblin", description: "Trofeu pequeno, mas util para moldes leves." },
+  "Aranha Gigante": { id: "parte_aranha_gigante", name: "Presa de Aranha Gigante", description: "Presa resistente usada em amarras e reforcos." },
+  "Morcego de Pedra": { id: "parte_morcego_de_pedra", name: "Asa de Morcego de Pedra", description: "Fragmento rigido de asa mineralizada." },
+  "Esqueleto Mineiro": { id: "parte_esqueleto_mineiro", name: "Minerio Ossudo", description: "Osso endurecido com poeira de caverna." },
+  "Slime Toxico": { id: "parte_slime_toxico", name: "Nucleo de Slime Toxico", description: "Nucleo gelatinoso ainda pulsando energia toxica." },
+  "Sentinela Quebrada": { id: "parte_sentinela_quebrada", name: "Engrenagem da Sentinela", description: "Peca mecanica arrancada das Ruinas." },
+  "Cultista Perdido": { id: "parte_cultista_perdido", name: "Manto Rasgado do Cultista", description: "Tecido ritual de grande valor para costura arcana." },
+  "Fantasma Antigo": { id: "parte_fantasma_antigo", name: "Essencia do Fantasma Antigo", description: "Residuo espiritual preso em cristal fosco." },
+  "Sapo Colossal": { id: "parte_sapo_colossal", name: "Pele do Sapo Colossal", description: "Couro viscoso e surpreendentemente resistente." },
+  "Bruxa do Brejo": { id: "parte_bruxa_do_brejo", name: "Totem da Bruxa do Brejo", description: "Totem quebrado ainda banhado por magia turva." },
+  "Serpente do Lodo": { id: "parte_serpente_do_lodo", name: "Escama da Serpente do Lodo", description: "Escama flexivel com odor de pantano." },
+  "Salamandra Rubra": { id: "parte_salamandra_rubra", name: "Glândula Rubra", description: "Nodulo quente que ainda guarda brasas." },
+  "Golem de Brasa": { id: "parte_golem_de_brasa", name: "Fragmento do Golem de Brasa", description: "Pedra vulcanica perfeita para armaduras pesadas." },
+  "Fenix Sombria": { id: "parte_fenix_sombria", name: "Pena da Fenix Sombria", description: "Pena escura repleta de calor residual." },
+  "Cavaleiro Abissal": { id: "parte_cavaleiro_abissal", name: "Placa do Cavaleiro Abissal", description: "Aco sombrio recuperado do Abismo." },
+  "Lamia do Eclipse": { id: "parte_lamia_do_eclipse", name: "Escama da Lamia do Eclipse", description: "Escama fria e lisa, boa para adornos taticos." },
+  "Colosso do Vazio": { id: "parte_colosso_do_vazio", name: "Fragmento do Colosso do Vazio", description: "Parte densa moldada por pressao do vazio." },
+  "Escudeiro de Ferro": { id: "parte_escudeiro_de_ferro", name: "Rebite de Ferro", description: "Pequeno reforco metalico de guerra." },
+  "Maga da Muralha": { id: "parte_maga_da_muralha", name: "Pedra de Foco da Muralha", description: "Cristal de muralha usado por conjuradoras." },
+  "Carrasco de Guerra": { id: "parte_carrasco_de_guerra", name: "Lamina do Carrasco", description: "Lamina pesada quebrada, mas ainda valiosa." },
+  "Guardiao Funebre": { id: "parte_guardiao_funebre", name: "Fragmento Funebre", description: "Ossada encantada da Necropole." },
+  "Feiticeira Morta": { id: "parte_feiticeira_morta", name: "Veu da Feiticeira Morta", description: "Veu necrotico usado em costuras ritualisticas." },
+  "Ceifador de Ossos": { id: "parte_ceifador_de_ossos", name: "Foice do Ceifador", description: "Farpa ossuda afiada como navalha." },
+  "Anjo Caido": { id: "parte_anjo_caido", name: "Pluma do Anjo Caido", description: "Pluma quebrada com brilho celeste corrompido." },
+  "Drake Celeste": { id: "parte_drake_celeste", name: "Escama do Drake Celeste", description: "Escama leve usada em pecas nobres." },
+  "Executor Astral": { id: "parte_executor_astral", name: "Lacre Astral", description: "Selo rigido usado pelos executores da Citadela." },
+  "Guardiao Aureo": { id: "parte_guardiao_aureo", name: "Lamina Aurea", description: "Fragmento sagrado de ouro vivo." },
+  "Oraculo Radiante": { id: "parte_oraculo_radiante", name: "Olho Radiante", description: "Pedra luminosa usada em armas e focos." },
+  "Quimera Solar": { id: "parte_quimera_solar", name: "Presa da Quimera Solar", description: "Parte rara, aquecida por energia solar." },
+  "Arauto do Cataclismo": { id: "parte_arauto_do_cataclismo", name: "Selo do Cataclismo", description: "Fragmento instavel do fim do mundo." },
+  "Titan Rachado": { id: "parte_titan_rachado", name: "Casco do Titan Rachado", description: "Placa colossal, perfeita para reforco bruto." },
+  "Serafim do Fim": { id: "parte_serafim_do_fim", name: "Pena do Serafim do Fim", description: "Pena final, densa e cortante." },
+  "Guardiao Temporal": { id: "parte_guardiao_temporal", name: "Engrenagem Temporal", description: "Peca rara que vibra fora do tempo." },
+  "Oraculo do Zero": { id: "parte_oraculo_do_zero", name: "Fragmento do Zero", description: "Pedra fria usada em moldes paradoxais." },
+  "Devorador de Eras": { id: "parte_devorador_de_eras", name: "Dente do Devorador de Eras", description: "Trofeu extremo da ultima fronteira." }
+};
+
 const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela", "Panteao", "Cataclismo", "Paradoxo"];
 const bossAbilityCatalog = {
   "Ent Ancestral": [
