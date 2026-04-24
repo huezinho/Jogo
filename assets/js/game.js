@@ -15,6 +15,7 @@ let currentMode = "battle";
 let bestiaryRegionFilter = null;
 let selectedTrophyCategory = "Todas";
 let campTab = "status";
+let villageTab = "inn";
 let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
@@ -31,6 +32,47 @@ let uiSettings = loadUiSettings();
 let dungeonMultiplayer = createDungeonMultiplayerState();
 let regionMusicAudio = null;
 let currentMusicRegion = null;
+const IS_DUNGEON_PAGE = !!window.IS_DUNGEON_PAGE;
+const MAIN_PAGE_PATH = "index.html";
+const DUNGEON_PAGE_PATH = "dungeon.html";
+const PENDING_PAGE_MODE_KEY = "rpg_turnos_pending_page_mode_v1";
+
+function queuePageMode(mode){
+  try{
+    sessionStorage.setItem(PENDING_PAGE_MODE_KEY, mode);
+  }catch{}
+}
+
+function consumeQueuedPageMode(){
+  try{
+    const mode = sessionStorage.getItem(PENDING_PAGE_MODE_KEY);
+    if(mode){
+      sessionStorage.removeItem(PENDING_PAGE_MODE_KEY);
+    }
+    return mode || "";
+  }catch{
+    return "";
+  }
+}
+
+function navigateToGamePage(mode){
+  queuePageMode(mode);
+  location.href = ["dungeon", "dungeon_run"].includes(mode) ? DUNGEON_PAGE_PATH : MAIN_PAGE_PATH;
+}
+
+function openDungeonPage(){
+  navigateToGamePage("dungeon");
+}
+
+function returnToMainPage(mode = "battle"){
+  navigateToGamePage(mode);
+}
+
+function setVillageTab(tab){
+  if(!["inn", "alchemist", "forge"].includes(tab)){ return; }
+  villageTab = tab;
+  updateUI();
+}
 
 function createDefaultPlayerEffects(){
   return {
@@ -413,9 +455,14 @@ function selectClass(name){
   playerEffects = createDefaultPlayerEffects();
   document.getElementById("classSelect").style.display = "none";
   document.getElementById("game").style.display = "block";
+  if(IS_DUNGEON_PAGE){
+    currentMode = "dungeon";
+  }
   syncRegionMusic(true);
   needsNewEnemy = true;
-  spawnEnemy();
+  if(!IS_DUNGEON_PAGE){
+    spawnEnemy();
+  }
   updateUI();
 }
 
@@ -1087,7 +1134,7 @@ function getCurrentCaps(){
 }
 
 function getXpToNextLevel(){
-  return 100 + player.level * 25 + Math.floor(player.level * player.level * 1.5);
+  return 100 + Math.max(0, player.level - 1) * 25 + Math.floor(player.level * player.level * 1.5);
 }
 
 function getCurrentClassData(){
@@ -4446,6 +4493,34 @@ function renderAlchemistPanel(){
   return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div>`, true)).join("")}</div></div>`;
 }
 
+function renderVillagePanel(){
+  const tabs = `
+    <div class="tabs" style="margin:12px 0 16px;">
+      <button class="tab-btn ${villageTab === "inn" ? "active" : ""}" onclick="setVillageTab('inn')">Pousada</button>
+      <button class="tab-btn ${villageTab === "alchemist" ? "active" : ""}" onclick="setVillageTab('alchemist')">Alquimista</button>
+      <button class="tab-btn ${villageTab === "forge" ? "active" : ""}" onclick="setVillageTab('forge')">Ferreiro</button>
+    </div>`;
+  if(villageTab === "alchemist"){
+    return `${tabs}${renderAlchemistPanel()}`;
+  }
+  if(villageTab === "forge"){
+    return `${tabs}${renderForgePanel()}`;
+  }
+  return `${tabs}
+    <div class="inventory-list">
+      <div class="inventory-item">
+        <strong>Pousada</strong><br>
+        <span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span>
+        <div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div>
+      </div>
+      <div class="inventory-item">
+        <strong>Recuperacao de mana</strong><br>
+        <span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span>
+        <div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div>
+      </div>
+    </div>`;
+}
+
 function getBaseEnemyName(enemyName){
   return enemyName.replace(/ Lv\.\d+$/, "");
 }
@@ -5153,6 +5228,11 @@ function challengeBoss(){
 }
 
 function setMode(mode){
+  if(IS_DUNGEON_PAGE && mode !== "dungeon"){
+    if(isProcessingTurn || isDead || player.hp <= 0){ return; }
+    returnToMainPage(mode);
+    return;
+  }
   if(isProcessingTurn || isDead || player.hp <= 0 || !["battle", "village", "trophies", "camp", "dungeon", "bestiary"].includes(mode)){ return; }
   if((levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
     log("Finalize sua evolucao antes de sair da batalha.");
@@ -5387,6 +5467,14 @@ function continueCampaign(){
   if(!["battle", "village", "trophies", "camp", "bestiary"].includes(currentMode)){
     currentMode = "battle";
   }
+  if(IS_DUNGEON_PAGE){
+    currentMode = "dungeon";
+  }else{
+    const queuedMode = consumeQueuedPageMode();
+    if(["battle", "village", "trophies", "camp", "bestiary"].includes(queuedMode)){
+      currentMode = queuedMode;
+    }
+  }
   isProcessingTurn = false;
   normalizePlayerState();
   if(enemy){
@@ -5506,19 +5594,25 @@ function updateUI(){
     ${activeBuffs.length ? `<div class="buff-list">${activeBuffs.map(buff => `<span class="buff-pill">${buff}</span>`).join("")}</div>` : ""}
     ${pointsLabel}`;
 
-  document.getElementById("modeTabs").innerHTML = `
-    <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
-    <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo</button>
-    <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
-    <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>
-    <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario</button>
-    <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon</button>`;
+  document.getElementById("modeTabs").innerHTML = IS_DUNGEON_PAGE
+    ? `
+      <button class="tab-btn active">Dungeon</button>
+      <button class="tab-btn" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha</button>`
+    : `
+      <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
+      <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo</button>
+      <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
+      <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>
+      <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario</button>
+      <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon</button>`;
 
   document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon"].includes(currentMode) && enemy
     ? renderEnemyCombatCard(enemy, shownEnemyHp)
     : ["battle", "dungeon"].includes(currentMode) ? `
     ${currentMode === "dungeon"
-      ? `<h3>Dungeon Online</h3><p>${isDungeonConnected() ? "Sala conectada. Aguarde o host iniciar ou enfrente o inimigo atual com o grupo." : "Crie uma sala ou entre com um codigo para jogar online."}</p>`
+      ? IS_DUNGEON_PAGE
+        ? `<h3>Entrada da Dungeon</h3><p>${isDungeonConnected() ? "Sua equipe esta reunida. Crie a sala, entre com o codigo e adentre a dungeon quando o grupo estiver pronto." : "Monte ou entre em uma sala para iniciar uma incursao cooperativa."}</p>`
+        : `<h3>Portal da Dungeon</h3><p>Daqui voce organiza sua equipe e so entra na pagina da dungeon quando clicar em adentrar.</p>`
       : isDead
         ? `<h3>Voce foi derrotado</h3><p>Escolha entre reiniciar a aventura ou aguardar o renascimento.</p>`
         : levelUpPoints > 0
@@ -5534,14 +5628,14 @@ function updateUI(){
     <h3>Bestiario</h3>
     <div class="inventory-list">${renderBestiary()}</div>`
     : currentMode === "dungeon" ? `
-    <h3>Dungeon</h3>
+    <h3>${IS_DUNGEON_PAGE ? "Quartel da Expedicao" : "Lobby da Dungeon"}</h3>
     <div class="inventory-list">
-      <div class="inventory-item"><strong>Regras</strong><br><span class="lock-note">A dungeon e uma sala online para ate 3 jogadores. O host cria a partida, compartilha o codigo e inicia o combate.</span></div>
+      <div class="inventory-item"><strong>${IS_DUNGEON_PAGE ? "Equipe" : "Como funciona"}</strong><br><span class="lock-note">${IS_DUNGEON_PAGE ? "Reuna ate 3 aventureiros, combine os codigos da sala e avance por toda a sequencia da dungeon em cooperativo." : "A dungeon fica em uma pagina separada. Aqui voce so prepara a entrada; o layout de incursao abre apenas quando voce escolher adentrar."}</span></div>
     </div>`
     : `
     <h3>Vilarejo</h3>
     <p>Um lugar seguro para se preparar antes da proxima aventura.</p>
-    ${renderAlchemistPanel()}${renderForgePanel()}`;
+    ${renderVillagePanel()}`;
 
   const regionButtons = Object.keys(regions).map(region => `
     <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || !isRegionUnlockedForBattle(region) || !!enemy ? "disabled" : ""}>${region}</button>
@@ -5549,7 +5643,7 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? dungeonData.description : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="inventory-list"><div class="inventory-item"><strong>Pousada</strong><br><span class="lock-note">Recupera toda a sua vida atual por ${getHealCost()} moedas.</span><div class="button-row"><button onclick="healAtVillage()">Curar Vida (${getHealCost()} moedas)</button></div></div><div class="inventory-item"><strong>Recuperacao de mana</strong><br><span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span><div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div></div></div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Organize a sala, espere seus aliados e comecem a incursao."}</div>${renderDungeonRoomControls()}` : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis e ferreiro para aprimorar seus equipamentos.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
@@ -5688,6 +5782,10 @@ function renderActions(){
     return;
   }
   if(currentMode === "dungeon"){
+    if(!IS_DUNGEON_PAGE){
+      actions.innerHTML = `<button onclick="openDungeonPage()">Adentrar na dungeon</button><button onclick="setMode('battle')">Voltar para a batalha</button>`;
+      return;
+    }
     if(player.hp <= 0){
       actions.innerHTML = `<button disabled>Aguardando seu renascimento...</button>`;
       return;
@@ -6758,7 +6856,19 @@ function log(msg){
   logBox.scrollTop = logBox.scrollHeight;
 }
 
-renderSavedCampaign();
+if(IS_DUNGEON_PAGE){
+  renderSavedCampaign();
+}else{
+  let shouldResumeQueuedCampaign = false;
+  try{
+    shouldResumeQueuedCampaign = !!sessionStorage.getItem(PENDING_PAGE_MODE_KEY);
+  }catch{}
+  if(shouldResumeQueuedCampaign && localStorage.getItem(SAVE_KEY)){
+    continueCampaign();
+  }else{
+    renderSavedCampaign();
+  }
+}
 renderSettingsPanel();
 setInterval(() => {
   if(isDead){

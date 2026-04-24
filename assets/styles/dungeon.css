@@ -1,3 +1,20 @@
+.dungeon-page{
+  background:
+    radial-gradient(circle at top, rgba(82,127,255,.12), transparent 30%),
+    radial-gradient(circle at bottom, rgba(19,187,151,.12), transparent 28%),
+    #0c1220;
+}
+
+.dungeon-page .container{
+  max-width:1460px;
+}
+
+.dungeon-page .panel{
+  background:linear-gradient(180deg,rgba(16,22,38,.95),rgba(11,17,30,.92));
+  border:1px solid rgba(120,144,255,.12);
+  box-shadow:0 18px 36px rgba(0,0,0,.24);
+}
+
 .dungeon-battle-card,
 .dungeon-rest-card{
   border:1px solid rgba(255,255,255,.08);
