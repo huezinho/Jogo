@@ -283,12 +283,12 @@
     return cloneData(withDungeonHeroContext(hero, null, () => getPassiveModifiers()).result);
   }
 
-  function buildDungeonHeroProfile(hero = getDungeonLocalHero()){
+  function buildDungeonHeroProfile(hero = getDungeonLocalHero(), peerId = dungeonMultiplayer.peer?.id || "local"){
     const sourceHero = hero || player;
     const previewStats = hero ? getDungeonPreviewStats(hero) : getPreviewStats();
     const effectState = hero?.effects || createDefaultPlayerEffects();
     return {
-      id: dungeonMultiplayer.peer?.id || "local",
+      id: peerId,
       name: `${getDisplayedClassName(sourceHero)} Lv.${sourceHero.level}`,
       class: sourceHero.class,
       displayedClassName: getDisplayedClassName(sourceHero),
@@ -310,7 +310,7 @@
   }
 
   getDungeonPlayerProfile = window.getDungeonPlayerProfile = function(){
-    return buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null);
+    return buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null, dungeonMultiplayer.peer?.id || "local");
   };
 
   function initializeDungeonLocalHero(){
@@ -461,13 +461,13 @@
     if(hasActiveDungeonRun() && dungeonMultiplayer.peer?.id){
       dungeonMultiplayer.heroStates[dungeonMultiplayer.peer.id] = cloneData(getDungeonLocalHero());
     }
-    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null);
+    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null, dungeonMultiplayer.peer.id);
     broadcastToDungeonPeers(createDungeonBroadcastPayload());
   };
 
   syncDungeonProfile = window.syncDungeonProfile = function(){
     if(!isDungeonConnected()){ return; }
-    const profile = buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null);
+    const profile = buildDungeonHeroProfile(hasActiveDungeonRun() ? getDungeonLocalHero() : null, dungeonMultiplayer.peer?.id || "local");
     if(isDungeonHost()){
       if(hasActiveDungeonRun() && dungeonMultiplayer.peer?.id){
         dungeonMultiplayer.heroStates[dungeonMultiplayer.peer.id] = cloneData(getDungeonLocalHero());
@@ -861,14 +861,24 @@
 
   function getDungeonPartyListMarkup(){
     const members = getDungeonRoomMembers();
+    const currentEntry = getDungeonCurrentTurnEntry();
+    const currentHeroId = currentEntry?.kind === "hero" ? currentEntry.id : "";
     if(!members.length){
       return `<p class="lock-note">Nenhum aventureiro conectado ainda.</p>`;
     }
     return `<div class="party-list">${members.map(member => `
-      <div class="party-entry">
-        <strong>${member.icon} ${member.name}</strong><br>
-        <span class="lock-note">${member.hp ?? 0}/${member.maxHp ?? 0} HP | ${member.mp ?? 0}/${member.maxMp ?? 0} MP</span><br>
-        ${member.shieldValue > 0 ? `<span class="status-on">Escudo ${member.shieldValue}</span><br>` : ""}
+      <div class="party-entry ${member.id === dungeonMultiplayer.peer?.id ? "local" : ""} ${member.id === currentHeroId ? "active-turn" : ""} ${member.dead ? "down" : ""}">
+        <div class="party-entry-head">
+          <strong>${member.icon} ${member.name}</strong>
+          <span class="party-turn-tag">${member.id === currentHeroId ? "Turno atual" : member.dead ? "Caido" : "Aguardando"}</span>
+        </div>
+        <span class="lock-note">Vida ${member.hp ?? 0}/${member.maxHp ?? 0}</span>
+        <div class="bar"><div class="fill hp" style="width:${Math.max(0, Math.min(100, ((member.hp ?? 0) / Math.max(1, member.maxHp ?? 1)) * 100))}%"></div></div>
+        <span class="lock-note">Mana ${member.mp ?? 0}/${member.maxMp ?? 0}</span>
+        <div class="bar"><div class="fill mp" style="width:${Math.max(0, Math.min(100, ((member.mp ?? 0) / Math.max(1, member.maxMp ?? 1)) * 100))}%"></div></div>
+        <span class="lock-note">XP ${member.level >= MAX_LEVEL ? "MAX" : `${member.xp ?? 0}/${member.xpToNextLevel ?? 0}`}</span>
+        <div class="bar"><div class="fill xp" style="width:${member.level >= MAX_LEVEL ? 100 : Math.max(0, Math.min(100, ((member.xp ?? 0) / Math.max(1, member.xpToNextLevel ?? 1)) * 100))}%"></div></div>
+        ${member.shieldValue > 0 ? `<span class="status-on">Escudo ${member.shieldValue}</span>` : ""}
         ${member.aggroTurns > 0 ? `<span class="status-off">Agressao por ${member.aggroTurns} turno(s)</span>` : `<span class="lock-note">Sem agressao extra</span>`}
       </div>`).join("")}</div>`;
   }
@@ -900,10 +910,10 @@
           <span class="lock-note">As batalhas 1 e 2 so enfrentam inimigos comuns. As 3 e 4 misturam comuns e incomuns. As 5 e 6 podem trazer qualquer raridade da regiao.</span><br>
           <span class="lock-note">Se houver menos inimigos que herois, o nivel dos monstros sobe proporcionalmente.</span>
         </div>
-        <div class="inventory-item">
-          <strong>Equipe</strong>
-          ${getDungeonPartyListMarkup()}
-        </div>
+      <div class="inventory-item">
+        <strong>Equipe</strong>
+        ${getDungeonPartyListMarkup()}
+      </div>
       </div>`; 
   }
 
@@ -1072,7 +1082,7 @@
             <div class="simple-combat-copy">
               <strong>Run resetada</strong>
               <span>Ao entrar novamente, a dungeon sempre volta para a primeira regiao.</span>
-              <span>XP e moedas da run so entram na campanha ao sair da expedicao.</span>
+              <span>Seu heroi sobe de nivel normalmente durante a run, e as moedas da dungeon so vao para a campanha ao sair da expedicao.</span>
             </div>
           </div>
         </div>`;
@@ -1126,7 +1136,7 @@
   function buildDungeonActionPayload(payload){
     return {
       ...payload,
-      player: buildDungeonHeroProfile(getDungeonLocalHero())
+      player: buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer?.id || "local")
     };
   }
 
@@ -1165,7 +1175,7 @@
       setDungeonLocalHero(cloneData(heroState));
       dungeonMultiplayer.dungeonCoins = Number(heroState.dungeonCoins) || 0;
     }
-    dungeonMultiplayer.party[peerId] = buildDungeonHeroProfile(dungeonMultiplayer.heroStates[peerId]);
+    dungeonMultiplayer.party[peerId] = buildDungeonHeroProfile(dungeonMultiplayer.heroStates[peerId], peerId);
   }
 
   function getDungeonHeroStateForPeer(peerId){
@@ -1448,7 +1458,7 @@
     if(!updatedEnemy || !isDungeonConnected()){ return; }
     const payload = {
       type: "enemy_reaction",
-      player: buildDungeonHeroProfile(getDungeonLocalHero()),
+      player: buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer?.id || "local"),
       updatedEnemy,
       reactionMessage
     };
@@ -1490,9 +1500,9 @@
     }).result;
     if(hero.hp <= 0){
       if(isDungeonHost()){
-        handleDungeonRaidDefeat(`${buildDungeonHeroProfile(hero).name} caiu na dungeon. A expedicao terminou em derrota.`);
+        handleDungeonRaidDefeat(`${buildDungeonHeroProfile(hero, dungeonMultiplayer.peer?.id || "local").name} caiu na dungeon. A expedicao terminou em derrota.`);
       }else if(dungeonMultiplayer.hostConnection?.open){
-        dungeonMultiplayer.hostConnection.send({ type: "player_defeated", player: buildDungeonHeroProfile(hero) });
+        dungeonMultiplayer.hostConnection.send({ type: "player_defeated", player: buildDungeonHeroProfile(hero, dungeonMultiplayer.peer?.id || "local") });
       }
       return;
     }
@@ -1796,7 +1806,7 @@
         if(packet.type === "attack"){
           if(targetProfile.id === dungeonMultiplayer.peer?.id){
             applyDungeonIncomingPacketToLocalHero(packet);
-            dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero());
+            dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
           }
           broadcastToDungeonPeers({ type: "enemy_attack", packet }, targetProfile.id === dungeonMultiplayer.peer?.id ? "" : "");
         }
@@ -1903,7 +1913,7 @@
       completed: completedRun,
       heroStates: cloneData(dungeonMultiplayer.heroStates || {})
     });
-    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero());
+    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
     run.lastRewards = rewards;
     run.lastEncounterWasBoss = defeatedWasBoss;
     run.phase = "intermission";
@@ -1945,7 +1955,7 @@
   startDungeonRaid = window.startDungeonRaid = function(){
     if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || isDead || player.hp <= 0){ return; }
     initializeDungeonLocalHero();
-    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero());
+    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
     const run = getDungeonRun();
     run.active = true;
     run.phase = "battle";
@@ -1985,7 +1995,7 @@
         hero.mp = caps.maxMp;
         bumpDungeonHeroStateVersion(hero);
       }
-      dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero());
+      dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
       player.stats.dungeonFountainUses = (player.stats.dungeonFountainUses || 0) + 1;
       broadcastToDungeonPeers({ type: "fountain_used", share: fountain.share, sourceId: dungeonMultiplayer.peer.id });
       log(`A fonte restaurou toda a equipe por ${fountain.share} moedas para cada aventureiro.`);
@@ -2055,7 +2065,7 @@
     dungeonMultiplayer.peer = new Peer(roomCode);
     dungeonMultiplayer.peer.on("open", id => {
       dungeonMultiplayer.roomCode = id;
-      dungeonMultiplayer.party[id] = buildDungeonHeroProfile(null);
+      dungeonMultiplayer.party[id] = buildDungeonHeroProfile(null, id);
       log(`Sala da dungeon criada: ${id}.`);
       updateUI();
     });
@@ -2099,7 +2109,7 @@
       const connection = dungeonMultiplayer.peer.connect(roomCode, { reliable: true });
       dungeonMultiplayer.hostConnection = connection;
       connection.on("open", () => {
-        connection.send({ type: "join", player: buildDungeonHeroProfile(null), heroState: cloneData(player) });
+        connection.send({ type: "join", player: buildDungeonHeroProfile(null, dungeonMultiplayer.peer?.id || "local"), heroState: cloneData(player) });
         log(`Conectando a sala ${roomCode}...`);
         updateUI();
       });
@@ -2425,10 +2435,10 @@
     const basicAttackLabel = withDungeonHeroContext(hero, selectedEnemy, () => getBasicAttackLabel()).result;
     const basicAttackTooltip = withDungeonHeroContext(hero, selectedEnemy, () => getBasicAttackTooltip()).result;
     const skillButtons = getDungeonSkillInfo(selectedEnemy, hero)
-      .map((skill, index) => `<button class="action-btn" data-tooltip="${getDungeonSkillButtonTooltip(skill)}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`)
+      .map((skill, index) => renderSkillActionButton({ ...skill, description: getDungeonSkillButtonTooltip(skill) }, index, `dungeonUseSkill(${index})`, hero))
       .join("");
     actions.innerHTML = `
-      <button class="action-btn" data-tooltip="${basicAttackTooltip} | Alvo: inimigo selecionado" onclick="dungeonAttack()">${basicAttackLabel}</button>
+      ${renderBasicActionButton(basicAttackLabel, `${basicAttackTooltip} | Alvo: inimigo selecionado`, "dungeonAttack()")}
       ${skillButtons}
       <button class="action-btn" data-tooltip="Encerra a sua vez sem atacar." onclick="dungeonPassTurn()">Passar turno</button>
       <button onclick="abandonDungeonRun()">Abandonar dungeon</button>`;
@@ -2566,7 +2576,8 @@
     currentMode = savedMode;
     enemy = savedEnemy;
     needsNewEnemy = savedNeedsNewEnemy;
-    syncLevelGlobalsToDungeonHero(hero);
+    syncLevelGlobalsFromDungeonHero(hero);
+    setDungeonHeroStateForPeer(dungeonMultiplayer.peer?.id, hero);
     syncDungeonProfile();
     updateUI();
   };
@@ -2592,7 +2603,8 @@
     }
     currentMode = savedMode;
     enemy = savedEnemy;
-    syncLevelGlobalsToDungeonHero(hero);
+    syncLevelGlobalsFromDungeonHero(hero);
+    setDungeonHeroStateForPeer(dungeonMultiplayer.peer?.id, hero);
     syncDungeonProfile();
     updateUI();
   };

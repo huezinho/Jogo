@@ -13,6 +13,7 @@ let currentRegion = "Floresta";
 let needsNewEnemy = false;
 let currentMode = "battle";
 let bestiaryRegionFilter = null;
+let artisanRegionFilter = null;
 let selectedTrophyCategory = "Todas";
 let campTab = "status";
 let villageTab = "inn";
@@ -69,9 +70,20 @@ function returnToMainPage(mode = "battle"){
 }
 
 function setVillageTab(tab){
-  if(!["inn", "alchemist", "forge"].includes(tab)){ return; }
+  if(!["inn", "alchemist", "forge", "artisan"].includes(tab)){ return; }
   villageTab = tab;
+  if(tab === "artisan" && !artisanRegionFilter){
+    artisanRegionFilter = currentRegion;
+  }
   updateUI();
+}
+
+function setArtisanRegion(regionName){
+  if(!regions[regionName]){ return; }
+  artisanRegionFilter = regionName;
+  if(currentMode === "village" && villageTab === "artisan"){
+    updateUI();
+  }
 }
 
 function createDefaultPlayerEffects(){
@@ -925,6 +937,71 @@ function getEnemyDropTemplate(enemyName, regionName, className = player?.class |
     ? forcedSlot
     : availableSlots[Math.floor(Math.random() * availableSlots.length)];
   return getRegionSetTemplate(regionName, chosenSlot, className);
+}
+
+function getEnemyMaterialTemplate(enemyName, regionName){
+  const material = enemyMaterialDrops?.[enemyName];
+  return {
+    id: material?.id || `parte_${slugify(enemyName)}`,
+    name: material?.name || `Parte de ${enemyName}`,
+    type: "material",
+    enemyName,
+    regionName,
+    description: material?.description || `Material obtido de ${enemyName}. O artesao do vilarejo usa essas partes para montar pecas do ${getRegionSetLabel(regionName)}.`
+  };
+}
+
+function getRegionCraftRecipes(regionName, className = player?.class || "Guerreiro"){
+  const regionData = regions[regionName];
+  if(!regionData){ return []; }
+  const enemyMaterials = regionData.enemies.map(enemyData => getEnemyMaterialTemplate(enemyData.name, regionName));
+  const baseRequirements = Object.fromEntries(enemyMaterials.map(material => [material.id, 1]));
+  const extraCosts = {
+    head: { [enemyMaterials[0].id]: 1 },
+    chest: { [enemyMaterials[1].id]: 1 },
+    legs: { [enemyMaterials[2].id]: 1 },
+    feet: { [enemyMaterials[0].id]: 1, [enemyMaterials[1].id]: 1 },
+    weapon: { [enemyMaterials[1].id]: 1, [enemyMaterials[2].id]: 1 }
+  };
+  return ["head", "chest", "legs", "feet", "weapon"].map(slot => {
+    const template = getRegionSetTemplate(regionName, slot, className);
+    const requirements = { ...baseRequirements };
+    Object.entries(extraCosts[slot] || {}).forEach(([itemId, qty]) => {
+      requirements[itemId] = (requirements[itemId] || 0) + qty;
+    });
+    const cost = Math.max(18, Math.ceil(getSellPrice(createEquipmentItem(template, "comum")) * 0.65));
+    return { slot, template, requirements, cost };
+  });
+}
+
+function getInventoryCountById(itemId){
+  return (player.inventory || []).reduce((total, item) => total + (item.id === itemId ? (item.qty || 1) : 0), 0);
+}
+
+function canCraftRecipe(recipe){
+  if(!recipe){ return false; }
+  if((player.coins || 0) < (recipe.cost || 0)){ return false; }
+  return Object.entries(recipe.requirements || {}).every(([itemId, qty]) => getInventoryCountById(itemId) >= qty);
+}
+
+function consumeInventoryById(itemId, quantity){
+  let remaining = quantity;
+  while(remaining > 0){
+    const itemIndex = player.inventory.findIndex(entry => entry.id === itemId);
+    if(itemIndex < 0){
+      break;
+    }
+    const item = player.inventory[itemIndex];
+    const available = item.qty || 1;
+    if(available > remaining){
+      item.qty = available - remaining;
+      remaining = 0;
+    }else{
+      remaining -= available;
+      player.inventory.splice(itemIndex, 1);
+    }
+  }
+  return remaining <= 0;
 }
 
 function getEquippedSetCount(setId){
@@ -4254,6 +4331,9 @@ function getInventoryItemSymbol(item){
   if(item.type === "chest"){
     return "📦";
   }
+  if(item.type === "material"){
+    return "🦴";
+  }
   if(item.type === "equipment"){
     if(item.slot === "accessory"){ return "📿"; }
     if(item.slot === "weapon"){
@@ -4314,7 +4394,7 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
   const tooltipText = description || "";
-  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}" title="${tooltipText}"` : ` class="inventory-item"`;
+  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}"` : ` class="inventory-item"`;
   const shouldShowInlineDescription = item?.type !== "equipment";
   return `<div${tooltipAttrs}>
     <div class="simple-item-line">
@@ -4382,6 +4462,9 @@ function getSellPrice(item){
   }
   if(item.type === "chest"){
     return 35;
+  }
+  if(item.type === "material"){
+    return 12;
   }
   if(item.type === "equipment"){
     return Math.max(
@@ -4493,18 +4576,49 @@ function renderAlchemistPanel(){
   return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div>`, true)).join("")}</div></div>`;
 }
 
+function renderArtisanPanel(){
+  const selectedRegion = artisanRegionFilter && regions[artisanRegionFilter] ? artisanRegionFilter : currentRegion;
+  const recipes = getRegionCraftRecipes(selectedRegion, player.class);
+  const regionData = regions[selectedRegion];
+  if(!regionData){
+    return `<div class="inventory-item"><div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Selecione uma regiao valida para montar pecas.</span></div>`;
+  }
+  return `<div class="inventory-item">
+    <div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div>
+    <span class="lock-note">Escolha a regiao do set que voce quer montar. Cada receita usa pelo menos 1 parte de cada inimigo da regiao, com variacoes extras por tipo de equipamento.</span>
+    <div class="tabs" style="margin:12px 0 16px;">${Object.keys(regions).map(regionName => `<button class="tab-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setArtisanRegion('${regionName}')">${regionName}</button>`).join("")}</div>
+    <div class="inventory-list" style="margin-top:12px;">${recipes.map(recipe => {
+      const requirementsText = Object.entries(recipe.requirements).map(([itemId, qty]) => {
+        const materialName = (player.inventory.find(item => item.id === itemId)?.name) || Object.values(enemyMaterialDrops || {}).find(entry => entry.id === itemId)?.name || itemId;
+        return `${materialName} x${qty}`;
+      }).join(" | ");
+      const craftTooltip = `Custo: ${recipe.cost} moedas | Materiais: ${requirementsText}`;
+      return getInventoryItemCardMarkup(
+        { ...recipe.template, type: "equipment", rarity: "comum", name: recipe.template.name },
+        `${buildEquipmentDescription(createEquipmentItem(recipe.template, "comum"))} Custo: ${recipe.cost} moedas. Materiais: ${requirementsText}.`,
+        `<div class="button-row"><div class="has-tooltip" data-tooltip="${craftTooltip}"><button class="action-btn" onclick="craftRegionEquipment('${selectedRegion}','${recipe.slot}')" ${canCraftRecipe(recipe) ? "" : "disabled"}>Craftar</button></div></div>`,
+        true
+      );
+    }).join("")}</div>
+  </div>`;
+}
+
 function renderVillagePanel(){
   const tabs = `
     <div class="tabs" style="margin:12px 0 16px;">
       <button class="tab-btn ${villageTab === "inn" ? "active" : ""}" onclick="setVillageTab('inn')">Pousada</button>
       <button class="tab-btn ${villageTab === "alchemist" ? "active" : ""}" onclick="setVillageTab('alchemist')">Alquimista</button>
       <button class="tab-btn ${villageTab === "forge" ? "active" : ""}" onclick="setVillageTab('forge')">Ferreiro</button>
+      <button class="tab-btn ${villageTab === "artisan" ? "active" : ""}" onclick="setVillageTab('artisan')">Artesao</button>
     </div>`;
   if(villageTab === "alchemist"){
     return `${tabs}${renderAlchemistPanel()}`;
   }
   if(villageTab === "forge"){
     return `${tabs}${renderForgePanel()}`;
+  }
+  if(villageTab === "artisan"){
+    return `${tabs}${renderArtisanPanel()}`;
   }
   return `${tabs}
     <div class="inventory-list">
@@ -4520,6 +4634,41 @@ function renderVillagePanel(){
       </div>
     </div>`;
 }
+
+function getModeShortcutMap(){
+  return {
+    Digit1: "battle",
+    Digit2: "village",
+    Digit3: "camp",
+    Digit4: "trophies",
+    Digit5: "bestiary",
+    Digit6: "dungeon"
+  };
+}
+
+function shouldIgnoreShortcutTarget(target){
+  if(!target){ return false; }
+  const tagName = (target.tagName || "").toUpperCase();
+  return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(tagName);
+}
+
+function handleModeShortcut(event){
+  if(!player || shouldIgnoreShortcutTarget(event.target) || event.ctrlKey || event.altKey || event.metaKey){
+    return;
+  }
+  const shortcutMode = getModeShortcutMap()[event.code];
+  if(!shortcutMode){ return; }
+  event.preventDefault();
+  if(IS_DUNGEON_PAGE){
+    if(shortcutMode === "battle"){
+      returnToMainPage("battle");
+    }
+    return;
+  }
+  setMode(shortcutMode);
+}
+
+window.addEventListener("keydown", handleModeShortcut);
 
 function getBaseEnemyName(enemyName){
   return enemyName.replace(/ Lv\.\d+$/, "");
@@ -4559,7 +4708,9 @@ function getEnemyPossibleDrop(enemyName, region, isBoss = false){
   }
   const slots = getRegionDropSlots(region, enemyName);
   if(!slots.length){ return "Sem drop conhecido"; }
-  return slots.map(slot => getRegionSetTemplate(region, slot, player?.class || "Guerreiro")?.name).join(" ou ");
+  const gearText = slots.map(slot => getRegionSetTemplate(region, slot, player?.class || "Guerreiro")?.name).join(" ou ");
+  const materialName = getEnemyMaterialTemplate(enemyName, region).name;
+  return `${gearText} | 20%: ${materialName}`;
 }
 
 function getSelectedBestiaryRegion(){
@@ -4838,7 +4989,7 @@ function rollWeightedRarity(){
 
 function addInventoryItem(item){
   const normalizedItem = normalizeEquipmentMetadata({ ...item, uid: item.uid || `${item.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}` });
-  const stackable = ["equipment", "consumable", "chest"].includes(normalizedItem.type);
+  const stackable = ["equipment", "consumable", "chest", "material"].includes(normalizedItem.type);
   if(stackable){
     const existing = player.inventory.find(entry =>
       entry.type === normalizedItem.type
@@ -4869,6 +5020,15 @@ function tryEnemyDrop(defeatedEnemy){
   log(`O ${enemyBaseName} deixou ${item.name}!`);
 }
 
+function tryEnemyMaterialDrop(defeatedEnemy){
+  if(defeatedEnemy?.isBoss){ return; }
+  const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
+  if(Math.random() > 0.2){ return; }
+  const material = getEnemyMaterialTemplate(enemyBaseName, defeatedEnemy.region);
+  addInventoryItem(material);
+  log(`Voce coletou ${material.name}.`);
+}
+
 function getBossChestItem(region){
   const regionData = regions[region];
   if(!regionData){ return null; }
@@ -4893,6 +5053,31 @@ function createRegionChest(region){
     region,
     description: `Contem 1 peca aleatoria do ${getRegionSetLabel(region)}.`
   };
+}
+
+function craftRegionEquipment(regionName, slot){
+  if(currentMode !== "village"){ return; }
+  const recipe = getRegionCraftRecipes(regionName, player.class).find(entry => entry.slot === slot);
+  if(!recipe){
+    log("O artesao nao encontrou essa receita.");
+    return;
+  }
+  if(player.coins < recipe.cost){
+    log(`Moedas insuficientes. O artesao cobra ${recipe.cost} moedas nessa montagem.`);
+    return;
+  }
+  for(const [itemId, qty] of Object.entries(recipe.requirements)){
+    if(getInventoryCountById(itemId) < qty){
+      log("Voce ainda nao tem todos os materiais necessarios para essa peca.");
+      return;
+    }
+  }
+  Object.entries(recipe.requirements).forEach(([itemId, qty]) => consumeInventoryById(itemId, qty));
+  player.coins -= recipe.cost;
+  const craftedItem = createEquipmentItem(recipe.template, "comum");
+  addInventoryItem(craftedItem);
+  log(`O artesao montou ${craftedItem.name} para voce.`);
+  updateUI();
 }
 
 function grantBossChest(region){
@@ -5412,6 +5597,9 @@ function respawnPlayer(){
 }
 
 function resetAdventure(){
+  if(!confirm("Tem certeza que deseja reiniciar a campanha? Todo o progresso atual sera apagado.")){
+    return;
+  }
   localStorage.removeItem(SAVE_KEY);
   location.reload();
 }
@@ -5597,14 +5785,14 @@ function updateUI(){
   document.getElementById("modeTabs").innerHTML = IS_DUNGEON_PAGE
     ? `
       <button class="tab-btn active">Dungeon</button>
-      <button class="tab-btn" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha</button>`
+      <button class="tab-btn" data-tooltip="Atalho: tecla 1" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha [1]</button>`
     : `
-      <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha</button>
-      <button class="tab-btn ${currentMode === "village" ? "active" : ""}" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo</button>
-      <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento</button>
-      <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus</button>
-      <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario</button>
-      <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon</button>`;
+      <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" data-tooltip="Atalho: tecla 1" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha [1]</button>
+      <button class="tab-btn ${currentMode === "village" ? "active" : ""}" data-tooltip="Atalho: tecla 2" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo [2]</button>
+      <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" data-tooltip="Atalho: tecla 3" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento [3]</button>
+      <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" data-tooltip="Atalho: tecla 4" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus [4]</button>
+      <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" data-tooltip="Atalho: tecla 5" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario [5]</button>
+      <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" data-tooltip="Atalho: tecla 6" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon [6]</button>`;
 
   document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon"].includes(currentMode) && enemy
     ? renderEnemyCombatCard(enemy, shownEnemyHp)
@@ -5643,14 +5831,14 @@ function updateUI(){
   document.getElementById("regionInfo").innerHTML = `
     <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? dungeonData.description : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis e ferreiro para aprimorar seus equipamentos.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar raridades e artesao para montar equipamentos com partes dos monstros.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
     : `
     <h3>Inventario</h3>
     ${player.inventory.length ? `<div class="inventory-list">${[...player.inventory].sort((a, b) => {
-      const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : 2;
+      const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : item.type === "material" ? 2 : 3;
       const priorityDiff = getInventoryPriority(a) - getInventoryPriority(b);
       if(priorityDiff !== 0){ return priorityDiff; }
       return a.name.localeCompare(b.name, "pt-BR");
@@ -5830,10 +6018,10 @@ function renderActions(){
     return;
   }
   const skillButtons = skillInfo.length
-    ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="useSkill(${index})">${skill.name}</button>`).join("")
+    ? skillInfo.map((skill, index) => renderSkillActionButton(skill, index, `useSkill(${index})`)).join("")
     : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
   actions.innerHTML = `
-    <button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="attack()">${getBasicAttackLabel()}</button>
+    ${renderBasicActionButton(getBasicAttackLabel(), getBasicAttackTooltip(), "attack()")}
     ${skillButtons}
     <button class="action-btn" data-tooltip="Encerra sua vez sem usar ataque nem habilidade." onclick="passTurn()">Passar turno</button>
     <button class="action-btn" data-tooltip="Foge da batalha atual sem receber recompensas. Custa ${getFleeCost()} moedas." onclick="fleeBattle()">Fugir</button>`;
@@ -5842,6 +6030,25 @@ function renderActions(){
 function toggleLog(){
   isLogHidden = !isLogHidden;
   updateUI();
+}
+
+function getSkillActionState(skill, actor = player){
+  const manaCost = Math.max(0, skill?.cost || 0);
+  const canUse = (actor?.mp || 0) >= manaCost;
+  return {
+    canUse,
+    manaCost,
+    classes: `action-btn skill-action ${canUse ? "skill-ready" : "skill-oom"}`
+  };
+}
+
+function renderSkillActionButton(skill, index, onClick, actor = player){
+  const state = getSkillActionState(skill, actor);
+  return `<button class="${state.classes}" data-tooltip="${skill.description}" onclick="${onClick}" ${state.canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
+}
+
+function renderBasicActionButton(label, tooltip, onClick){
+  return `<button class="action-btn basic-action-btn" data-tooltip="${tooltip}" onclick="${onClick}">${label}</button>`;
 }
 
 function renderLevelUpPanel(){
@@ -6108,6 +6315,7 @@ function handleEnemyDefeat(){
   const wasBoss = !!enemy?.isBoss;
   log("Inimigo derrotado!");
   tryEnemyDrop(enemy);
+  tryEnemyMaterialDrop(enemy);
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
   const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
   const baseXpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
@@ -6875,3 +7083,4 @@ setInterval(() => {
     updateUI();
   }
 }, 1000);
+

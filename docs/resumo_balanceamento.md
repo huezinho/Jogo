@@ -20,6 +20,48 @@
 - Mago: `80 HP`, `100 MP`, `14 ATQ`.
 - Adepto da Natureza: `100 HP`, `100 MP`, `12 ATQ`.
 
+## Arvores de habilidades
+
+### Guerreiro
+- Base: `Recuperar Folego` no nivel `1`, `Vontade de Ferro` no `10`, `Esbarrao` no `20`.
+- Cavaleiro: `Contundir` no `30`, `Refletir` no `40`, `Brado` no `50`.
+- Paladino: `Julgamento` no `60`, `Aura Divina` no `70`, `Escudo de Fe` no `80`.
+- Berserker: `Vallhala` no `60`, `Voce Nao e Digno` no `70`, `Voce Ira Me Parar?` no `80`.
+- Espadachim: `Investida` substitui `Esbarrao`, depois `Golpes Velozes` no `30`, `Contra-Ataque` no `40`, `Corte Profundo` no `50`.
+- Samurai: `Furar Blindagem` no `60`, `Mente Limpa` no `70`, `Cortes Ultrasonicos` no `80`.
+- Ninja: `Bomba de Fumaca` no `60`, `Eliminar` no `70`, `Mata-Gigantes` no `80`.
+
+### Mago
+- Base: ataque basico `Misseis Magicos`, `Ultimo Recurso` no `10`, `Explosao de Mana` no `20`.
+- Elementalista: `Bola de Fogo` no `30`, `Mana e Vida` no `40`, `Congelar` no `50`.
+- Mago Incendiario: `Fenix Sagrada` no `60`, `Fogo do Inferno` no `70`, `Explodir` no `80`.
+- Mago Frigido: `Nevasca` no `60`, `Gelo Queima` no `70`, `Avalanche` no `80`.
+- Arcanista: `Descarregar` no `30`, `Transbordando` no `40`, `Escudo de Mana` no `50`.
+- Arquimago: `Concentracao` no `60`, `Carregar` no `70`, `Sobrecarregar` no `80`.
+- Corrompido: `Corrupcao` no `60`, `Canhao de Vidro` no `70`, `Incorporar Demonio` no `80`.
+
+### Arqueiro
+- Base: `Mirar` no `1`, `Passos Leves` no `10`, `Camuflagem` no `20`.
+- Atirador: `Headshot` no `30`, `Pulso Firme` no `40`, `Tiro Perfurante` no `50`.
+- Atirador Arcano: `Emergencia Arcana` no `60`, `Cristalizar Mana` no `70`, `Sobreaquecer` no `80`.
+- Sniper: `Executar` no `60`, `Olhos de Falcao` no `70`, `Ponto Fraco` no `80`.
+- Cacador: `Rajada de Flechas` no `30`, `Errou` no `40`, `Armadilha` no `50`.
+- Espreitador: `Surpresa` no `60`, `Passos Silenciosos` no `70`, `Mirar no Pe` no `80`.
+- Guarda Florestal: `Tranquilizante` no `60`, `Resistencia Florestal` no `70`, `Tiro Cortante` no `80`.
+
+### Adepto da Natureza
+- Base: `Semente Viva` no `1`, `Ciclo Natural` no `10`, `Raizes` no `20`.
+- Druida: `Flor do Pantano` no `30`, `Seiva` no `40`, `Colheita` no `50`.
+- Druida Sombrio: `Apodrecer` no `60`, `Podridao` no `70`, `Colapso do Brejo` no `80`.
+- Avatar da Natureza: `Forma Verdadeira` no `60`, `Casca Ancestral` no `70`, `Esmagar Invasor` no `80`.
+- Espirito da Floresta: `Encanto da Brisa` no `30`, `Aura Feerica` no `40`, `Cancao Ancestral` no `50`.
+- Fada Monarca: `Decreto da Rainha` no `60`, `Asas da Realeza` no `70`, `Coroar` no `80`.
+- Protetor da Floresta: `Casulo de Vinhas` no `60`, `Juramento do Bosque` no `70`, `Jogar Espinhos` no `80`.
+
+### Fonte de verdade dos numeros
+- Os nomes acima seguem a arvore atual de `assets/js/data/class-trees.js`.
+- Os valores finais de dano, custo, escudo, cura e DOT continuam definidos em `assets/js/game.js`, principalmente em `getSkillInfo()`.
+
 ## Distribuicao de atributos
 - Todos os personagens usam os mesmos 3 atributos ao subir de nivel:
   - `Forca`: `5 + nivel * 0.15` em dano de ataque basico e dano de habilidade.
@@ -472,3 +514,11 @@
   - mais facil de achar bugs
   - mais facil atualizar documentacao
   - mais facil mexer em classes, bosses e dungeon sem ficar num arquivo de quase `500 KB`
+
+## Drops extras e artesao
+- Cada inimigo normal agora tambem pode dropar um `material de criatura` com `20%` de chance.
+- Esses materiais sao partes do monstro e ficam no inventario principal.
+- O `Artesao` do vilarejo usa os materiais da `regiao atual`.
+- Cada receita do artesao monta uma peca `comum` do set regional.
+- Todas as receitas usam pelo menos `1 material de cada inimigo` da regiao e adicionam custos extras conforme o slot.
+- O `Ferreiro` continua sendo a forma de subir a raridade depois da montagem.
