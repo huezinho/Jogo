@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dungeon - RPG por Turnos</title>
+<link rel="stylesheet" href="assets/styles/game.css" />
+<link rel="stylesheet" href="assets/styles/dungeon.css" />
+</head>
+<body class="dungeon-page">
+<script>
+window.IS_DUNGEON_PAGE = true;
+</script>
+<div class="container">
+<div id="classSelect" class="panel">
+<h3>Escolha sua classe</h3>
+<div class="class-grid">
+<button class="class-card class-warrior" onclick="selectClass('Guerreiro')">
+<span class="class-icon">&#x1F6E1;&#xFE0F;</span>
+<h4>Guerreiro</h4>
+<p><span class="stat-hp">Vida 120</span></p>
+<p><span class="stat-mp">Mana 60</span></p>
+<p><span class="stat-atk">Dano basico 18</span></p>
+<small>Alta resistencia, pouca mana e o ataque basico mais forte entre as classes iniciais.</small>
+</button>
+<button class="class-card class-archer" onclick="selectClass('Arqueiro')">
+<span class="class-icon">&#x1F3F9;</span>
+<h4>Arqueiro</h4>
+<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-mp">Mana 80</span></p>
+<p><span class="stat-atk">Dano basico 16</span></p>
+<small>Classe equilibrada, com boa mobilidade e um kit voltado para precisao, criticos e pressao constante.</small>
+</button>
+<button class="class-card class-mage" onclick="selectClass('Mago')">
+<span class="class-icon">&#x1F52E;</span>
+<h4>Mago</h4>
+<p><span class="stat-hp">Vida 80</span></p>
+<p><span class="stat-mp">Mana 100</span></p>
+<p><span class="stat-atk">Dano basico 14</span></p>
+<small>Menos vida, muita mana e as habilidades mais destrutivas entre as classes iniciais.</small>
+</button>
+<button class="class-card class-nature" onclick="selectClass('Adepto da Natureza')">
+<span class="class-icon">&#x1F33F;</span>
+<h4>Adepto da Natureza</h4>
+<p><span class="stat-hp">Vida 100</span></p>
+<p><span class="stat-mp">Mana 100</span></p>
+<p><span class="stat-atk">Dano basico 12</span></p>
+<small>Classe natural equilibrada, preparada para futuras rotas de suporte, magia da floresta e controle vivo.</small>
+</button>
+</div>
+<div id="savedCampaign" class="saved-campaign" style="display:none;"></div>
+</div>
+<div id="game" style="display:none;">
+<div class="panel" style="margin-bottom:18px;">
+<h2>Incursao Cooperativa</h2>
+<p class="lock-note">Esta pagina e exclusiva da dungeon. Monte a sala, entre com seu grupo e avance pela expedicao sem os elementos da campanha principal.</p>
+</div>
+<div class="game-layout">
+<div class="side-column">
+<div class="panel">
+<h3>Locais</h3>
+<div class="tabs" id="modeTabs"></div>
+</div>
+<div class="panel hero-portrait-panel" id="heroPortraitPanel"></div>
+</div>
+<div class="main-column">
+<div class="panel" id="playerInfo"></div>
+<div class="button-row" id="actions"></div>
+<div class="panel" id="enemyInfo"></div>
+<div id="levelUpPanel" class="panel levelup-panel" style="display:none;"></div>
+<div class="panel" id="logPanel">
+<div class="panel-header">
+<strong>Log de batalha</strong>
+<button onclick="toggleLog()">Ocultar</button>
+</div>
+<div id="log"></div>
+</div>
+</div>
+<div class="side-column">
+<div class="panel" id="regionInfo"></div>
+<div class="panel" id="inventoryInfo"></div>
+</div>
+</div>
+</div>
+</div>
+<button id="settingsFab" class="settings-fab" onclick="toggleSettingsPanel()">Configuracao</button>
+<div id="settingsPanel" class="panel settings-panel" style="display:none;"></div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="assets/js/data/system-data.js"></script>
+<script src="assets/js/data/world-data.js"></script>
+<script src="assets/js/data/class-trees.js"></script>
+<script src="assets/js/game.js"></script>
+<script src="assets/js/systems/dungeon-system.js"></script>
+</body>
+</html>
