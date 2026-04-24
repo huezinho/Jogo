@@ -17,11 +17,13 @@ let artisanRegionFilter = null;
 let selectedTrophyCategory = "Todas";
 let campTab = "status";
 let villageTab = "inn";
+let hideArtisanMaterials = false;
 let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
 let isLogHidden = false;
 let isSettingsOpen = false;
+let forgeFeedback = { slot: "", result: "", timeoutId: null };
 let playerEffects = createDefaultPlayerEffects();
 let displayState = {
   playerHp: null,
@@ -188,6 +190,27 @@ function saveUiSettings(){
 function toggleSettingsPanel(){
   isSettingsOpen = !isSettingsOpen;
   renderSettingsPanel();
+}
+
+function toggleHideArtisanMaterials(){
+  hideArtisanMaterials = !hideArtisanMaterials;
+  updateUI();
+}
+
+function triggerForgeFeedback(slot, result){
+  if(forgeFeedback.timeoutId){
+    clearTimeout(forgeFeedback.timeoutId);
+  }
+  forgeFeedback = {
+    slot,
+    result,
+    timeoutId: setTimeout(() => {
+      forgeFeedback = { slot: "", result: "", timeoutId: null };
+      if(currentMode === "village" && villageTab === "forge"){
+        updateUI();
+      }
+    }, 1200)
+  };
 }
 
 function ensureRegionMusicAudio(){
@@ -1394,7 +1417,7 @@ function getPassiveModifiers(){
     base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.05);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_mana_to_life") && tier60 === "mago_incendiario" && player.level >= 60){
-    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.1);
+    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.18);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "nature_cycle") && tier30 === "espirito_da_floresta" && player.level >= 30){
     base.skillPower += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * 0.3);
@@ -2678,87 +2701,106 @@ function getSkillInfo(){
   const attack = getActiveAttack();
   const skillPower = getSkillPowerBonus();
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
+  const warriorExtraCost = player.class === "Guerreiro" ? Math.floor(0.2 * player.level) : 0;
+  const clampMageSkillCost = cost => player.class === "Mago" ? Math.min(maxMp, Math.max(0, Math.floor(cost))) : Math.max(0, Math.floor(cost));
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_second_wind"){
-      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.1 : 0.07;
+      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.15 : 0.1;
       const heal = Math.floor(maxHp * healFactor);
-      const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.1 : 0;
-      return { ...skill, cost: 20, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome 20 MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 10% por 3 turnos." : ""}` };
+      const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.2 : 0;
+      const cost = 30 + warriorExtraCost;
+      return { ...skill, cost, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 20% por 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_shove"){
       const isEspadachim = subclassState.tier30 === "espadachim" && player.level >= 30;
+      const isCavaleiro = subclassState.tier30 === "cavaleiro" && player.level >= 30;
       const damage = isEspadachim
-        ? 20 + Math.floor(0.1 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
-        : 20 + Math.floor(0.06 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
-      const cost = isEspadachim ? 50 : subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 44 : 38;
+        ? 20 + Math.floor(0.07 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
+        : 20 + Math.floor((isCavaleiro ? 0.09 : 0.07) * maxHp) + Math.floor((isCavaleiro ? 0.6 : 0.6) * attack) + Math.floor((isCavaleiro ? 0.6 : 0.6) * skillPower);
+      const cost = (isEspadachim ? 50 : isCavaleiro ? 44 : 38) + warriorExtraCost;
       return {
         ...skill,
         name: isEspadachim ? "Investida" : skill.name,
         cost,
         damage,
-        enemyAttackDownPercent: subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.3 : 0,
-        enemyAttackDownTurns: subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 3 : 0,
-        description: `${isEspadachim ? "Investida" : skill.name}: consome ${cost} MP e causa ${damage} de dano.${subclassState.tier30 === "cavaleiro" && player.level >= 30 ? " Tambem reduz o ataque do inimigo em 30% por 3 turnos." : ""}`
+        enemyAttackDownPercent: isCavaleiro ? 0.3 : 0,
+        enemyAttackDownTurns: isCavaleiro ? 3 : 0,
+        description: `${isEspadachim ? "Investida" : skill.name}: consome ${cost} MP e causa ${damage} de dano.${isCavaleiro ? " Tambem reduz o ataque do inimigo em 30% por 3 turnos." : ""}`
       };
     }
     if(skill.type === "warrior_stagger"){
       const isBerserker = subclassState.tier60 === "berserker" && player.level >= 60;
       const maxEnemyHp = enemy?.maxHp || 0;
       const damage = isBerserker
-        ? 60 + Math.floor(0.06 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
-        : 30 + Math.floor(0.06 * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
-      return { ...skill, cost: 40, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome 40 MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
+        ? 60 + Math.floor(0.07 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
+        : 30 + Math.floor(0.07 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
     }
     if(skill.type === "warrior_swift_strikes"){
       const hits = subclassState.tier60 === "ninja" && player.level >= 60 ? 3 : 2;
       const bleedPercent = subclassState.tier60 === "samurai" && player.level >= 60 ? 0.15 : 0;
-      return { ...skill, cost: 44, hits, bleedPercent, description: `${skill.name}: consome 44 MP e executa ${hits} ataques basicos.${bleedPercent ? " Tambem aplica sangramento por 3 turnos." : ""}` };
+      const cost = 44 + warriorExtraCost;
+      return { ...skill, cost, hits, bleedPercent, description: `${skill.name}: consome ${cost} MP e executa ${hits} ataques basicos.${bleedPercent ? " Tambem aplica sangramento por 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_warcry"){
       if(subclassState.tier60 === "berserker" && player.level >= 60){
-        return { ...skill, name: "Ira", cost: 0, hpCostPercent: 0.8, turns: 4, totalDamagePercent: 1.5, description: `Ira: consome 80% da sua vida maxima e aumenta o dano total em 150% por 4 turnos.` };
+        const cost = warriorExtraCost;
+        return { ...skill, name: "Ira", cost, hpCostPercent: 0.8, turns: 4, totalDamagePercent: 1.5, description: `Ira: consome ${cost} MP e 80% da sua vida maxima, aumentando o dano total em 150% por 4 turnos.` };
       }
-      return { ...skill, cost: 40, turns: 5, attackPercent: 0.2, damageReductionPercent: subclassState.tier60 === "paladino" && player.level >= 60 ? 0.16 : 0, description: `${skill.name}: consome 40 MP e aumenta o ataque em 20% por 5 turnos.${subclassState.tier60 === "paladino" && player.level >= 60 ? " Tambem bloqueia 16% do dano sofrido nesse periodo." : ""}` };
+      const attackPercent = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.3 : 0.2;
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, turns: 5, attackPercent, damageReductionPercent: subclassState.tier60 === "paladino" && player.level >= 60 ? 0.16 : 0, description: `${skill.name}: consome ${cost} MP e aumenta o ataque em ${Math.floor(attackPercent * 100)}% por 5 turnos.${subclassState.tier60 === "paladino" && player.level >= 60 ? " Tambem bloqueia 16% do dano sofrido nesse periodo." : ""}` };
     }
     if(skill.type === "warrior_deep_cut"){
       const damage = 70 + Math.floor(1.1 * attack) + Math.floor(0.8 * skillPower);
       const bleedPercent = subclassState.tier60 === "ninja" && player.level >= 60 ? 0.3 : 0.15;
-      return { ...skill, cost: 52, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome 52 MP e causa ${damage} de dano.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
+      const cost = 52 + warriorExtraCost;
+      return { ...skill, cost, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
     }
     if(skill.type === "warrior_judgment"){
       const damage = 80 + Math.floor(0.4 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.8 * skillPower);
-      return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
     }
     if(skill.type === "warrior_valhalla"){
-      return { ...skill, cost: 100, turns: 5, incomingDamagePercent: 2, enemyMaxHpBonusDamagePercent: 0.15, description: `${skill.name}: consome 100 MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, turns: 5, incomingDamagePercent: 2, enemyMaxHpBonusDamagePercent: 0.15, description: `${skill.name}: consome ${cost} MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.` };
     }
     if(skill.type === "warrior_armor_piercer"){
       const damage = 80 + Math.floor(1.1 * attack) + Math.floor(1.1 * skillPower);
       const shieldMultiplier = enemy?.shieldValue > 0 ? 3 : 1;
-      return { ...skill, cost: 82, damage: damage * shieldMultiplier, description: `${skill.name}: consome 82 MP e causa ${damage * shieldMultiplier} de dano.${shieldMultiplier > 1 ? " O alvo tinha escudo ativo, entao o dano foi triplicado." : ""}` };
+      const cost = 82 + warriorExtraCost;
+      return { ...skill, cost, damage: damage * shieldMultiplier, description: `${skill.name}: consome ${cost} MP e causa ${damage * shieldMultiplier} de dano.${shieldMultiplier > 1 ? " O alvo tinha escudo ativo, entao o dano foi triplicado." : ""}` };
     }
     if(skill.type === "warrior_smoke_bomb"){
-      return { ...skill, cost: 40, turns: 1, nextDamageBonus: 0.3, description: `${skill.name}: consome 40 MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.` };
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, turns: 1, nextDamageBonus: 0.3, description: `${skill.name}: consome ${cost} MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.` };
     }
     if(skill.type === "warrior_faith_shield"){
-      return { ...skill, cost: Math.floor(maxMp * 0.7), turns: 3, description: `${skill.name}: consome ${Math.floor(maxMp * 0.7)} MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano absorvido ao inimigo.` };
+      const cost = Math.floor(maxMp * 0.7) + warriorExtraCost;
+      return { ...skill, cost, turns: 3, description: `${skill.name}: consome ${cost} MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano que teria sido absorvido ao inimigo.` };
     }
     if(skill.type === "warrior_unstoppable"){
-      return { ...skill, cost: 100, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 50, description: `${skill.name}: consome 100 MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque basico em 50 por 4 turnos.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 50, description: `${skill.name}: consome ${cost} MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque basico em 50 por 4 turnos.` };
     }
     if(skill.type === "warrior_ultrasonic_cuts"){
-      return { ...skill, cost: 240, turns: 3, description: `${skill.name}: consome 240 MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido.` };
+      const cost = 240 + warriorExtraCost;
+      return { ...skill, cost, turns: 3, description: `${skill.name}: consome ${cost} MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido.` };
     }
     if(skill.type === "warrior_giant_slayer"){
       const damage = enemy ? Math.floor(enemy.hp * 0.4) : 0;
-      return { ...skill, cost: 200, damage, description: `${skill.name}: consome 200 MP e causa ${damage} de dano com base na vida atual do inimigo.` };
+      const cost = 200 + warriorExtraCost;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano com base na vida atual do inimigo.` };
     }
     if(skill.type === "mage_mana_burst"){
-      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.6;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.13 : 0.09;
-      const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
-      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.4, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 40% da vida maxima do inimigo, devolve toda a mana gasta.` };
+      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.0 : 0.6;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.14 : 0.1;
+      const manaBurstCost = clampMageSkillCost(20 + Math.floor(0.2 * player.level) + mageExtraCost);
+      const enemyManaBurnAmount = enemy?.maxMp > 0 ? Math.floor((enemy.mp || 0) * 0.5) : 0;
+      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + (enemyManaBurnAmount * 4) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: manaBurstCost, damage, enemyManaBurnAmount, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano.${enemyManaBurnAmount > 0 ? ` Tambem consome ${enemyManaBurnAmount} de mana do alvo e converte isso em dano extra.` : ""}` };
     }
     if(skill.type === "mage_fireball"){
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
@@ -2770,7 +2812,7 @@ function getSkillInfo(){
       return {
         ...skill,
         name: isFrigido ? "Bola de Neve" : skill.name,
-        cost: 40 + mageExtraCost,
+        cost: clampMageSkillCost(40 + mageExtraCost),
         damage,
         burnDamage,
         burnTurns: 3,
@@ -2780,18 +2822,19 @@ function getSkillInfo(){
         appliesBurn: !isFrigido,
         appliesChill: isFrigido,
         description: isFrigido
-          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
-          : `${skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
+          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
+          : `${skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
       };
     }
     if(skill.type === "mage_concentration"){
-      return { ...skill, cost: 200 + mageExtraCost, turns: 4, percent: 0.1, manaRegenPercent: 0.1, description: `${skill.name}: consome ${200 + mageExtraCost} MP, aumenta o dano total em 10% e a regeneracao de mana em 10% por 4 turnos.` };
+      const cost = clampMageSkillCost(200 + mageExtraCost);
+      return { ...skill, cost, turns: 4, percent: 0.2, manaRegenPercent: 0.1, description: `${skill.name}: consome ${cost} MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.` };
     }
     if(skill.type === "mage_mana_shield"){
       const isArquimago = subclassState.tier60 === "arquimago" && player.level >= 60;
       const factor = isArquimago ? 0.4 : 0.3;
       const costPercent = isArquimago ? 0.12 : 0.15;
-      const cost = Math.floor(maxMp * costPercent) + mageExtraCost;
+      const cost = clampMageSkillCost(Math.floor(maxMp * costPercent) + mageExtraCost);
       const shield = 40 + Math.floor(factor * maxMp);
       return { ...skill, cost, shield, turns: 2, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo por 2 turnos.` };
     }
@@ -2799,7 +2842,7 @@ function getSkillInfo(){
       const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
       const damage = 60 + Math.floor(0.9 * skillPower) + getUniversalDamageFlatBonus();
-      const cost = 40 + Math.floor(0.2 * player.level) + mageExtraCost;
+      const cost = clampMageSkillCost(40 + Math.floor(0.2 * player.level) + mageExtraCost);
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return {
@@ -2812,47 +2855,55 @@ function getSkillInfo(){
         burnTurns: isIncendiario ? 6 : 0,
         chillTurns: isFrigido ? 2 : 0,
         chillAttackDownPercent: isFrigido ? 0.3 : 0,
+        freezeVulnerabilityPercent: isFrigido ? 0.5 : 0,
         description: isIncendiario
           ? `Bafo de Fogo: consome ${cost} MP, causa ${damage} de dano e aplica queimadura por 6 turnos.`
-          : `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem 30% de chance de impedir o proximo ataque do inimigo.${isFrigido ? " Se nao impedir o turno, ainda aplica resfriamento por 2 turnos." : ""}`
+          : `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem 30% de chance de impedir o proximo ataque do inimigo.${isFrigido ? " Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado." : ""}`
       };
     }
     if(skill.type === "mage_discharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: (10 * charges) + mageExtraCost, damage, charges, description: `${skill.name}: consome ${(10 * charges) + mageExtraCost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
+      const damage = subclassState.tier60 === "arquimago" && player.level >= 60
+        ? Math.floor((player.level + (0.007 * maxMp)) * charges) + getUniversalDamageFlatBonus()
+        : 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost((10 * charges) + mageExtraCost);
+      return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_sacred_phoenix"){
-      const cost = 200 + skillPower + mageExtraCost;
-      const damage = 100 + Math.floor(1.6 * skillPower) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(200 + skillPower + mageExtraCost);
+      const damage = 100 + Math.floor(1.8 * skillPower) + getUniversalDamageFlatBonus();
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return { ...skill, cost, damage, burnDamage, burnTurns: 1, healReductionPercent: 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, aplicando queimadura por 1 turno.` };
     }
     if(skill.type === "mage_blizzard"){
-      return { ...skill, cost: 120 + mageExtraCost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${120 + mageExtraCost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
+      const cost = clampMageSkillCost(120 + mageExtraCost);
+      return { ...skill, cost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${cost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
     }
     if(skill.type === "mage_corruption"){
-      const currentManaCost = Math.floor(player.mp * 0.3);
+      const currentManaCost = clampMageSkillCost(Math.floor(player.mp * 0.3));
       const damage = 100 + Math.floor(1.0 * skillPower) + Math.floor(0.3 * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: currentManaCost, damage, armorBreakPercent: 1, armorBreakTurns: 5, noShieldTurns: 5, description: `${skill.name}: consome ${currentManaCost} MP, causa ${damage} de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.` };
     }
     if(skill.type === "mage_overcharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 200 + maxMp + (15 * charges) + getUniversalDamageFlatBonus();
-      const cost = Math.floor(maxMp * 0.95) + mageExtraCost;
+      const damage = 200 + maxMp + (player.level * charges) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(Math.floor(maxMp * 0.95) + mageExtraCost);
       return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano usando sua mana maxima e as cargas arcanas.` };
     }
     if(skill.type === "mage_demon_form"){
-      return { ...skill, cost: Math.floor(player.mp * 0.3), turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${Math.floor(player.mp * 0.3)} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
+      const cost = clampMageSkillCost(Math.floor(player.mp * 0.3));
+      return { ...skill, cost, turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${cost} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
     }
     if(skill.type === "mage_explode"){
       const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: 500 + mageExtraCost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${500 + mageExtraCost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
+      const cost = clampMageSkillCost(500 + mageExtraCost);
+      return { ...skill, cost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${cost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_avalanche"){
-      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.6 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: 400 + mageExtraCost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${400 + mageExtraCost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(400 + mageExtraCost);
+      return { ...skill, cost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
     }
     if(skill.type === "archer_focus"){
       const cost = 30 + player.level;
@@ -3079,7 +3130,7 @@ function getActiveSkillPreviewDescription(skill){
     warrior_unstoppable: "Postura final de agressao contínua para dominar turnos decisivos.",
     warrior_ultrasonic_cuts: "Entrar em modo de cortes puros, focando apenas no ataque basico por alguns turnos.",
     warrior_giant_slayer: "Finalizador brutal contra alvos com muita vida atual.",
-    mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e pode devolver o custo quando acerta muito forte.",
+    mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e ainda drena mana do alvo para ampliar o impacto.",
     mage_fireball: "Magia elemental que aplica efeito persistente no inimigo, mudando de fogo para gelo conforme a rota.",
     mage_freeze: "Feitico de controle ou dano elemental que evolui junto da subclasse.",
     mage_sacred_phoenix: "Invocacao incendiaria de alto custo e alto impacto.",
@@ -3219,7 +3270,7 @@ function getPassiveStatusDescription(skill){
   }
   if(skill.type === "mage_mana_to_life"){
     const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
-    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.1)} de dano de habilidade.` : "";
+    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.18)} de dano de habilidade.` : "";
     return `${skill.name}: converte ${Math.floor(factor * 100)}% da mana maxima em vida maxima.${extraSkill}`;
   }
   if(skill.type === "mage_overflowing"){
@@ -3484,6 +3535,12 @@ function applyDamageToEnemy(rawDamage, options = {}){
     log(`${enemy.baseName} sofreu +${markedBonus} de dano por estar marcado.`);
     enemy.nextDamageTakenPercent = 0;
   }
+  if(damage > 0 && (enemy.frozenDamageBonusPercent || 0) > 0){
+    const frozenBonus = Math.floor(damage * enemy.frozenDamageBonusPercent);
+    damage += frozenBonus;
+    log(`Congelamento adicionou ${frozenBonus} de dano ao proximo golpe.`);
+    enemy.frozenDamageBonusPercent = 0;
+  }
   if(damage > 0 && playerEffects.damageDownTurns > 0 && playerEffects.damageDownPercent > 0){
     const reducedAmount = Math.floor(damage * playerEffects.damageDownPercent);
     damage = Math.max(0, damage - reducedAmount);
@@ -3738,9 +3795,9 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: skillInfo.ignoreArmor }) : damage;
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
-    if(skillInfo.type === "mage_mana_burst" && applyToTarget && enemy && damage > Math.floor(enemy.maxHp * (skillInfo.refundThresholdPercent || 0))){
-      player.mp = Math.min(getCurrentCaps().maxMp, player.mp + cost);
-      message += " A explosao foi poderosa o bastante para devolver toda a mana gasta.";
+    if(skillInfo.type === "mage_mana_burst" && applyToTarget && enemy && skillInfo.enemyManaBurnAmount > 0){
+      enemy.mp = Math.max(0, (enemy.mp || 0) - skillInfo.enemyManaBurnAmount);
+      message += ` A explosao consumiu ${skillInfo.enemyManaBurnAmount} de mana do alvo e converteu isso em dano extra.`;
     }
     if(skillInfo.type === "mage_fireball" && applyToTarget && enemy){
       if(skillInfo.appliesBurn){
@@ -3778,9 +3835,15 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         message += " O alvo ficou incendiado.";
       }
       if(skillInfo.chillTurns > 0){
-        enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
-        enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
-        message += " O inimigo ficou resfriado.";
+        const alreadyChilled = enemy.attackDownTurns > 0 && enemy.attackDownPercent > 0;
+        if(skillInfo.freezeVulnerabilityPercent > 0 && alreadyChilled){
+          enemy.frozenDamageBonusPercent = Math.max(enemy.frozenDamageBonusPercent || 0, skillInfo.freezeVulnerabilityPercent);
+          message += " O inimigo ficou congelado e sofrera 50% a mais no proximo dano.";
+        }else{
+          enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
+          enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+          message += " O inimigo ficou resfriado.";
+        }
         if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
           enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
           enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
@@ -4395,7 +4458,7 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
   const tooltipText = description || "";
   const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}"` : ` class="inventory-item"`;
-  const shouldShowInlineDescription = item?.type !== "equipment";
+  const shouldShowInlineDescription = !["equipment", "material"].includes(item?.type);
   return `<div${tooltipAttrs}>
     <div class="simple-item-line">
       <div class="simple-item-symbol">
@@ -4568,8 +4631,51 @@ function renderForgePanel(){
     const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
-    return getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true);
+    const feedbackClass = forgeFeedback.slot === entry.slot ? (forgeFeedback.result === "success" ? "forge-feedback-success" : forgeFeedback.result === "fail" ? "forge-feedback-fail" : "") : "";
+    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
   }).join("")}</div></div>`;
+}
+
+function getEnemyStatusEffects(targetEnemy){
+  if(!targetEnemy){ return []; }
+  const effects = [];
+  if(targetEnemy.bossBuffTurns > 0){
+    effects.push({ kind: "buff", text: `Buff do boss | ${targetEnemy.bossBuffTurns} turno(s)` });
+  }
+  if(targetEnemy.attackDownTurns > 0 && targetEnemy.attackDownPercent > 0){
+    effects.push({ kind: "debuff", text: `Ataque -${Math.floor(targetEnemy.attackDownPercent * 100)}% | ${targetEnemy.attackDownTurns} turno(s)` });
+  }
+  if(targetEnemy.armorDownTurns > 0 && targetEnemy.armorDownPercent > 0){
+    effects.push({ kind: "debuff", text: `Armadura -${Math.floor(targetEnemy.armorDownPercent * 100)}% | ${targetEnemy.armorDownTurns} turno(s)` });
+  }
+  if(targetEnemy.healReductionTurns > 0 && targetEnemy.healReductionPercent > 0){
+    effects.push({ kind: "debuff", text: `Cura -${Math.floor(targetEnemy.healReductionPercent * 100)}% | ${targetEnemy.healReductionTurns} turno(s)` });
+  }
+  if(targetEnemy.noShieldTurns > 0){
+    effects.push({ kind: "debuff", text: `Sem escudo | ${targetEnemy.noShieldTurns} turno(s)` });
+  }
+  if(targetEnemy.skipNextAttack){
+    effects.push({ kind: "control", text: "Proximo turno bloqueado" });
+  }
+  if(targetEnemy.rootedTurns > 0){
+    effects.push({ kind: "control", text: `Enraizado | ${targetEnemy.rootedTurns} turno(s)` });
+  }
+  if(targetEnemy.natureMarkTurns > 0){
+    effects.push({ kind: "debuff", text: `Marca | ${targetEnemy.natureMarkTurns} turno(s)` });
+  }
+  if(targetEnemy.naturePoisonTurns > 0 && targetEnemy.naturePoisonDamage > 0){
+    effects.push({ kind: "debuff", text: `Veneno ${targetEnemy.naturePoisonDamage}/t | ${targetEnemy.naturePoisonTurns} turno(s)` });
+  }
+  if(targetEnemy.natureDecayTurns > 0 && targetEnemy.natureDecayDamage > 0){
+    effects.push({ kind: "debuff", text: `Apodrecimento ${targetEnemy.natureDecayDamage}/t | ${targetEnemy.natureDecayTurns} turno(s)` });
+  }
+  if(targetEnemy.dotTurns > 0 && targetEnemy.dotDamagePerTurn > 0){
+    effects.push({ kind: "debuff", text: `${targetEnemy.dotSourceName || "DOT"} ${targetEnemy.dotDamagePerTurn}/t | ${targetEnemy.dotTurns} turno(s)` });
+  }
+  if(targetEnemy.frozenDamageBonusPercent > 0){
+    effects.push({ kind: "control", text: `Congelado | +${Math.floor(targetEnemy.frozenDamageBonusPercent * 100)}% no proximo dano` });
+  }
+  return effects;
 }
 
 function renderAlchemistPanel(){
@@ -4903,6 +5009,7 @@ function renderBattleRegionPreviewCard(){
 }
 
 function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
+  const statusEffects = getEnemyStatusEffects(targetEnemy);
   return `
     <div class="combat-arena-card enemy-card">
       <div class="combat-scene-header">
@@ -4937,6 +5044,10 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
           ${targetEnemy.maxHpStrikePercent > 0 ? `<span class="lock-note">Impacto brutal: +${Math.floor(targetEnemy.maxHpStrikePercent * 100)}% da sua vida maxima</span>` : ""}
           ${(targetEnemy.bossAbilities || []).length ? `<div class="boss-ability-list">${targetEnemy.bossAbilities.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>` : `${targetEnemy.isBoss ? `<span class="lock-note">Este chefao ainda nao revelou habilidades extras.</span>` : ""}`}
           ${targetEnemy.bossBuffTurns > 0 ? `<span class="status-on">Buff ativo por ${targetEnemy.bossBuffTurns} turno(s)</span>` : ""}
+        </div>
+        <div class="combat-detail-card">
+          <strong>Estados</strong>
+          ${statusEffects.length ? `<div class="enemy-status-list">${statusEffects.map(effect => `<span class="enemy-status-pill ${effect.kind}">${effect.text}</span>`).join("")}</div>` : `<span class="lock-note">Nenhum buff ou debuff ativo no momento.</span>`}
         </div>
         <div class="combat-detail-card">
           <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
@@ -5529,6 +5640,7 @@ function tryUpgradeEquippedItem(slot){
   player.coins -= cost;
   const chance = getForgeUpgradeChance(item);
   if(Math.random() > chance){
+    triggerForgeFeedback(slot, "fail");
     log(`O ferreiro falhou em aprimorar ${item.name}. Chance da tentativa: ${Math.floor(chance * 100)}%.`);
     updateUI();
     return;
@@ -5547,6 +5659,7 @@ function tryUpgradeEquippedItem(slot){
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
+  triggerForgeFeedback(slot, "success");
   log(`O ferreiro aprimorou ${item.name} para ${upgradedItem.name}!`);
   updateUI();
 }
@@ -5681,6 +5794,14 @@ function continueCampaign(){
       rebuiltEnemy.dotDamagePerTurn = enemy.dotDamagePerTurn || 0;
       rebuiltEnemy.dotTurns = enemy.dotTurns || 0;
       rebuiltEnemy.dotSourceName = enemy.dotSourceName || "";
+      rebuiltEnemy.rootedTurns = enemy.rootedTurns || 0;
+      rebuiltEnemy.natureMarkTurns = enemy.natureMarkTurns || 0;
+      rebuiltEnemy.natureMarkDamage = enemy.natureMarkDamage || 0;
+      rebuiltEnemy.naturePoisonTurns = enemy.naturePoisonTurns || 0;
+      rebuiltEnemy.naturePoisonDamage = enemy.naturePoisonDamage || 0;
+      rebuiltEnemy.natureDecayTurns = enemy.natureDecayTurns || 0;
+      rebuiltEnemy.natureDecayDamage = enemy.natureDecayDamage || 0;
+      rebuiltEnemy.frozenDamageBonusPercent = enemy.frozenDamageBonusPercent || 0;
       rebuiltEnemy.healReductionPercent = enemy.healReductionPercent || 0;
       rebuiltEnemy.healReductionTurns = enemy.healReductionTurns || 0;
       rebuiltEnemy.noShieldTurns = enemy.noShieldTurns || 0;
@@ -5833,11 +5954,15 @@ function updateUI(){
     <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? dungeonData.description : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
     ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar raridades e artesao para montar equipamentos com partes dos monstros.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
+  const visibleInventory = hideArtisanMaterials ? player.inventory.filter(item => item.type !== "material") : player.inventory;
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
     : `
     <h3>Inventario</h3>
-    ${player.inventory.length ? `<div class="inventory-list">${[...player.inventory].sort((a, b) => {
+    <div class="button-row" style="margin-bottom:10px;">
+      <button class="action-btn" onclick="toggleHideArtisanMaterials()">${hideArtisanMaterials ? "Mostrar itens de artesao" : "Esconder itens de artesao"}</button>
+    </div>
+    ${visibleInventory.length ? `<div class="inventory-list">${[...visibleInventory].sort((a, b) => {
       const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : item.type === "material" ? 2 : 3;
       const priorityDiff = getInventoryPriority(a) - getInventoryPriority(b);
       if(priorityDiff !== 0){ return priorityDiff; }
@@ -5863,7 +5988,7 @@ function updateUI(){
         item.type === "equipment" ? buildEquipmentDescription(item) : (item.description || ""),
         actionButton
       );
-    }).join("")}</div>` : `<p class="lock-note">Sua mochila esta vazia por enquanto.</p>`}`;
+    }).join("")}</div>` : `<p class="lock-note">${hideArtisanMaterials && player.inventory.length ? "Os itens visiveis acabaram. Desative o filtro para mostrar os materiais de artesao." : "Sua mochila esta vazia por enquanto."}</p>`}`;
 
   renderActions();
   renderLevelUpPanel();
@@ -5995,7 +6120,7 @@ function renderActions(){
       return;
     }
     const dungeonSkillButtons = skillInfo.length
-      ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`).join("")
+      ? skillInfo.map((skill, index) => renderSkillActionButton(skill, index, `dungeonUseSkill(${index})`)).join("")
       : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
     actions.innerHTML = `<button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="dungeonAttack()">${getBasicAttackLabel()}</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
     return false;
@@ -6044,7 +6169,10 @@ function getSkillActionState(skill, actor = player){
 
 function renderSkillActionButton(skill, index, onClick, actor = player){
   const state = getSkillActionState(skill, actor);
-  return `<button class="${state.classes}" data-tooltip="${skill.description}" onclick="${onClick}" ${state.canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
+  const forcedBasicLock = actor === player && playerEffects.forcedBasicTurns > 0;
+  const canUse = state.canUse && !forcedBasicLock;
+  const tooltip = forcedBasicLock ? `${skill.description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : skill.description;
+  return `<button class="${state.classes}${forcedBasicLock ? " skill-locked" : ""}" data-tooltip="${tooltip}" onclick="${onClick}" ${canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
 }
 
 function renderBasicActionButton(label, tooltip, onClick){

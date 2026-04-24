@@ -62,6 +62,351 @@
 - Os nomes acima seguem a arvore atual de `assets/js/data/class-trees.js`.
 - Os valores finais de dano, custo, escudo, cura e DOT continuam definidos em `assets/js/game.js`, principalmente em `getSkillInfo()`.
 
+## Scalings completos das habilidades
+
+### Ataques basicos
+- Guerreiro: ataque basico entre `ATQ` e `ATQ + 5`.
+- Arqueiro: ataque basico entre `ATQ` e `ATQ + 5`, com chance de acerto baseada em `getHitChance("basic")`.
+- Mago: `Misseis Magicos`
+  - quantidade: `floor(3 + 0.1 * nivel)`
+  - custo: `3 * quantidade de misseis`
+  - dano por missel: entre `5 + floor(0.2 * ATQ)` e `5 + floor(0.5 * ATQ)`
+  - Elementalista: adiciona `floor(0.1 * poder de habilidade)` em cada missel
+  - Arcanista: cada missel tem `15%` de chance de gerar `1 Carga Arcana` por `3 turnos`
+
+### Guerreiro
+- `Recuperar Folego`
+  - custo: `20 MP`
+  - cura base: `floor(0.07 * HP max)`
+  - Cavaleiro: cura vira `floor(0.10 * HP max)`
+  - Espadachim: além da cura, ganha `+10% dano total` por `3 turnos`
+- `Esbarrao`
+  - custo base: `38 MP`
+  - dano base: `20 + floor(0.06 * HP max) + floor(0.5 * ATQ) + floor(0.5 * poder de habilidade)`
+  - Cavaleiro: custo `44 MP`, ainda reduz `30%` do ataque inimigo por `3 turnos`
+  - Espadachim: vira `Investida`, custo `50 MP`, dano `20 + floor(0.1 * HP max) + floor(0.9 * ATQ) + floor(1.2 * poder de habilidade)`
+- `Contundir`
+  - custo: `40 MP`
+  - dano base: `30 + floor(0.06 * HP max) + floor(0.35 * ATQ) + floor(0.35 * poder de habilidade)`
+  - chance base: `30%` de pular o turno do inimigo
+  - Berserker: dano vira `60 + floor(0.06 * HP max) + floor(0.9 * ATQ) + floor(0.9 * poder de habilidade) + floor(0.1 * HP max do inimigo)` e perde a chance de controle
+- `Golpes Velozes`
+  - custo: `44 MP`
+  - golpes: `2`
+  - Ninja: `3` golpes
+  - Samurai: aplica sangramento de `15% do dano causado` por `3 turnos`
+- `Brado`
+  - custo: `40 MP`
+  - efeito: `+20% ataque` por `5 turnos`
+  - Paladino: também `-16% dano sofrido` por `5 turnos`
+  - Berserker: vira `Ira`, custa `80% da vida maxima`, concede `+150% dano total` por `4 turnos`
+- `Corte Profundo`
+  - custo: `52 MP`
+  - dano: `70 + floor(1.1 * ATQ) + floor(0.8 * poder de habilidade)`
+  - sangramento base: `15% do dano causado` por `3 turnos`
+  - Ninja: sangramento vira `30%`
+  - Samurai: ignora armadura
+- `Julgamento`
+  - custo: `100 MP`
+  - dano: `80 + floor(0.4 * HP max) + floor(0.5 * ATQ) + floor(0.8 * poder de habilidade)`
+- `Vallhala`
+  - custo: `100 MP`
+  - duração: `5 turnos`
+  - efeito: recebe `+200% dano`, mas adiciona `15% da vida maxima do inimigo` em qualquer dano causado
+- `Furar Blindagem`
+  - custo: `82 MP`
+  - dano base: `80 + floor(1.1 * ATQ) + floor(1.1 * poder de habilidade)`
+  - se o alvo estiver com escudo: dano `x3`
+- `Bomba de Fumaca`
+  - custo: `40 MP`
+  - efeito: esquiva garantida do próximo golpe e `+30%` no próximo dano
+- `Escudo de Fe`
+  - custo: `floor(0.7 * MP max)`
+  - duração: `3 turnos`
+  - efeito: invulnerável por `3 turnos`, depois explode com `50%` do dano absorvido
+- `Voce Ira Me Parar?`
+  - custo: `100 MP + 30% da vida maxima`
+  - duração: `4 turnos`
+  - efeito: impede perder turno e dá `+50 ATQ`
+- `Cortes Ultrasonicos`
+  - custo: `240 MP`
+  - duração: `3 turnos`
+  - efeito: só pode usar ataque básico e não pode ser atingido
+- `Mata-Gigantes`
+  - custo: `200 MP`
+  - dano: `floor(0.4 * vida atual do inimigo)`
+
+### Passivas do Guerreiro
+- `Vontade de Ferro`: reduz `floor(0.6 * nivel)` de dano por golpe
+- `Vontade de Ferro` do Cavaleiro: além disso, cura `3% da vida maxima` por turno
+- `Veloz`: `20%` de chance de esquiva
+- `Refletir`
+  - base: reflete `18%` do dano recebido
+  - Berserker: vira `50%` de chance de contra-atacar com ataque básico
+- `Contra-Ataque`
+  - base: contra-ataque ao esquivar
+  - Samurai: também cura `30%` do dano que o golpe causaria
+  - Ninja: contra-ataque ignora armadura e escudo
+- `Aura Divina`: ganha escudo persistente de `2% da vida maxima` por turno
+- `Voce Nao e Digno`: 1 vez por combate, sobrevive com `1 HP`
+- `Mente Limpa`: primeiro ataque bate duas vezes; a segunda por `50%` do dano
+- `Eliminar`: `+50% dano total` em inimigos abaixo de `50%` da vida
+
+### Mago
+- `Explosao de Mana`
+  - custo: `20 + floor(0.2 * nivel) + custo extra arcano`
+  - dano base: `30 + floor(0.6 * poder de habilidade) + floor(0.09 * MP max) + bonus universal`
+  - Arcanista: dano vira `30 + floor(0.6 * poder de habilidade) + floor(0.13 * MP max) + bonus universal`
+  - reembolso: devolve toda a mana se causar mais de `40% da vida maxima do inimigo`
+- `Bola de Fogo`
+  - custo: `40 MP + custo extra arcano`
+  - dano: `50 + floor(1.3 * poder de habilidade) + bonus universal`
+  - Mago Incendiario: soma `5% da vida atual do inimigo`
+  - queimadura: `3% da vida maxima do inimigo` por `3 turnos`
+  - `Fogo do Inferno`: queimadura sobe para `5%`
+  - cura recebida do inimigo: `-30%`
+- `Bola de Neve`
+  - custo: `40 MP + custo extra arcano`
+  - dano: mesmo da Bola de Fogo
+  - efeito: resfriamento por `3 turnos`, reduzindo `30%` do ataque inimigo
+- `Congelar`
+  - custo: `40 + floor(0.2 * nivel) + custo extra arcano`
+  - dano: `60 + floor(0.9 * poder de habilidade) + bonus universal`
+  - chance base: `30%` de impedir o próximo ataque
+  - Mago Frigido: se não impedir o turno, aplica resfriamento por `2 turnos`
+- `Bafo de Fogo`
+  - custo: igual ao `Congelar`
+  - dano: igual ao `Congelar`
+  - queimadura: `6 turnos`
+- `Descarregar`
+  - custo: `10 * cargas arcanas + custo extra arcano`
+  - dano: `60 + (nivel * cargas) + floor(0.1 * poder de habilidade) + floor(0.04 * MP max) + bonus universal`
+- `Escudo de Mana`
+  - custo base: `floor(0.15 * MP max) + custo extra arcano`
+  - escudo base: `40 + floor(0.3 * MP max)`
+  - duração: `2 turnos`
+  - Arquimago: custo `12% MP max`, escudo `40 + floor(0.4 * MP max)`
+- `Concentracao`
+  - custo: `200 MP + custo extra arcano`
+  - duração: `4 turnos`
+  - efeito: `+10% dano total` e `+10% regeneração de mana`
+- `Corrupcao`
+  - custo: `30% da mana atual`
+  - dano: `100 + floor(1.0 * poder de habilidade) + floor(0.3 * MP max) + bonus universal`
+  - efeito: remove `100%` da armadura e impede escudo por `5 turnos`
+- `Sobrecarregar`
+  - custo: `95% do MP max + custo extra arcano`
+  - dano: `200 + MP max + 15 * cargas arcanas + bonus universal`
+- `Incorporar Demonio`
+  - custo: `30% da mana atual`
+  - duração: `3 turnos`
+  - efeito: `+200% dano total`, porém recebe `+30% dano`
+- `Fenix Sagrada`
+  - custo: `200 + poder de habilidade + custo extra arcano`
+  - dano: `100 + floor(1.6 * poder de habilidade) + bonus universal`
+  - queimadura: `1 turno`
+- `Nevasca`
+  - custo: `120 MP + custo extra arcano`
+  - duração: `6 turnos`
+  - efeito: inimigo tem `15%` de chance de perder o turno
+- `Explodir`
+  - custo: `500 MP + custo extra arcano + 50% da vida maxima`
+  - dano: `200 + floor(1.3 * poder de habilidade) + floor(0.5 * HP max) + floor(0.5 * HP max do inimigo) + bonus universal`
+- `Avalanche`
+  - custo: `400 MP + custo extra arcano`
+  - dano: `200 + floor(1.3 * poder de habilidade) + floor(0.6 * HP max do inimigo) + bonus universal`
+  - resfriamento: `4 turnos`
+
+### Passivas do Mago
+- `Ultimo Recurso`: se o golpe seria fatal, só salva se a mana atual for pelo menos `2x` o dano; gasta esse valor em mana
+- `Mana e Vida`
+  - Elementalista: converte `50%` do MP max em HP max
+  - Mago Frigido: converte `65%`
+  - Mago Incendiario: além disso, ganha `10% do MP max` em poder de habilidade
+- `Transbordando`
+  - Arcanista: `+0.3 * MP max` em dano adicional e `+0.1 * MP max` no custo das skills
+  - Arquimago: `+0.45 * MP max` em dano adicional e `+0.2 * MP max` no custo
+- `Fogo do Inferno`: aumenta queimadura de `3%` para `5%`
+- `Gelo Queima`: resfriamento também aplica queimadura de `3%` por `1 turno`
+- `Carregar`: cada carga arcana dá `+5% dano total`
+- `Canhao de Vidro`: primeiro ataque do combate causa `2x dano`; sofre `+50% dano` nos `2 primeiros turnos`
+
+### Arqueiro
+- `Mirar`
+  - custo: `30 + nivel`
+  - duração: `5 turnos`
+  - efeito base: `100%` de acerto no ataque básico e `+ (5 + nivel)` no dano do ataque básico
+  - Atirador: ainda fortalece `Headshot` em `10%` e dá `+10% chance de critico` nele
+  - Cacador: `10%` de chance de disparo extra na `Rajada de Flechas`
+- `Headshot`
+  - custo: `60 + floor(0.3 * nivel)`
+  - dano base atual: `30 + floor(0.7 * ATQ) + floor(0.9 * poder de habilidade)`
+  - Atirador Arcano: vira `60 + floor(1.1 * poder de habilidade) + floor(0.6 * MP max)`
+  - critico base: `10%`
+  - Sniper: critico base vira `70%`
+  - Mirar ativo no Atirador: `+10%` chance de critico e `+10% dano final`
+  - Atirador Arcano: se não critar, marca o alvo para tomar `+15%` no próximo golpe
+- `Camuflagem`
+  - custo: `40 + floor(0.5 * nivel)`
+  - duração: `4 turnos`
+  - esquiva adicional: `20%`
+  - Cacador: `25%`
+  - Atirador: próximo dano fica `+30%`
+- `Rajada de Flechas`
+  - custo: `60 MP`
+  - golpes base: `2`
+  - Guarda Florestal: `3`
+  - Mirar ativo do Cacador: `10%` de chance de um disparo adicional
+- `Tiro Perfurante`
+  - custo: `80 MP`
+  - dano base: `50 + floor(0.8 * ATQ) + floor(0.8 * poder de habilidade)`
+  - Sniper: fator de ATQ vira `1.2`
+  - Atirador Arcano: fator de habilidade vira `1.2`
+  - ignora armadura e escudo
+  - Sniper: também destrói o escudo ativo
+- `Armadilha`
+  - custo: `80 MP`
+  - dano: `30 + floor(1.1 * poder de habilidade)`
+  - chance: `30%` de pular o turno do alvo
+  - Espreitador: soma `8% da vida atual do inimigo`
+  - Guarda Florestal: se prender, próxima `Rajada` causa `+15% dano`
+- `Emergencia Arcana`
+  - custo: `100 MP`
+  - dano: `60 + poder de habilidade + floor(0.75 * (MP max - mana atual))`
+- `Executar`
+  - custo: `120 MP`
+  - dano: `60 + floor(1.1 * ATQ) + floor(0.9 * poder de habilidade)`
+  - se alvo abaixo de `40%` da vida: dano `x3`
+- `Surpresa`
+  - custo: `80 MP`
+  - dano base: `60 + floor(0.9 * ATQ) + floor(0.7 * poder de habilidade)`
+  - se a última ação foi `Camuflagem`: `80 + floor(1.2 * ATQ) + floor(0.9 * poder de habilidade)`
+- `Tranquilizante`
+  - custo: `80 MP`
+  - dano: `60 + floor(0.8 * ATQ) + floor(0.6 * poder de habilidade)`
+  - efeito: `-30% dano do inimigo` por `3 turnos`
+- `Sobreaquecer`
+  - custo: toda a mana atual
+  - dano: `80 + floor(1.6 * poder de habilidade) + floor(0.6 * mana atual)`
+- `Ponto Fraco`
+  - custo: `120 MP`
+  - dano: `100 + floor(0.4 * ATQ) + floor(0.3 * poder de habilidade) + floor(0.25 * vida atual do inimigo)`
+- `Mirar no Pe`
+  - custo: `100 MP`
+  - dano: `80 + floor(0.6 * poder de habilidade) + floor(0.5 * ATQ)`
+  - efeitos: `-15% dano inimigo`, `-50% armadura`, `10%` de chance de pular turno
+- `Tiro Cortante`
+  - custo: `80 MP`
+  - dano total: `120 + floor(1.2 * ATQ) + floor(1.2 * poder de habilidade)`
+  - efeito: divide em `3` ticks iguais
+
+### Passivas do Arqueiro
+- `Passos Leves`: `5% + 0.5% * nivel` de esquiva
+- `Passos Leves` do Atirador: mantém a esquiva e ainda dá `5%` de chance de critico
+- `Passos Leves` do Cacador: mantém a esquiva e ainda dá `+10% moedas`
+- `Pulso Firme`
+  - base: `floor(0.9 * nivel)` em ATQ e em poder de habilidade
+  - Atirador Arcano: bônus de poder de habilidade vira `floor(1.3 * nivel)`
+  - Sniper: ainda concede `+15% chance de critico`
+- `Errou`
+  - base: ao esquivar, `+10% dano total` por `2 turnos`
+  - Espreitador: próximo dano fica `+50%`
+  - Guarda Florestal: cura `13% da vida maxima`
+- `Cristalizar Mana`: converte `5% do MP max` em poder de habilidade
+- `Olhos de Falcao`: `+15% chance de critico`; excedente acima de `100%` vira dano critico
+- `Passos Silenciosos`: `7%` de chance de o inimigo perder o turno
+- `Resistencia Florestal`: reduz `floor(0.2 * nivel)` de dano por golpe
+
+### Adepto da Natureza
+- `Semente Viva`
+  - custo: `20 + floor(0.5 * nivel)`
+  - dano: `10 + floor(0.7 * ATQ) + floor(0.3 * poder de habilidade)`
+  - marca base: `3 turnos`
+  - Druida: marca vira `4 turnos` e causa `floor(0.2 * poder de habilidade * turnos da marca)` por turno
+  - Espirito da Floresta: a marca reduz o dano inimigo em `8% * turnos restantes`
+- `Raizes`
+  - custo: `30 + floor(0.6 * nivel)`
+  - dano: `20 + floor(0.8 * ATQ) + floor(0.8 * poder de habilidade)`
+  - chance base de enraizar: `45%`
+  - Druida: `60%`
+  - Espirito da Floresta: se enraizar, reduz `50%` da armadura
+- `Flor do Pantano`
+  - custo: `20 + floor(0.4 * nivel)`
+  - dano base: `10 + floor(0.8 * ATQ) + floor(0.8 * poder de habilidade)`
+  - Avatar da Natureza: fator de ATQ vira `1.3`
+  - veneno: `floor(0.4 * poder de habilidade)` por turno
+  - duração base: `4 turnos`
+  - Druida Sombrio: `7 turnos`
+  - Avatar da Natureza: `3 turnos`
+- `Encanto da Brisa`
+  - custo: `30 + floor(0.3 * nivel)`
+  - dano: `20 + floor(1.1 * poder de habilidade)`
+  - chance base de pular turno: `20%`
+  - Fada Monarca: `30%`
+  - `Coroar`: soma `+20%` nas chances
+  - chance de enraizar em alvo marcado: mesma lógica acima
+  - Protetor da Floresta: se alvo estiver marcado, concede escudo igual a `100% do dano causado`
+- `Colheita`
+  - custo: `40 + floor(0.3 * nivel)`
+  - dano base: `30 + floor(1.2 * ATQ)`
+  - efeito: consome efeitos naturais e explode o dano restante
+- `Cancao Ancestral`
+  - custo: `40 + floor(0.4 * nivel)`
+  - cura base: `floor(1.4 * poder de habilidade)`
+  - se alvo enraizado: `floor(2.0 * poder de habilidade)`
+  - Protetor da Floresta: concede escudo de `1.6 * poder de habilidade` ou `2.2 * poder de habilidade` se alvo enraizado
+  - Fada Monarca: ainda reduz o dano inimigo em `12%`
+- `Apodrecer`
+  - custo: `40 + floor(0.5 * nivel)`
+  - dano: `50 + floor(1.2 * ATQ)`
+  - apodrecimento: `1.5% da vida maxima do inimigo` por `5 turnos`
+- `Forma Verdadeira`
+  - custo: `todo o MP max`
+  - duração: `5 turnos`
+  - efeito: `+26% ataque`, `-18% dano sofrido` e fortalece o ataque básico
+- `Decreto da Rainha`
+  - custo: `90 MP`
+  - dano: `floor(2.0 * poder de habilidade)`
+  - com `3 Cadencias`: `floor(2.9 * poder de habilidade)`
+- `Casulo de Vinhas`
+  - custo: `60 + floor(0.6 * nivel)`
+  - escudo: `floor(1.4 * ATQ + 1.4 * poder de habilidade)`
+- `Colapso do Brejo`
+  - custo: `85% do MP max`
+  - dano: `floor(1.8 * ATQ + 1.8 * poder de habilidade)`
+  - se alvo sem DOT natural: aplica marca, veneno e apodrecimento por `4 turnos`
+- `Esmagar Invasor`
+  - custo: `300 + floor(0.8 * nivel)`
+  - dano base: `floor(2 * ATQ)`
+  - alvo enraizado: `+floor(0.6 * ATQ)`
+  - em Forma Verdadeira: `+floor(1.0 * ATQ)`
+- `Coroar`
+  - custo: `300 + 2 * nivel`
+  - duração: `5 turnos`
+  - efeito: `+30% poder de habilidade`, `+20% curas`, `+20% chances de controle`
+- `Jogar Espinhos`
+  - custo: `20% da vida maxima + 4 * nivel MP`
+  - dano: `2 * escudo atual`
+  - consome todo o escudo e ignora armadura/escudo
+
+### Passivas do Adepto da Natureza
+- `Ciclo Natural`
+  - base: alvos marcados recebem `+10% dano` e devolvem `10%` do custo da skill usada contra eles
+  - Druida: bônus de dano vira `16%`
+  - Espirito da Floresta: ainda converte `30% do ATQ` em poder de habilidade
+- `Seiva`: cura `8%` do dano de marca e veneno
+  - Avatar da Natureza: também `+12% vida maxima`
+  - Druida Sombrio: também conta apodrecimento
+- `Aura Feerica`
+  - base: cada `Cadencia` dá `+4% poder de habilidade`, até `3`
+  - com `3` stacks: `+5% curas`
+  - Fada Monarca: cada stack dá `+6%` e no máximo concede `+10% curas`
+  - Protetor da Floresta: com `3` stacks também dá `+10% escudos`
+- `Podridao`: `+30%` em marca, veneno e apodrecimento
+- `Casca Ancestral`: reduz `4 + 0.5 * nivel` de dano por golpe; em Forma Verdadeira usa `4 + 0.7 * nivel`
+- `Asas da Realeza`: `20%` de esquiva, ou `60%` enquanto coroada
+- `Juramento do Bosque`: `+6% escudos` e reflete `30%` do dano absorvido pelo escudo
+
 ## Distribuicao de atributos
 - Todos os personagens usam os mesmos 3 atributos ao subir de nivel:
   - `Forca`: `5 + nivel * 0.15` em dano de ataque basico e dano de habilidade.
