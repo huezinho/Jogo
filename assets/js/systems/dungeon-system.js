@@ -1965,6 +1965,9 @@
     run.round = 1;
     run.shopStock = [];
     currentMode = DUNGEON_RUN_MODE;
+    if(typeof triggerActionFeedback === "function"){
+      triggerActionFeedback("dungeon_run", "A equipe entrou na dungeon.", "success");
+    }
     startDungeonEncounter();
   };
 
@@ -2030,6 +2033,9 @@
     ensureDungeonRunContainers();
     currentMode = window.IS_DUNGEON_PAGE ? "dungeon" : "battle";
     if(!silent){
+      if(typeof triggerActionFeedback === "function"){
+        triggerActionFeedback("dungeon", "Voce saiu da sala da dungeon.", "info");
+      }
       log("Voce saiu da sala da dungeon.");
     }
     updateUI();
@@ -2066,6 +2072,9 @@
     dungeonMultiplayer.peer.on("open", id => {
       dungeonMultiplayer.roomCode = id;
       dungeonMultiplayer.party[id] = buildDungeonHeroProfile(null, id);
+      if(typeof triggerActionFeedback === "function"){
+        triggerActionFeedback("dungeon", `Sala da dungeon criada: ${id}.`, "success");
+      }
       log(`Sala da dungeon criada: ${id}.`);
       updateUI();
     });
@@ -2110,6 +2119,9 @@
       dungeonMultiplayer.hostConnection = connection;
       connection.on("open", () => {
         connection.send({ type: "join", player: buildDungeonHeroProfile(null, dungeonMultiplayer.peer?.id || "local"), heroState: cloneData(player) });
+        if(typeof triggerActionFeedback === "function"){
+          triggerActionFeedback("dungeon", `Conectando a sala ${roomCode}.`, "info");
+        }
         log(`Conectando a sala ${roomCode}...`);
         updateUI();
       });
@@ -2361,7 +2373,7 @@
   };
 
   setMode = window.setMode = function(mode){
-    const validModes = ["battle", "village", "trophies", "camp", "dungeon", "bestiary", DUNGEON_RUN_MODE];
+    const validModes = ["battle", "village", "trophies", "camp", "dungeon", "bestiary", "arena", DUNGEON_RUN_MODE];
     if(isProcessingTurn || isDead || player.hp <= 0 || !validModes.includes(mode)){ return; }
     if(hasActiveDungeonRun() && mode !== DUNGEON_RUN_MODE){
       log("Enquanto a expedicao estiver ativa, voce so sai da dungeon abandonando a run ou se alguem do grupo cair.");
