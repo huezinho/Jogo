@@ -1,4 +1,4 @@
-const SAVE_KEY = "rpg_turnos_campaign_v1";
+ï»¿const SAVE_KEY = "rpg_turnos_campaign_v1";
 const UI_SETTINGS_KEY = "rpg_turnos_ui_settings_v1";
 const MAX_LEVEL = 100;
 
@@ -25,6 +25,8 @@ let isLogHidden = false;
 let isSettingsOpen = false;
 let forgeFeedback = { slot: "", result: "", timeoutId: null };
 let actionFeedback = { scope: "", message: "", tone: "info", timeoutId: null };
+let inventoryFlash = { uid: "", id: "", result: "", timeoutId: null };
+const spriteClassTimers = new Map();
 let playerEffects = createDefaultPlayerEffects();
 let displayState = {
   playerHp: null,
@@ -215,6 +217,21 @@ function renderActionFeedback(scope){
     return "";
   }
   return `<div class="feedback-banner feedback-${actionFeedback.tone}">${actionFeedback.message}</div>`;
+}
+
+function triggerInventoryFlash(item, result = "success"){
+  if(inventoryFlash.timeoutId){
+    clearTimeout(inventoryFlash.timeoutId);
+  }
+  inventoryFlash = {
+    uid: item?.uid || "",
+    id: item?.id || "",
+    result,
+    timeoutId: setTimeout(() => {
+      inventoryFlash = { uid: "", id: "", result: "", timeoutId: null };
+      updateUI();
+    }, 1300)
+  };
 }
 
 function ensureRegionMusicAudio(){
@@ -431,15 +448,177 @@ function getHeroCombatAssetKey(targetPlayer = player){
   return toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro");
 }
 
-function getHeroSpriteMarkup(targetPlayer = player){
-  const heroClass = getHeroSpriteClass(targetPlayer);
-  return `<div id="heroSprite" class="sprite-figure emoji-sprite ${heroClass}">${getHeroSpriteIcon(targetPlayer)}</div>`;
+const VISUAL_ASSET_VERSION = "hd-v8-20260505";
+const PROJECTILE_ASSET_VERSION = "hd-v4-20260503";
+
+function getVisualSpritePath(kind, assetKey){
+  const normalizedKind = kind === "heroes" ? "heroes" : "enemies";
+  const resolvedKey = combatArtAliases[normalizedKind]?.[assetKey] || assetKey;
+  const path = `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
+  return new URL(path, window.location.href).href;
 }
 
+function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extraClass = ""){
+  const source = getVisualSpritePath(kind, assetKey);
+  const safeLabel = String(label || "").replace(/"/g, "&quot;");
+  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${extraClass}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></div>`;
+}
+
+function getHeroSpriteMarkup(targetPlayer = player){
+  const heroClass = getHeroSpriteClass(targetPlayer);
+  return renderSpriteSheetFigure("heroSprite", "heroes", getHeroCombatAssetKey(targetPlayer), getHeroSpriteIcon(targetPlayer), getDisplayedClassName(targetPlayer), heroClass);
+}
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
-  const resolvedKey = combatArtAliases[kind]?.[assetKey] || assetKey;
-  const source = combatArtAssets[kind]?.[resolvedKey] || `assets/combat-art/normalized/${resolvedKey}.png`;
-  return `<img class="combat-avatar-media" src="${source}" alt="${altText}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="combat-avatar-fallback" style="display:none;">${fallbackMarkup}</span>`;
+  const source = getVisualSpritePath(kind, assetKey);
+  const safeLabel = String(altText || "").replace(/"/g, "&quot;");
+  return `<span class="combat-avatar-media sprite-avatar" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
+}
+
+function getProjectilePath(projectileKey){
+  const key = projectileKey || "arcane-orb";
+  return new URL(`assets/visual/projectiles/${key}.png?v=${PROJECTILE_ASSET_VERSION}`, window.location.href).href;
+}
+
+function getBarPercent(value, maxValue){
+  if(!Number.isFinite(value) || !Number.isFinite(maxValue) || maxValue <= 0){ return 0; }
+  return Math.max(0, Math.min(100, value / maxValue * 100));
+}
+
+function formatSceneStatValue(value, maxValue){
+  return `${Math.max(0, Math.floor(value || 0))}/${Math.max(0, Math.floor(maxValue || 0))}`;
+}
+
+function getEnemyDisplayedArmor(targetEnemy = enemy){
+  if(!targetEnemy){ return 0; }
+  const reduction = targetEnemy.armorDownTurns > 0 ? (targetEnemy.armorDownPercent || 0) : 0;
+  return Math.max(0, Math.floor((targetEnemy.armor || 0) * (1 - reduction)));
+}
+
+function renderSceneArmorBadge(armor){
+  if(!(armor > 0)){ return ""; }
+  return `<span class="scene-armor-badge" aria-label="Armadura ${armor}">${armor}</span>`;
+}
+
+function getHeroSceneEffects(){
+  return getActiveBuffs().filter(effect => !effect.startsWith("Escudo "));
+}
+
+function renderSceneEffectChips(effects = []){
+  if(!effects.length){ return ""; }
+  return `<div class="scene-effect-list">${effects.slice(0, 4).map(effect => {
+    const isDebuff = /-|Queimadura|Perdera|Somente/i.test(effect);
+    return `<span class="scene-effect-chip ${isDebuff ? "debuff" : "buff"}">${effect}</span>`;
+  }).join("")}</div>`;
+}
+
+function renderSceneVitalPlate(kind, stats){
+  const isEnemy = kind === "enemy";
+  const hpId = isEnemy ? "enemyHpFill" : "sceneHeroHpFill";
+  const mpId = isEnemy ? "sceneEnemyMpFill" : "sceneHeroMpFill";
+  const shieldId = isEnemy ? "sceneEnemyShieldFill" : "sceneHeroShieldFill";
+  const xpId = "sceneHeroXpFill";
+  const hpText = formatSceneStatValue(stats.hp, stats.maxHp);
+  const mpText = formatSceneStatValue(stats.mp, stats.maxMp);
+  const shieldText = formatSceneStatValue(stats.shield || 0, stats.maxHp);
+  const xpText = stats.level >= MAX_LEVEL ? "MAX" : formatSceneStatValue(stats.xp || 0, stats.xpToNext || 1);
+  const shieldRow = stats.shield > 0
+    ? `<div class="scene-vital-bar scene-vital-shield" aria-label="Escudo ${shieldText}">
+        <div id="${shieldId}" class="scene-vital-fill scene-shield-fill" style="width:${getBarPercent(stats.shield, stats.maxHp)}%"></div>
+        <span class="scene-vital-text">${Math.floor(stats.shield)}</span>
+      </div>`
+    : "";
+  const energyRow = stats.maxMp > 0
+    ? `<div class="scene-vital-bar scene-vital-energy" aria-label="Energia ${mpText}">
+        <div id="${mpId}" class="scene-vital-fill scene-mp-fill" style="width:${getBarPercent(stats.mp, stats.maxMp)}%"></div>
+        <span class="scene-vital-text">${mpText}</span>
+      </div>`
+    : "";
+  if(!isEnemy){
+    return `
+      <div class="scene-vitals scene-vitals-hero${stats.shield > 0 ? " has-shield" : ""}">
+        <span class="scene-level-badge" aria-label="Nivel ${stats.level}"><small>NV</small><b>${stats.level}</b></span>
+        <div class="scene-vital-stack">
+          ${shieldRow}
+          <div class="scene-vital-bar scene-vital-health" aria-label="Vida ${hpText}">
+            <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="width:${getBarPercent(stats.hp, stats.maxHp)}%"></div>
+            <span class="scene-vital-text">${hpText}</span>
+          </div>
+          ${energyRow}
+          <div class="scene-vital-bar scene-vital-xp" aria-label="XP ${xpText}">
+            <div id="${xpId}" class="scene-vital-fill scene-xp-fill" style="width:${stats.level >= MAX_LEVEL ? 100 : getBarPercent(stats.xp || 0, stats.xpToNext || 1)}%"></div>
+            <span class="scene-vital-text">${xpText}</span>
+          </div>
+          ${renderSceneEffectChips(stats.effects || [])}
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="scene-vitals scene-vitals-${kind}${isEnemy && stats.armor > 0 ? " has-armor" : ""}${stats.shield > 0 ? " has-shield" : ""}">
+      ${shieldRow}
+      <div class="scene-vital-row">
+        <div class="scene-vital-bar scene-vital-health" aria-label="Vida ${hpText}">
+          <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="width:${getBarPercent(stats.hp, stats.maxHp)}%"></div>
+          <span class="scene-vital-text">${hpText}</span>
+        </div>
+        ${isEnemy ? renderSceneArmorBadge(stats.armor || 0) : ""}
+      </div>
+      ${energyRow}
+    </div>`;
+}
+
+function getHeroProjectileKey(style = "attack"){
+  if(style === "buff"){ return ""; }
+  const heroKey = getHeroCombatAssetKey();
+  const archerKeys = new Set(["arqueiro", "atirador", "atirador-arcano", "sniper", "cacador", "espreitador", "guarda-florestal"]);
+  const natureKeys = new Set(["adepto-da-natureza", "druida", "avatar-da-natureza", "espirito-da-floresta", "protetor-da-floresta"]);
+  if(style === "cast" || player?.class === "Mago"){
+    if(["mago-incendiario"].includes(heroKey)){ return "fireball"; }
+    if(["mago-frigido"].includes(heroKey)){ return "frost-bolt"; }
+    if(["paladino", "arquimago", "fada-monarca"].includes(heroKey)){ return "holy-bolt"; }
+    if(["corrompido", "druida-sombrio"].includes(heroKey)){ return "shadow-bolt"; }
+    return "arcane-orb";
+  }
+  if(natureKeys.has(heroKey)){ return "nature-vine"; }
+  if(archerKeys.has(heroKey)){ return "arrow"; }
+  return "slash";
+}
+
+function getEnemyProjectileKey(style = "attack"){
+  if(style === "buff"){ return ""; }
+  if(style === "cast" || style === "skill"){ return "enemy-bolt"; }
+  const enemyArchetype = getEnemyRigArchetype(enemy?.baseName || enemy?.name || "");
+  return ["specter", "reaper", "winged", "humanoid"].includes(enemyArchetype) ? "enemy-bolt" : "enemy-claw";
+}
+
+function getSceneProjectileKey(attacker = "hero", style = "attack"){
+  return attacker === "hero" ? getHeroProjectileKey(style) : getEnemyProjectileKey(style);
+}
+
+function playSceneProjectile(attacker = "hero", style = "attack", travelMs = 360){
+  const projectileKey = getSceneProjectileKey(attacker, style);
+  if(!projectileKey){ return; }
+  const layer = document.getElementById("combatProjectileLayer");
+  const attackerElement = document.getElementById(attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox");
+  const defenderElement = document.getElementById(attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox");
+  if(!layer || !attackerElement || !defenderElement){ return; }
+  const layerRect = layer.getBoundingClientRect();
+  const attackerRect = attackerElement.getBoundingClientRect();
+  const defenderRect = defenderElement.getBoundingClientRect();
+  const fromX = attacker === "hero" ? attackerRect.left + attackerRect.width * 0.64 : attackerRect.left + attackerRect.width * 0.16;
+  const toX = attacker === "hero" ? defenderRect.left + defenderRect.width * 0.2 : defenderRect.left + defenderRect.width * 0.74;
+  const fromY = attackerRect.top + attackerRect.height * (style === "cast" ? 0.36 : 0.48);
+  const toY = defenderRect.top + defenderRect.height * 0.46;
+  const projectile = document.createElement("span");
+  projectile.className = `scene-projectile scene-projectile-${projectileKey} ${attacker === "hero" ? "from-hero" : "from-enemy"}`;
+  projectile.style.setProperty("--projectile-url", `url('${getProjectilePath(projectileKey)}')`);
+  projectile.style.setProperty("--from-x", `${fromX - layerRect.left - 48}px`);
+  projectile.style.setProperty("--from-y", `${fromY - layerRect.top - 32}px`);
+  projectile.style.setProperty("--to-x", `${toX - layerRect.left - 48}px`);
+  projectile.style.setProperty("--to-y", `${toY - layerRect.top - 32}px`);
+  projectile.style.setProperty("--travel-ms", `${Math.max(260, Math.floor(travelMs))}ms`);
+  projectile.style.setProperty("--projectile-dir", attacker === "hero" ? "1" : "-1");
+  layer.appendChild(projectile);
+  setTimeout(() => projectile.remove(), Math.max(340, Math.floor(travelMs) + 140));
 }
 
 function formatSubclassStatBonuses(subclass){
@@ -784,60 +963,76 @@ function restartElementAnimation(element, className){
 function pulseSpriteClass(elementId, className, duration = 260){
   const element = document.getElementById(elementId);
   if(!element){ return Promise.resolve(); }
+  const timerKey = `${elementId}:${className}`;
+  if(spriteClassTimers.has(timerKey)){
+    clearTimeout(spriteClassTimers.get(timerKey));
+  }
   restartElementAnimation(element, className);
   return new Promise(resolve => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       element.classList.remove(className);
+      spriteClassTimers.delete(timerKey);
       resolve();
     }, duration);
+    spriteClassTimers.set(timerKey, timeoutId);
   });
 }
 
 function getSpriteAnimationTiming(attacker = "hero", style = "attack"){
   if(style === "buff"){
-    return { attackerDuration: 520, hitDelay: 180, settleDelay: 160, betweenHits: 96 };
+    return { attackerDuration: 950, hitDelay: 300, settleDelay: 220, betweenHits: 140 };
   }
   if(style === "cast"){
     return attacker === "hero"
-      ? { attackerDuration: 480, hitDelay: 180, settleDelay: 180, betweenHits: 110 }
-      : { attackerDuration: 430, hitDelay: 160, settleDelay: 150, betweenHits: 100 };
+      ? { attackerDuration: 950, hitDelay: 330, settleDelay: 230, betweenHits: 150 }
+      : { attackerDuration: 950, hitDelay: 300, settleDelay: 220, betweenHits: 140 };
   }
   if(attacker === "hero"){
     if(player?.class === "Arqueiro"){
-      return { attackerDuration: 420, hitDelay: 170, settleDelay: 140, betweenHits: 110 };
+      return { attackerDuration: 820, hitDelay: 300, settleDelay: 200, betweenHits: 140 };
     }
     if(player?.class === "Guerreiro"){
-      return { attackerDuration: 320, hitDelay: 150, settleDelay: 120, betweenHits: 96 };
+      return { attackerDuration: 820, hitDelay: 280, settleDelay: 200, betweenHits: 130 };
     }
   }
   const enemyArchetype = getEnemyRigArchetype(enemy?.baseName || enemy?.name || "");
   if(["specter", "reaper", "winged", "humanoid"].includes(enemyArchetype)){
-    return { attackerDuration: 320, hitDelay: 140, settleDelay: 110, betweenHits: 96 };
+    return { attackerDuration: 820, hitDelay: 280, settleDelay: 200, betweenHits: 130 };
   }
-  return { attackerDuration: 280, hitDelay: 120, settleDelay: 100, betweenHits: 90 };
+  return { attackerDuration: 820, hitDelay: 260, settleDelay: 190, betweenHits: 120 };
 }
 
 async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = null, betweenHits = null){
   const attackerId = attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox";
   const defenderId = attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox";
-  const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : "attacking";
+  const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : style === "skill" ? "skilling" : "attacking";
   const timing = getSpriteAnimationTiming(attacker, style);
   const attackerDuration = timing.attackerDuration;
   const resolvedHitDelay = hitDelay ?? timing.hitDelay;
   const resolvedBetweenHits = betweenHits ?? timing.betweenHits;
   pulseSpriteClass(attackerId, attackerClass, attackerDuration);
+  if(style !== "buff" && (connectHit || style === "cast")){
+    playSceneProjectile(attacker, style, resolvedHitDelay + 120);
+  }
   if(!connectHit){
     await wait(Math.floor(resolvedHitDelay * 0.85));
     return;
   }
   await wait(resolvedHitDelay);
   for(let hitIndex = 0; hitIndex < Math.max(1, hitRepeats); hitIndex++){
-    pulseSpriteClass(defenderId, "hit", 220);
+    pulseSpriteClass(defenderId, "hit", 500);
     if(hitIndex < hitRepeats - 1){
       await wait(resolvedBetweenHits);
     }
   }
   await wait(timing.settleDelay);
+}
+
+function playEnemyEntranceAnimation(){
+  requestAnimationFrame(() => {
+    pulseSpriteClass("enemySpriteBox", "entering", 950);
+    pulseSpriteClass("heroSpriteBox", "readying", 750);
+  });
 }
 
 function getSkillAnimationStyle(skillInfo){
@@ -861,7 +1056,7 @@ function getSkillAnimationStyle(skillInfo){
   if(buffTypes.has(skillInfo.type)){
     return "buff";
   }
-  return player.class === "Mago" || skillInfo.type.startsWith("mage_") || skillInfo.type.startsWith("nature_") ? "cast" : "attack";
+  return player.class === "Mago" || skillInfo.type.startsWith("mage_") || skillInfo.type.startsWith("nature_") ? "cast" : "skill";
 }
 
 function getEnemyTemplateByName(enemyName){
@@ -2327,7 +2522,7 @@ function getActiveSkillPreviewDescription(skill){
     warrior_armor_pierce: "Ataque especializado em atravessar escudos, armadura ou resistencias.",
     warrior_smoke_bomb: "Ferramenta de evasao ofensiva para preparar o proximo golpe.",
     warrior_faith_shield: "Tecnica suprema de defesa total, seguida de explosao do dano armazenado.",
-    warrior_unstoppable: "Postura final de agressao contínua para dominar turnos decisivos.",
+    warrior_unstoppable: "Postura final de agressao contÃ­nua para dominar turnos decisivos.",
     warrior_ultrasonic_cuts: "Entrar em modo de cortes puros, focando apenas no ataque basico por alguns turnos.",
     warrior_giant_slayer: "Finalizador brutal contra alvos com muita vida atual.",
     mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e ainda drena mana do alvo para ampliar o impacto.",
@@ -2343,8 +2538,8 @@ function getActiveSkillPreviewDescription(skill){
     mage_demon_form: "Modo de risco extremo: muito dano extra, mas tambem muita vulnerabilidade.",
     mage_explode: "Feitico sacrificial devastador que consome mana e vida.",
     mage_avalanche: "Magia de avalanche com dano pesado e enfraquecimento prolongado.",
-    archer_focus: "Buff de precisão e dano que prepara seus tiros mais importantes por varios turnos.",
-    archer_camouflage: "Ferramenta de esquiva e preparação ofensiva, excelente para jogadas taticas.",
+    archer_focus: "Buff de precisÃ£o e dano que prepara seus tiros mais importantes por varios turnos.",
+    archer_camouflage: "Ferramenta de esquiva e preparaÃ§Ã£o ofensiva, excelente para jogadas taticas.",
     archer_headshot: "Disparo tecnico de alto dano, com chance de critico ou marcacao.",
     archer_barrage: "Sequencia de disparos basicos, com evolucoes diferentes para cada rota do cacador.",
     archer_piercing_shot: "Tiro direto para atravessar escudo e armadura.",
@@ -2399,8 +2594,8 @@ function getPassivePreviewDescription(skill){
     archer_dodge_damage_buff: "Passiva reativa que transforma esquiva em vantagem ofensiva ou sustentacao.",
     archer_mana_to_skill_bonus: "Passiva que converte mana maxima em dano de habilidade.",
     archer_sniper_bonus_crit: "Passiva de critico avancado, fazendo o excedente acima de 100% virar dano critico.",
-    archer_enemy_skip_chance: "Passiva de pressão que pode fazer o inimigo perder o turno.",
-    archer_flat_reduction_level: "Passiva defensiva de redução fixa por nivel.",
+    archer_enemy_skip_chance: "Passiva de pressÃ£o que pode fazer o inimigo perder o turno.",
+    archer_flat_reduction_level: "Passiva defensiva de reduÃ§Ã£o fixa por nivel.",
     coin_bonus: "Passiva voltada para aumentar suas recompensas em moedas.",
     nature_cycle: "Passiva que recompensa bater em alvos marcados pela Semente Viva.",
     nature_sap: "Passiva de sustentacao que transforma danos naturais recorrentes em cura.",
@@ -2925,7 +3120,7 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
       }
     }
     const finalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
-    return { damage: finalDamage, missiles, hitDamages, message: `${namePrefix} lançou ${missiles} misseis magicos e causou ${finalDamage} de dano.${chargeGains > 0 ? ` Voce ganhou ${chargeGains} carga(s) arcana(s).` : ""}` };
+    return { damage: finalDamage, missiles, hitDamages, message: `${namePrefix} lanÃ§ou ${missiles} misseis magicos e causou ${finalDamage} de dano.${chargeGains > 0 ? ` Voce ganhou ${chargeGains} carga(s) arcana(s).` : ""}` };
   }
   if(player.class === "Arqueiro" && !rollHit("basic")){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
@@ -3657,7 +3852,8 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
   const tooltipText = description || "";
-  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}"` : ` class="inventory-item"`;
+  const flashClass = inventoryFlash.result && ((item?.uid && item.uid === inventoryFlash.uid) || (item?.id && item.id === inventoryFlash.id)) ? ` inventory-flash-${inventoryFlash.result}` : "";
+  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip${flashClass}" data-tooltip="${tooltipText}"` : ` class="inventory-item${flashClass}"`;
   const shouldShowInlineDescription = !["equipment", "material"].includes(item?.type);
   return `<div${tooltipAttrs}>
     <div class="simple-item-line">
@@ -4124,9 +4320,9 @@ function getEnemyRigWrapperClass(targetEnemy){
 
 function getEnemySpriteMarkup(targetEnemy){
   const className = `${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}`;
-  return `<div id="enemySprite" class="sprite-figure emoji-sprite ${className}">${getEnemySpriteIcon(targetEnemy)}</div>`;
+  const assetKey = toCssToken(targetEnemy?.baseName || targetEnemy?.name || "desconhecido");
+  return renderSpriteSheetFigure("enemySprite", "enemies", assetKey, getEnemySpriteIcon(targetEnemy), targetEnemy?.baseName || targetEnemy?.name || "Inimigo", className);
 }
-
 function getHeroCombatFxMarkup(){
   return `
     <span class="combat-fx fx-hit-burst"></span>
@@ -4147,141 +4343,97 @@ function getEnemyCombatFxMarkup(){
 }
 
 function getSceneBackdropMarkup(regionName){
-  const token = toCssToken(regionName);
-  return `
-    <div class="scene-atmosphere scene-atmosphere-${token}">
-      <span class="scene-haze back"></span>
-      <span class="scene-haze front"></span>
-      <span class="scene-glow one"></span>
-      <span class="scene-glow two"></span>
-    </div>
-    <div class="scene-props scene-props-${token}">
-      <span class="scene-prop-ground"></span>
-      <span class="scene-prop left"></span>
-      <span class="scene-prop mid"></span>
-      <span class="scene-prop right"></span>
-    </div>`;
+  return "";
 }
 
 function renderCombatScene(activeEnemy = null, regionName = currentRegion){
   const sceneEnemy = activeEnemy || null;
   const heroClass = getHeroSpriteClass();
   const sceneClass = getRegionSpriteClass(regionName);
-  const displayedClassName = getDisplayedClassName();
-  const heroClassLine = displayedClassName !== player.class
-    ? `<div class="scene-subclass-line"><span class="scene-subclass-glyph">${getHeroSpriteIcon()}</span><span>${displayedClassName} | Base ${player.class}</span></div>`
-    : `<div class="scene-subclass-line"><span class="scene-subclass-glyph">${getHeroSpriteIcon()}</span><span>${player.class}</span></div>`;
+  const previewStats = getPreviewStats();
+  const heroVitals = renderSceneVitalPlate("hero", {
+    hp: displayState.playerHp ?? player.hp,
+    maxHp: previewStats.maxHp,
+    mp: displayState.playerMp ?? player.mp,
+    maxMp: previewStats.maxMp,
+    xp: displayState.playerXp ?? player.xp,
+    xpToNext: getXpToNextLevel(),
+    level: player.level,
+    shield: playerEffects.shieldValue || 0,
+    effects: getHeroSceneEffects()
+  });
+  const enemyVitals = sceneEnemy
+    ? renderSceneVitalPlate("enemy", {
+      hp: displayState.enemyHp ?? sceneEnemy.hp,
+      maxHp: sceneEnemy.maxHp,
+      mp: sceneEnemy.mp || 0,
+      maxMp: sceneEnemy.maxMp || 0,
+      shield: sceneEnemy.shieldValue || 0,
+      armor: getEnemyDisplayedArmor(sceneEnemy)
+    })
+    : "";
   const enemySide = sceneEnemy
     ? `<div class="${getEnemyRigWrapperClass(sceneEnemy)}" id="enemySpriteBox">
+        ${enemyVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
         <div class="sprite-fx">${getEnemyCombatFxMarkup()}</div>
         ${getEnemySpriteMarkup(sceneEnemy)}
-      </div>
-      <div class="scene-nameplate enemy-nameplate">
-        <strong>${sceneEnemy.baseName || sceneEnemy.name}</strong>
-        <span>${activeEnemy ? `${activeEnemy.isBoss ? "Chefao" : "Inimigo"} | Nv.${activeEnemy.level}` : "Chance atual mais alta"}</span>
       </div>`
-    : `<div class="scene-preview-pill">${getRegionBattleEmblem(regionName)}</div>`;
+    : "";
   return `
     <div class="battle-scene ${sceneClass}${activeEnemy ? " has-enemy" : " preview-scene"}">
       <div class="battle-scene-overlay"></div>
       ${getSceneBackdropMarkup(regionName)}
-      <div class="scene-region-tag">${regionName}</div>
+      <div id="combatProjectileLayer" class="combat-projectile-layer"></div>
       ${enemySide}
       <div id="heroSpriteBox" class="combat-entity hero-entity ${heroClass}">
+        ${heroVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
         <div class="sprite-fx">${getHeroCombatFxMarkup()}</div>
         ${getHeroSpriteMarkup()}
       </div>
-      <div class="scene-nameplate hero-nameplate">
-        <strong>${displayedClassName}</strong>
-        ${heroClassLine}
+    </div>`;
+}
+
+function renderAmbientHeroScene(scene){
+  const heroClass = getHeroSpriteClass();
+  const isCamp = scene === "camp";
+  return `
+    <div class="ambient-scene ${isCamp ? "camp-scene" : "village-scene"}">
+      <div class="ambient-scene-overlay"></div>
+      <div class="combat-entity hero-entity ambient-hero ${heroClass}${isCamp ? " resting" : ""}">
+        <div class="entity-aura"></div>
+        <div class="entity-shadow"></div>
+        ${getHeroSpriteMarkup()}
       </div>
     </div>`;
 }
 
 function renderBattleRegionPreviewCard(){
-  const regionData = regions[currentRegion];
-  const spawnPreview = getRegionSpawnPreview(currentRegion);
   return `
     <div class="combat-arena-card enemy-card">
-      <div class="combat-scene-header">
-        <div>
-          <h3>${currentRegion}</h3>
-          <p class="enemy-subtitle">Nenhum inimigo ativo. Explore a area e procure seu proximo combate.</p>
-        </div>
-        <div class="enemy-badges">
-          <span class="enemy-badge">Nivel medio ${getRegionAverageLevel(currentRegion)}</span>
-          <span class="enemy-badge">${currentRegion}</span>
-        </div>
-      </div>
-      <div class="simple-combat-banner">
-        <div class="simple-combat-avatar region-focus-avatar"><span class="combat-avatar-fallback">${getRegionBattleEmblem(currentRegion)}</span></div>
-        <div class="simple-combat-copy">
-          <strong>${currentRegion}</strong>
-          <span>${regionData.description}</span>
-          <span>${getBossUnlockText(currentRegion)}</span>
-        </div>
-      </div>
-      <div class="combat-detail-grid">
-        <div class="combat-detail-card">
-          <strong>Chances atuais de encontro</strong>
-          <div class="scene-preview-grid">
-            ${spawnPreview.map(entry => `<div class="spawn-preview-pill"><strong>${entry.name}</strong><span>Nv.${entry.level} | ${entry.chance.toFixed(1)}%</span></div>`).join("")}
-          </div>
-        </div>
-      </div>
+      ${renderCombatScene(null, currentRegion)}
     </div>`;
 }
 
 function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
   const statusEffects = getEnemyStatusEffects(targetEnemy);
+  const detailCards = [
+    statusEffects.length ? `<div class="combat-detail-card compact">
+      <strong>Estados</strong>
+      <div class="enemy-status-list">${statusEffects.map(effect => `<span class="enemy-status-pill ${effect.kind}">${effect.text}</span>`).join("")}</div>
+    </div>` : "",
+    `<div class="combat-detail-card compact">
+      <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
+      <span class="lock-note">${targetEnemy.possibleDrop}</span>
+    </div>`
+  ].filter(Boolean).join("");
   return `
     <div class="combat-arena-card enemy-card">
-      <div class="combat-scene-header">
-        <div>
-          <h3>${targetEnemy.name}</h3>
-          <p class="enemy-subtitle">${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} em ${targetEnemy.region}</p>
-        </div>
-        <div class="enemy-badges">
-          <span class="enemy-badge">Nivel ${targetEnemy.level}</span>
-          <span class="enemy-badge ${targetEnemy.rarityClass}">${targetEnemy.rarityLabel}</span>
-          <span class="enemy-badge">${targetEnemy.region}</span>
-        </div>
-      </div>
-      <div class="simple-combat-banner">
-        <div class="simple-combat-avatar enemy-focus-avatar">${renderCombatAvatar("enemies", toCssToken(targetEnemy.baseName || targetEnemy.name || "inimigo"), getEnemySpriteIcon(targetEnemy), targetEnemy.baseName || targetEnemy.name)}</div>
-        <div class="simple-combat-copy">
-          <strong>${targetEnemy.baseName || targetEnemy.name}</strong>
-          <span>${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} | Nivel ${targetEnemy.level}</span>
-          <span>${targetEnemy.possibleDrop}</span>
-        </div>
-      </div>
-      <div class="combat-detail-grid">
-        <div class="combat-detail-card">
-          ${targetEnemy.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${targetEnemy.shieldValue}</div><div class="bar small"><div class="shield-fill" style="width:${Math.min(100, targetEnemy.shieldValue / Math.max(1, targetEnemy.maxHp) * 100)}%"></div></div></div>` : ""}
-          <span class="lock-note">Vida ${Math.max(0, shownEnemyHp)}/${targetEnemy.maxHp}</span>
-          <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / targetEnemy.maxHp * 100}%"></div></div>
-          ${targetEnemy.isBoss ? `<span class="lock-note">Mana ${targetEnemy.mp}/${targetEnemy.maxMp}</span><div class="bar"><div class="fill mp" style="width:${targetEnemy.mp / targetEnemy.maxMp * 100}%"></div></div>` : ""}
-        </div>
-        <div class="combat-detail-card">
-          <strong>Perigos</strong>
-          ${targetEnemy.armor > 0 ? `<span class="lock-note">Armadura: ${targetEnemy.armor}</span>` : `<span class="lock-note">Sem armadura adicional.</span>`}
-          ${targetEnemy.maxHpStrikePercent > 0 ? `<span class="lock-note">Impacto brutal: +${Math.floor(targetEnemy.maxHpStrikePercent * 100)}% da sua vida maxima</span>` : ""}
-          ${(targetEnemy.bossAbilities || []).length ? `<div class="boss-ability-list">${targetEnemy.bossAbilities.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>` : `${targetEnemy.isBoss ? `<span class="lock-note">Este chefao ainda nao revelou habilidades extras.</span>` : ""}`}
-          ${targetEnemy.bossBuffTurns > 0 ? `<span class="status-on">Buff ativo por ${targetEnemy.bossBuffTurns} turno(s)</span>` : ""}
-        </div>
-        <div class="combat-detail-card">
-          <strong>Estados</strong>
-          ${statusEffects.length ? `<div class="enemy-status-list">${statusEffects.map(effect => `<span class="enemy-status-pill ${effect.kind}">${effect.text}</span>`).join("")}</div>` : `<span class="lock-note">Nenhum buff ou debuff ativo no momento.</span>`}
-        </div>
-        <div class="combat-detail-card">
-          <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
-          <span class="lock-note">${targetEnemy.possibleDrop}</span>
-        </div>
-      </div>
+      ${renderCombatScene(targetEnemy, targetEnemy.region)}
+      ${detailCards ? `<div class="combat-detail-grid compact">${detailCards}</div>` : ""}
     </div>`;
 }
 
@@ -4339,13 +4491,14 @@ function addInventoryItem(item){
     );
     if(existing){
       existing.qty = (existing.qty || 1) + (normalizedItem.qty || 1);
-      return;
+      return existing;
     }
   }
   if(stackable && !normalizedItem.qty){
     normalizedItem.qty = 1;
   }
   player.inventory.push(normalizedItem);
+  return normalizedItem;
 }
 
 function tryEnemyDrop(defeatedEnemy){
@@ -4415,8 +4568,8 @@ function craftRegionEquipment(regionName, slot){
   player.coins -= recipe.cost;
   const craftedItem = createEquipmentItem(recipe.template, "comum");
   player.stats.craftedEquipment = (player.stats.craftedEquipment || 0) + 1;
-  addInventoryItem(craftedItem);
-  triggerActionFeedback("village", `${craftedItem.name} criado e enviado para a mochila.`, "success");
+  const storedItem = addInventoryItem(craftedItem);
+  triggerInventoryFlash(storedItem || craftedItem, "success");
   log(`O artesao montou ${craftedItem.name} para voce.`);
   updateUI();
 }
@@ -4622,7 +4775,6 @@ function sellItem(itemUid){
   player.coins += value;
   player.stats.itemsSold = (player.stats.itemsSold || 0) + 1;
   player.stats.coinsEarned += value;
-  triggerActionFeedback("inventory", `${item.name} vendido por ${value} moedas.`, "success");
   log(`Voce vendeu ${item.name} por ${value} moedas.`);
   updateUI();
 }
@@ -4736,6 +4888,7 @@ function ensureEnemy(){
   if(!enemy || needsNewEnemy){
     spawnEnemy();
     updateUI();
+    playEnemyEntranceAnimation();
   }
 }
 
@@ -4754,6 +4907,7 @@ function challengeBoss(){
   needsNewEnemy = false;
   spawnEnemy(true);
   updateUI();
+  playEnemyEntranceAnimation();
 }
 
 function setMode(mode){
@@ -4864,12 +5018,13 @@ function buyConsumable(itemId){
   }
   player.coins -= cost;
   const existing = player.inventory.find(item => item.id === itemId);
+  let boughtItem = existing;
   if(existing){
     existing.qty++;
   }else{
-    addInventoryItem(createConsumableItem(itemId));
+    boughtItem = addInventoryItem(createConsumableItem(itemId));
   }
-  triggerActionFeedback("village", `${data.name} comprado. ${player.coins} moedas restantes.`, "success");
+  triggerInventoryFlash(boughtItem || { id: itemId }, "success");
   log(`Voce comprou ${data.name}.`);
   updateUI();
 }
@@ -4895,7 +5050,6 @@ function tryUpgradeEquippedItem(slot){
   const chance = getForgeUpgradeChance(item);
   if(Math.random() > chance){
     triggerForgeFeedback(slot, "fail");
-    triggerActionFeedback("village", `${item.name} resistiu ao aprimoramento. ${Math.floor(chance * 100)}% de chance.`, "warning");
     log(`O ferreiro falhou em aprimorar ${item.name}. Chance da tentativa: ${Math.floor(chance * 100)}%.`);
     updateUI();
     return;
@@ -4915,7 +5069,6 @@ function tryUpgradeEquippedItem(slot){
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
   triggerForgeFeedback(slot, "success");
-  triggerActionFeedback("village", `${upgradedItem.name} aprimorado com sucesso.`, "success");
   log(`O ferreiro aprimorou ${item.name} para ${upgradedItem.name}!`);
   updateUI();
 }
@@ -5134,14 +5287,11 @@ function updateUI(){
   const classBaseData = player.baseStats || classes[player.class];
   const subclassBonuses = getTotalSubclassBonuses();
   const bossUnlockProgress = getBossUnlockProgress(currentRegion);
-  document.getElementById("heroPortraitPanel").innerHTML = `
-    <h3>Seu heroi</h3>
-    <div class="hero-portrait-card">
-      <div class="hero-portrait-stage">${renderCombatAvatar("heroes", getHeroCombatAssetKey(), getHeroSpriteIcon(), getDisplayedClassName())}</div>
-      <div class="hero-portrait-copy">
-        <strong class="coin-badge" style="align-self:flex-start;">Nivel ${player.level}</strong>
-      </div>
-    </div>`;
+  const heroPortraitPanel = document.getElementById("heroPortraitPanel");
+  if (heroPortraitPanel){
+    heroPortraitPanel.innerHTML = "";
+    heroPortraitPanel.hidden = true;
+  }
 
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
@@ -5199,7 +5349,7 @@ function updateUI(){
     <h3>Sala de trofeus</h3>
     <div class="trophy-list">${renderTrophyGroups()}</div>`
     : currentMode === "camp" ? `
-    <h3>Acampamento</h3>
+    ${renderAmbientHeroScene("camp")}
     ${renderCampContent(campEntries, previewStats, investedSummary, classBaseData, subclassBonuses, activeSetData, xpToNextLevel)}`
     : currentMode === "bestiary" ? `
     <h3>Bestiario</h3>
@@ -5215,8 +5365,7 @@ function updateUI(){
       <div class="inventory-item"><strong>${IS_ARENA_PAGE ? "Duelo online" : "Como funciona"}</strong><br><span class="lock-note">${IS_ARENA_PAGE ? "Monte uma sala para 2 jogadores, deixe a iniciativa escolher quem abre o combate e resolva tudo em turnos." : "A arena fica em uma pagina separada. Aqui voce so prepara a entrada e o duelo online so abre quando voce escolher adentrar."}</span></div>
     </div>`
     : `
-    <h3>Vilarejo</h3>
-    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>
+    ${renderAmbientHeroScene("village")}
     ${renderVillagePanel()}`;
 
   const regionButtons = Object.keys(regions).map(region => `
@@ -5275,6 +5424,11 @@ function updateUI(){
   const actionsRow = document.getElementById("actions");
   const levelPanel = document.getElementById("levelUpPanel");
   const inventoryPanel = document.getElementById("inventoryInfo");
+  const gameLayout = document.querySelector(".game-layout");
+  const isVisualCombatMode = ["battle", "dungeon", "arena", "arena_run"].includes(currentMode);
+  if(gameLayout){
+    gameLayout.classList.toggle("visual-combat-layout", isVisualCombatMode);
+  }
   if(logBox){
     logBox.style.display = isLogHidden ? "none" : "block";
   }
@@ -5285,10 +5439,11 @@ function updateUI(){
     logPanel.style.display = ["battle", "dungeon"].includes(currentMode) ? "block" : "none";
   }
   if(playerPanel){
-    playerPanel.style.display = ["trophies", "bestiary"].includes(currentMode) ? "none" : "block";
+    playerPanel.style.display = isVisualCombatMode || ["trophies", "bestiary"].includes(currentMode) ? "none" : "block";
     playerPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "3" : "1";
   }
   if(enemyPanel){
+    enemyPanel.classList.toggle("visual-combat-panel", isVisualCombatMode);
     enemyPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "1" : "2";
   }
   if(actionsRow){
@@ -5315,23 +5470,47 @@ function animateBars(){
     const playerShieldFill = document.getElementById("playerShieldFill");
     const playerMpFill = document.getElementById("playerMpFill");
     const playerXpFill = document.getElementById("playerXpFill");
+    const sceneHeroShieldFill = document.getElementById("sceneHeroShieldFill");
+    const sceneHeroHpFill = document.getElementById("sceneHeroHpFill");
+    const sceneHeroMpFill = document.getElementById("sceneHeroMpFill");
+    const sceneHeroXpFill = document.getElementById("sceneHeroXpFill");
     const enemyHpFill = document.getElementById("enemyHpFill");
+    const sceneEnemyShieldFill = document.getElementById("sceneEnemyShieldFill");
+    const sceneEnemyMpFill = document.getElementById("sceneEnemyMpFill");
 
     if(playerHpFill){
       playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
     }
+    if(sceneHeroHpFill){
+      sceneHeroHpFill.style.width = `${getBarPercent(player.hp, getPreviewStats().maxHp)}%`;
+    }
     if(playerShieldFill){
       playerShieldFill.style.width = `${Math.min(100, (playerEffects.shieldValue || 0) / getPreviewStats().maxHp * 100)}%`;
+    }
+    if(sceneHeroShieldFill){
+      sceneHeroShieldFill.style.width = `${getBarPercent(playerEffects.shieldValue || 0, getPreviewStats().maxHp)}%`;
     }
     if(playerMpFill){
       playerMpFill.style.width = `${player.mp / getPreviewStats().maxMp * 100}%`;
     }
+    if(sceneHeroMpFill){
+      sceneHeroMpFill.style.width = `${getBarPercent(player.mp, getPreviewStats().maxMp)}%`;
+    }
     if(playerXpFill){
     playerXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : player.xp / getXpToNextLevel() * 100}%`;
     }
+    if(sceneHeroXpFill){
+      sceneHeroXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : getBarPercent(player.xp, getXpToNextLevel())}%`;
+    }
     if(enemy && enemyHpFill){
       const shownEnemyHp = displayState.enemyHp ?? enemy.hp;
-      enemyHpFill.style.width = `${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%`;
+      enemyHpFill.style.width = `${getBarPercent(Math.max(0, shownEnemyHp), enemy.maxHp)}%`;
+    }
+    if(enemy && sceneEnemyShieldFill){
+      sceneEnemyShieldFill.style.width = `${getBarPercent(enemy.shieldValue || 0, enemy.maxHp)}%`;
+    }
+    if(enemy && sceneEnemyMpFill){
+      sceneEnemyMpFill.style.width = `${getBarPercent(enemy.mp || 0, enemy.maxMp || 0)}%`;
     }
 
     displayState.playerHp = player.hp;
@@ -5608,7 +5787,7 @@ function setEnemyBarWidth(hpValue){
   const enemyHpFill = document.getElementById("enemyHpFill");
   if(!enemyHpFill || !enemy){ return; }
   enemyHpFill.style.transition = "none";
-  enemyHpFill.style.width = `${Math.max(0, hpValue) / enemy.maxHp * 100}%`;
+  enemyHpFill.style.width = `${getBarPercent(Math.max(0, hpValue), enemy.maxHp)}%`;
 }
 
 async function animateEnemyBarTo(targetHp, startHp = null, stepDelay = 16, minFrames = 8, frameDivisor = 3, startDelay = 12){
@@ -5650,7 +5829,7 @@ async function animateEnemyHitSequence(hitDamages){
     shownHp = Math.max(0, shownHp - damage);
     displayState.enemyHp = shownHp;
     setEnemyBarWidth(shownHp);
-    pulseSpriteClass("enemySpriteBox", "hit", 180);
+    pulseSpriteClass("enemySpriteBox", "hit-impact", Math.min(320, Math.max(170, animationConfig.missileHitDelay + 80)));
     await wait(animationConfig.missileHitDelay);
   }
 }

@@ -1,0 +1,716 @@
+﻿{
+    "schema":  "rpg-visual-assets-v5",
+    "generatedAt":  "2026-05-04T14:20:15",
+    "backgrounds":  {
+                        "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                        "regions":  {
+                                        "floresta":  {
+                                                         "name":  "Floresta",
+                                                         "src":  "assets\\visual\\backgrounds\\regions\\floresta.png",
+                                                         "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                         "heroAnchor":  {
+                                                                            "x":  0.72,
+                                                                            "y":  0.76
+                                                                        },
+                                                         "enemyAnchor":  {
+                                                                             "x":  0.28,
+                                                                             "y":  0.76
+                                                                         },
+                                                         "groundLine":  0.76,
+                                                         "accent":  "#4bbf73"
+                                                     },
+                                        "caverna":  {
+                                                        "name":  "Caverna",
+                                                        "src":  "assets\\visual\\backgrounds\\regions\\caverna.png",
+                                                        "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                        "heroAnchor":  {
+                                                                           "x":  0.72,
+                                                                           "y":  0.77
+                                                                       },
+                                                        "enemyAnchor":  {
+                                                                            "x":  0.28,
+                                                                            "y":  0.77
+                                                                        },
+                                                        "groundLine":  0.77,
+                                                        "accent":  "#8f7ad8"
+                                                    },
+                                        "ruinas":  {
+                                                       "name":  "Ruinas",
+                                                       "src":  "assets\\visual\\backgrounds\\regions\\ruinas.png",
+                                                       "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                       "heroAnchor":  {
+                                                                          "x":  0.72,
+                                                                          "y":  0.75
+                                                                      },
+                                                       "enemyAnchor":  {
+                                                                           "x":  0.28,
+                                                                           "y":  0.75
+                                                                       },
+                                                       "groundLine":  0.75,
+                                                       "accent":  "#d5b56e"
+                                                   },
+                                        "pantano":  {
+                                                        "name":  "Pantano",
+                                                        "src":  "assets\\visual\\backgrounds\\regions\\pantano.png",
+                                                        "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                        "heroAnchor":  {
+                                                                           "x":  0.72,
+                                                                           "y":  0.78
+                                                                       },
+                                                        "enemyAnchor":  {
+                                                                            "x":  0.28,
+                                                                            "y":  0.78
+                                                                        },
+                                                        "groundLine":  0.78,
+                                                        "accent":  "#5da35a"
+                                                    },
+                                        "vulcao":  {
+                                                       "name":  "Vulcao",
+                                                       "src":  "assets\\visual\\backgrounds\\regions\\vulcao.png",
+                                                       "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                       "heroAnchor":  {
+                                                                          "x":  0.72,
+                                                                          "y":  0.75
+                                                                      },
+                                                       "enemyAnchor":  {
+                                                                           "x":  0.28,
+                                                                           "y":  0.75
+                                                                       },
+                                                       "groundLine":  0.75,
+                                                       "accent":  "#f05a33"
+                                                   },
+                                        "abismo":  {
+                                                       "name":  "Abismo",
+                                                       "src":  "assets\\visual\\backgrounds\\regions\\abismo.png",
+                                                       "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                       "heroAnchor":  {
+                                                                          "x":  0.72,
+                                                                          "y":  0.74
+                                                                      },
+                                                       "enemyAnchor":  {
+                                                                           "x":  0.28,
+                                                                           "y":  0.74
+                                                                       },
+                                                       "groundLine":  0.74,
+                                                       "accent":  "#7b61ff"
+                                                   },
+                                        "fortaleza":  {
+                                                          "name":  "Fortaleza",
+                                                          "src":  "assets\\visual\\backgrounds\\regions\\fortaleza.png",
+                                                          "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                          "heroAnchor":  {
+                                                                             "x":  0.72,
+                                                                             "y":  0.76
+                                                                         },
+                                                          "enemyAnchor":  {
+                                                                              "x":  0.28,
+                                                                              "y":  0.76
+                                                                          },
+                                                          "groundLine":  0.76,
+                                                          "accent":  "#b8c4d8"
+                                                      },
+                                        "necropole":  {
+                                                          "name":  "Necropole",
+                                                          "src":  "assets\\visual\\backgrounds\\regions\\necropole.png",
+                                                          "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                          "heroAnchor":  {
+                                                                             "x":  0.72,
+                                                                             "y":  0.76
+                                                                         },
+                                                          "enemyAnchor":  {
+                                                                              "x":  0.28,
+                                                                              "y":  0.76
+                                                                          },
+                                                          "groundLine":  0.76,
+                                                          "accent":  "#7fd1c6"
+                                                      },
+                                        "citadela":  {
+                                                         "name":  "Citadela",
+                                                         "src":  "assets\\visual\\backgrounds\\regions\\citadela.png",
+                                                         "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                         "heroAnchor":  {
+                                                                            "x":  0.72,
+                                                                            "y":  0.75
+                                                                        },
+                                                         "enemyAnchor":  {
+                                                                             "x":  0.28,
+                                                                             "y":  0.75
+                                                                         },
+                                                         "groundLine":  0.75,
+                                                         "accent":  "#f0c15f"
+                                                     },
+                                        "panteao":  {
+                                                        "name":  "Panteao",
+                                                        "src":  "assets\\visual\\backgrounds\\regions\\panteao.png",
+                                                        "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                        "heroAnchor":  {
+                                                                           "x":  0.72,
+                                                                           "y":  0.74
+                                                                       },
+                                                        "enemyAnchor":  {
+                                                                            "x":  0.28,
+                                                                            "y":  0.74
+                                                                        },
+                                                        "groundLine":  0.74,
+                                                        "accent":  "#d9d2ff"
+                                                    },
+                                        "cataclismo":  {
+                                                           "name":  "Cataclismo",
+                                                           "src":  "assets\\visual\\backgrounds\\regions\\cataclismo.png",
+                                                           "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                           "heroAnchor":  {
+                                                                              "x":  0.72,
+                                                                              "y":  0.73
+                                                                          },
+                                                           "enemyAnchor":  {
+                                                                               "x":  0.28,
+                                                                               "y":  0.73
+                                                                           },
+                                                           "groundLine":  0.73,
+                                                           "accent":  "#ff6b6b"
+                                                       },
+                                        "paradoxo":  {
+                                                         "name":  "Paradoxo",
+                                                         "src":  "assets\\visual\\backgrounds\\regions\\paradoxo.png",
+                                                         "atlas":  "assets\\visual\\atlases\\region-background-atlas.png",
+                                                         "heroAnchor":  {
+                                                                            "x":  0.72,
+                                                                            "y":  0.74
+                                                                        },
+                                                         "enemyAnchor":  {
+                                                                             "x":  0.28,
+                                                                             "y":  0.74
+                                                                         },
+                                                         "groundLine":  0.74,
+                                                         "accent":  "#7ad7ff"
+                                                     }
+                                    },
+                        "scenes":  {
+                                       "camp":  {
+                                                    "src":  "assets/visual/backgrounds/scenes/camp.png",
+                                                    "heroAnchor":  {
+                                                                       "x":  0.48,
+                                                                       "y":  0.78
+                                                                   },
+                                                    "restAnchor":  {
+                                                                       "x":  0.48,
+                                                                       "y":  0.79
+                                                                   }
+                                                },
+                                       "village":  {
+                                                       "src":  "assets/visual/backgrounds/scenes/village.png"
+                                                   }
+                                   }
+                    },
+    "sprites":  {
+                    "frame":  {
+                                  "width":  192,
+                                  "height":  256
+                              },
+                    "columns":  48,
+                    "framesPerAnimation":  6,
+                    "animations":  {
+                                       "idle":  [
+                                                    0,
+                                                    1,
+                                                    2,
+                                                    3,
+                                                    4,
+                                                    5
+                                                ],
+                                       "walk":  [
+                                                    6,
+                                                    7,
+                                                    8,
+                                                    9,
+                                                    10,
+                                                    11
+                                                ],
+                                       "ready":  [
+                                                     12,
+                                                     13,
+                                                     14,
+                                                     15,
+                                                     16,
+                                                     17
+                                                 ],
+                                       "attack":  [
+                                                      18,
+                                                      19,
+                                                      20,
+                                                      21,
+                                                      22,
+                                                      23
+                                                  ],
+                                       "cast":  [
+                                                    24,
+                                                    25,
+                                                    26,
+                                                    27,
+                                                    28,
+                                                    29
+                                                ],
+                                       "skill":  [
+                                                     30,
+                                                     31,
+                                                     32,
+                                                     33,
+                                                     34,
+                                                     35
+                                                 ],
+                                       "hit":  [
+                                                   36,
+                                                   37,
+                                                   38,
+                                                   39,
+                                                   40,
+                                                   41
+                                               ],
+                                       "rest":  [
+                                                    42,
+                                                    43,
+                                                    44,
+                                                    45,
+                                                    46,
+                                                    47
+                                                ]
+                                   },
+                    "heroes":  {
+                                   "guerreiro":  {
+                                                     "src":  "assets/visual/sprites/heroes/guerreiro.png",
+                                                     "archetype":  "warrior"
+                                                 },
+                                   "cavaleiro":  {
+                                                     "src":  "assets/visual/sprites/heroes/cavaleiro.png",
+                                                     "archetype":  "warrior"
+                                                 },
+                                   "paladino":  {
+                                                    "src":  "assets/visual/sprites/heroes/paladino.png",
+                                                    "archetype":  "warrior"
+                                                },
+                                   "berserker":  {
+                                                     "src":  "assets/visual/sprites/heroes/berserker.png",
+                                                     "archetype":  "warrior"
+                                                 },
+                                   "espadachim":  {
+                                                      "src":  "assets/visual/sprites/heroes/espadachim.png",
+                                                      "archetype":  "warrior"
+                                                  },
+                                   "samurai":  {
+                                                   "src":  "assets/visual/sprites/heroes/samurai.png",
+                                                   "archetype":  "warrior"
+                                               },
+                                   "ninja":  {
+                                                 "src":  "assets/visual/sprites/heroes/ninja.png",
+                                                 "archetype":  "warrior"
+                                             },
+                                   "mago":  {
+                                                "src":  "assets/visual/sprites/heroes/mago.png",
+                                                "archetype":  "mage"
+                                            },
+                                   "elementalista":  {
+                                                         "src":  "assets/visual/sprites/heroes/elementalista.png",
+                                                         "archetype":  "mage"
+                                                     },
+                                   "mago-incendiario":  {
+                                                            "src":  "assets/visual/sprites/heroes/mago-incendiario.png",
+                                                            "archetype":  "mage"
+                                                        },
+                                   "mago-frigido":  {
+                                                        "src":  "assets/visual/sprites/heroes/mago-frigido.png",
+                                                        "archetype":  "mage"
+                                                    },
+                                   "arcanista":  {
+                                                     "src":  "assets/visual/sprites/heroes/arcanista.png",
+                                                     "archetype":  "mage"
+                                                 },
+                                   "arquimago":  {
+                                                     "src":  "assets/visual/sprites/heroes/arquimago.png",
+                                                     "archetype":  "mage"
+                                                 },
+                                   "corrompido":  {
+                                                      "src":  "assets/visual/sprites/heroes/corrompido.png",
+                                                      "archetype":  "mage"
+                                                  },
+                                   "arqueiro":  {
+                                                    "src":  "assets/visual/sprites/heroes/arqueiro.png",
+                                                    "archetype":  "archer"
+                                                },
+                                   "atirador":  {
+                                                    "src":  "assets/visual/sprites/heroes/atirador.png",
+                                                    "archetype":  "archer"
+                                                },
+                                   "atirador-arcano":  {
+                                                           "src":  "assets/visual/sprites/heroes/atirador-arcano.png",
+                                                           "archetype":  "archer"
+                                                       },
+                                   "sniper":  {
+                                                  "src":  "assets/visual/sprites/heroes/sniper.png",
+                                                  "archetype":  "archer"
+                                              },
+                                   "cacador":  {
+                                                   "src":  "assets/visual/sprites/heroes/cacador.png",
+                                                   "archetype":  "archer"
+                                               },
+                                   "espreitador":  {
+                                                       "src":  "assets/visual/sprites/heroes/espreitador.png",
+                                                       "archetype":  "archer"
+                                                   },
+                                   "guarda-florestal":  {
+                                                            "src":  "assets/visual/sprites/heroes/guarda-florestal.png",
+                                                            "archetype":  "archer"
+                                                        },
+                                   "adepto-da-natureza":  {
+                                                              "src":  "assets/visual/sprites/heroes/adepto-da-natureza.png",
+                                                              "archetype":  "nature"
+                                                          },
+                                   "druida":  {
+                                                  "src":  "assets/visual/sprites/heroes/druida.png",
+                                                  "archetype":  "nature"
+                                              },
+                                   "druida-sombrio":  {
+                                                          "src":  "assets/visual/sprites/heroes/druida-sombrio.png",
+                                                          "archetype":  "nature"
+                                                      },
+                                   "avatar-da-natureza":  {
+                                                              "src":  "assets/visual/sprites/heroes/avatar-da-natureza.png",
+                                                              "archetype":  "nature"
+                                                          },
+                                   "espirito-da-floresta":  {
+                                                                "src":  "assets/visual/sprites/heroes/espirito-da-floresta.png",
+                                                                "archetype":  "nature"
+                                                            },
+                                   "fada-monarca":  {
+                                                        "src":  "assets/visual/sprites/heroes/fada-monarca.png",
+                                                        "archetype":  "nature"
+                                                    },
+                                   "protetor-da-floresta":  {
+                                                                "src":  "assets/visual/sprites/heroes/protetor-da-floresta.png",
+                                                                "archetype":  "nature"
+                                                            }
+                               },
+                    "enemies":  {
+                                    "anjo-caido":  {
+                                                       "src":  "assets/visual/sprites/enemies/anjo-caido.png",
+                                                       "archetype":  "winged"
+                                                   },
+                                    "aranha-gigante":  {
+                                                           "src":  "assets/visual/sprites/enemies/aranha-gigante.png",
+                                                           "archetype":  "arachnid"
+                                                       },
+                                    "arauto-do-cataclismo":  {
+                                                                 "src":  "assets/visual/sprites/enemies/arauto-do-cataclismo.png",
+                                                                 "archetype":  "humanoid"
+                                                             },
+                                    "arauto-do-vazio":  {
+                                                            "src":  "assets/visual/sprites/enemies/arauto-do-vazio.png",
+                                                            "archetype":  "humanoid"
+                                                        },
+                                    "avatar-do-zenith":  {
+                                                             "src":  "assets/visual/sprites/enemies/avatar-do-zenith.png",
+                                                             "archetype":  "humanoid"
+                                                         },
+                                    "bruxa-do-brejo":  {
+                                                           "src":  "assets/visual/sprites/enemies/bruxa-do-brejo.png",
+                                                           "archetype":  "humanoid"
+                                                       },
+                                    "carrasco-de-guerra":  {
+                                                               "src":  "assets/visual/sprites/enemies/carrasco-de-guerra.png",
+                                                               "archetype":  "humanoid"
+                                                           },
+                                    "cavaleiro-abissal":  {
+                                                              "src":  "assets/visual/sprites/enemies/cavaleiro-abissal.png",
+                                                              "archetype":  "humanoid"
+                                                          },
+                                    "ceifador-de-ossos":  {
+                                                              "src":  "assets/visual/sprites/enemies/ceifador-de-ossos.png",
+                                                              "archetype":  "specter"
+                                                          },
+                                    "colosso-do-vazio":  {
+                                                             "src":  "assets/visual/sprites/enemies/colosso-do-vazio.png",
+                                                             "archetype":  "colossus"
+                                                         },
+                                    "cultista-perdido":  {
+                                                             "src":  "assets/visual/sprites/enemies/cultista-perdido.png",
+                                                             "archetype":  "humanoid"
+                                                         },
+                                    "deus-da-ruina":  {
+                                                          "src":  "assets/visual/sprites/enemies/deus-da-ruina.png",
+                                                          "archetype":  "colossus"
+                                                      },
+                                    "devorador-de-eras":  {
+                                                              "src":  "assets/visual/sprites/enemies/devorador-de-eras.png",
+                                                              "archetype":  "colossus"
+                                                          },
+                                    "draco-magmatico":  {
+                                                            "src":  "assets/visual/sprites/enemies/draco-magmatico.png",
+                                                            "archetype":  "winged"
+                                                        },
+                                    "drake-celeste":  {
+                                                          "src":  "assets/visual/sprites/enemies/drake-celeste.png",
+                                                          "archetype":  "winged"
+                                                      },
+                                    "ent-ancestral":  {
+                                                          "src":  "assets/visual/sprites/enemies/ent-ancestral.png",
+                                                          "archetype":  "ent"
+                                                      },
+                                    "escudeiro-de-ferro":  {
+                                                               "src":  "assets/visual/sprites/enemies/escudeiro-de-ferro.png",
+                                                               "archetype":  "humanoid"
+                                                           },
+                                    "esqueleto-mineiro":  {
+                                                              "src":  "assets/visual/sprites/enemies/esqueleto-mineiro.png",
+                                                              "archetype":  "humanoid"
+                                                          },
+                                    "executor-astral":  {
+                                                            "src":  "assets/visual/sprites/enemies/executor-astral.png",
+                                                            "archetype":  "humanoid"
+                                                        },
+                                    "fantasma-antigo":  {
+                                                            "src":  "assets/visual/sprites/enemies/fantasma-antigo.png",
+                                                            "archetype":  "specter"
+                                                        },
+                                    "feiticeira-morta":  {
+                                                             "src":  "assets/visual/sprites/enemies/feiticeira-morta.png",
+                                                             "archetype":  "specter"
+                                                         },
+                                    "fenix-sombria":  {
+                                                          "src":  "assets/visual/sprites/enemies/fenix-sombria.png",
+                                                          "archetype":  "winged"
+                                                      },
+                                    "general-de-aco":  {
+                                                           "src":  "assets/visual/sprites/enemies/general-de-aco.png",
+                                                           "archetype":  "humanoid"
+                                                       },
+                                    "goblin":  {
+                                                   "src":  "assets/visual/sprites/enemies/goblin.png",
+                                                   "archetype":  "humanoid"
+                                               },
+                                    "golem-de-brasa":  {
+                                                           "src":  "assets/visual/sprites/enemies/golem-de-brasa.png",
+                                                           "archetype":  "colossus"
+                                                       },
+                                    "guardiao-aureo":  {
+                                                           "src":  "assets/visual/sprites/enemies/guardiao-aureo.png",
+                                                           "archetype":  "humanoid"
+                                                       },
+                                    "guardiao-funebre":  {
+                                                             "src":  "assets/visual/sprites/enemies/guardiao-funebre.png",
+                                                             "archetype":  "humanoid"
+                                                         },
+                                    "guardiao-temporal":  {
+                                                              "src":  "assets/visual/sprites/enemies/guardiao-temporal.png",
+                                                              "archetype":  "humanoid"
+                                                          },
+                                    "hidra-do-lodo":  {
+                                                          "src":  "assets/visual/sprites/enemies/hidra-do-lodo.png",
+                                                          "archetype":  "slime"
+                                                      },
+                                    "imperador-do-eclipse":  {
+                                                                 "src":  "assets/visual/sprites/enemies/imperador-do-eclipse.png",
+                                                                 "archetype":  "humanoid"
+                                                             },
+                                    "lamia-do-eclipse":  {
+                                                             "src":  "assets/visual/sprites/enemies/lamia-do-eclipse.png",
+                                                             "archetype":  "serpent"
+                                                         },
+                                    "lobo-sombrio":  {
+                                                         "src":  "assets/visual/sprites/enemies/lobo-sombrio.png",
+                                                         "archetype":  "beast"
+                                                     },
+                                    "lorde-da-cripta":  {
+                                                            "src":  "assets/visual/sprites/enemies/lorde-da-cripta.png",
+                                                            "archetype":  "specter"
+                                                        },
+                                    "maga-da-muralha":  {
+                                                            "src":  "assets/visual/sprites/enemies/maga-da-muralha.png",
+                                                            "archetype":  "humanoid"
+                                                        },
+                                    "morcego-de-pedra":  {
+                                                             "src":  "assets/visual/sprites/enemies/morcego-de-pedra.png",
+                                                             "archetype":  "beast"
+                                                         },
+                                    "oraculo-do-zero":  {
+                                                            "src":  "assets/visual/sprites/enemies/oraculo-do-zero.png",
+                                                            "archetype":  "humanoid"
+                                                        },
+                                    "oraculo-radiante":  {
+                                                             "src":  "assets/visual/sprites/enemies/oraculo-radiante.png",
+                                                             "archetype":  "humanoid"
+                                                         },
+                                    "quimera-solar":  {
+                                                          "src":  "assets/visual/sprites/enemies/quimera-solar.png",
+                                                          "archetype":  "beast"
+                                                      },
+                                    "rei-espectral":  {
+                                                          "src":  "assets/visual/sprites/enemies/rei-espectral.png",
+                                                          "archetype":  "specter"
+                                                      },
+                                    "salamandra-rubra":  {
+                                                             "src":  "assets/visual/sprites/enemies/salamandra-rubra.png",
+                                                             "archetype":  "beast"
+                                                         },
+                                    "sapo-colossal":  {
+                                                          "src":  "assets/visual/sprites/enemies/sapo-colossal.png",
+                                                          "archetype":  "slime"
+                                                      },
+                                    "sentinela-quebrada":  {
+                                                               "src":  "assets/visual/sprites/enemies/sentinela-quebrada.png",
+                                                               "archetype":  "ent"
+                                                           },
+                                    "serafim-do-fim":  {
+                                                           "src":  "assets/visual/sprites/enemies/serafim-do-fim.png",
+                                                           "archetype":  "winged"
+                                                       },
+                                    "serpente-do-lodo":  {
+                                                             "src":  "assets/visual/sprites/enemies/serpente-do-lodo.png",
+                                                             "archetype":  "slime"
+                                                         },
+                                    "slime-toxico":  {
+                                                         "src":  "assets/visual/sprites/enemies/slime-toxico.png",
+                                                         "archetype":  "slime"
+                                                     },
+                                    "soberano-do-paradoxo":  {
+                                                                 "src":  "assets/visual/sprites/enemies/soberano-do-paradoxo.png",
+                                                                 "archetype":  "humanoid"
+                                                             },
+                                    "titan-rachado":  {
+                                                          "src":  "assets/visual/sprites/enemies/titan-rachado.png",
+                                                          "archetype":  "colossus"
+                                                      },
+                                    "troll-das-profundezas":  {
+                                                                  "src":  "assets/visual/sprites/enemies/troll-das-profundezas.png",
+                                                                  "archetype":  "humanoid"
+                                                              }
+                                }
+                },
+    "projectiles":  {
+                        "arcane-orb":  {
+                                           "src":  "assets/visual/projectiles/arcane-orb.png",
+                                           "frame":  {
+                                                         "width":  96,
+                                                         "height":  64
+                                                     },
+                                           "frames":  8
+                                       },
+                        "arrow":  {
+                                      "src":  "assets/visual/projectiles/arrow.png",
+                                      "frame":  {
+                                                    "width":  96,
+                                                    "height":  64
+                                                },
+                                      "frames":  8
+                                  },
+                        "enemy-bolt":  {
+                                           "src":  "assets/visual/projectiles/enemy-bolt.png",
+                                           "frame":  {
+                                                         "width":  96,
+                                                         "height":  64
+                                                     },
+                                           "frames":  8
+                                       },
+                        "enemy-claw":  {
+                                           "src":  "assets/visual/projectiles/enemy-claw.png",
+                                           "frame":  {
+                                                         "width":  96,
+                                                         "height":  64
+                                                     },
+                                           "frames":  8
+                                       },
+                        "fireball":  {
+                                         "src":  "assets/visual/projectiles/fireball.png",
+                                         "frame":  {
+                                                       "width":  96,
+                                                       "height":  64
+                                                   },
+                                         "frames":  8
+                                     },
+                        "frost-bolt":  {
+                                           "src":  "assets/visual/projectiles/frost-bolt.png",
+                                           "frame":  {
+                                                         "width":  96,
+                                                         "height":  64
+                                                     },
+                                           "frames":  8
+                                       },
+                        "holy-bolt":  {
+                                          "src":  "assets/visual/projectiles/holy-bolt.png",
+                                          "frame":  {
+                                                        "width":  96,
+                                                        "height":  64
+                                                    },
+                                          "frames":  8
+                                      },
+                        "nature-vine":  {
+                                            "src":  "assets/visual/projectiles/nature-vine.png",
+                                            "frame":  {
+                                                          "width":  96,
+                                                          "height":  64
+                                                      },
+                                            "frames":  8
+                                        },
+                        "shadow-bolt":  {
+                                            "src":  "assets/visual/projectiles/shadow-bolt.png",
+                                            "frame":  {
+                                                          "width":  96,
+                                                          "height":  64
+                                                      },
+                                            "frames":  8
+                                        },
+                        "slash":  {
+                                      "src":  "assets/visual/projectiles/slash.png",
+                                      "frame":  {
+                                                    "width":  96,
+                                                    "height":  64
+                                                },
+                                      "frames":  8
+                                  }
+                    },
+    "placement":  {
+                      "hero":  {
+                                   "x":  0.28,
+                                   "y":  0.78,
+                                   "origin":  "bottom-center"
+                               },
+                      "enemy":  {
+                                    "x":  0.72,
+                                    "y":  0.78,
+                                    "origin":  "bottom-center"
+                                }
+                  },
+    "notes":  [
+                  "V5 spritesheets use one generated atlas row per hero/subclass and per enemy slug.",
+                  "Idle, ready, hit and rest use stable repeated frames to avoid flicker and foot sliding.",
+                  "Attack, cast and skill actions use generated wind-up/release frames with slower CSS timing."
+              ],
+    "sourceAtlases":  {
+                          "heroes":  "assets/visual/atlases/hd-hero-sprite-atlas.png",
+                          "enemies":  "assets/visual/atlases/hd-enemy-sprite-atlas.png",
+                          "projectiles":  "assets/visual/atlases/hd-projectile-atlas.png"
+                      },
+    "generatedAtlases":  {
+                             "heroes":  [
+                                            "assets/visual/atlases/generated-v5/heroes-01.png",
+                                            "assets/visual/atlases/generated-v5/heroes-02.png",
+                                            "assets/visual/atlases/generated-v5/heroes-03.png",
+                                            "assets/visual/atlases/generated-v5/heroes-04.png",
+                                            "assets/visual/atlases/generated-v5/heroes-05.png",
+                                            "assets/visual/atlases/generated-v5/heroes-06.png",
+                                            "assets/visual/atlases/generated-v5/heroes-07.png"
+                                        ],
+                             "enemies":  [
+                                             "assets/visual/atlases/generated-v5/enemies-01.png",
+                                             "assets/visual/atlases/generated-v5/enemies-02.png",
+                                             "assets/visual/atlases/generated-v5/enemies-03.png",
+                                             "assets/visual/atlases/generated-v5/enemies-04.png",
+                                             "assets/visual/atlases/generated-v5/enemies-05.png",
+                                             "assets/visual/atlases/generated-v5/enemies-06.png",
+                                             "assets/visual/atlases/generated-v5/enemies-07.png",
+                                             "assets/visual/atlases/generated-v5/enemies-08.png",
+                                             "assets/visual/atlases/generated-v5/enemies-09.png",
+                                             "assets/visual/atlases/generated-v5/enemies-10.png",
+                                             "assets/visual/atlases/generated-v5/enemies-11.png",
+                                             "assets/visual/atlases/generated-v5/enemies-12.png"
+                                         ]
+                         }
+}
