@@ -39,6 +39,14 @@ let dungeonMultiplayer = createDungeonMultiplayerState();
 let arenaMultiplayer = createArenaMultiplayerState();
 let regionMusicAudio = null;
 let currentMusicRegion = null;
+const villageNpcProfiles = {
+  inn: { label: "Pousadeira", className: "npc-inn", asset: "innkeeper.png" },
+  alchemist: { label: "Alquimista", className: "npc-alchemist", asset: "alchemist.png" },
+  forge: { label: "Ferreiro", className: "npc-forge", asset: "blacksmith.png" },
+  artisan: { label: "Artesao", className: "npc-artisan", asset: "artisan.png" }
+};
+const VILLAGE_NPC_ASSET_VERSION = "village-npc-v3-20260506";
+
 function setVillageTab(tab){
   if(!["inn", "alchemist", "forge", "artisan"].includes(tab)){ return; }
   villageTab = tab;
@@ -511,6 +519,53 @@ function renderSceneEffectChips(effects = []){
   }).join("")}</div>`;
 }
 
+function getHpFillGradient(current, max){
+  const ratio = Number(max) > 0 ? Math.max(0, Math.min(1, Number(current) / Number(max))) : 0;
+  if(ratio <= 0.25){
+    return "linear-gradient(90deg,#b82d2d,#ff6a55)";
+  }
+  if(ratio <= 0.5){
+    return "linear-gradient(90deg,#cf7b24,#ffd166)";
+  }
+  return "linear-gradient(90deg,#249c46,#7ee787)";
+}
+
+function getHpFillStyle(current, max){
+  return `width:${getBarPercent(current, max)}%;background:${getHpFillGradient(current, max)}`;
+}
+
+function getHpMeterColors(current, max){
+  const ratio = Number(max) > 0 ? Math.max(0, Math.min(1, Number(current) / Number(max))) : 0;
+  if(ratio <= 0.25){
+    return { from: "#b82d2d", to: "#ff6a55", glow: "rgba(255,88,72,.35)" };
+  }
+  if(ratio <= 0.5){
+    return { from: "#cf7b24", to: "#ffd166", glow: "rgba(255,190,72,.3)" };
+  }
+  return { from: "#249c46", to: "#7ee787", glow: "rgba(91,230,116,.3)" };
+}
+
+function getHpMeterStyle(current, max){
+  const pct = getBarPercent(current, max);
+  const colors = getHpMeterColors(current, max);
+  return `--hp-pct:${pct}%;--hp-from:${colors.from};--hp-to:${colors.to};--hp-glow:${colors.glow};`;
+}
+
+function applyHpMeterStyle(fillElement, current, max){
+  if(!fillElement){ return; }
+  const pct = getBarPercent(current, max);
+  const colors = getHpMeterColors(current, max);
+  fillElement.style.width = `${pct}%`;
+  fillElement.style.background = `linear-gradient(90deg,${colors.from},${colors.to})`;
+  const meter = fillElement.parentElement;
+  if(meter){
+    meter.style.setProperty("--hp-pct", `${pct}%`);
+    meter.style.setProperty("--hp-from", colors.from);
+    meter.style.setProperty("--hp-to", colors.to);
+    meter.style.setProperty("--hp-glow", colors.glow);
+  }
+}
+
 function renderSceneVitalPlate(kind, stats){
   const isEnemy = kind === "enemy";
   const hpId = isEnemy ? "enemyHpFill" : "sceneHeroHpFill";
@@ -539,8 +594,8 @@ function renderSceneVitalPlate(kind, stats){
         <span class="scene-level-badge" aria-label="Nivel ${stats.level}"><small>NV</small><b>${stats.level}</b></span>
         <div class="scene-vital-stack">
           ${shieldRow}
-          <div class="scene-vital-bar scene-vital-health" aria-label="Vida ${hpText}">
-            <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="width:${getBarPercent(stats.hp, stats.maxHp)}%"></div>
+          <div class="scene-vital-bar scene-vital-health hp-meter" style="${getHpMeterStyle(stats.hp, stats.maxHp)}" aria-label="Vida ${hpText}">
+            <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="${getHpFillStyle(stats.hp, stats.maxHp)}"></div>
             <span class="scene-vital-text">${hpText}</span>
           </div>
           ${energyRow}
@@ -556,8 +611,8 @@ function renderSceneVitalPlate(kind, stats){
     <div class="scene-vitals scene-vitals-${kind}${isEnemy && stats.armor > 0 ? " has-armor" : ""}${stats.shield > 0 ? " has-shield" : ""}">
       ${shieldRow}
       <div class="scene-vital-row">
-        <div class="scene-vital-bar scene-vital-health" aria-label="Vida ${hpText}">
-          <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="width:${getBarPercent(stats.hp, stats.maxHp)}%"></div>
+        <div class="scene-vital-bar scene-vital-health hp-meter" style="${getHpMeterStyle(stats.hp, stats.maxHp)}" aria-label="Vida ${hpText}">
+          <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="${getHpFillStyle(stats.hp, stats.maxHp)}"></div>
           <span class="scene-vital-text">${hpText}</span>
         </div>
         ${isEnemy ? renderSceneArmorBadge(stats.armor || 0) : ""}
@@ -772,6 +827,25 @@ function getRegionSpawnPreview(regionName){
     ...entry.enemyData,
     chance: (entry.weight / totalWeight) * 100
   }));
+}
+
+function formatSpawnChanceValue(chance){
+  const numericChance = Math.max(0, Number(chance) || 0);
+  return numericChance >= 10 ? numericChance.toFixed(0) : numericChance.toFixed(1);
+}
+
+function renderSpawnPreviewCard(regionName = currentRegion){
+  const spawnPreview = getRegionSpawnPreview(regionName)
+    .slice()
+    .sort((a, b) => b.chance - a.chance);
+  const chanceMarkup = spawnPreview.length
+    ? spawnPreview.map(entry => `<span class="spawn-chance-chip"><strong>${entry.name}</strong> ${formatSpawnChanceValue(entry.chance)}%</span>`).join("")
+    : `<span class="lock-note">Sem criaturas disponiveis.</span>`;
+  return `
+    <div class="combat-detail-card compact combat-info-card spawn-preview-card">
+      <strong>Chances de spawn</strong>
+      <div class="spawn-chance-list">${chanceMarkup}</div>
+    </div>`;
 }
 
 function getRegionBattleEmblem(regionName){
@@ -4403,6 +4477,7 @@ function renderAmbientHeroScene(scene){
   return `
     <div class="ambient-scene ${isCamp ? "camp-scene" : "village-scene"}">
       <div class="ambient-scene-overlay"></div>
+      ${isCamp ? "" : renderVillageNpcSprite()}
       <div class="combat-entity hero-entity ambient-hero ${heroClass}${isCamp ? " resting" : ""}">
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
@@ -4411,10 +4486,25 @@ function renderAmbientHeroScene(scene){
     </div>`;
 }
 
+function getVillageNpcProfile(tab = villageTab){
+  return villageNpcProfiles[tab] || villageNpcProfiles.inn;
+}
+
+function renderVillageNpcSprite(tab = villageTab){
+  const profile = getVillageNpcProfile(tab);
+  const src = `assets/visual/sprites/village/${profile.asset}?v=${VILLAGE_NPC_ASSET_VERSION}`;
+  return `
+    <div class="village-npc-entity ${profile.className}" aria-label="${profile.label}" role="img">
+      <div class="npc-shadow"></div>
+      <img class="village-npc-sprite" src="${src}" alt="${profile.label}" draggable="false">
+    </div>`;
+}
+
 function renderBattleRegionPreviewCard(){
   return `
     <div class="combat-arena-card enemy-card">
       ${renderCombatScene(null, currentRegion)}
+      <div class="combat-detail-grid compact combat-info-strip">${renderSpawnPreviewCard(currentRegion)}</div>
     </div>`;
 }
 
@@ -4425,7 +4515,7 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
       <strong>Estados</strong>
       <div class="enemy-status-list">${statusEffects.map(effect => `<span class="enemy-status-pill ${effect.kind}">${effect.text}</span>`).join("")}</div>
     </div>` : "",
-    `<div class="combat-detail-card compact">
+    `<div class="combat-detail-card compact combat-info-card drop-preview-card">
       <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
       <span class="lock-note">${targetEnemy.possibleDrop}</span>
     </div>`
@@ -4433,7 +4523,7 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
   return `
     <div class="combat-arena-card enemy-card">
       ${renderCombatScene(targetEnemy, targetEnemy.region)}
-      ${detailCards ? `<div class="combat-detail-grid compact">${detailCards}</div>` : ""}
+      ${detailCards ? `<div class="combat-detail-grid compact combat-info-strip">${detailCards}</div>` : ""}
     </div>`;
 }
 
@@ -5303,7 +5393,7 @@ function updateUI(){
     </div>
     ${playerEffects.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${playerEffects.shieldValue}</div><div class="bar small"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div></div></div>` : ""}
     Vida: ${player.hp}/${previewStats.maxHp}
-    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    <div class="bar hp-meter player-hp-meter" style="${getHpMeterStyle(shownPlayerHp, previewStats.maxHp)}"><div id="playerHpFill" class="fill hp" style="${getHpFillStyle(shownPlayerHp, previewStats.maxHp)}"></div></div>
     Mana: ${player.mp}/${previewStats.maxMp}
     <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
     XP: ${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}
@@ -5426,8 +5516,12 @@ function updateUI(){
   const inventoryPanel = document.getElementById("inventoryInfo");
   const gameLayout = document.querySelector(".game-layout");
   const isVisualCombatMode = ["battle", "dungeon", "arena", "arena_run"].includes(currentMode);
+  const isAmbientSceneMode = ["camp", "village"].includes(currentMode);
+  const isWideCenterMode = isAmbientSceneMode || ["trophies", "bestiary"].includes(currentMode);
   if(gameLayout){
     gameLayout.classList.toggle("visual-combat-layout", isVisualCombatMode);
+    gameLayout.classList.toggle("ambient-scene-layout", isAmbientSceneMode);
+    gameLayout.classList.toggle("wide-center-layout", isWideCenterMode);
   }
   if(logBox){
     logBox.style.display = isLogHidden ? "none" : "block";
@@ -5447,6 +5541,7 @@ function updateUI(){
     enemyPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "1" : "2";
   }
   if(actionsRow){
+    actionsRow.classList.toggle("combat-actions-row", isVisualCombatMode);
     actionsRow.style.order = ["battle", "dungeon"].includes(currentMode) ? "2" : "3";
   }
   if(levelPanel){
@@ -5479,10 +5574,10 @@ function animateBars(){
     const sceneEnemyMpFill = document.getElementById("sceneEnemyMpFill");
 
     if(playerHpFill){
-      playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
+      applyHpMeterStyle(playerHpFill, player.hp, getPreviewStats().maxHp);
     }
     if(sceneHeroHpFill){
-      sceneHeroHpFill.style.width = `${getBarPercent(player.hp, getPreviewStats().maxHp)}%`;
+      applyHpMeterStyle(sceneHeroHpFill, player.hp, getPreviewStats().maxHp);
     }
     if(playerShieldFill){
       playerShieldFill.style.width = `${Math.min(100, (playerEffects.shieldValue || 0) / getPreviewStats().maxHp * 100)}%`;
@@ -5504,7 +5599,7 @@ function animateBars(){
     }
     if(enemy && enemyHpFill){
       const shownEnemyHp = displayState.enemyHp ?? enemy.hp;
-      enemyHpFill.style.width = `${getBarPercent(Math.max(0, shownEnemyHp), enemy.maxHp)}%`;
+      applyHpMeterStyle(enemyHpFill, Math.max(0, shownEnemyHp), enemy.maxHp);
     }
     if(enemy && sceneEnemyShieldFill){
       sceneEnemyShieldFill.style.width = `${getBarPercent(enemy.shieldValue || 0, enemy.maxHp)}%`;
@@ -5679,6 +5774,18 @@ function renderBasicActionButton(label, tooltip, onClick){
   return `<button class="action-btn basic-action-btn" data-tooltip="${tooltip}" onclick="${onClick}">${label}</button>`;
 }
 
+function renderAttributeControls(attribute){
+  const currentValue = Number(allocation[attribute]) || 0;
+  return `
+    <div class="attribute-controls">
+      <button class="attribute-step-large" onclick="adjustAttribute('${attribute}', -5)" ${currentValue < 5 ? "disabled" : ""}>-5</button>
+      <button onclick="adjustAttribute('${attribute}', -1)" ${currentValue === 0 ? "disabled" : ""}>-</button>
+      <span class="attribute-value">${currentValue}</span>
+      <button onclick="adjustAttribute('${attribute}', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      <button class="attribute-step-large" onclick="adjustAttribute('${attribute}', 5)" ${levelUpPoints < 5 ? "disabled" : ""}>+5</button>
+    </div>`;
+}
+
 function renderLevelUpPanel(){
   const panel = document.getElementById("levelUpPanel");
   if(needsSubclassChoice()){
@@ -5705,27 +5812,15 @@ function renderLevelUpPanel(){
     <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
     <div class="attribute-row">
       <div><strong>Vitalidade</strong><br><small>+${getAttributePointGain("vitality")} HP maxima por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('vitality', -1)" ${(allocation.vitality || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.vitality || 0}</span>
-        <button onclick="adjustAttribute('vitality', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("vitality")}
     </div>
     <div class="attribute-row">
       <div><strong>Sabedoria</strong><br><small>+${getAttributePointGain("wisdom")} MP maxima por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('wisdom', -1)" ${(allocation.wisdom || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.wisdom || 0}</span>
-        <button onclick="adjustAttribute('wisdom', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("wisdom")}
     </div>
     <div class="attribute-row">
       <div><strong>Forca</strong><br><small>+${getAttributePointGain("strength")} ATQ e +${getAttributePointGain("strength")} dano de habilidade por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('strength', -1)" ${(allocation.strength || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.strength || 0}</span>
-        <button onclick="adjustAttribute('strength', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("strength")}
     </div>
     <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
 }
@@ -5787,7 +5882,7 @@ function setEnemyBarWidth(hpValue){
   const enemyHpFill = document.getElementById("enemyHpFill");
   if(!enemyHpFill || !enemy){ return; }
   enemyHpFill.style.transition = "none";
-  enemyHpFill.style.width = `${getBarPercent(Math.max(0, hpValue), enemy.maxHp)}%`;
+  applyHpMeterStyle(enemyHpFill, Math.max(0, hpValue), enemy.maxHp);
 }
 
 async function animateEnemyBarTo(targetHp, startHp = null, stepDelay = 16, minFrames = 8, frameDivisor = 3, startDelay = 12){
@@ -6492,11 +6587,16 @@ function gainXP(amount){
 }
 
 function adjustAttribute(attribute, amount){
-  if(amount > 0 && levelUpPoints <= 0){ return; }
-  if(amount < 0 && allocation[attribute] <= 0){ return; }
+  if(!["vitality", "wisdom", "strength"].includes(attribute)){ return; }
+  const delta = Math.trunc(Number(amount) || 0);
+  if(delta === 0){ return; }
 
-  allocation[attribute] += amount;
-  levelUpPoints -= amount;
+  allocation[attribute] = Number(allocation[attribute]) || 0;
+  if(delta > 0 && levelUpPoints < delta){ return; }
+  if(delta < 0 && allocation[attribute] < Math.abs(delta)){ return; }
+
+  allocation[attribute] += delta;
+  levelUpPoints -= delta;
   updateUI();
 }
 
