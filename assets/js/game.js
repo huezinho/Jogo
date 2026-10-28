@@ -1,6 +1,17 @@
 ﻿const SAVE_KEY = "rpg_turnos_campaign_v1";
+const CHARACTER_SAVES_KEY = "rpg_turnos_character_saves_v1";
+const ACTIVE_CHARACTER_KEY = "rpg_turnos_active_character_v1";
+const CHARACTER_SELECT_EXIT_KEY = "rpg_turnos_character_select_exit_v1";
 const UI_SETTINGS_KEY = "rpg_turnos_ui_settings_v1";
 const MAX_LEVEL = 100;
+const MAX_CHARACTER_SAVES = 6;
+const START_CLASS_ORDER = ["Guerreiro", "Arqueiro", "Mago", "Adepto da Natureza"];
+const START_CLASS_COPY = {
+  Guerreiro: "Linha de frente resistente, forte no ataque basico e seguro para aprender o ritmo da aventura.",
+  Arqueiro: "Pressao constante, boa mana inicial e dano fisico confiavel para controlar combates longos.",
+  Mago: "Menos vida, mais mana e alto potencial para resolver lutas com habilidades poderosas.",
+  "Adepto da Natureza": "Equilibrio entre vida e mana, com rotas voltadas a controle, suporte e magia viva."
+};
 
 let player, enemy;
 let musicFadeInterval = null;
@@ -17,11 +28,29 @@ let artisanRegionFilter = null;
 let selectedTrophyCategory = "Todas";
 let campTab = "status";
 let villageTab = "inn";
+let villageNpcEntryPending = "";
+let startScreenTab = "continue";
+let inventoryFilter = "all";
 let enemiesSpawned = 0;
 let isDead = false;
 let deadUntil = null;
 let isLogHidden = false;
 let isSettingsOpen = false;
+let forgeFeedback = { slot: "", result: "", timeoutId: null };
+let actionFeedback = { scope: "", message: "", tone: "info", timeoutId: null };
+let inventoryFlash = { uid: "", id: "", result: "", timeoutId: null };
+const INVENTORY_MIN_SLOTS = 40;
+const INVENTORY_SLOT_COLUMNS = 8;
+const MAX_LOG_ENTRIES = 90;
+const INVENTORY_FILTER_OPTIONS = [
+  { id: "all", label: "Todos" },
+  { id: "chest", label: "Baus" },
+  { id: "material", label: "Itens de artesao" },
+  { id: "consumable", label: "Consumiveis" },
+  { id: "equipment", label: "Equipamentos" }
+];
+const spriteClassTimers = new Map();
+let saveCampaignTimeoutId = null;
 let playerEffects = createDefaultPlayerEffects();
 let displayState = {
   playerHp: null,
@@ -31,51 +60,38 @@ let displayState = {
 };
 let uiSettings = loadUiSettings();
 let dungeonMultiplayer = createDungeonMultiplayerState();
+let arenaMultiplayer = createArenaMultiplayerState();
 let regionMusicAudio = null;
 let currentMusicRegion = null;
-const IS_DUNGEON_PAGE = !!window.IS_DUNGEON_PAGE;
-const MAIN_PAGE_PATH = "index.html";
-const DUNGEON_PAGE_PATH = "dungeon.html";
-const PENDING_PAGE_MODE_KEY = "rpg_turnos_pending_page_mode_v1";
-
-function queuePageMode(mode){
-  try{
-    sessionStorage.setItem(PENDING_PAGE_MODE_KEY, mode);
-  }catch{}
-}
-
-function consumeQueuedPageMode(){
-  try{
-    const mode = sessionStorage.getItem(PENDING_PAGE_MODE_KEY);
-    if(mode){
-      sessionStorage.removeItem(PENDING_PAGE_MODE_KEY);
-    }
-    return mode || "";
-  }catch{
-    return "";
-  }
-}
-
-function navigateToGamePage(mode){
-  queuePageMode(mode);
-  location.href = ["dungeon", "dungeon_run"].includes(mode) ? DUNGEON_PAGE_PATH : MAIN_PAGE_PATH;
-}
-
-function openDungeonPage(){
-  navigateToGamePage("dungeon");
-}
-
-function returnToMainPage(mode = "battle"){
-  navigateToGamePage(mode);
-}
+const villageNpcProfiles = {
+  inn: { label: "Pousadeira", className: "npc-inn", asset: "innkeeper.png" },
+  alchemist: { label: "Alquimista", className: "npc-alchemist", asset: "alchemist.png" },
+  forge: { label: "Ferreiro", className: "npc-forge", asset: "blacksmith.png" },
+  artisan: { label: "Artesao", className: "npc-artisan", asset: "artisan.png" }
+};
+const VILLAGE_NPC_ASSET_VERSION = "village-npc-v3-20260506";
 
 function setVillageTab(tab){
   if(!["inn", "alchemist", "forge", "artisan"].includes(tab)){ return; }
+  const previousTab = villageTab;
   villageTab = tab;
+  if(previousTab !== tab){
+    queueVillageNpcEntry(tab);
+  }
   if(tab === "artisan" && !artisanRegionFilter){
     artisanRegionFilter = currentRegion;
   }
   updateUI();
+}
+
+function queueVillageNpcEntry(tab = villageTab){
+  villageNpcEntryPending = tab;
+}
+
+function consumeVillageNpcEntry(tab = villageTab){
+  if(villageNpcEntryPending !== tab){ return false; }
+  villageNpcEntryPending = "";
+  return true;
 }
 
 function setArtisanRegion(regionName){
@@ -166,6 +182,121 @@ function createDungeonMultiplayerState(){
   };
 }
 
+function createArenaMultiplayerState(){
+  return {
+    peer: null,
+    isHost: false,
+    roomCode: "",
+    hostConnection: null,
+    connections: {},
+    fighters: {},
+    heroStates: {},
+    duelActive: false,
+    turnId: "",
+    round: 1,
+    actionLockedUntil: 0
+  };
+}
+
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function escapeJsString(value){
+  return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "");
+}
+
+function createCharacterId(){
+  if(window.crypto?.randomUUID){
+    return `hero-${window.crypto.randomUUID()}`;
+  }
+  return `hero-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function readCharacterSavesRaw(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(CHARACTER_SAVES_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed.filter(entry => entry?.player?.class) : [];
+  }catch{
+    return [];
+  }
+}
+
+function writeCharacterSaves(saves){
+  localStorage.setItem(CHARACTER_SAVES_KEY, JSON.stringify(saves));
+}
+
+function normalizeSavedCharacterState(state){
+  if(!state?.player?.class){ return null; }
+  const normalized = { ...state };
+  normalized.characterId = normalized.characterId || normalized.player.characterId || createCharacterId();
+  normalized.player.characterId = normalized.characterId;
+  normalized.player.characterName = normalized.player.characterName || normalized.characterName || normalized.player.class;
+  normalized.characterName = normalized.characterName || normalized.player.characterName;
+  normalized.updatedAt = normalized.updatedAt || Date.now();
+  normalized.createdAt = normalized.createdAt || normalized.updatedAt;
+  return normalized;
+}
+
+function migrateLegacySaveIfNeeded(){
+  const rawLegacy = localStorage.getItem(SAVE_KEY);
+  if(!rawLegacy){ return; }
+  let legacyState = null;
+  try{
+    const parsedLegacy = JSON.parse(rawLegacy);
+    if(parsedLegacy?.player && !parsedLegacy.characterId && !parsedLegacy.player.characterId){
+      parsedLegacy.characterId = "legacy-campaign";
+      parsedLegacy.player.characterId = "legacy-campaign";
+    }
+    legacyState = normalizeSavedCharacterState(parsedLegacy);
+  }catch{
+    legacyState = null;
+  }
+  if(!legacyState){ return; }
+  localStorage.setItem(SAVE_KEY, JSON.stringify(legacyState));
+  const saves = readCharacterSavesRaw();
+  if(!saves.some(save => save.characterId === legacyState.characterId)){
+    saves.push(legacyState);
+    writeCharacterSaves(saves);
+  }
+}
+
+function getCharacterSaves(){
+  migrateLegacySaveIfNeeded();
+  return readCharacterSavesRaw()
+    .map(normalizeSavedCharacterState)
+    .filter(Boolean)
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+}
+
+function getSavedCharacterState(characterId = ""){
+  const saves = getCharacterSaves();
+  const activeId = characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || saves[0]?.characterId || "";
+  return saves.find(save => save.characterId === activeId) || saves[0] || null;
+}
+
+function upsertCharacterSave(state, options = {}){
+  const { setActive = false } = options;
+  const normalized = normalizeSavedCharacterState(state);
+  if(!normalized){ return; }
+  const saves = readCharacterSavesRaw().filter(save => save.characterId !== normalized.characterId);
+  saves.push(normalized);
+  writeCharacterSaves(saves);
+  if(setActive){
+    localStorage.setItem(ACTIVE_CHARACTER_KEY, normalized.characterId);
+  }
+}
+
+function getNextCharacterName(className){
+  return className;
+}
+
 function loadUiSettings(){
   try{
     const saved = JSON.parse(localStorage.getItem(UI_SETTINGS_KEY) || "{}");
@@ -173,10 +304,12 @@ function loadUiSettings(){
       enemyBarSpeed: saved.enemyBarSpeed || "rapida",
       disableRespawnTimer: !!saved.disableRespawnTimer,
       musicVolume: typeof saved.musicVolume === "number" ? Math.min(1, Math.max(0, saved.musicVolume)) : 0.5,
-      musicMuted: !!saved.musicMuted
+      musicMuted: !!saved.musicMuted,
+      devUnlockBestiary: !!saved.devUnlockBestiary,
+      inventoryOpen: saved.inventoryOpen !== false
     };
   }catch{
-    return { enemyBarSpeed: "rapida", disableRespawnTimer: false, musicVolume: 0.5, musicMuted: false };
+    return { enemyBarSpeed: "rapida", disableRespawnTimer: false, musicVolume: 0.5, musicMuted: false, devUnlockBestiary: false, inventoryOpen: true };
   }
 }
 
@@ -188,6 +321,121 @@ function saveUiSettings(){
 function toggleSettingsPanel(){
   isSettingsOpen = !isSettingsOpen;
   renderSettingsPanel();
+}
+
+function setDevUnlockBestiary(enabled){
+  uiSettings.devUnlockBestiary = !!enabled;
+  saveUiSettings();
+  if(player){
+    updateUI();
+  }
+}
+
+function isBestiaryDevUnlocked(){
+  return !!uiSettings.devUnlockBestiary;
+}
+
+function exitToCharacterSelect(){
+  if(isProcessingTurn){
+    log("Aguarde o turno atual terminar antes de sair.");
+    return;
+  }
+  if(player){
+    saveCampaign();
+  }
+  if(saveCampaignTimeoutId){
+    clearTimeout(saveCampaignTimeoutId);
+    saveCampaignTimeoutId = null;
+  }
+  player = null;
+  enemy = null;
+  isDead = false;
+  deadUntil = null;
+  isProcessingTurn = false;
+  isSettingsOpen = false;
+  try{
+    localStorage.removeItem(ACTIVE_CHARACTER_KEY);
+    sessionStorage.setItem(CHARACTER_SELECT_EXIT_KEY, "1");
+    sessionStorage.removeItem(PENDING_PAGE_MODE_KEY);
+  }catch{}
+  const gameRoot = document.getElementById("game");
+  const startRoot = document.getElementById("classSelect");
+  if(gameRoot){ gameRoot.style.display = "none"; }
+  if(startRoot){ startRoot.style.display = "block"; }
+  renderSettingsPanel();
+  renderStartScreen();
+}
+
+function setInventoryFilter(filterId){
+  if(!INVENTORY_FILTER_OPTIONS.some(option => option.id === filterId)){ return; }
+  inventoryFilter = filterId;
+  updateUI();
+}
+
+function toggleInventoryPanel(){
+  uiSettings.inventoryOpen = uiSettings.inventoryOpen === false;
+  saveUiSettings();
+  updateUI();
+}
+
+function blurActiveControl(){
+  const activeElement = document.activeElement;
+  if(activeElement && typeof activeElement.blur === "function"){
+    activeElement.blur();
+  }
+}
+
+function triggerForgeFeedback(slot, result){
+  if(forgeFeedback.timeoutId){
+    clearTimeout(forgeFeedback.timeoutId);
+  }
+  forgeFeedback = {
+    slot,
+    result,
+    timeoutId: setTimeout(() => {
+      forgeFeedback = { slot: "", result: "", timeoutId: null };
+      if(currentMode === "village" && villageTab === "forge"){
+        updateUI();
+      }
+    }, 1200)
+  };
+}
+
+function triggerActionFeedback(scope, message, tone = "info"){
+  if(actionFeedback.timeoutId){
+    clearTimeout(actionFeedback.timeoutId);
+  }
+  actionFeedback = {
+    scope,
+    message,
+    tone,
+    timeoutId: setTimeout(() => {
+      actionFeedback = { scope: "", message: "", tone: "info", timeoutId: null };
+      updateUI();
+    }, 2600)
+  };
+}
+
+function renderActionFeedback(scope){
+  if(!actionFeedback.message || actionFeedback.scope !== scope){
+    return "";
+  }
+  return `<div class="feedback-banner feedback-${actionFeedback.tone}">${actionFeedback.message}</div>`;
+}
+
+function triggerInventoryFlash(item, result = "success"){
+  if(inventoryFlash.timeoutId){
+    clearTimeout(inventoryFlash.timeoutId);
+  }
+  inventoryFlash = {
+    uid: item?.uid || "",
+    id: item?.id || "",
+    result,
+    timeoutId: setTimeout(() => {
+      inventoryFlash = { uid: "", id: "", result: "", timeoutId: null };
+      updateUI();
+    }, 1300)
+  };
 }
 
 function ensureRegionMusicAudio(){
@@ -333,6 +581,7 @@ function renderSettingsPanel(){
   ];
   panel.innerHTML = `
     <h3>Configuracao</h3>
+    ${player ? `<div class="settings-options settings-main-actions"><button class="danger-btn" onclick="exitToCharacterSelect()">Sair para personagens</button></div>` : ""}
     <span class="lock-note">Velocidade da barra de vida do inimigo</span>
     <div class="settings-options">
       ${options.map(option => `<button class="${uiSettings.enemyBarSpeed === option.id ? "active" : ""}" onclick="setEnemyBarSpeed('${option.id}')">${option.label}</button>`).join("")}
@@ -354,6 +603,14 @@ function renderSettingsPanel(){
         <button class="${uiSettings.musicMuted ? "active" : ""}" onclick="toggleMusicMute()">${uiSettings.musicMuted ? "Desmutar" : "Mutar"}</button>
       </div>
       <span class="settings-note">Volume atual: ${Math.round((uiSettings.musicVolume ?? 0.5) * 100)}%${uiSettings.musicMuted ? " | Mutado" : ""}</span>
+    </div>
+    <div style="margin-top:14px;">
+      <span class="lock-note">Dev</span>
+      <div class="settings-options">
+        <button class="${uiSettings.devUnlockBestiary ? "active" : ""}" onclick="setDevUnlockBestiary(true)">Bestiario livre</button>
+        <button class="${!uiSettings.devUnlockBestiary ? "active" : ""}" onclick="setDevUnlockBestiary(false)">Normal</button>
+      </div>
+      <span class="settings-note">Libera todas as regioes apenas no bestiario para analise, sem liberar chefes na campanha.</span>
     </div>`;
 }
 
@@ -404,15 +661,294 @@ function getHeroCombatAssetKey(targetPlayer = player){
   return toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro");
 }
 
-function getHeroSpriteMarkup(targetPlayer = player){
-  const heroClass = getHeroSpriteClass(targetPlayer);
-  return `<div id="heroSprite" class="sprite-figure emoji-sprite ${heroClass}">${getHeroSpriteIcon(targetPlayer)}</div>`;
+const VISUAL_ASSET_VERSION = "hd-v8-20260505";
+const PROJECTILE_ASSET_VERSION = "hd-v4-20260503";
+const ITEM_ASSET_VERSION = "items-v2-20260511";
+const REGION_MAP_ASSET_VERSION = "region-map-v1-20260519";
+const LOCATION_MAP_ASSET_VERSION = "locations-map-v1-20260520";
+const RARITY_GEM_ASSET_VERSION = "rarity-gems-v1-20260519";
+const REGION_MAP_MARKERS = {
+  Floresta: { x: 32, y: 89 },
+  Caverna: { x: 53, y: 75 },
+  Ruinas: { x: 30, y: 61 },
+  Pantano: { x: 70, y: 63 },
+  Vulcao: { x: 51, y: 50 },
+  Abismo: { x: 58, y: 36 },
+  Fortaleza: { x: 24, y: 44 },
+  Necropole: { x: 77, y: 49 },
+  Citadela: { x: 58, y: 27 },
+  Panteao: { x: 64, y: 22 },
+  Cataclismo: { x: 31, y: 12 },
+  Paradoxo: { x: 79, y: 10 }
+};
+const LOCATION_MODE_OPTIONS = [
+  { id: "battle", label: "Batalha", shortcut: "C", marker: "1", x: 29, y: 19 },
+  { id: "village", label: "Vilarejo", shortcut: "B", marker: "2", x: 73, y: 20 },
+  { id: "camp", label: "Acampamento", shortcut: "I", marker: "3", x: 25, y: 45 },
+  { id: "trophies", label: "Trofeus", shortcut: "V", marker: "4", x: 73, y: 44 },
+  { id: "bestiary", label: "Bestiario", shortcut: "H", marker: "5", x: 20, y: 68 },
+  { id: "dungeon", label: "Dungeon", shortcut: "Z", marker: "6", x: 78, y: 68 },
+  { id: "arena", label: "Arena", shortcut: "A", marker: "7", x: 51, y: 85 }
+];
+
+function getVisualSpritePath(kind, assetKey){
+  const normalizedKind = kind === "heroes" ? "heroes" : "enemies";
+  const resolvedKey = combatArtAliases[normalizedKind]?.[assetKey] || assetKey;
+  const path = `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
+  return new URL(path, window.location.href).href;
 }
 
+function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extraClass = ""){
+  const source = getVisualSpritePath(kind, assetKey);
+  const safeLabel = String(label || "").replace(/"/g, "&quot;");
+  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${extraClass}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></div>`;
+}
+
+function getHeroSpriteMarkup(targetPlayer = player){
+  const heroClass = getHeroSpriteClass(targetPlayer);
+  return renderSpriteSheetFigure("heroSprite", "heroes", getHeroCombatAssetKey(targetPlayer), getHeroSpriteIcon(targetPlayer), getDisplayedClassName(targetPlayer), heroClass);
+}
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
-  const resolvedKey = combatArtAliases[kind]?.[assetKey] || assetKey;
-  const source = combatArtAssets[kind]?.[resolvedKey] || `assets/combat-art/normalized/${resolvedKey}.png`;
-  return `<img class="combat-avatar-media" src="${source}" alt="${altText}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="combat-avatar-fallback" style="display:none;">${fallbackMarkup}</span>`;
+  const source = getVisualSpritePath(kind, assetKey);
+  const safeLabel = String(altText || "").replace(/"/g, "&quot;");
+  return `<span class="combat-avatar-media sprite-avatar" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
+}
+
+function getProjectilePath(projectileKey){
+  const key = projectileKey || "arcane-orb";
+  return new URL(`assets/visual/projectiles/${key}.png?v=${PROJECTILE_ASSET_VERSION}`, window.location.href).href;
+}
+
+function getBarPercent(value, maxValue){
+  if(!Number.isFinite(value) || !Number.isFinite(maxValue) || maxValue <= 0){ return 0; }
+  return Math.max(0, Math.min(100, value / maxValue * 100));
+}
+
+function formatSceneStatValue(value, maxValue){
+  return `${Math.max(0, Math.floor(value || 0))}/${Math.max(0, Math.floor(maxValue || 0))}`;
+}
+
+function getEnemyDisplayedArmor(targetEnemy = enemy){
+  if(!targetEnemy){ return 0; }
+  const reduction = targetEnemy.armorDownTurns > 0 ? (targetEnemy.armorDownPercent || 0) : 0;
+  return Math.max(0, Math.floor((targetEnemy.armor || 0) * (1 - reduction)));
+}
+
+function renderSceneArmorBadge(armor){
+  if(!(armor > 0)){ return ""; }
+  return `<span class="scene-armor-badge" aria-label="Armadura ${armor}">${armor}</span>`;
+}
+
+function getHeroSceneEffects(){
+  return getActiveBuffs().filter(effect => !effect.startsWith("Escudo "));
+}
+
+function renderSceneEffectChips(effects = []){
+  if(!effects.length){ return ""; }
+  return `<div class="scene-effect-list">${effects.slice(0, 4).map(effect => {
+    const isDebuff = /-|Queimadura|Perdera|Somente/i.test(effect);
+    return `<span class="scene-effect-chip ${isDebuff ? "debuff" : "buff"}">${effect}</span>`;
+  }).join("")}</div>`;
+}
+
+function renderEnemyRarityGem(targetEnemy){
+  if(!targetEnemy){ return ""; }
+  const gemKey = getRarityGemAssetKey(targetEnemy.rarityKey, targetEnemy.isBoss);
+  const label = targetEnemy.isBoss ? "Chefao" : (targetEnemy.rarityLabel || getRarityInfo(targetEnemy.rarityKey || "comum").label);
+  return `<img class="enemy-rarity-gem" src="${getRarityGemPath(targetEnemy.rarityKey, targetEnemy.isBoss)}" alt="" title="Raridade: ${escapeHtml(label)}" aria-label="Raridade ${escapeHtml(label)}" draggable="false">`;
+}
+
+function getRarityGemAssetKey(rarityKey = "comum", isBoss = false){
+  if(isBoss){ return "boss"; }
+  if(rarityKey === "ultra_rara"){ return "boss"; }
+  if(rarityKey === "lendaria"){ return "lendaria"; }
+  if(rarityKey === "rara"){ return "rara"; }
+  if(rarityKey === "incomum"){ return "incomum"; }
+  return "comum";
+}
+
+function getRarityGemPath(rarityKey = "comum", isBoss = false){
+  return `assets/visual/ui/rarity-gem-${getRarityGemAssetKey(rarityKey, isBoss)}.png?v=${RARITY_GEM_ASSET_VERSION}`;
+}
+
+function getHpFillGradient(current, max){
+  const ratio = Number(max) > 0 ? Math.max(0, Math.min(1, Number(current) / Number(max))) : 0;
+  if(ratio <= 0.25){
+    return "linear-gradient(90deg,#b82d2d,#ff6a55)";
+  }
+  if(ratio <= 0.5){
+    return "linear-gradient(90deg,#cf7b24,#ffd166)";
+  }
+  return "linear-gradient(90deg,#249c46,#7ee787)";
+}
+
+function getHpFillStyle(current, max){
+  return `width:${getBarPercent(current, max)}%;background:${getHpFillGradient(current, max)}`;
+}
+
+function getHpMeterColors(current, max){
+  const ratio = Number(max) > 0 ? Math.max(0, Math.min(1, Number(current) / Number(max))) : 0;
+  if(ratio <= 0.25){
+    return { from: "#b82d2d", to: "#ff6a55", glow: "rgba(255,88,72,.35)" };
+  }
+  if(ratio <= 0.5){
+    return { from: "#cf7b24", to: "#ffd166", glow: "rgba(255,190,72,.3)" };
+  }
+  return { from: "#249c46", to: "#7ee787", glow: "rgba(91,230,116,.3)" };
+}
+
+function getHpMeterStyle(current, max){
+  const pct = getBarPercent(current, max);
+  const colors = getHpMeterColors(current, max);
+  return `--hp-pct:${pct}%;--hp-from:${colors.from};--hp-to:${colors.to};--hp-glow:${colors.glow};`;
+}
+
+function applyHpMeterStyle(fillElement, current, max){
+  if(!fillElement){ return; }
+  const pct = getBarPercent(current, max);
+  const colors = getHpMeterColors(current, max);
+  fillElement.style.width = `${pct}%`;
+  fillElement.style.background = `linear-gradient(90deg,${colors.from},${colors.to})`;
+  const meter = fillElement.parentElement;
+  if(meter){
+    meter.style.setProperty("--hp-pct", `${pct}%`);
+    meter.style.setProperty("--hp-from", colors.from);
+    meter.style.setProperty("--hp-to", colors.to);
+    meter.style.setProperty("--hp-glow", colors.glow);
+  }
+}
+
+function renderSceneVitalPlate(kind, stats){
+  const isEnemy = kind === "enemy";
+  const hpId = isEnemy ? "enemyHpFill" : "sceneHeroHpFill";
+  const mpId = isEnemy ? "sceneEnemyMpFill" : "sceneHeroMpFill";
+  const shieldId = isEnemy ? "sceneEnemyShieldFill" : "sceneHeroShieldFill";
+  const xpId = "sceneHeroXpFill";
+  const hpText = formatSceneStatValue(stats.hp, stats.maxHp);
+  const mpText = formatSceneStatValue(stats.mp, stats.maxMp);
+  const shieldText = formatSceneStatValue(stats.shield || 0, stats.maxHp);
+  const xpText = stats.level >= MAX_LEVEL ? "MAX" : formatSceneStatValue(stats.xp || 0, stats.xpToNext || 1);
+  const shieldRow = stats.shield > 0
+    ? `<div class="scene-vital-bar scene-vital-shield" aria-label="Escudo ${shieldText}">
+        <div id="${shieldId}" class="scene-vital-fill scene-shield-fill" style="width:${getBarPercent(stats.shield, stats.maxHp)}%"></div>
+        <span class="scene-vital-text">${Math.floor(stats.shield)}</span>
+      </div>`
+    : "";
+  const energyRow = stats.maxMp > 0
+    ? `<div class="scene-vital-bar scene-vital-energy" aria-label="Energia ${mpText}">
+        <div id="${mpId}" class="scene-vital-fill scene-mp-fill" style="width:${getBarPercent(stats.mp, stats.maxMp)}%"></div>
+        <span class="scene-vital-text">${mpText}</span>
+      </div>`
+    : "";
+  if(!isEnemy){
+    return `
+      <div class="scene-vitals scene-vitals-hero${stats.shield > 0 ? " has-shield" : ""}">
+        <span class="scene-level-badge" aria-label="Nivel ${stats.level}"><small>NV</small><b>${stats.level}</b></span>
+        <div class="scene-vital-stack">
+          ${shieldRow}
+          <div class="scene-vital-bar scene-vital-health hp-meter" style="${getHpMeterStyle(stats.hp, stats.maxHp)}" aria-label="Vida ${hpText}">
+            <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="${getHpFillStyle(stats.hp, stats.maxHp)}"></div>
+            <span class="scene-vital-text">${hpText}</span>
+          </div>
+          ${energyRow}
+          <div class="scene-vital-bar scene-vital-xp" aria-label="XP ${xpText}">
+            <div id="${xpId}" class="scene-vital-fill scene-xp-fill" style="width:${stats.level >= MAX_LEVEL ? 100 : getBarPercent(stats.xp || 0, stats.xpToNext || 1)}%"></div>
+            <span class="scene-vital-text">${xpText}</span>
+          </div>
+          ${renderSceneEffectChips(stats.effects || [])}
+        </div>
+      </div>`;
+  }
+  const enemyEnergyRow = stats.maxMp > 0
+    ? `<div class="scene-vital-row scene-energy-row">
+        <span class="enemy-rarity-gem-spacer" aria-hidden="true"></span>
+        ${energyRow}
+        ${isEnemy && stats.armor > 0 ? `<span class="scene-armor-spacer" aria-hidden="true"></span>` : ""}
+      </div>`
+    : "";
+  return `
+    <div class="scene-vitals scene-vitals-${kind}${isEnemy && stats.armor > 0 ? " has-armor" : ""}${stats.shield > 0 ? " has-shield" : ""}">
+      ${shieldRow}
+      <div class="scene-vital-row">
+        ${isEnemy ? (stats.rarityGem || "") : ""}
+        <div class="scene-vital-bar scene-vital-health hp-meter" style="${getHpMeterStyle(stats.hp, stats.maxHp)}" aria-label="Vida ${hpText}">
+          <div id="${hpId}" class="scene-vital-fill scene-hp-fill" style="${getHpFillStyle(stats.hp, stats.maxHp)}"></div>
+          <span class="scene-vital-text">${hpText}</span>
+        </div>
+        ${isEnemy ? renderSceneArmorBadge(stats.armor || 0) : ""}
+      </div>
+      ${enemyEnergyRow}
+    </div>`;
+}
+
+function getHeroSceneVitalMarkup(){
+  const previewStats = getPreviewStats();
+  return renderSceneVitalPlate("hero", {
+    hp: displayState.playerHp ?? player.hp,
+    maxHp: previewStats.maxHp,
+    mp: displayState.playerMp ?? player.mp,
+    maxMp: previewStats.maxMp,
+    xp: displayState.playerXp ?? player.xp,
+    xpToNext: getXpToNextLevel(),
+    level: player.level,
+    shield: playerEffects.shieldValue || 0,
+    effects: getHeroSceneEffects()
+  });
+}
+
+function getHeroProjectileKey(style = "attack"){
+  if(style === "buff"){ return ""; }
+  const heroKey = getHeroCombatAssetKey();
+  const archerKeys = new Set(["arqueiro", "atirador", "atirador-arcano", "sniper", "cacador", "espreitador", "guarda-florestal"]);
+  const natureKeys = new Set(["adepto-da-natureza", "druida", "avatar-da-natureza", "espirito-da-floresta", "protetor-da-floresta"]);
+  if(style === "cast" || player?.class === "Mago"){
+    if(["mago-incendiario"].includes(heroKey)){ return "fireball"; }
+    if(["mago-frigido"].includes(heroKey)){ return "frost-bolt"; }
+    if(["paladino", "arquimago", "fada-monarca"].includes(heroKey)){ return "holy-bolt"; }
+    if(["corrompido", "druida-sombrio"].includes(heroKey)){ return "shadow-bolt"; }
+    return "arcane-orb";
+  }
+  if(natureKeys.has(heroKey)){ return "nature-vine"; }
+  if(archerKeys.has(heroKey)){ return "arrow"; }
+  return "slash";
+}
+
+function getEnemyProjectileKey(style = "attack"){
+  if(style === "buff"){ return ""; }
+  if(style === "cast" || style === "skill"){ return "enemy-bolt"; }
+  const enemyArchetype = getEnemyRigArchetype(enemy?.baseName || enemy?.name || "");
+  return ["specter", "reaper", "winged", "humanoid"].includes(enemyArchetype) ? "enemy-bolt" : "enemy-claw";
+}
+
+function getSceneProjectileKey(attacker = "hero", style = "attack"){
+  return attacker === "hero" ? getHeroProjectileKey(style) : getEnemyProjectileKey(style);
+}
+
+function playSceneProjectile(attacker = "hero", style = "attack", travelMs = 360){
+  const projectileKey = getSceneProjectileKey(attacker, style);
+  if(!projectileKey){ return; }
+  const layer = document.getElementById("combatProjectileLayer");
+  const attackerElement = document.getElementById(attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox");
+  const defenderElement = document.getElementById(attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox");
+  if(!layer || !attackerElement || !defenderElement){ return; }
+  const layerRect = layer.getBoundingClientRect();
+  const attackerRect = attackerElement.getBoundingClientRect();
+  const defenderRect = defenderElement.getBoundingClientRect();
+  const fromX = attacker === "hero" ? attackerRect.left + attackerRect.width * 0.64 : attackerRect.left + attackerRect.width * 0.16;
+  const toX = attacker === "hero" ? defenderRect.left + defenderRect.width * 0.2 : defenderRect.left + defenderRect.width * 0.74;
+  const fromY = attackerRect.top + attackerRect.height * (style === "cast" ? 0.36 : 0.48);
+  const toY = defenderRect.top + defenderRect.height * 0.46;
+  const projectile = document.createElement("span");
+  projectile.className = `scene-projectile scene-projectile-${projectileKey} ${attacker === "hero" ? "from-hero" : "from-enemy"}`;
+  projectile.style.setProperty("--projectile-url", `url('${getProjectilePath(projectileKey)}')`);
+  projectile.style.setProperty("--from-x", `${fromX - layerRect.left - 48}px`);
+  projectile.style.setProperty("--from-y", `${fromY - layerRect.top - 32}px`);
+  projectile.style.setProperty("--to-x", `${toX - layerRect.left - 48}px`);
+  projectile.style.setProperty("--to-y", `${toY - layerRect.top - 32}px`);
+  projectile.style.setProperty("--travel-ms", `${Math.max(260, Math.floor(travelMs))}ms`);
+  projectile.style.setProperty("--projectile-dir", attacker === "hero" ? "1" : "-1");
+  layer.appendChild(projectile);
+  setTimeout(() => projectile.remove(), Math.max(340, Math.floor(travelMs) + 140));
 }
 
 function formatSubclassStatBonuses(subclass){
@@ -437,7 +973,17 @@ function getTotalSubclassBonuses(targetPlayer = player){
 
 function selectClass(name){
   const base = classes[name];
+  if(!base){ return; }
+  if(getCharacterSaves().length >= MAX_CHARACTER_SAVES){
+    startScreenTab = "continue";
+    renderStartScreen();
+    alert(`Limite de ${MAX_CHARACTER_SAVES} personagens atingido. Apague um personagem salvo para criar outro.`);
+    return;
+  }
+  const characterId = createCharacterId();
   player = {
+    characterId,
+    characterName: getNextCharacterName(name),
     class: name,
     level: 1,
     xp: 0,
@@ -460,15 +1006,35 @@ function selectClass(name){
       regionKills: {},
       regionBossKills: {},
       dungeonClears: 0,
-      dungeonBestStep: 0
+      dungeonBestStep: 0,
+      craftedEquipment: 0,
+      itemsSold: 0,
+      arenaDuels: 0,
+      arenaWins: 0
     }
   };
   normalizePlayerState();
   playerEffects = createDefaultPlayerEffects();
+  enemy = null;
+  pendingLevelUps = 0;
+  levelUpPoints = 0;
+  allocation = { strength: 0, wisdom: 0, vitality: 0 };
+  currentRegion = "Floresta";
+  enemiesSpawned = 0;
+  isDead = false;
+  deadUntil = null;
+  isProcessingTurn = false;
+  isLogHidden = false;
+  displayState = { playerHp: player.hp, playerMp: player.mp, playerXp: player.xp, enemyHp: null };
+  localStorage.setItem(ACTIVE_CHARACTER_KEY, characterId);
   document.getElementById("classSelect").style.display = "none";
   document.getElementById("game").style.display = "block";
   if(IS_DUNGEON_PAGE){
     currentMode = "dungeon";
+  }else if(IS_ARENA_PAGE){
+    currentMode = "arena";
+  }else{
+    currentMode = "battle";
   }
   syncRegionMusic(true);
   needsNewEnemy = true;
@@ -564,92 +1130,114 @@ function getRegionSpawnPreview(regionName){
   }));
 }
 
+function formatSpawnChanceValue(chance){
+  const numericChance = Math.max(0, Number(chance) || 0);
+  return numericChance >= 10 ? numericChance.toFixed(0) : numericChance.toFixed(1);
+}
+
+function renderSpawnPreviewCard(regionName = currentRegion){
+  const spawnPreview = getRegionSpawnPreview(regionName)
+    .slice()
+    .sort((a, b) => b.chance - a.chance);
+  const chanceMarkup = spawnPreview.length
+    ? spawnPreview.map(entry => {
+      const rarity = getEnemyRarity(regionName, entry.name, false);
+      const rarityToken = toCssToken(rarity.key);
+      return `<span class="spawn-chance-chip spawn-rarity-${rarityToken}" title="Raridade: ${escapeHtml(rarity.label)}"><img class="spawn-rarity-gem" src="${getRarityGemPath(rarity.key, false)}" alt="" aria-hidden="true" draggable="false"><strong>${escapeHtml(entry.name)}</strong><span class="spawn-chance-value">${formatSpawnChanceValue(entry.chance)}%</span></span>`;
+    }).join("")
+    : `<span class="lock-note">Sem criaturas disponiveis.</span>`;
+  return `
+    <div class="combat-detail-card compact combat-info-card spawn-preview-card">
+      <div class="spawn-chance-list">${chanceMarkup}</div>
+    </div>`;
+}
+
 function getRegionBattleEmblem(regionName){
   const emblems = {
-    Floresta: "🌲",
-    Caverna: "🪨",
-    Ruinas: "🏛️",
-    Pantano: "🐸",
-    Vulcao: "🌋",
-    Abismo: "🕳️",
-    Fortaleza: "🛡️",
-    Necropole: "⚰️",
-    Citadela: "🏰",
-    Panteao: "☀️",
-    Cataclismo: "☄️",
-    Paradoxo: "🌀"
+    Floresta: "??",
+    Caverna: "??",
+    Ruinas: "???",
+    Pantano: "??",
+    Vulcao: "??",
+    Abismo: "???",
+    Fortaleza: "???",
+    Necropole: "??",
+    Citadela: "??",
+    Panteao: "??",
+    Cataclismo: "??",
+    Paradoxo: "??"
   };
-  return emblems[regionName] || "⚔️";
+  return emblems[regionName] || "??";
 }
 
 function getEnemySpriteIcon(targetEnemy){
   const enemyName = targetEnemy?.baseName || targetEnemy?.name || "";
   const byName = {
-    "Lobo Sombrio": "🐺",
-    Goblin: "👺",
-    "Aranha Gigante": "🕷️",
-    "Morcego de Pedra": "🦇",
-    "Esqueleto Mineiro": "💀",
-    "Slime Toxico": "🧪",
-    "Sentinela Quebrada": "🛡️",
-    "Cultista Perdido": "🔮",
-    "Fantasma Antigo": "👻",
-    "Sapo Colossal": "🐸",
-    "Bruxa do Brejo": "🧙",
-    "Serpente do Lodo": "🐍",
-    "Salamandra Rubra": "🦎",
-    "Golem de Brasa": "🪨",
-    "Fenix Sombria": "🔥",
-    "Cavaleiro Abissal": "⚔️",
-    "Lamia do Eclipse": "🐍",
-    "Colosso do Vazio": "🗿",
-    "Escudeiro de Ferro": "🛡️",
-    "Maga da Muralha": "✨",
-    "Carrasco de Guerra": "🪓",
-    "Guardiao Funebre": "⚰️",
-    "Feiticeira Morta": "🪄",
-    "Ceifador de Ossos": "☠️",
-    "Anjo Caido": "🪽",
-    "Drake Celeste": "🐉",
-    "Executor Astral": "🌠",
-    "Guardiao Aureo": "☀️",
-    "Oraculo Radiante": "🔆",
-    "Quimera Solar": "🦁",
-    "Arauto do Cataclismo": "☄️",
-    "Titan Rachado": "⛰️",
-    "Serafim do Fim": "🌩️",
-    "Guardiao Temporal": "⏳",
-    "Oraculo do Zero": "🌀",
-    "Devorador do Eco": "🌌",
-    "Ent Ancestral": "🌳",
-    "Troll das Profundezas": "🪨",
-    "Rei Espectral": "👻",
-    "Hidra do Lodo": "🐍",
-    "Draco Magmatico": "🌋",
-    "Arauto do Vazio": "🕳️",
-    "General de Aco": "🛡️",
-    "Lorde da Cripta": "⚰️",
-    "Imperador do Eclipse": "🌘",
-    "Avatar do Zenith": "☀️",
-    "Deus da Ruina": "☄️",
-    "Soberano do Paradoxo": "🌀"
+    "Lobo Sombrio": "??",
+    Goblin: "??",
+    "Aranha Gigante": "???",
+    "Morcego de Pedra": "??",
+    "Esqueleto Mineiro": "??",
+    "Slime Toxico": "??",
+    "Sentinela Quebrada": "???",
+    "Cultista Perdido": "??",
+    "Fantasma Antigo": "??",
+    "Sapo Colossal": "??",
+    "Bruxa do Brejo": "??",
+    "Serpente do Lodo": "??",
+    "Salamandra Rubra": "??",
+    "Golem de Brasa": "??",
+    "Fenix Sombria": "??",
+    "Cavaleiro Abissal": "??",
+    "Lamia do Eclipse": "??",
+    "Colosso do Vazio": "??",
+    "Escudeiro de Ferro": "???",
+    "Maga da Muralha": "?",
+    "Carrasco de Guerra": "??",
+    "Guardiao Funebre": "??",
+    "Feiticeira Morta": "??",
+    "Ceifador de Ossos": "??",
+    "Anjo Caido": "??",
+    "Drake Celeste": "??",
+    "Executor Astral": "??",
+    "Guardiao Aureo": "??",
+    "Oraculo Radiante": "??",
+    "Quimera Solar": "??",
+    "Arauto do Cataclismo": "??",
+    "Titan Rachado": "??",
+    "Serafim do Fim": "???",
+    "Guardiao Temporal": "?",
+    "Oraculo do Zero": "??",
+    "Devorador do Eco": "??",
+    "Ent Ancestral": "??",
+    "Troll das Profundezas": "??",
+    "Rei Espectral": "??",
+    "Hidra do Lodo": "??",
+    "Draco Magmatico": "??",
+    "Arauto do Vazio": "???",
+    "General de Aco": "???",
+    "Lorde da Cripta": "??",
+    "Imperador do Eclipse": "??",
+    "Avatar do Zenith": "??",
+    "Deus da Ruina": "??",
+    "Soberano do Paradoxo": "??"
   };
   if(byName[enemyName]){ return byName[enemyName]; }
   const archetype = getEnemyRigArchetype(enemyName);
   const byArchetype = {
-    beast: "🐾",
-    humanoid: "⚔️",
-    arachnid: "🕸️",
-    slime: "🧪",
-    serpent: "🐍",
-    winged: "🪽",
-    specter: "👻",
-    reaper: "☠️",
-    colossus: "🗿",
-    armored: "🛡️",
-    ent: "🌳"
+    beast: "??",
+    humanoid: "??",
+    arachnid: "???",
+    slime: "??",
+    serpent: "??",
+    winged: "??",
+    specter: "??",
+    reaper: "??",
+    colossus: "??",
+    armored: "???",
+    ent: "??"
   };
-  return byArchetype[archetype] || "👹";
+  return byArchetype[archetype] || "??";
 }
 
 function getEnemyStats(template, regionOverride = null, isBoss = false){
@@ -753,60 +1341,76 @@ function restartElementAnimation(element, className){
 function pulseSpriteClass(elementId, className, duration = 260){
   const element = document.getElementById(elementId);
   if(!element){ return Promise.resolve(); }
+  const timerKey = `${elementId}:${className}`;
+  if(spriteClassTimers.has(timerKey)){
+    clearTimeout(spriteClassTimers.get(timerKey));
+  }
   restartElementAnimation(element, className);
   return new Promise(resolve => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       element.classList.remove(className);
+      spriteClassTimers.delete(timerKey);
       resolve();
     }, duration);
+    spriteClassTimers.set(timerKey, timeoutId);
   });
 }
 
 function getSpriteAnimationTiming(attacker = "hero", style = "attack"){
   if(style === "buff"){
-    return { attackerDuration: 520, hitDelay: 180, settleDelay: 160, betweenHits: 96 };
+    return { attackerDuration: 950, hitDelay: 300, settleDelay: 220, betweenHits: 140 };
   }
   if(style === "cast"){
     return attacker === "hero"
-      ? { attackerDuration: 480, hitDelay: 180, settleDelay: 180, betweenHits: 110 }
-      : { attackerDuration: 430, hitDelay: 160, settleDelay: 150, betweenHits: 100 };
+      ? { attackerDuration: 950, hitDelay: 330, settleDelay: 230, betweenHits: 150 }
+      : { attackerDuration: 950, hitDelay: 300, settleDelay: 220, betweenHits: 140 };
   }
   if(attacker === "hero"){
     if(player?.class === "Arqueiro"){
-      return { attackerDuration: 420, hitDelay: 170, settleDelay: 140, betweenHits: 110 };
+      return { attackerDuration: 820, hitDelay: 300, settleDelay: 200, betweenHits: 140 };
     }
     if(player?.class === "Guerreiro"){
-      return { attackerDuration: 320, hitDelay: 150, settleDelay: 120, betweenHits: 96 };
+      return { attackerDuration: 820, hitDelay: 280, settleDelay: 200, betweenHits: 130 };
     }
   }
   const enemyArchetype = getEnemyRigArchetype(enemy?.baseName || enemy?.name || "");
   if(["specter", "reaper", "winged", "humanoid"].includes(enemyArchetype)){
-    return { attackerDuration: 320, hitDelay: 140, settleDelay: 110, betweenHits: 96 };
+    return { attackerDuration: 820, hitDelay: 280, settleDelay: 200, betweenHits: 130 };
   }
-  return { attackerDuration: 280, hitDelay: 120, settleDelay: 100, betweenHits: 90 };
+  return { attackerDuration: 820, hitDelay: 260, settleDelay: 190, betweenHits: 120 };
 }
 
 async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = null, betweenHits = null){
   const attackerId = attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox";
   const defenderId = attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox";
-  const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : "attacking";
+  const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : style === "skill" ? "skilling" : "attacking";
   const timing = getSpriteAnimationTiming(attacker, style);
   const attackerDuration = timing.attackerDuration;
   const resolvedHitDelay = hitDelay ?? timing.hitDelay;
   const resolvedBetweenHits = betweenHits ?? timing.betweenHits;
   pulseSpriteClass(attackerId, attackerClass, attackerDuration);
+  if(style !== "buff" && (connectHit || style === "cast")){
+    playSceneProjectile(attacker, style, resolvedHitDelay + 120);
+  }
   if(!connectHit){
     await wait(Math.floor(resolvedHitDelay * 0.85));
     return;
   }
   await wait(resolvedHitDelay);
   for(let hitIndex = 0; hitIndex < Math.max(1, hitRepeats); hitIndex++){
-    pulseSpriteClass(defenderId, "hit", 220);
+    pulseSpriteClass(defenderId, "hit", 500);
     if(hitIndex < hitRepeats - 1){
       await wait(resolvedBetweenHits);
     }
   }
   await wait(timing.settleDelay);
+}
+
+function playEnemyEntranceAnimation(){
+  requestAnimationFrame(() => {
+    pulseSpriteClass("enemySpriteBox", "entering", 950);
+    pulseSpriteClass("heroSpriteBox", "readying", 750);
+  });
 }
 
 function getSkillAnimationStyle(skillInfo){
@@ -830,7 +1434,7 @@ function getSkillAnimationStyle(skillInfo){
   if(buffTypes.has(skillInfo.type)){
     return "buff";
   }
-  return player.class === "Mago" || skillInfo.type.startsWith("mage_") || skillInfo.type.startsWith("nature_") ? "cast" : "attack";
+  return player.class === "Mago" || skillInfo.type.startsWith("mage_") || skillInfo.type.startsWith("nature_") ? "cast" : "skill";
 }
 
 function getEnemyTemplateByName(enemyName){
@@ -879,7 +1483,7 @@ function getRegionFromEnemy(enemyName){
 }
 
 function getSetBonusValues(regionName){
-  return regionSetBonusProfiles[regionName] || { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
+  return { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
 }
 
 function getRegionEquipmentBaseStats(regionName, slot){
@@ -888,14 +1492,6 @@ function getRegionEquipmentBaseStats(regionName, slot){
     return { ...(getBossAccessoryTemplate(regionName)?.baseStats || {}) };
   }
   return slot === "weapon" ? { ...(profile.weapon || {}) } : { ...(profile.armor || {}) };
-}
-
-function getRegionDropSlots(regionName, enemyName){
-  const regionData = regions[regionName];
-  if(!regionData){ return []; }
-  const orderedEnemies = [...regionData.enemies].sort((a, b) => b.weight - a.weight);
-  const enemyIndex = orderedEnemies.findIndex(enemyData => enemyData.name === enemyName);
-  return enemyDropSlotGroups[enemyIndex] ? [...enemyDropSlotGroups[enemyIndex]] : [];
 }
 
 function getRegionSetTemplate(regionName, slot, className = player?.class || "Guerreiro"){
@@ -930,15 +1526,6 @@ function getBossAccessoryTemplate(regionName){
   };
 }
 
-function getEnemyDropTemplate(enemyName, regionName, className = player?.class || "Guerreiro", forcedSlot = null){
-  const availableSlots = getRegionDropSlots(regionName, enemyName);
-  if(!availableSlots.length){ return null; }
-  const chosenSlot = forcedSlot && availableSlots.includes(forcedSlot)
-    ? forcedSlot
-    : availableSlots[Math.floor(Math.random() * availableSlots.length)];
-  return getRegionSetTemplate(regionName, chosenSlot, className);
-}
-
 function getEnemyMaterialTemplate(enemyName, regionName){
   const material = enemyMaterialDrops?.[enemyName];
   return {
@@ -949,29 +1536,6 @@ function getEnemyMaterialTemplate(enemyName, regionName){
     regionName,
     description: material?.description || `Material obtido de ${enemyName}. O artesao do vilarejo usa essas partes para montar pecas do ${getRegionSetLabel(regionName)}.`
   };
-}
-
-function getRegionCraftRecipes(regionName, className = player?.class || "Guerreiro"){
-  const regionData = regions[regionName];
-  if(!regionData){ return []; }
-  const enemyMaterials = regionData.enemies.map(enemyData => getEnemyMaterialTemplate(enemyData.name, regionName));
-  const baseRequirements = Object.fromEntries(enemyMaterials.map(material => [material.id, 1]));
-  const extraCosts = {
-    head: { [enemyMaterials[0].id]: 1 },
-    chest: { [enemyMaterials[1].id]: 1 },
-    legs: { [enemyMaterials[2].id]: 1 },
-    feet: { [enemyMaterials[0].id]: 1, [enemyMaterials[1].id]: 1 },
-    weapon: { [enemyMaterials[1].id]: 1, [enemyMaterials[2].id]: 1 }
-  };
-  return ["head", "chest", "legs", "feet", "weapon"].map(slot => {
-    const template = getRegionSetTemplate(regionName, slot, className);
-    const requirements = { ...baseRequirements };
-    Object.entries(extraCosts[slot] || {}).forEach(([itemId, qty]) => {
-      requirements[itemId] = (requirements[itemId] || 0) + qty;
-    });
-    const cost = Math.max(18, Math.ceil(getSellPrice(createEquipmentItem(template, "comum")) * 0.65));
-    return { slot, template, requirements, cost };
-  });
 }
 
 function getInventoryCountById(itemId){
@@ -1107,14 +1671,14 @@ function normalizePlayerState(){
   }
   player.inventory = (Array.isArray(player.inventory) ? player.inventory : []).map((item, index) => ({
     ...normalizeInventoryItem(item, index)
-  }));
+  })).filter(item => item.type !== "equipment" || item.slot === "accessory");
   const oldEquipment = player.equipment || {};
   player.equipment = {
-    head: normalizeEquipmentMetadata(oldEquipment.head || null),
-    chest: normalizeEquipmentMetadata(oldEquipment.chest || null),
-    weapon: normalizeEquipmentMetadata(oldEquipment.weapon || null),
-    legs: normalizeEquipmentMetadata(oldEquipment.legs || null),
-    feet: normalizeEquipmentMetadata(oldEquipment.feet || oldEquipment.boots || null),
+    head: null,
+    chest: null,
+    weapon: null,
+    legs: null,
+    feet: null,
     accessory: normalizeEquipmentMetadata(oldEquipment.accessory || null)
   };
   player.stats = player.stats || {
@@ -1125,13 +1689,21 @@ function normalizePlayerState(){
     regionKills: {},
     regionBossKills: {},
     dungeonClears: 0,
-    dungeonBestStep: 0
+    dungeonBestStep: 0,
+    craftedEquipment: 0,
+    itemsSold: 0,
+    arenaDuels: 0,
+    arenaWins: 0
   };
   player.stats.migrations = player.stats.migrations || {};
   player.stats.regionKills = player.stats.regionKills || {};
   player.stats.regionBossKills = player.stats.regionBossKills || {};
   player.stats.dungeonClears = player.stats.dungeonClears || 0;
   player.stats.dungeonBestStep = player.stats.dungeonBestStep || 0;
+  player.stats.craftedEquipment = player.stats.craftedEquipment || 0;
+  player.stats.itemsSold = player.stats.itemsSold || 0;
+  player.stats.arenaDuels = player.stats.arenaDuels || 0;
+  player.stats.arenaWins = player.stats.arenaWins || 0;
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   if(!player.stats.migrations.baseHpRebalance_v1){
@@ -1394,7 +1966,7 @@ function getPassiveModifiers(){
     base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.05);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_mana_to_life") && tier60 === "mago_incendiario" && player.level >= 60){
-    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.1);
+    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.18);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "nature_cycle") && tier30 === "espirito_da_floresta" && player.level >= 30){
     base.skillPower += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * 0.3);
@@ -1425,121 +1997,6 @@ function needsSubclassChoice(){
   if(!player){ return false; }
   const subclassState = getPlayerSubclassState();
   return (player.level >= 30 && !subclassState.tier30) || (player.level >= 60 && !!subclassState.tier30 && !subclassState.tier60);
-}
-
-function getCollectedEquipmentCount(){
-  return player.inventory.filter(item => item.type === "equipment").length + Object.values(player.equipment || {}).filter(Boolean).length;
-}
-
-function getLegendaryEquipmentCount(){
-  return [...player.inventory, ...Object.values(player.equipment || {})].filter(Boolean).filter(item => item.type === "equipment" && item.rarity === "lendaria").length;
-}
-
-function getCompletedSetCount(){
-  return getActiveSetBonuses().activeSets.length;
-}
-
-function getSubclassCount(){
-  return getChosenSubclassDefs().length;
-}
-
-function getTrophyCompletion(){
-  const trophies = getTrophies();
-  const done = trophies.filter(trophy => trophy.done).length;
-  return Math.floor(done / trophies.length * 100);
-}
-
-function getTrophies(){
-  return [
-    { category: "Combate", name: "Primeiro Sangue", done: player.stats.enemiesDefeated >= 1, description: "Derrote 1 inimigo." },
-    { category: "Combate", name: "Limpador de Trilha", done: player.stats.enemiesDefeated >= 10, description: "Derrote 10 inimigos." },
-    { category: "Combate", name: "Cacador Experiente", done: player.stats.enemiesDefeated >= 25, description: "Derrote 25 inimigos." },
-    { category: "Combate", name: "Exterminador", done: player.stats.enemiesDefeated >= 100, description: "Derrote 100 inimigos." },
-    { category: "Chefes", name: "Matador de Chefes", done: player.stats.bossesDefeated >= 1, description: "Derrote 1 chefao." },
-    { category: "Chefes", name: "Lenda da Coroa", done: player.stats.bossesDefeated >= 5, description: "Derrote 5 chefes." },
-    { category: "Chefes", name: "Dominador Regional", done: Object.keys(regions).every(region => (player.stats.regionBossKills?.[region] || 0) > 0), description: "Derrote o chefao de todas as regioes ao menos uma vez." },
-    { category: "Economia", name: "Bolso Pesado", done: player.stats.coinsEarned >= 500, description: "Acumule 500 moedas ao longo da campanha." },
-    { category: "Economia", name: "Magnata do Vilarejo", done: player.stats.coinsEarned >= 2500, description: "Acumule 2500 moedas ao longo da campanha." },
-    { category: "Equipamentos", name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
-    { category: "Equipamentos", name: "Tesouro Lendario", done: getLegendaryEquipmentCount() >= 1, description: "Obtenha pelo menos 1 equipamento lendario." },
-    { category: "Equipamentos", name: "Vestido para Guerra", done: Object.values(player.equipment || {}).filter(Boolean).length >= 5, description: "Equipe todos os 5 slots de equipamento." },
-    { category: "Equipamentos", name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
-    { category: "Progressao", name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
-    { category: "Progressao", name: "Forma Final", done: getSubclassCount() >= 2, description: "Escolha sua segunda subclasse." },
-    { category: "Progressao", name: "Alem do Vulcao", done: player.level >= 44, description: "Alcance o nivel 44." },
-    { category: "Progressao", name: "Senhor da Necropole", done: player.level >= 60, description: "Alcance o nivel 60." },
-    { category: "Progressao", name: "Peregrino do Panteao", done: player.level >= 68, description: "Alcance o nivel 68." },
-    { category: "Progressao", name: "Fim do Mundo", done: player.level >= 76, description: "Alcance o nivel 76." },
-    { category: "Progressao", name: "Alem do Cataclismo", done: player.level >= 84, description: "Alcance o nivel 84." },
-    { category: "Sobrevivencia", name: "Imortal por Teimosia", done: player.stats.deaths >= 1, description: "Caia em batalha e volte para lutar outra vez." },
-    { category: "Sobrevivencia", name: "Veterano de Guerra", done: player.stats.deaths >= 5, description: "Caia 5 vezes e continue a jornada." },
-    { category: "Progressao", name: "Mestre do Vazio", done: player.level >= 60, description: "Alcance o nivel 60." },
-    { category: "Progressao", name: "Ascensao Heroica", done: player.level >= 80, description: "Alcance o nivel 80." },
-    { category: "Progressao", name: "Mestre Supremo", done: player.level >= MAX_LEVEL, description: "Alcance o nivel maximo." },
-    { category: "Dungeon", name: "Primeira Incursao", done: (player.stats.dungeonBestStep || 0) >= 1, description: "Derrote o primeiro inimigo da dungeon online." },
-    { category: "Dungeon", name: "Meio Caminho", done: (player.stats.dungeonBestStep || 0) >= Math.floor(getDungeonSequence().length / 2), description: "Alcance metade da sequencia fixa da dungeon." },
-    { category: "Dungeon", name: "Fim da Incursao", done: (player.stats.dungeonClears || 0) >= 1, description: "Conclua a dungeon inteira uma vez." },
-    { category: "Dungeon", name: "Grupo Persistente", done: (player.stats.dungeonClears || 0) >= 3, description: "Conclua a dungeon inteira 3 vezes." },
-    { category: "Colecao", name: "Arsenal Completo", done: getCollectedEquipmentCount() >= 20, description: "Junte 20 equipamentos entre inventario e equipamento atual." },
-    { category: "Colecao", name: "Lenda Reluzente", done: getLegendaryEquipmentCount() >= 3, description: "Obtenha 3 equipamentos lendarios." }
-  ];
-}
-
-function getTrophyCategories(){
-  const grouped = {};
-  for(const trophy of getTrophies()){
-    const category = trophy.category || "Geral";
-    grouped[category] = grouped[category] || [];
-    grouped[category].push(trophy);
-  }
-  return grouped;
-}
-
-function getTrophyCategorySummary(){
-  return Object.entries(getTrophyCategories()).map(([category, trophies]) => {
-    const completed = trophies.filter(trophy => trophy.done).length;
-    return {
-      category,
-      completed,
-      total: trophies.length,
-      percent: Math.floor((completed / Math.max(1, trophies.length)) * 100)
-    };
-  });
-}
-
-function setTrophyCategory(category){
-  selectedTrophyCategory = category || "Todas";
-  updateUI();
-}
-
-function getVisibleTrophyCategories(){
-  const grouped = getTrophyCategories();
-  if(selectedTrophyCategory === "Todas" || !grouped[selectedTrophyCategory]){
-    return grouped;
-  }
-  return { [selectedTrophyCategory]: grouped[selectedTrophyCategory] };
-}
-
-function renderTrophyGroups(){
-  return Object.entries(getVisibleTrophyCategories()).map(([category, trophies]) => {
-    const completed = trophies.filter(trophy => trophy.done).length;
-    return `<div class="trophy-category"><div class="panel-header"><strong>${category}</strong><span class="coin-badge">${completed}/${trophies.length}</span></div><div class="trophy-list">${trophies.map(trophy => `<div class="trophy-item ${trophy.done ? "" : "locked"}"><strong>${trophy.name}</strong><br><span class="lock-note">${trophy.description}</span></div>`).join("")}</div></div>`;
-  }).join("");
-}
-
-function renderTrophySummaryPanel(){
-  const categorySummary = getTrophyCategorySummary();
-  const overall = getTrophyCompletion();
-  return `
-    <h3>Resumo das conquistas</h3>
-    <div class="button-row">
-      <button class="region-chip ${selectedTrophyCategory === "Todas" ? "active" : ""}" onclick="setTrophyCategory('Todas')">Todas</button>
-      ${categorySummary.map(entry => `<button class="region-chip ${selectedTrophyCategory === entry.category ? "active" : ""}" onclick="setTrophyCategory('${entry.category}')">${entry.category}</button>`).join("")}
-    </div>
-    <div class="trophy-summary-grid">
-      ${categorySummary.map(entry => `<div class="trophy-summary-card"><strong>${entry.category}</strong><span>${entry.percent}%</span><small>${entry.completed}/${entry.total} concluidas</small></div>`).join("")}
-      <div class="trophy-summary-card"><strong>Total geral</strong><span>${overall}%</span><small>${getTrophies().filter(trophy => trophy.done).length}/${getTrophies().length} conquistas</small></div>
-    </div>`;
 }
 
 function setCampTab(tab){
@@ -1600,707 +2057,6 @@ function renderCampContent(campEntries, previewStats, investedSummary, classBase
     </div>
     ${getChosenSubclassDefs().length ? `<div class="inventory-item"><strong>Rota de subclasse</strong><div class="subclass-route">${getChosenSubclassDefs().map((subclass, index, arr) => `<span class="subclass-chip active">${index === arr.length - 1 ? "Atual: " : "Escolhida: "}${subclass.name}</span>`).join("")} </div><div class="subclass-summary"><strong>Bonus recebidos</strong><div class="subclass-bonus-list">${getChosenSubclassDefs().map(subclass => `<div class="inventory-item"><strong>${subclass.name}</strong><br><span class="lock-note">${subclass.description}</span><br><span class="status-on">${formatSubclassStatBonuses(subclass)}</span></div>`).join("")}</div><div class="inventory-item" style="margin-top:10px;"><strong>Total acumulado</strong><br><span class="status-on">${formatSubclassStatBonuses(getTotalSubclassBonuses())}</span></div></div></div>` : `<div class="inventory-item"><strong>Subclasse</strong><br><span class="lock-note">Ainda nao escolhida. Sua primeira escolha acontece no nivel 30 e a segunda no nivel 60.</span></div>`}
     <div class="inventory-item" style="margin-top:12px;"><strong>Spoiler de subclasses</strong><br><span class="lock-note">Aqui voce ja consegue ver os nomes das rotas futuras da sua classe.</span><div class="inventory-list">${renderSubclassSpoilers()}</div></div>`;
-}
-
-function isDungeonMode(){
-  return currentMode === "dungeon";
-}
-
-function getDungeonRequirement(){
-  return dungeonData.minLevel;
-}
-
-function getDungeonSequence(){
-  return Object.entries(regions).flatMap(([regionName, regionData]) => [
-    ...regionData.enemies.map(template => ({ regionName, template, isBoss: false })),
-    { regionName, template: regionData.boss, isBoss: true }
-  ]);
-}
-
-function getDungeonStepEntry(stepIndex = dungeonMultiplayer.dungeonStepIndex || 0){
-  const sequence = getDungeonSequence();
-  return sequence[Math.min(Math.max(0, stepIndex), Math.max(0, sequence.length - 1))] || null;
-}
-
-function getDungeonPartyScale(){
-  return Math.max(1, getDungeonRoomMembers().length || 1);
-}
-
-function createDungeonEnemyAtStep(stepIndex = dungeonMultiplayer.dungeonStepIndex || 0){
-  const entry = getDungeonStepEntry(stepIndex);
-  if(!entry){ return null; }
-  const partyScale = getDungeonPartyScale();
-  const scaledTemplate = {
-    ...entry.template,
-    level: Math.max(1, entry.template.level * partyScale)
-  };
-  const dungeonEnemy = createEnemyFromTemplate(scaledTemplate, entry.isBoss, entry.regionName);
-  dungeonEnemy.dungeonStepIndex = stepIndex;
-  dungeonEnemy.dungeonSourceRegion = entry.regionName;
-  dungeonEnemy.name = `${entry.template.name} Lv.${scaledTemplate.level}`;
-  return dungeonEnemy;
-}
-
-function getDungeonProgressText(){
-  const sequence = getDungeonSequence();
-  const currentStep = Math.min((dungeonMultiplayer.dungeonStepIndex || 0) + 1, sequence.length);
-  const entry = getDungeonStepEntry();
-  if(!entry){
-    return "Sequencia completa.";
-  }
-  return `Etapa ${currentStep}/${sequence.length}: ${entry.template.name} (${entry.regionName})`;
-}
-
-function isDungeonConnected(){
-  return !!(dungeonMultiplayer.peer && (dungeonMultiplayer.isHost || dungeonMultiplayer.hostConnection?.open));
-}
-
-function isDungeonHost(){
-  return !!(dungeonMultiplayer.peer && dungeonMultiplayer.isHost);
-}
-
-function clearDungeonEnemyTimer(){
-  if(dungeonMultiplayer.enemyAttackTimer){
-    clearInterval(dungeonMultiplayer.enemyAttackTimer);
-    dungeonMultiplayer.enemyAttackTimer = null;
-  }
-}
-
-function getDungeonRoomMembers(){
-  return Object.values(dungeonMultiplayer.party);
-}
-
-function getDungeonPlayerProfile(){
-  return {
-    id: dungeonMultiplayer.peer?.id || "local",
-    name: `${getDisplayedClassName()} Lv.${player.level}`,
-    class: player.class,
-    level: player.level,
-    icon: getHeroSpriteIcon()
-  };
-}
-
-function getDungeonCurrentTurnId(){
-  return dungeonMultiplayer.turnOrder[dungeonMultiplayer.turnIndex] || null;
-}
-
-function isMyDungeonTurn(){
-  return isDungeonConnected() && dungeonMultiplayer.battleActive && getDungeonCurrentTurnId() === dungeonMultiplayer.peer?.id;
-}
-
-function syncDungeonEnemyState(sharedEnemy){
-  if(currentMode !== "dungeon"){ return; }
-  enemy = sharedEnemy ? { ...sharedEnemy } : null;
-  displayState.enemyHp = enemy ? enemy.hp : null;
-  needsNewEnemy = !enemy;
-}
-
-function broadcastToDungeonPeers(payload){
-  Object.values(dungeonMultiplayer.connections).forEach(connection => {
-    if(connection?.open){
-      connection.send(payload);
-    }
-  });
-}
-
-function broadcastDungeonState(){
-  if(!isDungeonHost()){ return; }
-  dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = getDungeonPlayerProfile();
-  broadcastToDungeonPeers({
-    type: "state",
-    roomCode: dungeonMultiplayer.roomCode,
-    party: dungeonMultiplayer.party,
-    enemy: enemy ? { ...enemy } : null,
-    turnOrder: [...dungeonMultiplayer.turnOrder],
-    turnIndex: dungeonMultiplayer.turnIndex,
-    dungeonStepIndex: dungeonMultiplayer.dungeonStepIndex,
-    round: dungeonMultiplayer.round,
-    enemySkipTurn: !!dungeonMultiplayer.enemySkipTurn,
-    battleActive: !!dungeonMultiplayer.battleActive
-  });
-}
-
-function syncDungeonProfile(){
-  if(!isDungeonConnected()){ return; }
-  const profile = getDungeonPlayerProfile();
-  if(isDungeonHost()){
-    dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = profile;
-    broadcastDungeonState();
-  }else if(dungeonMultiplayer.hostConnection?.open){
-    dungeonMultiplayer.hostConnection.send({ type: "profile_update", player: profile });
-  }
-}
-
-function handleDungeonPeerDisconnect(peerId){
-  delete dungeonMultiplayer.connections[peerId];
-  if(dungeonMultiplayer.party[peerId]){
-    log(`${dungeonMultiplayer.party[peerId].name} saiu da sala da dungeon.`);
-    delete dungeonMultiplayer.party[peerId];
-    dungeonMultiplayer.turnOrder = dungeonMultiplayer.turnOrder.filter(id => id !== peerId);
-    if(dungeonMultiplayer.turnIndex >= dungeonMultiplayer.turnOrder.length){
-      dungeonMultiplayer.turnIndex = 0;
-    }
-    if(dungeonMultiplayer.battleActive && dungeonMultiplayer.turnOrder.length < 2){
-      handleDungeonRaidDefeat("A incursao terminou porque o grupo se desfez.");
-      return;
-    }
-    broadcastDungeonState();
-    updateUI();
-  }
-}
-
-function leaveDungeonRoom(silent = false){
-  clearDungeonEnemyTimer();
-  Object.values(dungeonMultiplayer.connections).forEach(connection => {
-    try { connection.close(); } catch {}
-  });
-  if(dungeonMultiplayer.hostConnection){
-    try { dungeonMultiplayer.hostConnection.close(); } catch {}
-  }
-  if(dungeonMultiplayer.peer){
-    try { dungeonMultiplayer.peer.destroy(); } catch {}
-  }
-  dungeonMultiplayer = createDungeonMultiplayerState();
-  if(currentMode === "dungeon"){
-    enemy = null;
-    displayState.enemyHp = null;
-    needsNewEnemy = true;
-  }
-  if(!silent){
-    log("Voce saiu da sala da dungeon.");
-  }
-  updateUI();
-}
-
-function renderDungeonPartyList(){
-  const members = getDungeonRoomMembers();
-  if(!members.length){
-    return `<p class="lock-note">Nenhum aventureiro conectado ainda.</p>`;
-  }
-  return `<div class="party-list">${members.map(member => `<div class="party-entry"><strong>${member.icon} ${member.name}</strong><br><span class="lock-note">${member.class} | Nivel ${member.level}</span></div>`).join("")}</div>`;
-}
-
-function getDungeonStatusText(){
-  if(isDungeonHost()){
-    if(dungeonMultiplayer.battleActive && enemy){
-      return `Rodada ${dungeonMultiplayer.round}. Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}.`;
-    }
-    return `Sala criada. Compartilhe o codigo ${dungeonMultiplayer.roomCode} com seus amigos.`;
-  }
-  if(isDungeonConnected()){
-    if(dungeonMultiplayer.battleActive && enemy){
-      return `Conectado a sala ${dungeonMultiplayer.roomCode}. Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}.`;
-    }
-    return `Conectado a sala ${dungeonMultiplayer.roomCode}. Aguarde o host iniciar a incursao.`;
-  }
-  return "Crie uma sala ou entre com um codigo para jogar online com ate 2 amigos.";
-}
-
-function renderDungeonRoomControls(){
-  const canStart = isDungeonHost() && getDungeonRoomMembers().length >= 2 && !enemy && !isDead && player.hp > 0;
-  const canManageRoom = !isDead && player.hp > 0;
-  const sequence = getDungeonSequence();
-  const nextEntry = getDungeonStepEntry();
-  return `
-    <div class="inventory-list">
-      <div class="inventory-item">
-        <strong>Sala online</strong><br>
-        <span class="lock-note">${getDungeonStatusText()}</span>
-        ${dungeonMultiplayer.roomCode ? `<div style="margin-top:10px;"><span class="room-pill">${dungeonMultiplayer.roomCode}</span></div>` : ""}
-        ${!isDungeonConnected() ? `<div style="margin-top:10px;"><input id="dungeonJoinCode" class="text-input" placeholder="Codigo da sala" maxlength="12" /></div>` : ""}
-        <div class="button-row">
-          <button onclick="hostDungeonRoom()" ${isDungeonConnected() || !canManageRoom ? "disabled" : ""}>Criar sala</button>
-          <button onclick="joinDungeonRoom()" ${isDungeonConnected() || !canManageRoom ? "disabled" : ""}>Entrar</button>
-          ${isDungeonConnected() ? `<button onclick="leaveDungeonRoom()">Sair da sala</button>` : ""}
-        </div>
-        ${isDungeonHost() ? `<div class="button-row"><button onclick="startDungeonRaid()" ${canStart ? "" : "disabled"}>Iniciar dungeon</button></div><span class="lock-note">${getDungeonRoomMembers().length < 2 ? "Conecte pelo menos mais 1 jogador para comecar." : "Sala pronta para a batalha."}</span>` : ""}
-      </div>
-      <div class="inventory-item">
-        <strong>Progressao da dungeon</strong><br>
-        <span class="lock-note">${getDungeonProgressText()}</span><br>
-        <span class="lock-note">Ordem fixa: inimigos e chefao de cada regiao, da Floresta ate o Paradoxo. Proximo: ${nextEntry ? `${nextEntry.template.name} de ${nextEntry.regionName}` : "fim da sequencia"}.</span><br>
-        <span class="lock-note">Total da rota: ${sequence.length} encontros. O nivel de cada inimigo e multiplicado pela quantidade de herois conectados.</span>
-      </div>
-      <div class="inventory-item">
-        <strong>Equipe</strong>
-        ${renderDungeonPartyList()}
-      </div>
-    </div>`;
-}
-
-function hostDungeonRoom(){
-  if(currentMode !== "dungeon" || !player || isDead || player.hp <= 0){ return; }
-  if(typeof Peer === "undefined"){
-    log("Nao foi possivel carregar o sistema online da dungeon.");
-    return;
-  }
-  leaveDungeonRoom(true);
-  const roomCode = `DNG${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-  dungeonMultiplayer = createDungeonMultiplayerState();
-  dungeonMultiplayer.isHost = true;
-  dungeonMultiplayer.roomCode = roomCode;
-  dungeonMultiplayer.peer = new Peer(roomCode);
-  dungeonMultiplayer.peer.on("open", id => {
-    dungeonMultiplayer.roomCode = id;
-    dungeonMultiplayer.party[id] = getDungeonPlayerProfile();
-    log(`Sala da dungeon criada: ${id}.`);
-    updateUI();
-  });
-  dungeonMultiplayer.peer.on("connection", connection => {
-    if(getDungeonRoomMembers().length >= 3){
-      connection.on("open", () => {
-        connection.send({ type: "reject", reason: "A sala da dungeon ja esta cheia." });
-        connection.close();
-      });
-      return;
-    }
-    dungeonMultiplayer.connections[connection.peer] = connection;
-    connection.on("data", data => handleDungeonHostMessage(connection, data));
-    connection.on("close", () => handleDungeonPeerDisconnect(connection.peer));
-  });
-  dungeonMultiplayer.peer.on("error", error => {
-    log(`Erro na dungeon online: ${error.type || error.message}.`);
-    updateUI();
-  });
-}
-
-function joinDungeonRoom(){
-  if(currentMode !== "dungeon" || !player || isDead || player.hp <= 0){ return; }
-  if(typeof Peer === "undefined"){
-    log("Nao foi possivel carregar o sistema online da dungeon.");
-    return;
-  }
-  const input = document.getElementById("dungeonJoinCode");
-  const roomCode = (input?.value || "").trim().toUpperCase();
-  if(!roomCode){
-    log("Informe o codigo da sala para entrar na dungeon.");
-    return;
-  }
-  leaveDungeonRoom(true);
-  dungeonMultiplayer = createDungeonMultiplayerState();
-  dungeonMultiplayer.isHost = false;
-  dungeonMultiplayer.roomCode = roomCode;
-  dungeonMultiplayer.peer = new Peer();
-  dungeonMultiplayer.peer.on("open", () => {
-    const connection = dungeonMultiplayer.peer.connect(roomCode, { reliable: true });
-    dungeonMultiplayer.hostConnection = connection;
-    connection.on("open", () => {
-      connection.send({ type: "join", player: getDungeonPlayerProfile() });
-      log(`Conectando a sala ${roomCode}...`);
-      updateUI();
-    });
-    connection.on("data", handleDungeonGuestMessage);
-    connection.on("close", () => {
-      log("A conexao com a dungeon foi encerrada.");
-      leaveDungeonRoom(true);
-    });
-  });
-  dungeonMultiplayer.peer.on("error", error => {
-    log(`Erro na conexao da dungeon: ${error.type || error.message}.`);
-    updateUI();
-  });
-}
-
-function handleDungeonHostMessage(connection, data){
-  if(!data || !isDungeonHost()){ return; }
-  if(data.type === "join"){
-    dungeonMultiplayer.party[connection.peer] = data.player;
-    connection.send({ type: "joined", roomCode: dungeonMultiplayer.roomCode });
-    log(`${data.player.name} entrou na sala da dungeon.`);
-    broadcastDungeonState();
-    updateUI();
-    return;
-  }
-  if(data.type === "profile_update"){
-    dungeonMultiplayer.party[connection.peer] = data.player;
-    broadcastDungeonState();
-    updateUI();
-    return;
-  }
-  if(data.type === "player_defeated"){
-    handleDungeonRaidDefeat(`${dungeonMultiplayer.party[connection.peer]?.name || "Um jogador"} caiu na dungeon. A incursao foi perdida.`);
-    return;
-  }
-  if(data.type === "action"){
-    if(data.player){
-      dungeonMultiplayer.party[connection.peer] = data.player;
-    }
-    if(getDungeonCurrentTurnId() !== connection.peer || !dungeonMultiplayer.battleActive || !enemy){
-      return;
-    }
-    if(data.message){
-      log(data.message);
-      broadcastToDungeonPeers({ type: "log", message: data.message });
-    }
-    if(enemy && data.damage){
-      applyDungeonDamageToEnemy(data.damage, { ignoreArmor: !!data.ignoreArmor, ignoreShield: !!data.ignoreShield });
-      displayState.enemyHp = enemy.hp;
-    }
-    if(enemy && data.freezeNext){
-      enemy.skipNextAttack = true;
-    }
-    if(enemy && enemy.hp <= 0){
-      handleDungeonRaidVictory();
-      return;
-    }
-    advanceDungeonTurn();
-    broadcastDungeonState();
-    updateUI();
-  }
-}
-
-function handleDungeonGuestMessage(data){
-  if(!data){ return; }
-  if(data.type === "reject"){
-    log(data.reason);
-    leaveDungeonRoom(true);
-    return;
-  }
-  if(data.type === "joined"){
-    dungeonMultiplayer.roomCode = data.roomCode;
-    updateUI();
-    return;
-  }
-  if(data.type === "state"){
-    const wasBattleActive = dungeonMultiplayer.battleActive;
-    const previousEnemyStep = enemy?.dungeonStepIndex;
-    dungeonMultiplayer.roomCode = data.roomCode || dungeonMultiplayer.roomCode;
-    dungeonMultiplayer.party = data.party || {};
-    dungeonMultiplayer.turnOrder = data.turnOrder || [];
-    dungeonMultiplayer.turnIndex = data.turnIndex || 0;
-    dungeonMultiplayer.round = data.round || 1;
-    dungeonMultiplayer.dungeonStepIndex = data.dungeonStepIndex || 0;
-    dungeonMultiplayer.enemySkipTurn = !!data.enemySkipTurn;
-    dungeonMultiplayer.battleActive = !!data.battleActive;
-    if(dungeonMultiplayer.battleActive && (!wasBattleActive || (data.enemy && previousEnemyStep !== data.enemy.dungeonStepIndex))){
-      resetCombatEffects();
-    }
-    syncDungeonEnemyState(data.enemy || null);
-    updateUI();
-    return;
-  }
-  if(data.type === "log"){
-    log(data.message);
-    return;
-  }
-  if(data.type === "enemy_attack"){
-    processDungeonIncomingDamage(data.damage, data.message, data.targetId, data.targetName);
-    return;
-  }
-  if(data.type === "raid_reward"){
-    grantDungeonRaidRewards(data.rewards);
-    updateUI();
-    return;
-  }
-  if(data.type === "victory"){
-    syncDungeonEnemyState(null);
-    dungeonMultiplayer.battleActive = false;
-    dungeonMultiplayer.turnOrder = [];
-    dungeonMultiplayer.turnIndex = 0;
-    dungeonMultiplayer.dungeonStepIndex = 0;
-    player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
-    grantDungeonRaidRewards(data.rewards);
-    log(data.message);
-    updateUI();
-    return;
-  }
-  if(data.type === "defeat"){
-    dungeonMultiplayer.battleActive = false;
-    dungeonMultiplayer.turnOrder = [];
-    dungeonMultiplayer.turnIndex = 0;
-    dungeonMultiplayer.dungeonStepIndex = 0;
-    syncDungeonEnemyState(null);
-    if(player.hp <= 0 || isDead){
-      handleDeath(data.message || "Voce caiu na dungeon.");
-    }else{
-      handleDungeonRaidDefeat(data.message);
-    }
-    return;
-  }
-  if(data.type === "room_closed"){
-    log("O host encerrou a sala da dungeon.");
-    leaveDungeonRoom(true);
-  }
-}
-
-function startDungeonRaid(){
-  if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || enemy || isDead || player.hp <= 0){ return; }
-  dungeonMultiplayer.dungeonStepIndex = 0;
-  enemy = createDungeonEnemyAtStep(0);
-  if(!enemy){ return; }
-  resetCombatEffects();
-  displayState.enemyHp = enemy.hp;
-  needsNewEnemy = false;
-  dungeonMultiplayer.turnOrder = Object.keys(dungeonMultiplayer.party);
-  dungeonMultiplayer.turnIndex = 0;
-  dungeonMultiplayer.round = 1;
-  dungeonMultiplayer.enemySkipTurn = false;
-  dungeonMultiplayer.battleActive = true;
-  log(`A dungeon comecou contra ${enemy.name}!`);
-  broadcastToDungeonPeers({ type: "log", message: `A dungeon comecou contra ${enemy.name}!` });
-  broadcastDungeonState();
-  updateUI();
-}
-
-function applyDungeonDamageToEnemy(rawDamage, options = {}){
-  if(!enemy){ return 0; }
-  let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
-  if(damage > 0 && enemy.shieldValue > 0 && !options.ignoreShield){
-    const absorbedByShield = Math.min(enemy.shieldValue, damage);
-    enemy.shieldValue -= absorbedByShield;
-    damage -= absorbedByShield;
-    log(`${enemy.baseName} absorveu ${absorbedByShield} de dano com o escudo.`);
-    if(enemy.shieldValue <= 0){
-      enemy.shieldValue = 0;
-      enemy.shieldTurns = 0;
-      log(`O escudo de ${enemy.baseName} se partiu.`);
-    }
-  }
-  enemy.hp -= damage;
-  return damage;
-}
-
-function grantDungeonRaidRewards(rewards){
-  if(!rewards){ return; }
-  player.coins += rewards.coins;
-  player.stats.coinsEarned += rewards.coins;
-  player.stats.enemiesDefeated++;
-  player.stats.dungeonBestStep = Math.max(player.stats.dungeonBestStep || 0, rewards.step || 0);
-  gainXP(rewards.xp);
-}
-
-function handleDungeonRaidVictory(){
-  if(!enemy){ return; }
-  const defeatedEnemy = enemy;
-  const defeatedStep = dungeonMultiplayer.dungeonStepIndex || 0;
-  const sequence = getDungeonSequence();
-  const rewards = {
-    xp: 40 + enemy.level * 9,
-    coins: 14 + enemy.level * 4,
-    step: defeatedStep + 1
-  };
-  grantDungeonRaidRewards(rewards);
-  if(defeatedEnemy.isBoss){
-    player.stats.bossesDefeated++;
-  }
-  if(defeatedStep < sequence.length - 1){
-    dungeonMultiplayer.dungeonStepIndex = defeatedStep + 1;
-    enemy = createDungeonEnemyAtStep(dungeonMultiplayer.dungeonStepIndex);
-    resetCombatEffects();
-    displayState.enemyHp = enemy.hp;
-    dungeonMultiplayer.turnIndex = 0;
-    dungeonMultiplayer.round++;
-    const message = `${defeatedEnemy.name} foi derrotado! Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas. Proximo encontro: ${enemy.name}.`;
-    log(message);
-    broadcastToDungeonPeers({ type: "log", message });
-    broadcastToDungeonPeers({ type: "raid_reward", rewards });
-    broadcastDungeonState();
-    updateUI();
-    return;
-  }
-  enemy = null;
-  dungeonMultiplayer.battleActive = false;
-  dungeonMultiplayer.turnOrder = [];
-  dungeonMultiplayer.turnIndex = 0;
-  dungeonMultiplayer.dungeonStepIndex = 0;
-  displayState.enemyHp = null;
-  needsNewEnemy = true;
-  player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
-  const message = `${defeatedEnemy.name} caiu! A dungeon inteira foi concluida. Cada jogador recebeu ${rewards.xp} XP e ${rewards.coins} moedas.`;
-  log(message);
-  broadcastToDungeonPeers({ type: "victory", rewards, message });
-  broadcastDungeonState();
-  updateUI();
-}
-
-function handleDungeonRaidDefeat(message){
-  enemy = null;
-  dungeonMultiplayer.battleActive = false;
-  dungeonMultiplayer.turnOrder = [];
-  dungeonMultiplayer.turnIndex = 0;
-  displayState.enemyHp = null;
-  needsNewEnemy = true;
-  if(isDungeonHost()){
-    broadcastToDungeonPeers({ type: "defeat", message });
-    broadcastDungeonState();
-  }
-  if(isDungeonConnected()){
-    leaveDungeonRoom(true);
-  }
-  currentMode = "battle";
-  dungeonMultiplayer.dungeonStepIndex = 0;
-  log(message);
-  updateUI();
-}
-
-function advanceDungeonTurn(){
-  if(!isDungeonHost() || !dungeonMultiplayer.battleActive || !enemy){ return; }
-  if(dungeonMultiplayer.turnIndex < dungeonMultiplayer.turnOrder.length - 1){
-    dungeonMultiplayer.turnIndex++;
-    return;
-  }
-  if(enemy.skipNextAttack){
-    enemy.skipNextAttack = false;
-    dungeonMultiplayer.turnIndex = 0;
-    dungeonMultiplayer.round++;
-    log(`${enemy.name} perdeu o turno.`);
-    broadcastToDungeonPeers({ type: "log", message: `${enemy.name} perdeu o turno.` });
-    return;
-  }
-  const targetId = dungeonMultiplayer.turnOrder[Math.floor(Math.random() * dungeonMultiplayer.turnOrder.length)];
-  const targetName = dungeonMultiplayer.party[targetId]?.name || "um heroi";
-  const damage = enemy.attack + Math.floor(Math.random() * 5);
-  const message = `${enemy.name} atacou ${targetName} e causou ${damage} de dano.`;
-  processDungeonIncomingDamage(damage, message, targetId, targetName);
-  broadcastToDungeonPeers({ type: "enemy_attack", damage, message, targetId, targetName });
-  if(player.hp <= 0){
-    return;
-  }
-  dungeonMultiplayer.turnIndex = 0;
-  dungeonMultiplayer.round++;
-}
-
-function processDungeonIncomingDamage(baseDamage, message, targetId = null, targetName = ""){
-  if(message){
-    log(message);
-  }
-  const myDungeonId = dungeonMultiplayer.peer?.id || "local";
-  if(targetId && targetId !== myDungeonId){
-    log(`${targetName || "Outro heroi"} foi o alvo do inimigo desta vez.`);
-    updateUI();
-    return;
-  }
-  const result = applyIncomingDamage(baseDamage);
-  pulseSpriteClass("enemySpriteBox", "attacking", 240);
-  if(!result.missed){
-    setTimeout(() => pulseSpriteClass("heroSpriteBox", "hit", 220), 70);
-  }
-  if(result.missed){
-    log("O inimigo errou o golpe contra voce.");
-  }
-  if(result.absorbed > 0){
-    log(`Seu escudo absorveu ${result.absorbed} de dano.`);
-  }
-  if(result.manaAbsorbed > 0){
-    log(`Ultimo Recurso converteu ${result.manaAbsorbed} de dano em gasto de mana.`);
-  }
-  if(playerEffects.shieldValue <= 0){
-    playerEffects.shieldTurns = 0;
-    playerEffects.shieldReactiveWeakening = false;
-  }else if(playerEffects.shieldTurns > 0){
-    playerEffects.shieldTurns--;
-    if(playerEffects.shieldTurns <= 0){
-      playerEffects.shieldValue = 0;
-      playerEffects.shieldReactiveWeakening = false;
-      log("Seu escudo se desfez.");
-    }
-  }
-  if(player.hp <= 0){
-    if(isDungeonHost()){
-      enemy = null;
-      dungeonMultiplayer.battleActive = false;
-      dungeonMultiplayer.turnOrder = [];
-      dungeonMultiplayer.turnIndex = 0;
-      displayState.enemyHp = null;
-      needsNewEnemy = true;
-      broadcastToDungeonPeers({ type: "defeat", message: "O grupo foi derrotado na dungeon." });
-      broadcastDungeonState();
-      handleDeath("Voce caiu na dungeon.");
-    }else if(dungeonMultiplayer.hostConnection?.open){
-      dungeonMultiplayer.hostConnection.send({ type: "player_defeated" });
-    }
-  }
-  displayState.playerHp = player.hp;
-  displayState.playerMp = player.mp;
-  updateUI();
-}
-
-function sendDungeonActionPayload(payload){
-  if(!isDungeonConnected() || !enemy){ return; }
-  const actionPayload = { ...payload, player: getDungeonPlayerProfile() };
-  if(isDungeonHost()){
-    handleDungeonHostMessage({ peer: dungeonMultiplayer.peer.id }, { type: "action", ...actionPayload });
-  }else if(dungeonMultiplayer.hostConnection?.open){
-    dungeonMultiplayer.hostConnection.send({ type: "action", ...actionPayload });
-  }
-}
-
-async function dungeonAttack(){
-  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead || !isMyDungeonTurn()){ return; }
-  const result = getBasicAttackResult(getDungeonPlayerProfile().name, false);
-  if(result.blocked){
-    log(result.message);
-    updateUI();
-    return;
-  }
-  applyTurnStartPassives();
-  await playSpriteAttackAnimation("hero", player.class === "Mago" ? "cast" : "attack", result.damage > 0, player.class === "Mago" ? Math.min(result.missiles || 1, 3) : 1, 70, 82);
-  playerEffects.lastActionType = "basic_attack";
-  decayPlayerBuffs();
-  const healed = getTurnHealing();
-  if(healed > 0){
-    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
-    log(`Voce recuperou ${healed} de vida.`);
-  }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
-  }
-  updateUI();
-  sendDungeonActionPayload({ damage: result.damage, message: result.message });
-}
-
-async function dungeonUseSkill(index){
-  if(currentMode !== "dungeon" || !isDungeonConnected() || !enemy || isDead || !isMyDungeonTurn()){ return; }
-  if(playerEffects.forcedBasicTurns > 0){
-    log("Voce so pode usar o ataque basico enquanto Cortes Ultrasonicos estiver ativo.");
-    updateUI();
-    return;
-  }
-  const skillInfo = getSkillInfo()[index];
-  if(!skillInfo){
-    log("Voce ainda nao desbloqueou essa habilidade.");
-    return;
-  }
-  const result = applySkillLocally(skillInfo, getDungeonPlayerProfile().name, false);
-  if(result.blocked){
-    log(result.message);
-    updateUI();
-    return;
-  }
-  applyTurnStartPassives();
-  displayState.playerMp = player.mp;
-  updateUI();
-  await wait(80);
-  await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
-  decayPlayerBuffs();
-  const healed = getTurnHealing();
-  if(healed > 0){
-    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + healed);
-    log(`Voce recuperou ${healed} de vida.`);
-  }
-  const manaRecovered = regenMana();
-  if(manaRecovered > 0){
-    log(`Voce recuperou ${manaRecovered} de mana.`);
-  }
-  updateUI();
-  sendDungeonActionPayload({ damage: result.damage, message: result.message, ignoreArmor: !!skillInfo.ignoreArmor, freezeNext: !!result.freezeApplied });
-}
-
-function getRegionRequirement(region){
-  const regionNames = Object.keys(regions);
-  const index = regionNames.indexOf(region);
-  if(index <= 0){ return "nenhum requisito"; }
-  const previousRegion = regionNames[index - 1];
-  return `derrotar ${regions[previousRegion].boss.name}`;
-}
-
-function isRegionUnlockedForBattle(region){
-  const regionNames = Object.keys(regions);
-  const index = regionNames.indexOf(region);
-  if(index <= 0){ return true; }
-  const previousRegion = regionNames[index - 1];
-  return !!player?.stats?.regionBossKills?.[previousRegion];
 }
 
 function grantNextLevelForTest(){
@@ -2678,87 +2434,106 @@ function getSkillInfo(){
   const attack = getActiveAttack();
   const skillPower = getSkillPowerBonus();
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
+  const warriorExtraCost = player.class === "Guerreiro" ? Math.floor(0.2 * player.level) : 0;
+  const clampMageSkillCost = cost => player.class === "Mago" ? Math.min(maxMp, Math.max(0, Math.floor(cost))) : Math.max(0, Math.floor(cost));
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_second_wind"){
-      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.1 : 0.07;
+      const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.15 : 0.1;
       const heal = Math.floor(maxHp * healFactor);
-      const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.1 : 0;
-      return { ...skill, cost: 20, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome 20 MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 10% por 3 turnos." : ""}` };
+      const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.2 : 0;
+      const cost = 30 + warriorExtraCost;
+      return { ...skill, cost, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total em 20% por 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_shove"){
       const isEspadachim = subclassState.tier30 === "espadachim" && player.level >= 30;
+      const isCavaleiro = subclassState.tier30 === "cavaleiro" && player.level >= 30;
       const damage = isEspadachim
-        ? 20 + Math.floor(0.1 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
-        : 20 + Math.floor(0.06 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
-      const cost = isEspadachim ? 50 : subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 44 : 38;
+        ? 20 + Math.floor(0.07 * maxHp) + Math.floor(0.9 * attack) + Math.floor(1.2 * skillPower)
+        : 20 + Math.floor((isCavaleiro ? 0.09 : 0.07) * maxHp) + Math.floor((isCavaleiro ? 0.6 : 0.6) * attack) + Math.floor((isCavaleiro ? 0.6 : 0.6) * skillPower);
+      const cost = (isEspadachim ? 50 : isCavaleiro ? 44 : 38) + warriorExtraCost;
       return {
         ...skill,
         name: isEspadachim ? "Investida" : skill.name,
         cost,
         damage,
-        enemyAttackDownPercent: subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.3 : 0,
-        enemyAttackDownTurns: subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 3 : 0,
-        description: `${isEspadachim ? "Investida" : skill.name}: consome ${cost} MP e causa ${damage} de dano.${subclassState.tier30 === "cavaleiro" && player.level >= 30 ? " Tambem reduz o ataque do inimigo em 30% por 3 turnos." : ""}`
+        enemyAttackDownPercent: isCavaleiro ? 0.3 : 0,
+        enemyAttackDownTurns: isCavaleiro ? 3 : 0,
+        description: `${isEspadachim ? "Investida" : skill.name}: consome ${cost} MP e causa ${damage} de dano.${isCavaleiro ? " Tambem reduz o ataque do inimigo em 30% por 3 turnos." : ""}`
       };
     }
     if(skill.type === "warrior_stagger"){
       const isBerserker = subclassState.tier60 === "berserker" && player.level >= 60;
       const maxEnemyHp = enemy?.maxHp || 0;
       const damage = isBerserker
-        ? 60 + Math.floor(0.06 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
-        : 30 + Math.floor(0.06 * maxHp) + Math.floor(0.35 * attack) + Math.floor(0.35 * skillPower);
-      return { ...skill, cost: 40, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome 40 MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
+        ? 60 + Math.floor(0.07 * maxHp) + Math.floor(0.9 * attack) + Math.floor(0.9 * skillPower) + Math.floor(0.1 * maxEnemyHp)
+        : 30 + Math.floor(0.07 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.5 * skillPower);
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, damage, skipChance: isBerserker ? 0 : 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.${isBerserker ? "" : " Tem 30% de chance de fazer o inimigo perder o proximo turno."}` };
     }
     if(skill.type === "warrior_swift_strikes"){
       const hits = subclassState.tier60 === "ninja" && player.level >= 60 ? 3 : 2;
       const bleedPercent = subclassState.tier60 === "samurai" && player.level >= 60 ? 0.15 : 0;
-      return { ...skill, cost: 44, hits, bleedPercent, description: `${skill.name}: consome 44 MP e executa ${hits} ataques basicos.${bleedPercent ? " Tambem aplica sangramento por 3 turnos." : ""}` };
+      const cost = 44 + warriorExtraCost;
+      return { ...skill, cost, hits, bleedPercent, description: `${skill.name}: consome ${cost} MP e executa ${hits} ataques basicos.${bleedPercent ? " Tambem aplica sangramento por 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_warcry"){
       if(subclassState.tier60 === "berserker" && player.level >= 60){
-        return { ...skill, name: "Ira", cost: 0, hpCostPercent: 0.8, turns: 4, totalDamagePercent: 1.5, description: `Ira: consome 80% da sua vida maxima e aumenta o dano total em 150% por 4 turnos.` };
+        const cost = warriorExtraCost;
+        return { ...skill, name: "Ira", cost, hpCostPercent: 0.8, turns: 4, totalDamagePercent: 1.5, description: `Ira: consome ${cost} MP e 80% da sua vida maxima, aumentando o dano total em 150% por 4 turnos.` };
       }
-      return { ...skill, cost: 40, turns: 5, attackPercent: 0.2, damageReductionPercent: subclassState.tier60 === "paladino" && player.level >= 60 ? 0.16 : 0, description: `${skill.name}: consome 40 MP e aumenta o ataque em 20% por 5 turnos.${subclassState.tier60 === "paladino" && player.level >= 60 ? " Tambem bloqueia 16% do dano sofrido nesse periodo." : ""}` };
+      const attackPercent = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.3 : 0.2;
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, turns: 5, attackPercent, damageReductionPercent: subclassState.tier60 === "paladino" && player.level >= 60 ? 0.16 : 0, description: `${skill.name}: consome ${cost} MP e aumenta o ataque em ${Math.floor(attackPercent * 100)}% por 5 turnos.${subclassState.tier60 === "paladino" && player.level >= 60 ? " Tambem bloqueia 16% do dano sofrido nesse periodo." : ""}` };
     }
     if(skill.type === "warrior_deep_cut"){
       const damage = 70 + Math.floor(1.1 * attack) + Math.floor(0.8 * skillPower);
       const bleedPercent = subclassState.tier60 === "ninja" && player.level >= 60 ? 0.3 : 0.15;
-      return { ...skill, cost: 52, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome 52 MP e causa ${damage} de dano.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
+      const cost = 52 + warriorExtraCost;
+      return { ...skill, cost, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
     }
     if(skill.type === "warrior_judgment"){
       const damage = 80 + Math.floor(0.4 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.8 * skillPower);
-      return { ...skill, cost: 100, damage, description: `${skill.name}: consome 100 MP e causa ${damage} de dano.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.` };
     }
     if(skill.type === "warrior_valhalla"){
-      return { ...skill, cost: 100, turns: 5, incomingDamagePercent: 2, enemyMaxHpBonusDamagePercent: 0.15, description: `${skill.name}: consome 100 MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, turns: 5, incomingDamagePercent: 2, enemyMaxHpBonusDamagePercent: 0.15, description: `${skill.name}: consome ${cost} MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.` };
     }
     if(skill.type === "warrior_armor_piercer"){
       const damage = 80 + Math.floor(1.1 * attack) + Math.floor(1.1 * skillPower);
       const shieldMultiplier = enemy?.shieldValue > 0 ? 3 : 1;
-      return { ...skill, cost: 82, damage: damage * shieldMultiplier, description: `${skill.name}: consome 82 MP e causa ${damage * shieldMultiplier} de dano.${shieldMultiplier > 1 ? " O alvo tinha escudo ativo, entao o dano foi triplicado." : ""}` };
+      const cost = 82 + warriorExtraCost;
+      return { ...skill, cost, damage: damage * shieldMultiplier, description: `${skill.name}: consome ${cost} MP e causa ${damage * shieldMultiplier} de dano.${shieldMultiplier > 1 ? " O alvo tinha escudo ativo, entao o dano foi triplicado." : ""}` };
     }
     if(skill.type === "warrior_smoke_bomb"){
-      return { ...skill, cost: 40, turns: 1, nextDamageBonus: 0.3, description: `${skill.name}: consome 40 MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.` };
+      const cost = 40 + warriorExtraCost;
+      return { ...skill, cost, turns: 1, nextDamageBonus: 0.3, description: `${skill.name}: consome ${cost} MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.` };
     }
     if(skill.type === "warrior_faith_shield"){
-      return { ...skill, cost: Math.floor(maxMp * 0.7), turns: 3, description: `${skill.name}: consome ${Math.floor(maxMp * 0.7)} MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano absorvido ao inimigo.` };
+      const cost = Math.floor(maxMp * 0.7) + warriorExtraCost;
+      return { ...skill, cost, turns: 3, description: `${skill.name}: consome ${cost} MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano que teria sido absorvido ao inimigo.` };
     }
     if(skill.type === "warrior_unstoppable"){
-      return { ...skill, cost: 100, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 50, description: `${skill.name}: consome 100 MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque basico em 50 por 4 turnos.` };
+      const cost = 100 + warriorExtraCost;
+      return { ...skill, cost, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 50, description: `${skill.name}: consome ${cost} MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque basico em 50 por 4 turnos.` };
     }
     if(skill.type === "warrior_ultrasonic_cuts"){
-      return { ...skill, cost: 240, turns: 3, description: `${skill.name}: consome 240 MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido.` };
+      const cost = 240 + warriorExtraCost;
+      return { ...skill, cost, turns: 3, description: `${skill.name}: consome ${cost} MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido.` };
     }
     if(skill.type === "warrior_giant_slayer"){
       const damage = enemy ? Math.floor(enemy.hp * 0.4) : 0;
-      return { ...skill, cost: 200, damage, description: `${skill.name}: consome 200 MP e causa ${damage} de dano com base na vida atual do inimigo.` };
+      const cost = 200 + warriorExtraCost;
+      return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano com base na vida atual do inimigo.` };
     }
     if(skill.type === "mage_mana_burst"){
-      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.1 : 0.6;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.13 : 0.09;
-      const manaBurstCost = 20 + Math.floor(0.2 * player.level) + mageExtraCost;
-      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: manaBurstCost, damage, refundThresholdPercent: 0.4, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano. Se causar mais de 40% da vida maxima do inimigo, devolve toda a mana gasta.` };
+      const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.0 : 0.6;
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.14 : 0.1;
+      const manaBurstCost = clampMageSkillCost(20 + Math.floor(0.2 * player.level) + mageExtraCost);
+      const enemyManaBurnAmount = enemy?.maxMp > 0 ? Math.floor((enemy.mp || 0) * 0.5) : 0;
+      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + (enemyManaBurnAmount * 4) + getUniversalDamageFlatBonus();
+      return { ...skill, cost: manaBurstCost, damage, enemyManaBurnAmount, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano.${enemyManaBurnAmount > 0 ? ` Tambem consome ${enemyManaBurnAmount} de mana do alvo e converte isso em dano extra.` : ""}` };
     }
     if(skill.type === "mage_fireball"){
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
@@ -2770,7 +2545,7 @@ function getSkillInfo(){
       return {
         ...skill,
         name: isFrigido ? "Bola de Neve" : skill.name,
-        cost: 40 + mageExtraCost,
+        cost: clampMageSkillCost(40 + mageExtraCost),
         damage,
         burnDamage,
         burnTurns: 3,
@@ -2780,18 +2555,19 @@ function getSkillInfo(){
         appliesBurn: !isFrigido,
         appliesChill: isFrigido,
         description: isFrigido
-          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
-          : `${skill.name}: consome ${40 + mageExtraCost} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
+          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
+          : `${skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
       };
     }
     if(skill.type === "mage_concentration"){
-      return { ...skill, cost: 200 + mageExtraCost, turns: 4, percent: 0.1, manaRegenPercent: 0.1, description: `${skill.name}: consome ${200 + mageExtraCost} MP, aumenta o dano total em 10% e a regeneracao de mana em 10% por 4 turnos.` };
+      const cost = clampMageSkillCost(200 + mageExtraCost);
+      return { ...skill, cost, turns: 4, percent: 0.2, manaRegenPercent: 0.1, description: `${skill.name}: consome ${cost} MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.` };
     }
     if(skill.type === "mage_mana_shield"){
       const isArquimago = subclassState.tier60 === "arquimago" && player.level >= 60;
       const factor = isArquimago ? 0.4 : 0.3;
       const costPercent = isArquimago ? 0.12 : 0.15;
-      const cost = Math.floor(maxMp * costPercent) + mageExtraCost;
+      const cost = clampMageSkillCost(Math.floor(maxMp * costPercent) + mageExtraCost);
       const shield = 40 + Math.floor(factor * maxMp);
       return { ...skill, cost, shield, turns: 2, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo por 2 turnos.` };
     }
@@ -2799,7 +2575,7 @@ function getSkillInfo(){
       const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
       const damage = 60 + Math.floor(0.9 * skillPower) + getUniversalDamageFlatBonus();
-      const cost = 40 + Math.floor(0.2 * player.level) + mageExtraCost;
+      const cost = clampMageSkillCost(40 + Math.floor(0.2 * player.level) + mageExtraCost);
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return {
@@ -2812,47 +2588,55 @@ function getSkillInfo(){
         burnTurns: isIncendiario ? 6 : 0,
         chillTurns: isFrigido ? 2 : 0,
         chillAttackDownPercent: isFrigido ? 0.3 : 0,
+        freezeVulnerabilityPercent: isFrigido ? 0.5 : 0,
         description: isIncendiario
           ? `Bafo de Fogo: consome ${cost} MP, causa ${damage} de dano e aplica queimadura por 6 turnos.`
-          : `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem 30% de chance de impedir o proximo ataque do inimigo.${isFrigido ? " Se nao impedir o turno, ainda aplica resfriamento por 2 turnos." : ""}`
+          : `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem 30% de chance de impedir o proximo ataque do inimigo.${isFrigido ? " Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado." : ""}`
       };
     }
     if(skill.type === "mage_discharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: (10 * charges) + mageExtraCost, damage, charges, description: `${skill.name}: consome ${(10 * charges) + mageExtraCost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
+      const damage = subclassState.tier60 === "arquimago" && player.level >= 60
+        ? Math.floor((player.level + (0.007 * maxMp)) * charges) + getUniversalDamageFlatBonus()
+        : 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost((10 * charges) + mageExtraCost);
+      return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_sacred_phoenix"){
-      const cost = 200 + skillPower + mageExtraCost;
-      const damage = 100 + Math.floor(1.6 * skillPower) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(200 + skillPower + mageExtraCost);
+      const damage = 100 + Math.floor(1.8 * skillPower) + getUniversalDamageFlatBonus();
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return { ...skill, cost, damage, burnDamage, burnTurns: 1, healReductionPercent: 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, aplicando queimadura por 1 turno.` };
     }
     if(skill.type === "mage_blizzard"){
-      return { ...skill, cost: 120 + mageExtraCost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${120 + mageExtraCost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
+      const cost = clampMageSkillCost(120 + mageExtraCost);
+      return { ...skill, cost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${cost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
     }
     if(skill.type === "mage_corruption"){
-      const currentManaCost = Math.floor(player.mp * 0.3);
+      const currentManaCost = clampMageSkillCost(Math.floor(player.mp * 0.3));
       const damage = 100 + Math.floor(1.0 * skillPower) + Math.floor(0.3 * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: currentManaCost, damage, armorBreakPercent: 1, armorBreakTurns: 5, noShieldTurns: 5, description: `${skill.name}: consome ${currentManaCost} MP, causa ${damage} de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.` };
     }
     if(skill.type === "mage_overcharge"){
       const charges = getArcaneChargeInfo().charges;
-      const damage = 200 + maxMp + (15 * charges) + getUniversalDamageFlatBonus();
-      const cost = Math.floor(maxMp * 0.95) + mageExtraCost;
+      const damage = 200 + maxMp + (player.level * charges) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(Math.floor(maxMp * 0.95) + mageExtraCost);
       return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano usando sua mana maxima e as cargas arcanas.` };
     }
     if(skill.type === "mage_demon_form"){
-      return { ...skill, cost: Math.floor(player.mp * 0.3), turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${Math.floor(player.mp * 0.3)} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
+      const cost = clampMageSkillCost(Math.floor(player.mp * 0.3));
+      return { ...skill, cost, turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${cost} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
     }
     if(skill.type === "mage_explode"){
       const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: 500 + mageExtraCost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${500 + mageExtraCost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
+      const cost = clampMageSkillCost(500 + mageExtraCost);
+      return { ...skill, cost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${cost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_avalanche"){
-      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.6 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
-      return { ...skill, cost: 400 + mageExtraCost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${400 + mageExtraCost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(400 + mageExtraCost);
+      return { ...skill, cost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
     }
     if(skill.type === "archer_focus"){
       const cost = 30 + player.level;
@@ -3079,7 +2863,7 @@ function getActiveSkillPreviewDescription(skill){
     warrior_unstoppable: "Postura final de agressao contínua para dominar turnos decisivos.",
     warrior_ultrasonic_cuts: "Entrar em modo de cortes puros, focando apenas no ataque basico por alguns turnos.",
     warrior_giant_slayer: "Finalizador brutal contra alvos com muita vida atual.",
-    mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e pode devolver o custo quando acerta muito forte.",
+    mage_mana_burst: "Explosao arcana que mistura dano de habilidade com mana maxima e ainda drena mana do alvo para ampliar o impacto.",
     mage_fireball: "Magia elemental que aplica efeito persistente no inimigo, mudando de fogo para gelo conforme a rota.",
     mage_freeze: "Feitico de controle ou dano elemental que evolui junto da subclasse.",
     mage_sacred_phoenix: "Invocacao incendiaria de alto custo e alto impacto.",
@@ -3219,7 +3003,7 @@ function getPassiveStatusDescription(skill){
   }
   if(skill.type === "mage_mana_to_life"){
     const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
-    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.1)} de dano de habilidade.` : "";
+    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.18)} de dano de habilidade.` : "";
     return `${skill.name}: converte ${Math.floor(factor * 100)}% da mana maxima em vida maxima.${extraSkill}`;
   }
   if(skill.type === "mage_overflowing"){
@@ -3484,6 +3268,12 @@ function applyDamageToEnemy(rawDamage, options = {}){
     log(`${enemy.baseName} sofreu +${markedBonus} de dano por estar marcado.`);
     enemy.nextDamageTakenPercent = 0;
   }
+  if(damage > 0 && (enemy.frozenDamageBonusPercent || 0) > 0){
+    const frozenBonus = Math.floor(damage * enemy.frozenDamageBonusPercent);
+    damage += frozenBonus;
+    log(`Congelamento adicionou ${frozenBonus} de dano ao proximo golpe.`);
+    enemy.frozenDamageBonusPercent = 0;
+  }
   if(damage > 0 && playerEffects.damageDownTurns > 0 && playerEffects.damageDownPercent > 0){
     const reducedAmount = Math.floor(damage * playerEffects.damageDownPercent);
     damage = Math.max(0, damage - reducedAmount);
@@ -3738,9 +3528,9 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: skillInfo.ignoreArmor }) : damage;
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
-    if(skillInfo.type === "mage_mana_burst" && applyToTarget && enemy && damage > Math.floor(enemy.maxHp * (skillInfo.refundThresholdPercent || 0))){
-      player.mp = Math.min(getCurrentCaps().maxMp, player.mp + cost);
-      message += " A explosao foi poderosa o bastante para devolver toda a mana gasta.";
+    if(skillInfo.type === "mage_mana_burst" && applyToTarget && enemy && skillInfo.enemyManaBurnAmount > 0){
+      enemy.mp = Math.max(0, (enemy.mp || 0) - skillInfo.enemyManaBurnAmount);
+      message += ` A explosao consumiu ${skillInfo.enemyManaBurnAmount} de mana do alvo e converteu isso em dano extra.`;
     }
     if(skillInfo.type === "mage_fireball" && applyToTarget && enemy){
       if(skillInfo.appliesBurn){
@@ -3778,9 +3568,15 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         message += " O alvo ficou incendiado.";
       }
       if(skillInfo.chillTurns > 0){
-        enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
-        enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
-        message += " O inimigo ficou resfriado.";
+        const alreadyChilled = enemy.attackDownTurns > 0 && enemy.attackDownPercent > 0;
+        if(skillInfo.freezeVulnerabilityPercent > 0 && alreadyChilled){
+          enemy.frozenDamageBonusPercent = Math.max(enemy.frozenDamageBonusPercent || 0, skillInfo.freezeVulnerabilityPercent);
+          message += " O inimigo ficou congelado e sofrera 50% a mais no proximo dano.";
+        }else{
+          enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
+          enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+          message += " O inimigo ficou resfriado.";
+        }
         if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
           enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
           enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
@@ -4307,85 +4103,28 @@ function getItemRarityVisualClass(item){
   return `item-rarity-${toCssToken(item?.rarity || "comum")}`;
 }
 
-function getWeaponVisualKind(item){
-  if(item?.classRestriction === "Arqueiro"){ return "weapon-bow"; }
-  if(item?.classRestriction === "Mago"){ return "weapon-staff"; }
-  return "weapon-sword";
+function getItemAssetId(item){
+  if(!item){ return "unknown_item"; }
+  if(item.type === "chest"){
+    return item.id || `bau_${slugify(item.region || "regional")}`;
+  }
+  if(item.type === "equipment" && item.slot === "accessory"){
+    return item.baseItemId || (item.id || "").replace(/_(comum|incomum|rara|ultra_rara|lendaria)$/,"") || "accessory";
+  }
+  return item.baseItemId || item.id || slugify(item.name || "item");
 }
 
-function getPotionVisualKind(item){
-  if(item?.id === "health_potion"){ return "health"; }
-  if(item?.id === "mana_potion"){ return "mana"; }
-  if(item?.id === "skill_tonic"){ return "skill"; }
-  return "attack";
+function getItemSpritePath(item){
+  return `assets/visual/items/${getItemAssetId(item)}.png?v=${ITEM_ASSET_VERSION}`;
 }
 
 function getInventoryItemSymbol(item){
-  if(!item){ return "🎒"; }
-  if(item.type === "consumable"){
-    if(item.id === "health_potion"){ return "🧪"; }
-    if(item.id === "mana_potion"){ return "🔵"; }
-    if(item.id === "skill_tonic"){ return "✨"; }
-    return "⚔️";
-  }
-  if(item.type === "chest"){
-    return "📦";
-  }
-  if(item.type === "material"){
-    return "🦴";
-  }
-  if(item.type === "equipment"){
-    if(item.slot === "accessory"){ return "📿"; }
-    if(item.slot === "weapon"){
-      if(item.classRestriction === "Arqueiro"){ return "🏹"; }
-      if(item.classRestriction === "Mago"){ return "🪄"; }
-      return "🗡️";
-    }
-    if(item.slot === "head"){ return "🪖"; }
-    if(item.slot === "chest"){ return "🛡️"; }
-    if(item.slot === "legs"){ return "👖"; }
-    if(item.slot === "feet"){ return "🥾"; }
-    if(item.slot === "accessory"){ return "📿"; }
-  }
-  return "📦";
+  const label = escapeHtml(item?.name || "Item");
+  return `<img class="item-icon-img" src="${getItemSpritePath(item)}" alt="${label}" loading="lazy">`;
 }
 
 function getItemSpriteMarkup(item){
-  if(!item){
-    return `<div class="item-sprite chest"><span class="item-part body"></span><span class="item-part lid"></span><span class="item-part lock"></span></div>`;
-  }
-  if(item.type === "consumable"){
-    const kind = getPotionVisualKind(item);
-    return `<div class="item-sprite potion ${kind}"><span class="item-part cork"></span><span class="item-part bottle"></span><span class="item-part liquid"></span></div>`;
-  }
-  if(item.type === "chest"){
-    return `<div class="item-sprite chest"><span class="item-part lid"></span><span class="item-part body"></span><span class="item-part lock"></span><span class="item-part band-left"></span><span class="item-part band-right"></span></div>`;
-  }
-  if(item.type === "equipment"){
-    if(item.slot === "weapon"){
-      const kind = getWeaponVisualKind(item);
-      if(kind === "weapon-bow"){
-        return `<div class="item-sprite ${kind}"><span class="item-part bow"></span><span class="item-part string"></span><span class="item-part arrow"></span></div>`;
-      }
-      if(kind === "weapon-staff"){
-        return `<div class="item-sprite ${kind}"><span class="item-part shaft"></span><span class="item-part orb"></span><span class="item-part rune"></span></div>`;
-      }
-      return `<div class="item-sprite ${kind}"><span class="item-part blade"></span><span class="item-part guard"></span><span class="item-part hilt"></span><span class="item-part pommel"></span></div>`;
-    }
-    if(item.slot === "head"){
-      return `<div class="item-sprite armor-head"><span class="item-part helm"></span><span class="item-part visor"></span><span class="item-part crest"></span></div>`;
-    }
-    if(item.slot === "chest"){
-      return `<div class="item-sprite armor-chest"><span class="item-part pauldron-left"></span><span class="item-part pauldron-right"></span><span class="item-part plate"></span><span class="item-part emblem"></span></div>`;
-    }
-    if(item.slot === "legs"){
-      return `<div class="item-sprite armor-legs"><span class="item-part belt"></span><span class="item-part leg-left"></span><span class="item-part leg-right"></span></div>`;
-    }
-    if(item.slot === "feet"){
-      return `<div class="item-sprite armor-feet"><span class="item-part boot-left"></span><span class="item-part boot-right"></span><span class="item-part sole-left"></span><span class="item-part sole-right"></span></div>`;
-    }
-  }
-  return `<div class="item-sprite chest"><span class="item-part lid"></span><span class="item-part body"></span><span class="item-part lock"></span></div>`;
+  return getInventoryItemSymbol(item);
 }
 
 function getInventoryItemCardMarkup(item, description, actionButton = "", compact = false){
@@ -4394,8 +4133,9 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
   const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
   const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
   const tooltipText = description || "";
-  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip" data-tooltip="${tooltipText}"` : ` class="inventory-item"`;
-  const shouldShowInlineDescription = item?.type !== "equipment";
+  const flashClass = inventoryFlash.result && ((item?.uid && item.uid === inventoryFlash.uid) || (item?.id && item.id === inventoryFlash.id)) ? ` inventory-flash-${inventoryFlash.result}` : "";
+  const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip${flashClass}" data-tooltip="${tooltipText}"` : ` class="inventory-item${flashClass}"`;
+  const shouldShowInlineDescription = !["equipment", "material"].includes(item?.type);
   return `<div${tooltipAttrs}>
     <div class="simple-item-line">
       <div class="simple-item-symbol">
@@ -4412,6 +4152,86 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
       </div>
     </div>
   </div>`;
+}
+
+function getInventoryTypeLabel(item){
+  if(item?.type === "consumable"){ return "Consumivel"; }
+  if(item?.type === "chest"){ return "Bau"; }
+  if(item?.type === "material"){ return "Material"; }
+  if(item?.type === "equipment"){ return item.slot === "accessory" ? "Acessorio" : "Equipamento"; }
+  return "Item";
+}
+
+function getInventoryPrimaryActionText(item){
+  if(item?.type === "consumable"){ return "Clique esquerdo: usar."; }
+  if(item?.type === "chest"){ return "Clique esquerdo: abrir."; }
+  if(item?.type === "equipment"){
+    return canEquipItem(item) ? "Clique esquerdo: equipar." : "Clique esquerdo: item nao equipavel por esta classe.";
+  }
+  return "Clique esquerdo: apenas inspecionar.";
+}
+
+function getInventoryTooltipText(item){
+  const description = item?.type === "equipment" ? buildEquipmentDescription(item) : (item?.description || "");
+  const details = [
+    item?.name || "Item",
+    `Tipo: ${getInventoryTypeLabel(item)}`,
+    item?.qty ? `Quantidade: ${item.qty}` : "",
+    item?.rarity ? `Raridade: ${getRarityInfo(item.rarity).label}` : "",
+    item?.regionName ? `Regiao: ${item.regionName}` : item?.region ? `Regiao: ${item.region}` : "",
+    description,
+    getInventoryPrimaryActionText(item),
+    currentMode === "village" ? `Botao direito: vender por ${getSellPrice(item)} moedas.` : "Venda somente no vilarejo."
+  ];
+  return details.filter(Boolean).join(" | ");
+}
+
+function getInventorySlotCount(itemCount){
+  return Math.max(INVENTORY_MIN_SLOTS, Math.ceil(Math.max(1, itemCount) / INVENTORY_SLOT_COLUMNS) * INVENTORY_SLOT_COLUMNS);
+}
+
+function renderInventorySlotMarkup(item){
+  const flashClass = inventoryFlash.result && ((item?.uid && item.uid === inventoryFlash.uid) || (item?.id && item.id === inventoryFlash.id)) ? ` inventory-flash-${inventoryFlash.result}` : "";
+  const rarityClass = item?.rarity ? ` ${getItemRarityVisualClass(item)}` : "";
+  const typeClass = item?.type ? ` inventory-slot-${toCssToken(item.type)}` : "";
+  const uid = escapeJsString(item?.uid || "");
+  const tooltip = escapeHtml(getInventoryTooltipText(item));
+  const label = escapeHtml(item?.name || "Item");
+  const quantity = item?.qty && item.qty > 1 ? `<span class="inventory-slot-qty">x${item.qty}</span>` : "";
+  const regionMarker = item?.regionName || item?.region ? `<span class="inventory-slot-corner ${getItemToneClass(item)}"></span>` : "";
+  return `<button type="button" class="inventory-slot has-tooltip${rarityClass}${typeClass}${flashClass}" data-tooltip="${tooltip}" aria-label="${label}" onclick="return activateInventoryItem('${uid}', event)" oncontextmenu="return sellInventoryItem('${uid}', event)">
+    ${getInventoryItemSymbol(item)}
+    ${quantity}
+    ${regionMarker}
+  </button>`;
+}
+
+function renderInventoryGrid(items){
+  const sortedItems = [...items].sort((a, b) => {
+    const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : item.type === "equipment" ? 2 : item.type === "material" ? 3 : 4;
+    const priorityDiff = getInventoryPriority(a) - getInventoryPriority(b);
+    if(priorityDiff !== 0){ return priorityDiff; }
+    return (a.name || "").localeCompare(b.name || "", "pt-BR");
+  });
+  const emptySlots = Array.from({ length: Math.max(0, getInventorySlotCount(sortedItems.length) - sortedItems.length) }, () => `<span class="inventory-slot inventory-slot-empty" aria-hidden="true"></span>`).join("");
+  return `<div class="inventory-grid">${sortedItems.map(renderInventorySlotMarkup).join("")}${emptySlots}</div>`;
+}
+
+function getInventoryFilterLabel(filterId = inventoryFilter){
+  return INVENTORY_FILTER_OPTIONS.find(option => option.id === filterId)?.label || "Todos";
+}
+
+function getVisibleInventoryItems(){
+  if(inventoryFilter === "all"){
+    return player.inventory;
+  }
+  return player.inventory.filter(item => item.type === inventoryFilter);
+}
+
+function renderInventoryFilterTabs(){
+  return `<div class="inventory-filter-tabs" role="group" aria-label="Filtro do inventario">${INVENTORY_FILTER_OPTIONS.map(option => `
+    <button type="button" class="inventory-filter-tab ${inventoryFilter === option.id ? "active" : ""}" onclick="setInventoryFilter('${option.id}')">${option.label}</button>
+  `).join("")}</div>`;
 }
 
 function createEquipmentItem(dropTemplate, rarity){
@@ -4452,7 +4272,7 @@ function getDropTemplateFromItem(item){
 
 function canEquipItem(item){
   item = normalizeEquipmentMetadata(item);
-  return !item.classRestriction || item.classRestriction === player.class;
+  return item?.type === "equipment" && item.slot === "accessory" && (!item.classRestriction || item.classRestriction === player.class);
 }
 
 function getSellPrice(item){
@@ -4568,8 +4388,51 @@ function renderForgePanel(){
     const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
-    return getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true);
+    const feedbackClass = forgeFeedback.slot === entry.slot ? (forgeFeedback.result === "success" ? "forge-feedback-success" : forgeFeedback.result === "fail" ? "forge-feedback-fail" : "") : "";
+    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
   }).join("")}</div></div>`;
+}
+
+function getEnemyStatusEffects(targetEnemy){
+  if(!targetEnemy){ return []; }
+  const effects = [];
+  if(targetEnemy.bossBuffTurns > 0){
+    effects.push({ kind: "buff", text: `Buff do boss | ${targetEnemy.bossBuffTurns} turno(s)` });
+  }
+  if(targetEnemy.attackDownTurns > 0 && targetEnemy.attackDownPercent > 0){
+    effects.push({ kind: "debuff", text: `Ataque -${Math.floor(targetEnemy.attackDownPercent * 100)}% | ${targetEnemy.attackDownTurns} turno(s)` });
+  }
+  if(targetEnemy.armorDownTurns > 0 && targetEnemy.armorDownPercent > 0){
+    effects.push({ kind: "debuff", text: `Armadura -${Math.floor(targetEnemy.armorDownPercent * 100)}% | ${targetEnemy.armorDownTurns} turno(s)` });
+  }
+  if(targetEnemy.healReductionTurns > 0 && targetEnemy.healReductionPercent > 0){
+    effects.push({ kind: "debuff", text: `Cura -${Math.floor(targetEnemy.healReductionPercent * 100)}% | ${targetEnemy.healReductionTurns} turno(s)` });
+  }
+  if(targetEnemy.noShieldTurns > 0){
+    effects.push({ kind: "debuff", text: `Sem escudo | ${targetEnemy.noShieldTurns} turno(s)` });
+  }
+  if(targetEnemy.skipNextAttack){
+    effects.push({ kind: "control", text: "Proximo turno bloqueado" });
+  }
+  if(targetEnemy.rootedTurns > 0){
+    effects.push({ kind: "control", text: `Enraizado | ${targetEnemy.rootedTurns} turno(s)` });
+  }
+  if(targetEnemy.natureMarkTurns > 0){
+    effects.push({ kind: "debuff", text: `Marca | ${targetEnemy.natureMarkTurns} turno(s)` });
+  }
+  if(targetEnemy.naturePoisonTurns > 0 && targetEnemy.naturePoisonDamage > 0){
+    effects.push({ kind: "debuff", text: `Veneno ${targetEnemy.naturePoisonDamage}/t | ${targetEnemy.naturePoisonTurns} turno(s)` });
+  }
+  if(targetEnemy.natureDecayTurns > 0 && targetEnemy.natureDecayDamage > 0){
+    effects.push({ kind: "debuff", text: `Apodrecimento ${targetEnemy.natureDecayDamage}/t | ${targetEnemy.natureDecayTurns} turno(s)` });
+  }
+  if(targetEnemy.dotTurns > 0 && targetEnemy.dotDamagePerTurn > 0){
+    effects.push({ kind: "debuff", text: `${targetEnemy.dotSourceName || "DOT"} ${targetEnemy.dotDamagePerTurn}/t | ${targetEnemy.dotTurns} turno(s)` });
+  }
+  if(targetEnemy.frozenDamageBonusPercent > 0){
+    effects.push({ kind: "control", text: `Congelado | +${Math.floor(targetEnemy.frozenDamageBonusPercent * 100)}% no proximo dano` });
+  }
+  return effects;
 }
 
 function renderAlchemistPanel(){
@@ -4578,25 +4441,21 @@ function renderAlchemistPanel(){
 
 function renderArtisanPanel(){
   const selectedRegion = artisanRegionFilter && regions[artisanRegionFilter] ? artisanRegionFilter : currentRegion;
-  const recipes = getRegionCraftRecipes(selectedRegion, player.class);
   const regionData = regions[selectedRegion];
   if(!regionData){
     return `<div class="inventory-item"><div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Selecione uma regiao valida para montar pecas.</span></div>`;
   }
+  const materials = [...regionData.enemies, regionData.boss].filter(Boolean).map(enemyData => getEnemyMaterialTemplate(enemyData.name, selectedRegion));
   return `<div class="inventory-item">
     <div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div>
-    <span class="lock-note">Escolha a regiao do set que voce quer montar. Cada receita usa pelo menos 1 parte de cada inimigo da regiao, com variacoes extras por tipo de equipamento.</span>
+    <span class="lock-note">A repaginacao de equipamentos esta em preparo. Por enquanto, este painel cataloga os materiais de craft de cada regiao para voce conferir o que ja esta coletando.</span>
     <div class="tabs" style="margin:12px 0 16px;">${Object.keys(regions).map(regionName => `<button class="tab-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setArtisanRegion('${regionName}')">${regionName}</button>`).join("")}</div>
-    <div class="inventory-list" style="margin-top:12px;">${recipes.map(recipe => {
-      const requirementsText = Object.entries(recipe.requirements).map(([itemId, qty]) => {
-        const materialName = (player.inventory.find(item => item.id === itemId)?.name) || Object.values(enemyMaterialDrops || {}).find(entry => entry.id === itemId)?.name || itemId;
-        return `${materialName} x${qty}`;
-      }).join(" | ");
-      const craftTooltip = `Custo: ${recipe.cost} moedas | Materiais: ${requirementsText}`;
+    <div class="inventory-list" style="margin-top:12px;">${materials.map(material => {
+      const owned = getInventoryCountById(material.id);
       return getInventoryItemCardMarkup(
-        { ...recipe.template, type: "equipment", rarity: "comum", name: recipe.template.name },
-        `${buildEquipmentDescription(createEquipmentItem(recipe.template, "comum"))} Custo: ${recipe.cost} moedas. Materiais: ${requirementsText}.`,
-        `<div class="button-row"><div class="has-tooltip" data-tooltip="${craftTooltip}"><button class="action-btn" onclick="craftRegionEquipment('${selectedRegion}','${recipe.slot}')" ${canCraftRecipe(recipe) ? "" : "disabled"}>Craftar</button></div></div>`,
+        material,
+        `${material.description} Possui: ${owned}.`,
+        `<div class="bestiary-drop-line"><span class="bestiary-stat stat-drop"><small>Possui</small><strong>${owned}</strong></span></div>`,
         true
       );
     }).join("")}</div>
@@ -4611,16 +4470,17 @@ function renderVillagePanel(){
       <button class="tab-btn ${villageTab === "forge" ? "active" : ""}" onclick="setVillageTab('forge')">Ferreiro</button>
       <button class="tab-btn ${villageTab === "artisan" ? "active" : ""}" onclick="setVillageTab('artisan')">Artesao</button>
     </div>`;
+  const feedback = renderActionFeedback("village");
   if(villageTab === "alchemist"){
-    return `${tabs}${renderAlchemistPanel()}`;
+    return `${feedback}${tabs}${renderAlchemistPanel()}`;
   }
   if(villageTab === "forge"){
-    return `${tabs}${renderForgePanel()}`;
+    return `${feedback}${tabs}${renderForgePanel()}`;
   }
   if(villageTab === "artisan"){
-    return `${tabs}${renderArtisanPanel()}`;
+    return `${feedback}${tabs}${renderArtisanPanel()}`;
   }
-  return `${tabs}
+  return `${feedback}${tabs}
     <div class="inventory-list">
       <div class="inventory-item">
         <strong>Pousada</strong><br>
@@ -4637,12 +4497,13 @@ function renderVillagePanel(){
 
 function getModeShortcutMap(){
   return {
-    Digit1: "battle",
-    Digit2: "village",
-    Digit3: "camp",
-    Digit4: "trophies",
-    Digit5: "bestiary",
-    Digit6: "dungeon"
+    KeyC: "battle",
+    KeyB: "village",
+    KeyI: "camp",
+    KeyV: "trophies",
+    KeyH: "bestiary",
+    KeyZ: "dungeon",
+    KeyA: "arena"
   };
 }
 
@@ -4652,16 +4513,42 @@ function shouldIgnoreShortcutTarget(target){
   return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(tagName);
 }
 
+function handleCombatActionShortcut(event){
+  if(!player || shouldIgnoreShortcutTarget(event.target) || event.ctrlKey || event.altKey || event.metaKey){
+    return false;
+  }
+  if(!["battle", "dungeon_run", "arena_run"].includes(currentMode)){
+    return false;
+  }
+  const match = event.code.match(/^(Digit|Numpad)([1-9])$/);
+  if(!match){ return false; }
+  const actions = document.getElementById("actions");
+  if(!actions){ return false; }
+  const actionableButtons = Array.from(actions.querySelectorAll("button")).filter(button => !button.disabled);
+  const buttonIndex = Number(match[2]) - 1;
+  const actionButton = actionableButtons[buttonIndex];
+  if(!actionButton){ return false; }
+  event.preventDefault();
+  actionButton.click();
+  return true;
+}
+
 function handleModeShortcut(event){
+  if(handleCombatActionShortcut(event)){
+    return;
+  }
   if(!player || shouldIgnoreShortcutTarget(event.target) || event.ctrlKey || event.altKey || event.metaKey){
     return;
   }
   const shortcutMode = getModeShortcutMap()[event.code];
   if(!shortcutMode){ return; }
   event.preventDefault();
-  if(IS_DUNGEON_PAGE){
+  if(IS_DUNGEON_PAGE || IS_ARENA_PAGE){
     if(shortcutMode === "battle"){
       returnToMainPage("battle");
+    }
+    if((IS_DUNGEON_PAGE && shortcutMode === "dungeon") || (IS_ARENA_PAGE && shortcutMode === "arena")){
+      return;
     }
     return;
   }
@@ -4669,6 +4556,11 @@ function handleModeShortcut(event){
 }
 
 window.addEventListener("keydown", handleModeShortcut);
+window.addEventListener("beforeunload", () => {
+  if(player){
+    saveCampaign();
+  }
+});
 
 function getBaseEnemyName(enemyName){
   return enemyName.replace(/ Lv\.\d+$/, "");
@@ -4699,32 +4591,29 @@ function getEnemyRarity(region, enemyName, isBoss = false){
 }
 
 function getEnemyPossibleDrop(enemyName, region, isBoss = false){
-  if(isBoss){
-    const accessoryName = getBossAccessoryTemplate(region)?.name;
-    return accessoryName ? `Bau da ${region} | 3%: ${accessoryName}` : `Bau da ${region}`;
-  }
   if(region === "Dungeon"){
     return "Tesouros da expedicao ainda nao catalogados";
   }
-  const slots = getRegionDropSlots(region, enemyName);
-  if(!slots.length){ return "Sem drop conhecido"; }
-  const gearText = slots.map(slot => getRegionSetTemplate(region, slot, player?.class || "Guerreiro")?.name).join(" ou ");
   const materialName = getEnemyMaterialTemplate(enemyName, region).name;
-  return `${gearText} | 20%: ${materialName}`;
+  if(isBoss){
+    const accessoryName = getBossAccessoryTemplate(region)?.name;
+    return `${materialName} (35%)${accessoryName ? ` | Acessorio raro: ${accessoryName}` : ""}`;
+  }
+  return `${materialName} (30% total; ao dropar: 85% x1, 10% x2, 5% x3)`;
 }
 
 function getSelectedBestiaryRegion(){
-  if(bestiaryRegionFilter && regions[bestiaryRegionFilter] && isRegionUnlockedForBattle(bestiaryRegionFilter)){
+  if(bestiaryRegionFilter && regions[bestiaryRegionFilter] && (isBestiaryDevUnlocked() || isRegionUnlockedForBattle(bestiaryRegionFilter))){
     return bestiaryRegionFilter;
   }
-  if(regions[currentRegion] && isRegionUnlockedForBattle(currentRegion)){
+  if(regions[currentRegion] && (isBestiaryDevUnlocked() || isRegionUnlockedForBattle(currentRegion))){
     return currentRegion;
   }
-  return Object.keys(regions).find(regionName => isRegionUnlockedForBattle(regionName)) || Object.keys(regions)[0];
+  return Object.keys(regions).find(regionName => isBestiaryDevUnlocked() || isRegionUnlockedForBattle(regionName)) || Object.keys(regions)[0];
 }
 
 function setBestiaryRegion(regionName){
-  if(!regions[regionName] || !isRegionUnlockedForBattle(regionName)){ return; }
+  if(!regions[regionName] || (!isBestiaryDevUnlocked() && !isRegionUnlockedForBattle(regionName))){ return; }
   bestiaryRegionFilter = regionName;
   updateUI();
 }
@@ -4750,6 +4639,46 @@ function getBossAbilityDetailText(ability){
     details.push(`Cria escudo de ${shieldText}${ability.shieldTurns ? ` por ${ability.shieldTurns} turnos` : ""}`);
   }
   return details.join(" | ");
+}
+
+function renderBestiaryMetric(label, value, cssClass){
+  return `<span class="bestiary-stat ${cssClass}"><small>${label}</small><strong>${value}</strong></span>`;
+}
+
+function renderBestiaryStatGrid(stats){
+  return `<div class="bestiary-stat-grid">
+    ${renderBestiaryMetric("Vida", stats.maxHp, "stat-hp")}
+    ${renderBestiaryMetric("Ataque", stats.attack, "stat-atk")}
+    ${renderBestiaryMetric("Armadura", stats.armor, "stat-armor")}
+    ${stats.maxHpStrikePercent > 0 ? renderBestiaryMetric("Impacto", `+${Math.floor(stats.maxHpStrikePercent * 100)}%`, "stat-impact") : ""}
+  </div>`;
+}
+
+function renderBestiaryInfoLine(label, value, cssClass = ""){
+  return `<span class="bestiary-info-line ${cssClass}"><strong>${label}</strong>${value}</span>`;
+}
+
+function openBestiarySprite(kind, assetKey, label, extraClass = ""){
+  const existing = document.getElementById("bestiarySpriteModal");
+  if(existing){ existing.remove(); }
+  const modal = document.createElement("div");
+  modal.id = "bestiarySpriteModal";
+  modal.className = "bestiary-sprite-modal";
+  modal.innerHTML = `
+    <div class="bestiary-sprite-dialog">
+      <button class="bestiary-modal-close" onclick="closeBestiarySprite()">Fechar</button>
+      <div class="bestiary-preview-stage">${renderSpriteSheetFigure("bestiaryPreviewSprite", kind, assetKey, getEnemySpriteIcon({ name: label, baseName: label }), label, extraClass)}</div>
+      <strong>${escapeHtml(label)}</strong>
+    </div>`;
+  modal.addEventListener("click", event => {
+    if(event.target === modal){ closeBestiarySprite(); }
+  });
+  document.body.appendChild(modal);
+}
+
+function closeBestiarySprite(){
+  const modal = document.getElementById("bestiarySpriteModal");
+  if(modal){ modal.remove(); }
 }
 
 const beastRigEnemies = new Set(["Lobo Sombrio", "Sapo Colossal", "Quimera Solar"]);
@@ -4790,9 +4719,9 @@ function getEnemyRigWrapperClass(targetEnemy){
 
 function getEnemySpriteMarkup(targetEnemy){
   const className = `${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}`;
-  return `<div id="enemySprite" class="sprite-figure emoji-sprite ${className}">${getEnemySpriteIcon(targetEnemy)}</div>`;
+  const assetKey = toCssToken(targetEnemy?.baseName || targetEnemy?.name || "desconhecido");
+  return renderSpriteSheetFigure("enemySprite", "enemies", assetKey, getEnemySpriteIcon(targetEnemy), targetEnemy?.baseName || targetEnemy?.name || "Inimigo", className);
 }
-
 function getHeroCombatFxMarkup(){
   return `
     <span class="combat-fx fx-hit-burst"></span>
@@ -4812,164 +4741,151 @@ function getEnemyCombatFxMarkup(){
     <span class="combat-fx fx-enemy-buff"></span>`;
 }
 
-function getSceneBackdropMarkup(regionName){
-  const token = toCssToken(regionName);
-  return `
-    <div class="scene-atmosphere scene-atmosphere-${token}">
-      <span class="scene-haze back"></span>
-      <span class="scene-haze front"></span>
-      <span class="scene-glow one"></span>
-      <span class="scene-glow two"></span>
-    </div>
-    <div class="scene-props scene-props-${token}">
-      <span class="scene-prop-ground"></span>
-      <span class="scene-prop left"></span>
-      <span class="scene-prop mid"></span>
-      <span class="scene-prop right"></span>
-    </div>`;
-}
-
 function renderCombatScene(activeEnemy = null, regionName = currentRegion){
   const sceneEnemy = activeEnemy || null;
   const heroClass = getHeroSpriteClass();
   const sceneClass = getRegionSpriteClass(regionName);
-  const displayedClassName = getDisplayedClassName();
-  const heroClassLine = displayedClassName !== player.class
-    ? `<div class="scene-subclass-line"><span class="scene-subclass-glyph">${getHeroSpriteIcon()}</span><span>${displayedClassName} | Base ${player.class}</span></div>`
-    : `<div class="scene-subclass-line"><span class="scene-subclass-glyph">${getHeroSpriteIcon()}</span><span>${player.class}</span></div>`;
+  const previewStats = getPreviewStats();
+  const heroVitals = renderSceneVitalPlate("hero", {
+    hp: displayState.playerHp ?? player.hp,
+    maxHp: previewStats.maxHp,
+    mp: displayState.playerMp ?? player.mp,
+    maxMp: previewStats.maxMp,
+    xp: displayState.playerXp ?? player.xp,
+    xpToNext: getXpToNextLevel(),
+    level: player.level,
+    shield: playerEffects.shieldValue || 0,
+    effects: getHeroSceneEffects()
+  });
+  const enemyVitals = sceneEnemy
+    ? renderSceneVitalPlate("enemy", {
+      hp: displayState.enemyHp ?? sceneEnemy.hp,
+      maxHp: sceneEnemy.maxHp,
+      mp: sceneEnemy.mp || 0,
+      maxMp: sceneEnemy.maxMp || 0,
+      shield: sceneEnemy.shieldValue || 0,
+      armor: getEnemyDisplayedArmor(sceneEnemy),
+      rarityGem: renderEnemyRarityGem(sceneEnemy)
+    })
+    : "";
   const enemySide = sceneEnemy
     ? `<div class="${getEnemyRigWrapperClass(sceneEnemy)}" id="enemySpriteBox">
+        ${enemyVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
         <div class="sprite-fx">${getEnemyCombatFxMarkup()}</div>
         ${getEnemySpriteMarkup(sceneEnemy)}
-      </div>
-      <div class="scene-nameplate enemy-nameplate">
-        <strong>${sceneEnemy.baseName || sceneEnemy.name}</strong>
-        <span>${activeEnemy ? `${activeEnemy.isBoss ? "Chefao" : "Inimigo"} | Nv.${activeEnemy.level}` : "Chance atual mais alta"}</span>
       </div>`
-    : `<div class="scene-preview-pill">${getRegionBattleEmblem(regionName)}</div>`;
+    : "";
   return `
     <div class="battle-scene ${sceneClass}${activeEnemy ? " has-enemy" : " preview-scene"}">
-      <div class="battle-scene-overlay"></div>
-      ${getSceneBackdropMarkup(regionName)}
-      <div class="scene-region-tag">${regionName}</div>
+      <div id="combatProjectileLayer" class="combat-projectile-layer"></div>
       ${enemySide}
       <div id="heroSpriteBox" class="combat-entity hero-entity ${heroClass}">
+        ${heroVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
         <div class="sprite-fx">${getHeroCombatFxMarkup()}</div>
         ${getHeroSpriteMarkup()}
       </div>
-      <div class="scene-nameplate hero-nameplate">
-        <strong>${displayedClassName}</strong>
-        ${heroClassLine}
+    </div>`;
+}
+
+function renderAmbientHeroScene(scene){
+  const heroClass = getHeroSpriteClass();
+  const isCamp = scene === "camp";
+  const heroVitals = getHeroSceneVitalMarkup();
+  return `
+    <div class="ambient-scene ${isCamp ? "camp-scene" : "village-scene"}">
+      <div class="ambient-scene-overlay"></div>
+      ${isCamp ? "" : renderVillageNpcSprite()}
+      <div class="combat-entity hero-entity ambient-hero ${heroClass}${isCamp ? " resting" : ""}">
+        ${heroVitals}
+        <div class="entity-aura"></div>
+        <div class="entity-shadow"></div>
+        ${getHeroSpriteMarkup()}
       </div>
+    </div>`;
+}
+
+function getVillageNpcProfile(tab = villageTab){
+  return villageNpcProfiles[tab] || villageNpcProfiles.inn;
+}
+
+function renderVillageNpcSprite(tab = villageTab){
+  const profile = getVillageNpcProfile(tab);
+  const src = `assets/visual/sprites/village/${profile.asset}?v=${VILLAGE_NPC_ASSET_VERSION}`;
+  const entryClass = consumeVillageNpcEntry(tab) ? " entering" : "";
+  return `
+    <div class="village-npc-entity ${profile.className}${entryClass}" aria-label="${profile.label}" role="img">
+      <div class="npc-shadow"></div>
+      <img class="village-npc-sprite" src="${src}" alt="${profile.label}" draggable="false">
     </div>`;
 }
 
 function renderBattleRegionPreviewCard(){
-  const regionData = regions[currentRegion];
-  const spawnPreview = getRegionSpawnPreview(currentRegion);
   return `
     <div class="combat-arena-card enemy-card">
-      <div class="combat-scene-header">
-        <div>
-          <h3>${currentRegion}</h3>
-          <p class="enemy-subtitle">Nenhum inimigo ativo. Explore a area e procure seu proximo combate.</p>
-        </div>
-        <div class="enemy-badges">
-          <span class="enemy-badge">Nivel medio ${getRegionAverageLevel(currentRegion)}</span>
-          <span class="enemy-badge">${currentRegion}</span>
-        </div>
-      </div>
-      <div class="simple-combat-banner">
-        <div class="simple-combat-avatar region-focus-avatar"><span class="combat-avatar-fallback">${getRegionBattleEmblem(currentRegion)}</span></div>
-        <div class="simple-combat-copy">
-          <strong>${currentRegion}</strong>
-          <span>${regionData.description}</span>
-          <span>${getBossUnlockText(currentRegion)}</span>
-        </div>
-      </div>
-      <div class="combat-detail-grid">
-        <div class="combat-detail-card">
-          <strong>Chances atuais de encontro</strong>
-          <div class="scene-preview-grid">
-            ${spawnPreview.map(entry => `<div class="spawn-preview-pill"><strong>${entry.name}</strong><span>Nv.${entry.level} | ${entry.chance.toFixed(1)}%</span></div>`).join("")}
-          </div>
-        </div>
-      </div>
+      ${renderCombatScene(null, currentRegion)}
+      <div class="combat-detail-grid compact combat-info-strip">${renderSpawnPreviewCard(currentRegion)}</div>
     </div>`;
 }
 
 function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
+  const statusEffects = getEnemyStatusEffects(targetEnemy);
+  const detailCards = [
+    statusEffects.length ? `<div class="combat-detail-card compact">
+      <strong>Estados</strong>
+      <div class="enemy-status-list">${statusEffects.map(effect => `<span class="enemy-status-pill ${effect.kind}">${effect.text}</span>`).join("")}</div>
+    </div>` : "",
+    `<div class="combat-detail-card compact combat-info-card drop-preview-card">
+      <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
+      <span class="lock-note">${targetEnemy.possibleDrop}</span>
+    </div>`
+  ].filter(Boolean).join("");
   return `
     <div class="combat-arena-card enemy-card">
-      <div class="combat-scene-header">
-        <div>
-          <h3>${targetEnemy.name}</h3>
-          <p class="enemy-subtitle">${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} em ${targetEnemy.region}</p>
-        </div>
-        <div class="enemy-badges">
-          <span class="enemy-badge">Nivel ${targetEnemy.level}</span>
-          <span class="enemy-badge ${targetEnemy.rarityClass}">${targetEnemy.rarityLabel}</span>
-          <span class="enemy-badge">${targetEnemy.region}</span>
-        </div>
-      </div>
-      <div class="simple-combat-banner">
-        <div class="simple-combat-avatar enemy-focus-avatar">${renderCombatAvatar("enemies", toCssToken(targetEnemy.baseName || targetEnemy.name || "inimigo"), getEnemySpriteIcon(targetEnemy), targetEnemy.baseName || targetEnemy.name)}</div>
-        <div class="simple-combat-copy">
-          <strong>${targetEnemy.baseName || targetEnemy.name}</strong>
-          <span>${targetEnemy.isBoss ? "Chefao da regiao" : "Inimigo encontrado"} | Nivel ${targetEnemy.level}</span>
-          <span>${targetEnemy.possibleDrop}</span>
-        </div>
-      </div>
-      <div class="combat-detail-grid">
-        <div class="combat-detail-card">
-          ${targetEnemy.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${targetEnemy.shieldValue}</div><div class="bar small"><div class="shield-fill" style="width:${Math.min(100, targetEnemy.shieldValue / Math.max(1, targetEnemy.maxHp) * 100)}%"></div></div></div>` : ""}
-          <span class="lock-note">Vida ${Math.max(0, shownEnemyHp)}/${targetEnemy.maxHp}</span>
-          <div class="bar"><div id="enemyHpFill" class="fill hp" style="width:${Math.max(0, shownEnemyHp) / targetEnemy.maxHp * 100}%"></div></div>
-          ${targetEnemy.isBoss ? `<span class="lock-note">Mana ${targetEnemy.mp}/${targetEnemy.maxMp}</span><div class="bar"><div class="fill mp" style="width:${targetEnemy.mp / targetEnemy.maxMp * 100}%"></div></div>` : ""}
-        </div>
-        <div class="combat-detail-card">
-          <strong>Perigos</strong>
-          ${targetEnemy.armor > 0 ? `<span class="lock-note">Armadura: ${targetEnemy.armor}</span>` : `<span class="lock-note">Sem armadura adicional.</span>`}
-          ${targetEnemy.maxHpStrikePercent > 0 ? `<span class="lock-note">Impacto brutal: +${Math.floor(targetEnemy.maxHpStrikePercent * 100)}% da sua vida maxima</span>` : ""}
-          ${(targetEnemy.bossAbilities || []).length ? `<div class="boss-ability-list">${targetEnemy.bossAbilities.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>` : `${targetEnemy.isBoss ? `<span class="lock-note">Este chefao ainda nao revelou habilidades extras.</span>` : ""}`}
-          ${targetEnemy.bossBuffTurns > 0 ? `<span class="status-on">Buff ativo por ${targetEnemy.bossBuffTurns} turno(s)</span>` : ""}
-        </div>
-        <div class="combat-detail-card">
-          <strong>${targetEnemy.isBoss ? "Recompensa possivel" : "Possivel drop"}</strong>
-          <span class="lock-note">${targetEnemy.possibleDrop}</span>
-        </div>
-      </div>
+      ${renderCombatScene(targetEnemy, targetEnemy.region)}
+      ${detailCards ? `<div class="combat-detail-grid compact combat-info-strip">${detailCards}</div>` : ""}
     </div>`;
 }
 
 function renderBestiary(){
   const selectedRegion = getSelectedBestiaryRegion();
   const regionData = regions[selectedRegion];
-  const unlockProgress = getBossUnlockProgress(selectedRegion);
+  const devBestiary = isBestiaryDevUnlocked();
+  const unlockProgress = devBestiary
+    ? { defeated: regionData.enemies.length, total: regionData.enemies.length, unlocked: true, missing: [] }
+    : getBossUnlockProgress(selectedRegion);
   const enemyCards = regionData.enemies.map(template => {
     const stats = getEnemyStats(template, selectedRegion, false);
     const rarity = getEnemyRarity(selectedRegion, template.name, false);
-    return `<div class="inventory-item"><div class="simple-item-line"><div class="simple-combat-avatar" style="width:64px;height:96px;border-radius:14px;">${renderCombatAvatar("enemies", toCssToken(template.name), getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div><div class="simple-item-copy"><strong>${template.name} Lv.${template.level}</strong><br><span class="${rarity.cssClass}">${rarity.label}</span><br><span class="lock-note">Vida: ${stats.maxHp} | Ataque: ${stats.attack} | Armadura: ${stats.armor}${stats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(stats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br><span class="lock-note">Drop possivel: ${getEnemyPossibleDrop(template.name, selectedRegion, false)}</span><br><span class="lock-note">${getRegionSetLabel(selectedRegion)} | Bonus do set completo: ${formatStatBonusList(getSetBonusValues(selectedRegion))}</span></div></div></div>`;
+    const assetKey = toCssToken(template.name);
+    return `<div class="inventory-item bestiary-card"><div class="simple-item-line">
+      <button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${assetKey}','${escapeJsString(template.name)}','enemy-${assetKey}')" aria-label="Ampliar sprite de ${escapeHtml(template.name)}"><div class="simple-combat-avatar">${renderCombatAvatar("enemies", assetKey, getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div></button>
+      <div class="simple-item-copy">
+        <strong>${template.name} Lv.${template.level}</strong><br>
+        <span class="${rarity.cssClass}">${rarity.label}</span>
+        ${renderBestiaryStatGrid(stats)}
+        ${renderBestiaryInfoLine("Drop", getEnemyPossibleDrop(template.name, selectedRegion, false), "stat-drop")}
+      </div></div></div>`;
   }).join("");
   const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
   const bossProfile = getBossDifficultyProfile(selectedRegion, true);
   const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
   const bossKit = getBossAbilitySet(regionData.boss.name, selectedRegion);
+  const bestiaryUnlockText = devBestiary ? "Modo dev: todas as entradas do bestiario estao liberadas para analise." : getBossUnlockText(selectedRegion);
   return `
-    <div class="bestiary-filter-row">${Object.keys(regions).map(regionName => `<button class="region-chip action-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setBestiaryRegion('${regionName}')" ${isRegionUnlockedForBattle(regionName) ? "" : "disabled"}>${regionName}</button>`).join("")}</div>
     <div class="inventory-item">
       <strong>${selectedRegion}</strong><br>
       <span class="lock-note">${regionData.description}</span><br>
-      <span class="lock-note">${getBossUnlockText(selectedRegion)}</span>
+      <span class="lock-note">${bestiaryUnlockText}</span>
       <div class="inventory-list">${enemyCards}</div>
       <div class="inventory-item" style="margin-top:12px;">
-        <div class="simple-item-line"><div class="simple-combat-avatar" style="width:72px;height:108px;border-radius:14px;">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
-        <span class="lock-note">Vida: ${bossStats.maxHp} | Ataque: ${bossStats.attack} | Armadura: ${bossStats.armor}${bossStats.maxHpStrikePercent > 0 ? ` | Impacto: +${Math.floor(bossStats.maxHpStrikePercent * 100)}% da vida maxima` : ""}</span><br>
-        <span class="lock-note">Mana: ${bossMana} | Recompensa: ${getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true)} | Progresso: ${unlockProgress.defeated}/${unlockProgress.total}</span></div></div>
+        <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
+        ${renderBestiaryStatGrid(bossStats)}
+        <div class="bestiary-stat-grid">${renderBestiaryMetric("Mana", bossMana, "stat-mp")}${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
+        ${renderBestiaryInfoLine("Recompensa", getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true), "stat-drop")}</div></div>
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
       </div>
     </div>`;
@@ -5000,43 +4916,75 @@ function addInventoryItem(item){
     );
     if(existing){
       existing.qty = (existing.qty || 1) + (normalizedItem.qty || 1);
-      return;
+      return existing;
     }
   }
   if(stackable && !normalizedItem.qty){
     normalizedItem.qty = 1;
   }
   player.inventory.push(normalizedItem);
+  return normalizedItem;
 }
 
-function tryEnemyDrop(defeatedEnemy){
-  const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
-  const dropTemplate = getEnemyDropTemplate(enemyBaseName, defeatedEnemy.region, player.class);
-  if(!dropTemplate){ return; }
-  if(Math.random() > 0.1){ return; }
-  const rarity = rollWeightedRarity();
-  const item = createEquipmentItem(dropTemplate, rarity);
-  addInventoryItem(item);
-  log(`O ${enemyBaseName} deixou ${item.name}!`);
+function renderBestiaryRegionMapCard(selectedRegion, devBestiary = false){
+  const markers = Object.keys(regions).map((regionName, index) => {
+    const marker = REGION_MAP_MARKERS[regionName] || { x: 50, y: 50 };
+    const unlocked = devBestiary || isRegionUnlockedForBattle(regionName);
+    const tooltip = unlocked
+      ? `${regionName} | Nivel medio: ${getRegionAverageLevel(regionName)}`
+      : `${regionName} bloqueada | Requer ${getRegionRequirement(regionName)}`;
+    return `
+      <button
+        class="region-map-marker action-btn ${selectedRegion === regionName ? "active" : ""}"
+        style="--x:${marker.x}%;--y:${marker.y}%"
+        data-tooltip="${escapeHtml(tooltip)}"
+        onclick="setBestiaryRegion('${regionName}')"
+        aria-label="Ver criaturas de ${regionName}"
+        ${unlocked ? "" : "disabled"}
+      >${index + 1}</button>`;
+  }).join("");
+  return `
+    <div class="region-map-card bestiary-region-map-card">
+      <div class="region-map-frame">
+        <img class="region-map-image" src="assets/visual/maps/region-map.png?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
+        ${markers}
+      </div>
+    </div>`;
 }
 
 function tryEnemyMaterialDrop(defeatedEnemy){
-  if(defeatedEnemy?.isBoss){ return; }
+  if(!defeatedEnemy?.name || !defeatedEnemy?.region){ return; }
   const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
-  if(Math.random() > 0.2){ return; }
+  if(defeatedEnemy?.isBoss){
+    if(Math.random() >= 0.35){ return; }
+  }else if(Math.random() >= 0.30){
+    return;
+  }
   const material = getEnemyMaterialTemplate(enemyBaseName, defeatedEnemy.region);
+  if(defeatedEnemy?.isBoss){
+    material.qty = 1;
+  }else{
+    const quantityRoll = Math.random();
+    if(quantityRoll < 0.05){
+      material.qty = 3;
+    }else if(quantityRoll < 0.15){
+      material.qty = 2;
+    }else{
+      material.qty = 1;
+    }
+  }
   addInventoryItem(material);
-  log(`Voce coletou ${material.name}.`);
+  log(`Voce coletou ${material.name}${material.qty > 1 ? ` x${material.qty}` : ""}.`);
 }
 
 function getBossChestItem(region){
   const regionData = regions[region];
   if(!regionData){ return null; }
-  const possibleDrops = regionData.enemies.filter(enemyData => !!getEnemyDropTemplate(enemyData.name, region, player.class));
-  if(!possibleDrops.length){ return null; }
-  const chosenEnemy = chooseWeightedEnemy(possibleDrops, { regionName: region, applyLevelAdjustment: false });
-  const dropTemplate = getEnemyDropTemplate(chosenEnemy.name, region, player.class);
-  return createEquipmentItem(dropTemplate, rollWeightedRarity());
+  const pool = [...regionData.enemies, regionData.boss].filter(Boolean);
+  const chosenEnemy = pool[Math.floor(Math.random() * pool.length)];
+  const material = getEnemyMaterialTemplate(chosenEnemy.name, region);
+  material.qty = chosenEnemy === regionData.boss ? 1 : 2;
+  return material;
 }
 
 function getBossAccessoryItem(region){
@@ -5051,33 +4999,8 @@ function createRegionChest(region){
     name: `Bau da ${region}`,
     type: "chest",
     region,
-    description: `Contem 1 peca aleatoria do ${getRegionSetLabel(region)}.`
+    description: "Contem materiais de craft da regiao."
   };
-}
-
-function craftRegionEquipment(regionName, slot){
-  if(currentMode !== "village"){ return; }
-  const recipe = getRegionCraftRecipes(regionName, player.class).find(entry => entry.slot === slot);
-  if(!recipe){
-    log("O artesao nao encontrou essa receita.");
-    return;
-  }
-  if(player.coins < recipe.cost){
-    log(`Moedas insuficientes. O artesao cobra ${recipe.cost} moedas nessa montagem.`);
-    return;
-  }
-  for(const [itemId, qty] of Object.entries(recipe.requirements)){
-    if(getInventoryCountById(itemId) < qty){
-      log("Voce ainda nao tem todos os materiais necessarios para essa peca.");
-      return;
-    }
-  }
-  Object.entries(recipe.requirements).forEach(([itemId, qty]) => consumeInventoryById(itemId, qty));
-  player.coins -= recipe.cost;
-  const craftedItem = createEquipmentItem(recipe.template, "comum");
-  addInventoryItem(craftedItem);
-  log(`O artesao montou ${craftedItem.name} para voce.`);
-  updateUI();
 }
 
 function grantBossChest(region){
@@ -5222,6 +5145,41 @@ async function useConsumable(itemId){
   }
 }
 
+function activateInventoryItem(itemUid, event = null){
+  if(event){
+    event.preventDefault();
+  }
+  blurActiveControl();
+  const item = player.inventory.find(entry => entry.uid === itemUid);
+  if(!item){ return false; }
+  if(item.type === "consumable"){
+    useConsumable(item.id);
+    return false;
+  }
+  if(item.type === "chest"){
+    openChest(item.uid);
+    return false;
+  }
+  if(item.type === "equipment"){
+    equipItem(item.uid);
+    return false;
+  }
+  log(`${item.name}: ${item.description || "material guardado no inventario."}`);
+  return false;
+}
+
+function sellInventoryItem(itemUid, event = null){
+  if(event){
+    event.preventDefault();
+  }
+  if(currentMode !== "village"){
+    log("A venda de itens so pode ser feita no vilarejo.");
+    return false;
+  }
+  sellItem(itemUid);
+  return false;
+}
+
 function equipItem(itemUid){
   const itemIndex = player.inventory.findIndex(entry => entry.uid === itemUid);
   if(itemIndex < 0){ return; }
@@ -5279,6 +5237,8 @@ function sellItem(itemUid){
     player.inventory.splice(itemIndex, 1);
   }
   player.coins += value;
+  player.stats.itemsSold = (player.stats.itemsSold || 0) + 1;
+  player.stats.coinsEarned += value;
   log(`Voce vendeu ${item.name} por ${value} moedas.`);
   updateUI();
 }
@@ -5384,14 +5344,16 @@ function spawnEnemy(isBoss = false){
         ? `O chefao ${enemy.name} surgiu na ${currentRegion}!`
         : `Um ${enemy.name} apareceu na ${currentRegion}!`
   );
-  saveCampaign();
+  queueCampaignSave();
 }
 
 function ensureEnemy(){
   if(!["battle", "dungeon"].includes(currentMode) || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
+  blurActiveControl();
   if(!enemy || needsNewEnemy){
     spawnEnemy();
     updateUI();
+    playEnemyEntranceAnimation();
   }
 }
 
@@ -5410,6 +5372,7 @@ function challengeBoss(){
   needsNewEnemy = false;
   spawnEnemy(true);
   updateUI();
+  playEnemyEntranceAnimation();
 }
 
 function setMode(mode){
@@ -5418,18 +5381,24 @@ function setMode(mode){
     returnToMainPage(mode);
     return;
   }
-  if(isProcessingTurn || isDead || player.hp <= 0 || !["battle", "village", "trophies", "camp", "dungeon", "bestiary"].includes(mode)){ return; }
+  if(IS_ARENA_PAGE && mode !== "arena"){
+    if(isProcessingTurn || isDead || player.hp <= 0){ return; }
+    returnToMainPage(mode);
+    return;
+  }
+  if(isProcessingTurn || isDead || player.hp <= 0 || !["battle", "village", "trophies", "camp", "dungeon", "bestiary", "arena"].includes(mode)){ return; }
   if((levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
     log("Finalize sua evolucao antes de sair da batalha.");
     updateUI();
     return;
   }
-  if((mode === "village" || mode === "trophies" || mode === "camp" || mode === "dungeon" || mode === "bestiary") && enemy){
+  if((mode === "village" || mode === "trophies" || mode === "camp" || mode === "dungeon" || mode === "bestiary" || mode === "arena") && enemy){
     log(
       mode === "village" ? "Voce so pode ir ao vilarejo fora de combate."
       : mode === "trophies" ? "A sala de trofeus so pode ser acessada fora de combate."
       : mode === "camp" ? "O acampamento so pode ser acessado fora de combate."
       : mode === "dungeon" ? "A dungeon so pode ser acessada fora de combate."
+      : mode === "arena" ? "A arena so pode ser acessada fora de combate."
       : "O bestiario so pode ser acessado fora de combate."
     );
     updateUI();
@@ -5437,6 +5406,9 @@ function setMode(mode){
   }
   if(currentMode === "dungeon" && mode !== "dungeon" && isDungeonConnected()){
     leaveDungeonRoom(true);
+  }
+  if(mode === "village" && currentMode !== "village"){
+    queueVillageNpcEntry(villageTab);
   }
   currentMode = mode;
   syncRegionMusic();
@@ -5466,6 +5438,7 @@ function healAtVillage(){
   player.coins -= cost;
   player.hp = maxHp;
   displayState.playerHp = player.hp;
+  triggerActionFeedback("village", `Vida restaurada por ${cost} moedas.`, "success");
   log(`Voce descansou no vilarejo e recuperou toda a vida por ${cost} moedas.`);
   updateUI();
 }
@@ -5485,6 +5458,7 @@ function restoreManaAtVillage(){
   player.coins -= cost;
   player.mp = maxMp;
   displayState.playerMp = player.mp;
+  triggerActionFeedback("village", `Mana restaurada por ${cost} moedas.`, "success");
   log(`Voce descansou a mente no vilarejo e recuperou toda a mana por ${cost} moedas.`);
   updateUI();
 }
@@ -5500,11 +5474,13 @@ function buyConsumable(itemId){
   }
   player.coins -= cost;
   const existing = player.inventory.find(item => item.id === itemId);
+  let boughtItem = existing;
   if(existing){
     existing.qty++;
   }else{
-    addInventoryItem(createConsumableItem(itemId));
+    boughtItem = addInventoryItem(createConsumableItem(itemId));
   }
+  triggerInventoryFlash(boughtItem || { id: itemId }, "success");
   log(`Voce comprou ${data.name}.`);
   updateUI();
 }
@@ -5529,6 +5505,7 @@ function tryUpgradeEquippedItem(slot){
   player.coins -= cost;
   const chance = getForgeUpgradeChance(item);
   if(Math.random() > chance){
+    triggerForgeFeedback(slot, "fail");
     log(`O ferreiro falhou em aprimorar ${item.name}. Chance da tentativa: ${Math.floor(chance * 100)}%.`);
     updateUI();
     return;
@@ -5547,6 +5524,7 @@ function tryUpgradeEquippedItem(slot){
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
+  triggerForgeFeedback(slot, "success");
   log(`O ferreiro aprimorou ${item.name} para ${upgradedItem.name}!`);
   updateUI();
 }
@@ -5597,20 +5575,49 @@ function respawnPlayer(){
 }
 
 function resetAdventure(){
-  if(!confirm("Tem certeza que deseja reiniciar a campanha? Todo o progresso atual sera apagado.")){
+  const characterId = player?.characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
+  if(!confirm("Tem certeza que deseja apagar este personagem? Todo o progresso dele sera removido.")){
     return;
   }
-  localStorage.removeItem(SAVE_KEY);
+  if(characterId){
+    deleteCharacterSave(characterId, false);
+  }
+  localStorage.removeItem(ACTIVE_CHARACTER_KEY);
   location.reload();
 }
 
-function saveCampaign(){
+function isStartScreenVisible(){
+  const gamePanel = document.getElementById("game");
+  return !gamePanel || gamePanel.style.display === "none";
+}
+
+function queueCampaignSave(delay = 220){
+  if(!player){ return; }
+  if(saveCampaignTimeoutId){
+    clearTimeout(saveCampaignTimeoutId);
+  }
+  saveCampaignTimeoutId = setTimeout(() => {
+    saveCampaignTimeoutId = null;
+    saveCampaign();
+  }, delay);
+}
+
+function saveCampaign({ renderStart = false } = {}){
+  if(saveCampaignTimeoutId){
+    clearTimeout(saveCampaignTimeoutId);
+    saveCampaignTimeoutId = null;
+  }
   if(!player){
-    localStorage.removeItem(SAVE_KEY);
     renderSavedCampaign();
     return;
   }
+  player.characterId = player.characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || createCharacterId();
+  player.characterName = player.characterName || getNextCharacterName(player.class);
   const state = {
+    characterId: player.characterId,
+    characterName: player.characterName,
+    updatedAt: Date.now(),
+    createdAt: player.createdAt || Date.now(),
     player,
     enemy: currentMode === "dungeon" ? null : enemy,
     pendingLevelUps,
@@ -5626,15 +5633,25 @@ function saveCampaign(){
     isLogHidden,
     playerEffects
   };
+  player.createdAt = state.createdAt;
+  const activeCharacterId = localStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
+  upsertCharacterSave(state, { setActive: activeCharacterId === state.characterId });
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  renderSavedCampaign();
+  if(renderStart || isStartScreenVisible()){
+    renderSavedCampaign();
+  }
 }
 
-function continueCampaign(){
-  const raw = localStorage.getItem(SAVE_KEY);
+function continueCampaign(characterId = ""){
+  const selectedState = getSavedCharacterState(characterId);
+  const raw = selectedState ? JSON.stringify(selectedState) : localStorage.getItem(SAVE_KEY);
   if(!raw){ return; }
-  const state = JSON.parse(raw);
+  const state = normalizeSavedCharacterState(JSON.parse(raw));
+  if(!state){ return; }
+  localStorage.setItem(ACTIVE_CHARACTER_KEY, state.characterId);
   player = state.player;
+  player.characterId = state.characterId;
+  player.characterName = state.characterName || player.characterName || player.class;
   enemy = state.enemy;
   pendingLevelUps = state.pendingLevelUps;
   levelUpPoints = state.levelUpPoints;
@@ -5652,14 +5669,16 @@ function continueCampaign(){
     deadUntil = deadUntil || Date.now();
     player.hp = 0;
   }
-  if(!["battle", "village", "trophies", "camp", "bestiary"].includes(currentMode)){
+  if(!["battle", "village", "trophies", "camp", "bestiary", "arena"].includes(currentMode)){
     currentMode = "battle";
   }
   if(IS_DUNGEON_PAGE){
     currentMode = "dungeon";
+  }else if(IS_ARENA_PAGE){
+    currentMode = "arena";
   }else{
     const queuedMode = consumeQueuedPageMode();
-    if(["battle", "village", "trophies", "camp", "bestiary"].includes(queuedMode)){
+    if(["battle", "village", "trophies", "camp", "bestiary", "arena"].includes(queuedMode)){
       currentMode = queuedMode;
     }
   }
@@ -5681,6 +5700,14 @@ function continueCampaign(){
       rebuiltEnemy.dotDamagePerTurn = enemy.dotDamagePerTurn || 0;
       rebuiltEnemy.dotTurns = enemy.dotTurns || 0;
       rebuiltEnemy.dotSourceName = enemy.dotSourceName || "";
+      rebuiltEnemy.rootedTurns = enemy.rootedTurns || 0;
+      rebuiltEnemy.natureMarkTurns = enemy.natureMarkTurns || 0;
+      rebuiltEnemy.natureMarkDamage = enemy.natureMarkDamage || 0;
+      rebuiltEnemy.naturePoisonTurns = enemy.naturePoisonTurns || 0;
+      rebuiltEnemy.naturePoisonDamage = enemy.naturePoisonDamage || 0;
+      rebuiltEnemy.natureDecayTurns = enemy.natureDecayTurns || 0;
+      rebuiltEnemy.natureDecayDamage = enemy.natureDecayDamage || 0;
+      rebuiltEnemy.frozenDamageBonusPercent = enemy.frozenDamageBonusPercent || 0;
       rebuiltEnemy.healReductionPercent = enemy.healReductionPercent || 0;
       rebuiltEnemy.healReductionTurns = enemy.healReductionTurns || 0;
       rebuiltEnemy.noShieldTurns = enemy.noShieldTurns || 0;
@@ -5698,25 +5725,258 @@ function continueCampaign(){
   if(isDead && deadUntil && Date.now() >= deadUntil){
     deadUntil = Date.now();
   }
+  if(currentMode === "village"){
+    queueVillageNpcEntry(villageTab);
+  }
   syncRegionMusic(true);
   log("Campanha retomada.");
   updateUI();
 }
 
 function renderSavedCampaign(){
-  const saved = document.getElementById("savedCampaign");
-  if(localStorage.getItem(SAVE_KEY)){
-    saved.style.display = "block";
-    saved.innerHTML = `
-      <h3>Campanha em andamento</h3>
-      <div class="button-row">
-        <button onclick="continueCampaign()">Continuar campanha</button>
-        <button onclick="resetAdventure()">Reiniciar aventura</button>
-      </div>`;
-  }else{
-    saved.style.display = "none";
-    saved.innerHTML = "";
+  renderStartScreen();
+}
+
+function deleteCharacterSave(characterId, shouldRender = true){
+  const saves = readCharacterSavesRaw().filter(save => save.characterId !== characterId);
+  writeCharacterSaves(saves);
+  try{
+    const legacyState = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+    if(legacyState?.characterId === characterId || legacyState?.player?.characterId === characterId){
+      localStorage.removeItem(SAVE_KEY);
+    }
+  }catch{
+    localStorage.removeItem(SAVE_KEY);
   }
+  if(localStorage.getItem(ACTIVE_CHARACTER_KEY) === characterId){
+    localStorage.removeItem(ACTIVE_CHARACTER_KEY);
+  }
+  if(player?.characterId === characterId){
+    player = null;
+    enemy = null;
+  }
+  if(shouldRender){
+    renderStartScreen();
+  }
+}
+
+function getStartClassList(){
+  return START_CLASS_ORDER.filter(className => classes[className]);
+}
+
+function formatStartDate(timestamp){
+  if(!timestamp){ return ""; }
+  try{
+    return new Date(timestamp).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }catch{
+    return "";
+  }
+}
+
+function renderStartStat(label, value, cssClass){
+  return `<span class="start-stat ${cssClass}"><small>${label}</small><strong>${value}</strong></span>`;
+}
+
+function renderStartHeroFigure(targetPlayer, idPrefix){
+  const assetKey = getHeroCombatAssetKey(targetPlayer);
+  const heroClass = getHeroSpriteClass(targetPlayer);
+  const label = getDisplayedClassName(targetPlayer);
+  return `<div class="start-hero-stage">${renderSpriteSheetFigure(`${idPrefix}-${toCssToken(assetKey)}`, "heroes", assetKey, getHeroSpriteIcon(targetPlayer), label, heroClass)}</div>`;
+}
+
+function cloneSavedValue(value, fallback = {}){
+  try{
+    return JSON.parse(JSON.stringify(value ?? fallback));
+  }catch{
+    return fallback;
+  }
+}
+
+function getSavedAllocation(savedAllocation = {}){
+  return {
+    strength: Number(savedAllocation.strength) || 0,
+    wisdom: Number(savedAllocation.wisdom) || 0,
+    vitality: Number(savedAllocation.vitality) || 0
+  };
+}
+
+function prepareSavedPlayerForPreview(savedPlayer){
+  const prepared = cloneSavedValue(savedPlayer, {});
+  const baseStats = prepared.baseStats || classes[prepared.class] || { hp: prepared.maxHp || 0, mp: prepared.maxMp || 0, attack: prepared.attack || 0 };
+  const invested = createDefaultInvestedStats(prepared.stats?.invested || {});
+  const level = Math.max(1, Number(prepared.level) || 1);
+  const estimatedHpGain = Math.max(Number(invested.hpGain) || 0, (Number(invested.vitality) || 0) * getAttributePointGain("vitality", level));
+  const estimatedMpGain = Math.max(Number(invested.mpGain) || 0, (Number(invested.wisdom) || 0) * getAttributePointGain("wisdom", level));
+  const estimatedAttackGain = Math.max(Number(invested.attackGain) || 0, (Number(invested.strength) || 0) * getAttributePointGain("strength", level));
+  prepared.baseStats = baseStats;
+  prepared.maxHp = Math.max(Number(prepared.maxHp) || 0, (Number(baseStats.hp) || 0) + estimatedHpGain);
+  prepared.maxMp = Math.max(Number(prepared.maxMp) || 0, (Number(baseStats.mp) || 0) + estimatedMpGain);
+  prepared.attack = Math.max(Number(prepared.attack) || 0, (Number(baseStats.attack) || 0) + estimatedAttackGain);
+  prepared.hp = Math.max(0, Number(prepared.hp ?? prepared.maxHp) || 0);
+  prepared.mp = Math.max(0, Number(prepared.mp ?? prepared.maxMp) || 0);
+  return prepared;
+}
+
+function getSavedCharacterPreviewStats(state){
+  const previousPlayer = player;
+  const previousAllocation = allocation;
+  const previousEffects = playerEffects;
+  try{
+    player = prepareSavedPlayerForPreview(state.player);
+    allocation = getSavedAllocation(state.allocation);
+    playerEffects = { ...createDefaultPlayerEffects(), ...(state.playerEffects || {}) };
+    normalizePlayerState();
+    const previewStats = getPreviewStats();
+    return {
+      hp: Math.min(Math.max(0, Number(player.hp) || 0), previewStats.maxHp),
+      mp: Math.min(Math.max(0, Number(player.mp) || 0), previewStats.maxMp),
+      maxHp: previewStats.maxHp,
+      maxMp: previewStats.maxMp,
+      attack: previewStats.attack,
+      level: Math.max(1, Number(player.level) || 1)
+    };
+  }catch{
+    const fallbackPlayer = state?.player || {};
+    return {
+      hp: Number(fallbackPlayer.hp) || 0,
+      mp: Number(fallbackPlayer.mp) || 0,
+      maxHp: Number(fallbackPlayer.maxHp) || 0,
+      maxMp: Number(fallbackPlayer.maxMp) || 0,
+      attack: Number(fallbackPlayer.attack) || 0,
+      level: Math.max(1, Number(fallbackPlayer.level) || 1)
+    };
+  }finally{
+    player = previousPlayer;
+    allocation = previousAllocation;
+    playerEffects = previousEffects;
+  }
+}
+
+function getSavedCharacterTitle(savedPlayer, level){
+  const rawName = String(savedPlayer.characterName || "").trim();
+  const className = savedPlayer.class || getDisplayedClassName(savedPlayer);
+  if(!rawName){ return className; }
+  const escapedClassName = String(className).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if(new RegExp(`^${escapedClassName}\\s+\\d+$`, "i").test(rawName)){
+    return className;
+  }
+  const escapedLevel = String(level).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const levelSuffix = new RegExp(`\\s+(?:nivel|nv\\.?|lv\\.?|level)?\\s*${escapedLevel}$`, "i");
+  const cleanedName = rawName.replace(levelSuffix, "").trim();
+  return cleanedName || className;
+}
+
+function renderStartLevelBadge(level){
+  return `<span class="start-level-badge"><small>NV</small><strong>${level}</strong></span>`;
+}
+
+function renderClassCreationCard(className, disabled = false){
+  const base = classes[className];
+  const targetPlayer = { class: className, subclassChoices: { tier30: null, tier60: null } };
+  const token = toCssToken(className);
+  return `
+    <button type="button" class="character-class-card class-${token}" data-start-class="${escapeHtml(className)}" ${disabled ? "disabled" : ""}>
+      ${renderStartHeroFigure(targetPlayer, `new-${token}`)}
+      <span class="start-card-kicker">Novo personagem</span>
+      <strong class="start-card-title">${escapeHtml(className)}</strong>
+      <span class="start-card-copy">${escapeHtml(START_CLASS_COPY[className] || "")}</span>
+      ${disabled ? `<span class="start-limit-message">Limite de personagens atingido.</span>` : ""}
+      <span class="start-stat-row">
+        ${renderStartStat("Vida", base.hp, "stat-hp")}
+        ${renderStartStat("Mana", base.mp, "stat-mp")}
+        ${renderStartStat("Dano", base.attack, "stat-atk")}
+      </span>
+    </button>`;
+}
+
+function renderSavedCharacterCard(state){
+  const savedPlayer = state.player;
+  const token = toCssToken(savedPlayer.class);
+  const className = getDisplayedClassName(savedPlayer);
+  const stats = getSavedCharacterPreviewStats(state);
+  const displayName = getSavedCharacterTitle(savedPlayer, stats.level);
+  const updated = formatStartDate(state.updatedAt);
+  return `
+    <div class="saved-character-card class-${token}">
+      ${renderStartHeroFigure(savedPlayer, `saved-${toCssToken(state.characterId || displayName)}`)}
+      <div class="saved-character-copy">
+        <span class="start-card-kicker">Personagem salvo</span>
+        <div class="saved-character-heading">
+          <strong class="start-card-title">${escapeHtml(displayName)}</strong>
+          ${renderStartLevelBadge(stats.level)}
+        </div>
+        <span class="start-card-copy">${escapeHtml(className)}${updated ? ` - Atualizado ${updated}` : ""}</span>
+        <span class="start-stat-row">
+          ${renderStartStat("Vida", `${stats.hp}/${stats.maxHp}`, "stat-hp")}
+          ${renderStartStat("Mana", `${stats.mp}/${stats.maxMp}`, "stat-mp")}
+          ${renderStartStat("Dano", stats.attack, "stat-atk")}
+        </span>
+        <div class="saved-character-actions">
+          <button type="button" data-continue-character="${escapeHtml(state.characterId)}">Continuar</button>
+          <button type="button" class="danger-btn" data-delete-character="${escapeHtml(state.characterId)}">Apagar</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function setStartScreenTab(tab){
+  if(!["continue", "create"].includes(tab)){ return; }
+  startScreenTab = tab;
+  renderStartScreen();
+}
+
+function renderStartScreen(){
+  const root = document.getElementById("classSelect");
+  if(!root){ return; }
+  const saves = getCharacterSaves();
+  const activeTab = saves.length ? startScreenTab : "create";
+  const canCreateCharacter = saves.length < MAX_CHARACTER_SAVES;
+  startScreenTab = activeTab;
+  const savedMarkup = saves.length
+    ? `<div class="saved-character-grid">${saves.map(renderSavedCharacterCard).join("")}</div>`
+    : `<div class="start-empty-state">Nenhum personagem salvo ainda.</div>`;
+  const createMarkup = `
+    <div class="start-save-limit ${canCreateCharacter ? "" : "full"}">
+      <strong>${saves.length}/${MAX_CHARACTER_SAVES}</strong>
+      <span>${canCreateCharacter ? "espacos de personagem usados" : "limite de personagens atingido"}</span>
+    </div>
+    <div class="character-class-grid">${getStartClassList().map(className => renderClassCreationCard(className, !canCreateCharacter)).join("")}</div>`;
+  root.innerHTML = `
+    <div class="start-screen">
+      <div class="start-hero-copy">
+        <span class="start-eyebrow">RPG por Turnos</span>
+        <h2>Escolha um heroi</h2>
+        <p>Continue uma aventura salva ou crie um novo personagem com progresso separado.</p>
+      </div>
+      <div class="start-mode-tabs">
+        <button type="button" class="${activeTab === "continue" ? "active" : ""}" data-start-tab="continue" ${saves.length ? "" : "disabled"}>Continuar aventura</button>
+        <button type="button" class="${activeTab === "create" ? "active" : ""}" data-start-tab="create">Criar personagem ${saves.length}/${MAX_CHARACTER_SAVES}</button>
+      </div>
+      <section class="start-section">
+        <div class="start-section-head">
+          <span class="start-eyebrow">${activeTab === "continue" ? "Continuar" : "Criar"}</span>
+          <h3>${activeTab === "continue" ? "Personagens salvos" : "Novo personagem"}</h3>
+        </div>
+        ${activeTab === "continue" ? savedMarkup : createMarkup}
+      </section>
+    </div>`;
+  root.querySelectorAll("[data-start-tab]").forEach(button => {
+    button.addEventListener("click", () => setStartScreenTab(button.dataset.startTab));
+  });
+  root.querySelectorAll("[data-start-class]").forEach(button => {
+    button.addEventListener("click", () => selectClass(button.dataset.startClass));
+  });
+  root.querySelectorAll("[data-continue-character]").forEach(button => {
+    button.addEventListener("click", () => continueCampaign(button.dataset.continueCharacter));
+  });
+  root.querySelectorAll("[data-delete-character]").forEach(button => {
+    button.addEventListener("click", () => {
+      if(confirm("Apagar este personagem?")){
+        deleteCharacterSave(button.dataset.deleteCharacter);
+      }
+    });
+  });
+  root.style.display = player ? "none" : "block";
 }
 
 function changeRegion(region){
@@ -5737,6 +5997,74 @@ function changeRegion(region){
   updateUI();
 }
 
+function renderRegionMapCard(){
+  const controlsDisabled = isProcessingTurn || isDead || levelUpPoints > 0 || !!enemy;
+  const bossUnlockProgress = getBossUnlockProgress(currentRegion);
+  const bossProgressTooltip = bossUnlockProgress.unlocked
+    ? `Chefao liberado. Progresso: ${bossUnlockProgress.defeated}/${bossUnlockProgress.total} inimigos da regiao derrotados pelo menos uma vez.`
+    : `Derrote uma vez cada um dos ${bossUnlockProgress.total} inimigos da regiao para liberar o chefao. Faltam: ${bossUnlockProgress.missing.join(", ")}.`;
+  const markers = Object.keys(regions).map((region, index) => {
+    const marker = REGION_MAP_MARKERS[region] || { x: 50, y: 50 };
+    const locked = !isRegionUnlockedForBattle(region);
+    return `
+      <button
+        class="region-map-marker action-btn ${region === currentRegion ? "active" : ""}"
+        style="--x:${marker.x}%;--y:${marker.y}%"
+        data-tooltip="${region} | Nivel medio: ${getRegionAverageLevel(region)} | Requer ${getRegionRequirement(region)}"
+        onclick="changeRegion('${region}')"
+        aria-label="Viajar para ${region}"
+        ${controlsDisabled || locked ? "disabled" : ""}
+      >${index + 1}</button>`;
+  }).join("");
+  return `
+    <div class="region-map-card">
+      <div class="region-map-frame">
+        <img class="region-map-image" src="assets/visual/maps/region-map.png?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
+        ${markers}
+        <div class="region-map-boss-hud">
+          <span class="region-map-boss-progress">${bossUnlockProgress.defeated}/${bossUnlockProgress.total}</span>
+          <button class="region-map-boss-btn boss-btn action-btn" data-tooltip="${escapeHtml(bossProgressTooltip)}" onclick="challengeBoss()" aria-label="Enfrentar chefao" ${controlsDisabled || !bossUnlockProgress.unlocked ? "disabled" : ""}>Chefao</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getLocationActiveMode(){
+  if(currentMode === "dungeon_run"){ return "dungeon"; }
+  if(currentMode === "arena_run"){ return "arena"; }
+  return currentMode;
+}
+
+function isLocationModeDisabled(mode){
+  if(mode === "battle"){
+    return isProcessingTurn || isDead || player.hp <= 0;
+  }
+  return isProcessingTurn || isDead || player.hp <= 0 || !!enemy || levelUpPoints > 0 || needsSubclassChoice();
+}
+
+function renderLocationMapNavigation(){
+  const activeMode = getLocationActiveMode();
+  const markers = LOCATION_MODE_OPTIONS.map(option => {
+    const disabled = isLocationModeDisabled(option.id);
+    return `
+      <button
+        class="location-map-marker action-btn ${option.id === activeMode ? "active" : ""}"
+        style="--x:${option.x}%;--y:${option.y}%"
+        data-tooltip="${option.label} | Atalho ${option.shortcut}"
+        onclick="setMode('${option.id}')"
+        aria-label="Ir para ${option.label}"
+        ${disabled ? "disabled" : ""}
+      >${option.marker}</button>`;
+  }).join("");
+  return `
+    <div class="location-map-card">
+      <div class="location-map-frame">
+        <img class="location-map-image" src="assets/visual/maps/locations-map.png?v=${LOCATION_MAP_ASSET_VERSION}" alt="Mapa de locais do jogo" />
+        ${markers}
+      </div>
+    </div>`;
+}
+
 function updateUI(){
   const pointsLabel = levelUpPoints > 0
     ? `<p><strong>Pontos para distribuir:</strong> ${levelUpPoints}</p>`
@@ -5755,14 +6083,11 @@ function updateUI(){
   const classBaseData = player.baseStats || classes[player.class];
   const subclassBonuses = getTotalSubclassBonuses();
   const bossUnlockProgress = getBossUnlockProgress(currentRegion);
-  document.getElementById("heroPortraitPanel").innerHTML = `
-    <h3>Seu heroi</h3>
-    <div class="hero-portrait-card">
-      <div class="hero-portrait-stage">${renderCombatAvatar("heroes", getHeroCombatAssetKey(), getHeroSpriteIcon(), getDisplayedClassName())}</div>
-      <div class="hero-portrait-copy">
-        <strong class="coin-badge" style="align-self:flex-start;">Nivel ${player.level}</strong>
-      </div>
-    </div>`;
+  const heroPortraitPanel = document.getElementById("heroPortraitPanel");
+  if (heroPortraitPanel){
+    heroPortraitPanel.innerHTML = "";
+    heroPortraitPanel.hidden = true;
+  }
 
   const campEntries = getCampEntries();
   document.getElementById("playerInfo").innerHTML = `
@@ -5774,7 +6099,7 @@ function updateUI(){
     </div>
     ${playerEffects.shieldValue > 0 ? `<div class="shield-row"><div class="shield-label">Escudo: ${playerEffects.shieldValue}</div><div class="bar small"><div id="playerShieldFill" class="shield-fill" style="width:${shieldWidth}%"></div></div></div>` : ""}
     Vida: ${player.hp}/${previewStats.maxHp}
-    <div class="bar"><div id="playerHpFill" class="fill hp" style="width:${shownPlayerHp / previewStats.maxHp * 100}%"></div></div>
+    <div class="bar hp-meter player-hp-meter" style="${getHpMeterStyle(shownPlayerHp, previewStats.maxHp)}"><div id="playerHpFill" class="fill hp" style="${getHpFillStyle(shownPlayerHp, previewStats.maxHp)}"></div></div>
     Mana: ${player.mp}/${previewStats.maxMp}
     <div class="bar"><div id="playerMpFill" class="fill mp" style="width:${shownPlayerMp / previewStats.maxMp * 100}%"></div></div>
     XP: ${player.level >= MAX_LEVEL ? "MAX" : `${player.xp}/${xpToNextLevel}`}
@@ -5782,25 +6107,34 @@ function updateUI(){
     ${activeBuffs.length ? `<div class="buff-list">${activeBuffs.map(buff => `<span class="buff-pill">${buff}</span>`).join("")}</div>` : ""}
     ${pointsLabel}`;
 
-  document.getElementById("modeTabs").innerHTML = IS_DUNGEON_PAGE
+  const modeTabs = document.getElementById("modeTabs");
+  const modeTabsPanel = modeTabs.closest(".panel");
+  if(modeTabsPanel){
+    modeTabsPanel.classList.toggle("location-map-panel", !IS_DUNGEON_PAGE && !IS_ARENA_PAGE);
+  }
+  modeTabs.classList.toggle("location-map-tabs", !IS_DUNGEON_PAGE && !IS_ARENA_PAGE);
+  modeTabs.innerHTML = IS_DUNGEON_PAGE
     ? `
       <button class="tab-btn active">Dungeon</button>
-      <button class="tab-btn" data-tooltip="Atalho: tecla 1" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha [1]</button>`
-    : `
-      <button class="tab-btn ${currentMode === "battle" ? "active" : ""}" data-tooltip="Atalho: tecla 1" onclick="setMode('battle')" ${isProcessingTurn ? "disabled" : ""}>Batalha [1]</button>
-      <button class="tab-btn ${currentMode === "village" ? "active" : ""}" data-tooltip="Atalho: tecla 2" onclick="setMode('village')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Vilarejo [2]</button>
-      <button class="tab-btn ${currentMode === "camp" ? "active" : ""}" data-tooltip="Atalho: tecla 3" onclick="setMode('camp')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Acampamento [3]</button>
-      <button class="tab-btn ${currentMode === "trophies" ? "active" : ""}" data-tooltip="Atalho: tecla 4" onclick="setMode('trophies')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Sala de trofeus [4]</button>
-      <button class="tab-btn ${currentMode === "bestiary" ? "active" : ""}" data-tooltip="Atalho: tecla 5" onclick="setMode('bestiary')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Bestiario [5]</button>
-      <button class="tab-btn ${currentMode === "dungeon" ? "active" : ""}" data-tooltip="Atalho: tecla 6" onclick="setMode('dungeon')" ${isProcessingTurn || !!enemy || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Dungeon [6]</button>`;
+      <button class="tab-btn" data-tooltip="Atalho: tecla C" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha [C]</button>`
+    : IS_ARENA_PAGE
+    ? `
+      <button class="tab-btn active">Arena</button>
+      <button class="tab-btn" data-tooltip="Atalho: tecla C" onclick="returnToMainPage('battle')" ${isProcessingTurn ? "disabled" : ""}>Voltar para a campanha [C]</button>`
+    : renderLocationMapNavigation();
 
-  document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon"].includes(currentMode) && enemy
+  document.getElementById("enemyInfo").innerHTML = ["battle", "dungeon", "arena", "arena_run"].includes(currentMode) && enemy
     ? renderEnemyCombatCard(enemy, shownEnemyHp)
-    : ["battle", "dungeon"].includes(currentMode) ? `
+    : ["battle", "dungeon", "arena"].includes(currentMode) ? `
+    ${renderActionFeedback(currentMode)}
     ${currentMode === "dungeon"
       ? IS_DUNGEON_PAGE
         ? `<h3>Entrada da Dungeon</h3><p>${isDungeonConnected() ? "Sua equipe esta reunida. Crie a sala, entre com o codigo e adentre a dungeon quando o grupo estiver pronto." : "Monte ou entre em uma sala para iniciar uma incursao cooperativa."}</p>`
         : `<h3>Portal da Dungeon</h3><p>Daqui voce organiza sua equipe e so entra na pagina da dungeon quando clicar em adentrar.</p>`
+      : currentMode === "arena"
+        ? IS_ARENA_PAGE
+          ? `<h3>Portal da Arena</h3><p>${typeof getArenaStatusMessage === "function" ? getArenaStatusMessage() : "Crie uma sala, convide outro jogador e entre no duelo quando ambos estiverem prontos."}</p>`
+          : `<h3>Portal da Arena</h3><p>Daqui voce organiza o duelo e so entra na pagina da arena quando clicar em adentrar.</p>`
       : isDead
         ? `<h3>Voce foi derrotado</h3><p>Escolha entre reiniciar a aventura ou aguardar o renascimento.</p>`
         : levelUpPoints > 0
@@ -5810,7 +6144,7 @@ function updateUI(){
     <h3>Sala de trofeus</h3>
     <div class="trophy-list">${renderTrophyGroups()}</div>`
     : currentMode === "camp" ? `
-    <h3>Acampamento</h3>
+    ${renderAmbientHeroScene("camp")}
     ${renderCampContent(campEntries, previewStats, investedSummary, classBaseData, subclassBonuses, activeSetData, xpToNextLevel)}`
     : currentMode === "bestiary" ? `
     <h3>Bestiario</h3>
@@ -5820,50 +6154,53 @@ function updateUI(){
     <div class="inventory-list">
       <div class="inventory-item"><strong>${IS_DUNGEON_PAGE ? "Equipe" : "Como funciona"}</strong><br><span class="lock-note">${IS_DUNGEON_PAGE ? "Reuna ate 3 aventureiros, combine os codigos da sala e avance por toda a sequencia da dungeon em cooperativo." : "A dungeon fica em uma pagina separada. Aqui voce so prepara a entrada; o layout de incursao abre apenas quando voce escolher adentrar."}</span></div>
     </div>`
+    : currentMode === "arena" ? `
+    <h3>${IS_ARENA_PAGE ? "Patio da Arena" : "Portal da Arena"}</h3>
+    <div class="inventory-list">
+      <div class="inventory-item"><strong>${IS_ARENA_PAGE ? "Duelo online" : "Como funciona"}</strong><br><span class="lock-note">${IS_ARENA_PAGE ? "Monte uma sala para 2 jogadores, deixe a iniciativa escolher quem abre o combate e resolva tudo em turnos." : "A arena fica em uma pagina separada. Aqui voce so prepara a entrada e o duelo online so abre quando voce escolher adentrar."}</span></div>
+    </div>`
     : `
-    <h3>Vilarejo</h3>
-    <p>Um lugar seguro para se preparar antes da proxima aventura.</p>
+    ${renderAmbientHeroScene("village")}
     ${renderVillagePanel()}`;
 
-  const regionButtons = Object.keys(regions).map(region => `
-    <button class="region-chip action-btn ${region === currentRegion ? "active" : ""}" data-tooltip="Nivel medio dos inimigos: ${getRegionAverageLevel(region)} | Requer ${getRegionRequirement(region)}" onclick="changeRegion('${region}')" ${isProcessingTurn || levelUpPoints > 0 || !isRegionUnlockedForBattle(region) || !!enemy ? "disabled" : ""}>${region}</button>
-  `).join("");
-  document.getElementById("regionInfo").innerHTML = `
-    <h3>${currentMode === "battle" ? `Regiao Atual: ${currentRegion}` : currentMode === "trophies" ? "Resumo da campanha" : currentMode === "camp" ? "Resumo do heroi" : currentMode === "bestiary" ? "Guia de criaturas" : currentMode === "dungeon" ? "Sala da Dungeon" : "Servicos do Vilarejo"}</h3>
-    <p>${currentMode === "battle" ? `${regions[currentRegion].description} Requer ${getRegionRequirement(currentRegion)}. ${getBossUnlockText(currentRegion)}` : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%` : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos." : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, drops, set e o kit completo do chefao local." : currentMode === "dungeon" ? dungeonData.description : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente."}</p>
-    ${currentMode === "battle" ? `<div class="button-row">${regionButtons}</div><div class="inventory-item" style="margin-top:12px;"><strong>Chefao da regiao</strong><br><span class="lock-note">${getBossUnlockText(currentRegion)}</span><div class="button-row" style="margin-top:10px;"><button class="boss-btn" onclick="challengeBoss()" ${isProcessingTurn || levelUpPoints > 0 || isDead || !!enemy || !bossUnlockProgress.unlocked ? "disabled" : ""}>Enfrentar chefao</button></div></div>` : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar raridades e artesao para montar equipamentos com partes dos monstros.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : currentMode === "bestiary" ? `<div class="lock-note">Cada regiao possui um set proprio. As roupas podem ser usadas por qualquer classe, mas a arma do set so pode ser equipada pela classe correspondente.</div>` : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+  const regionPanelTitle = currentMode === "battle"
+    ? "Mapa"
+    : currentMode === "trophies" ? "Resumo da campanha"
+    : currentMode === "camp" ? "Resumo do heroi"
+    : currentMode === "bestiary" ? "Guia de criaturas"
+    : currentMode === "dungeon" ? "Sala da Dungeon"
+    : ["arena", "arena_run"].includes(currentMode) ? "Sala da Arena"
+    : "Servicos do Vilarejo";
+  const regionPanelDescription = currentMode === "battle"
+    ? regions[currentRegion].description
+    : currentMode === "trophies" ? `Inimigos derrotados: ${player.stats.enemiesDefeated} | Chefes derrotados: ${player.stats.bossesDefeated} | Conquistas: ${trophyCompletion}%`
+    : currentMode === "camp" ? "Aqui voce revisa sua rota de subclasse, bonus recebidos, proximos desbloqueios, equipamentos e conjuntos completos."
+    : currentMode === "bestiary" ? "Escolha uma regiao ja desbloqueada na batalha para estudar inimigos, materiais de craft e o kit completo do chefao local."
+    : currentMode === "dungeon" ? dungeonData.description
+    : ["arena", "arena_run"].includes(currentMode) ? "Crie ou entre em uma sala para enfrentar outro jogador. O primeiro turno do duelo sempre e escolhido aleatoriamente."
+    : "Aqui ficam os servicos de descanso do vilarejo, para corpo e mente.";
+  const regionInfoPanel = document.getElementById("regionInfo");
+  regionInfoPanel.classList.toggle("region-map-only-panel", currentMode === "battle" || currentMode === "bestiary");
+  regionInfoPanel.innerHTML = `
+    <h3>${regionPanelTitle}</h3>
+    <p>${regionPanelDescription}</p>
+    ${currentMode === "battle" ? `${renderRegionMapCard()}` : currentMode === "bestiary" ? renderBestiaryRegionMapCard(getSelectedBestiaryRegion(), isBestiaryDevUnlocked()) : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar acessorios e artesao para catalogar partes de craft.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : ["arena", "arena_run"].includes(currentMode) ? (IS_ARENA_PAGE ? `${typeof renderArenaRoomControls === "function" ? renderArenaRoomControls() : `<div class="lock-note">Carregando sistemas da arena...</div>`}` : `<div class="lock-note">A arena abre em uma pagina separada. Clique em adentrar para criar uma sala ou entrar em um duelo.</div>`) : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
+  const visibleInventory = getVisibleInventoryItems();
+  const inventoryOpen = uiSettings.inventoryOpen !== false;
   document.getElementById("inventoryInfo").innerHTML = currentMode === "trophies"
     ? renderTrophySummaryPanel()
     : `
-    <h3>Inventario</h3>
-    ${player.inventory.length ? `<div class="inventory-list">${[...player.inventory].sort((a, b) => {
-      const getInventoryPriority = item => item.type === "consumable" ? 0 : item.type === "chest" ? 1 : item.type === "material" ? 2 : 3;
-      const priorityDiff = getInventoryPriority(a) - getInventoryPriority(b);
-      if(priorityDiff !== 0){ return priorityDiff; }
-      return a.name.localeCompare(b.name, "pt-BR");
-    }).map(item => {
-      const useButton = item.type === "consumable"
-        ? `<button onclick="useConsumable('${item.id}')">Usar</button>`
-        : "";
-      const equipButton = item.type === "equipment"
-        ? `<button onclick="equipItem('${item.uid}')" ${canEquipItem(item) ? "" : "disabled"}>Equipar</button>`
-        : "";
-      const openButton = item.type === "chest"
-        ? `<button onclick="openChest('${item.uid}')">Abrir</button>`
-        : "";
-      const sellButton = currentMode === "village"
-        ? `<button onclick="sellItem('${item.uid}')">Vender (${getSellPrice(item)} moedas)</button>`
-        : "";
-      const actionButton = (useButton || equipButton || openButton || sellButton)
-        ? `<div class="button-row">${useButton}${equipButton}${openButton}${sellButton}</div>`
-        : "";
-      return getInventoryItemCardMarkup(
-        item,
-        item.type === "equipment" ? buildEquipmentDescription(item) : (item.description || ""),
-        actionButton
-      );
-    }).join("")}</div>` : `<p class="lock-note">Sua mochila esta vazia por enquanto.</p>`}`;
+    <div class="panel-header inventory-panel-header">
+      <h3>Inventario</h3>
+      <button class="inventory-toggle-btn" type="button" onclick="toggleInventoryPanel()">${inventoryOpen ? "Fechar" : "Abrir"}</button>
+    </div>
+    ${renderActionFeedback("inventory")}
+    ${inventoryOpen ? `
+      <div class="inventory-hint">Clique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.</div>
+      ${renderInventoryFilterTabs()}
+      ${visibleInventory.length ? renderInventoryGrid(visibleInventory) : `<p class="lock-note">${player.inventory.length ? `Nenhum item no filtro: ${getInventoryFilterLabel()}.` : "Sua mochila esta vazia por enquanto."}</p>${renderInventoryGrid([])}`}
+    ` : `<p class="inventory-collapsed-note lock-note">Inventario fechado.</p>`}`;
 
   renderActions();
   renderLevelUpPanel();
@@ -5876,6 +6213,15 @@ function updateUI(){
   const actionsRow = document.getElementById("actions");
   const levelPanel = document.getElementById("levelUpPanel");
   const inventoryPanel = document.getElementById("inventoryInfo");
+  const gameLayout = document.querySelector(".game-layout");
+  const isVisualCombatMode = ["battle", "dungeon", "arena", "arena_run"].includes(currentMode);
+  const isAmbientSceneMode = ["camp", "village"].includes(currentMode);
+  const isWideCenterMode = isAmbientSceneMode || ["trophies", "bestiary"].includes(currentMode);
+  if(gameLayout){
+    gameLayout.classList.toggle("visual-combat-layout", isVisualCombatMode);
+    gameLayout.classList.toggle("ambient-scene-layout", isAmbientSceneMode);
+    gameLayout.classList.toggle("wide-center-layout", isWideCenterMode);
+  }
   if(logBox){
     logBox.style.display = isLogHidden ? "none" : "block";
   }
@@ -5886,13 +6232,15 @@ function updateUI(){
     logPanel.style.display = ["battle", "dungeon"].includes(currentMode) ? "block" : "none";
   }
   if(playerPanel){
-    playerPanel.style.display = ["trophies", "bestiary"].includes(currentMode) ? "none" : "block";
+    playerPanel.style.display = isVisualCombatMode || isAmbientSceneMode || ["trophies", "bestiary"].includes(currentMode) ? "none" : "block";
     playerPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "3" : "1";
   }
   if(enemyPanel){
+    enemyPanel.classList.toggle("visual-combat-panel", isVisualCombatMode);
     enemyPanel.style.order = ["battle", "dungeon"].includes(currentMode) ? "1" : "2";
   }
   if(actionsRow){
+    actionsRow.classList.toggle("combat-actions-row", isVisualCombatMode);
     actionsRow.style.order = ["battle", "dungeon"].includes(currentMode) ? "2" : "3";
   }
   if(levelPanel){
@@ -5907,7 +6255,7 @@ function updateUI(){
   if(inventoryPanel){
     inventoryPanel.style.display = "block";
   }
-  saveCampaign();
+  queueCampaignSave();
 }
 
 function animateBars(){
@@ -5916,23 +6264,47 @@ function animateBars(){
     const playerShieldFill = document.getElementById("playerShieldFill");
     const playerMpFill = document.getElementById("playerMpFill");
     const playerXpFill = document.getElementById("playerXpFill");
+    const sceneHeroShieldFill = document.getElementById("sceneHeroShieldFill");
+    const sceneHeroHpFill = document.getElementById("sceneHeroHpFill");
+    const sceneHeroMpFill = document.getElementById("sceneHeroMpFill");
+    const sceneHeroXpFill = document.getElementById("sceneHeroXpFill");
     const enemyHpFill = document.getElementById("enemyHpFill");
+    const sceneEnemyShieldFill = document.getElementById("sceneEnemyShieldFill");
+    const sceneEnemyMpFill = document.getElementById("sceneEnemyMpFill");
 
     if(playerHpFill){
-      playerHpFill.style.width = `${player.hp / getPreviewStats().maxHp * 100}%`;
+      applyHpMeterStyle(playerHpFill, player.hp, getPreviewStats().maxHp);
+    }
+    if(sceneHeroHpFill){
+      applyHpMeterStyle(sceneHeroHpFill, player.hp, getPreviewStats().maxHp);
     }
     if(playerShieldFill){
       playerShieldFill.style.width = `${Math.min(100, (playerEffects.shieldValue || 0) / getPreviewStats().maxHp * 100)}%`;
     }
+    if(sceneHeroShieldFill){
+      sceneHeroShieldFill.style.width = `${getBarPercent(playerEffects.shieldValue || 0, getPreviewStats().maxHp)}%`;
+    }
     if(playerMpFill){
       playerMpFill.style.width = `${player.mp / getPreviewStats().maxMp * 100}%`;
+    }
+    if(sceneHeroMpFill){
+      sceneHeroMpFill.style.width = `${getBarPercent(player.mp, getPreviewStats().maxMp)}%`;
     }
     if(playerXpFill){
     playerXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : player.xp / getXpToNextLevel() * 100}%`;
     }
+    if(sceneHeroXpFill){
+      sceneHeroXpFill.style.width = `${player.level >= MAX_LEVEL ? 100 : getBarPercent(player.xp, getXpToNextLevel())}%`;
+    }
     if(enemy && enemyHpFill){
       const shownEnemyHp = displayState.enemyHp ?? enemy.hp;
-      enemyHpFill.style.width = `${Math.max(0, shownEnemyHp) / enemy.maxHp * 100}%`;
+      applyHpMeterStyle(enemyHpFill, Math.max(0, shownEnemyHp), enemy.maxHp);
+    }
+    if(enemy && sceneEnemyShieldFill){
+      sceneEnemyShieldFill.style.width = `${getBarPercent(enemy.shieldValue || 0, enemy.maxHp)}%`;
+    }
+    if(enemy && sceneEnemyMpFill){
+      sceneEnemyMpFill.style.width = `${getBarPercent(enemy.mp || 0, enemy.maxMp || 0)}%`;
     }
 
     displayState.playerHp = player.hp;
@@ -5969,6 +6341,26 @@ function renderActions(){
     actions.innerHTML = `<button onclick="setMode('battle')">Voltar para a batalha</button>`;
     return;
   }
+  if(currentMode === "arena"){
+    if(!IS_ARENA_PAGE){
+      actions.innerHTML = `<button onclick="openArenaPage()">Adentrar na arena</button><button onclick="setMode('battle')">Voltar para a batalha</button>`;
+      return;
+    }
+    if(typeof renderArenaActions === "function"){
+      renderArenaActions(actions);
+      return;
+    }
+    actions.innerHTML = `<button disabled>Carregando a arena...</button>`;
+    return;
+  }
+  if(currentMode === "arena_run"){
+    if(typeof renderArenaActions === "function"){
+      renderArenaActions(actions);
+      return;
+    }
+    actions.innerHTML = `<button disabled>Carregando a arena...</button>`;
+    return;
+  }
   if(currentMode === "dungeon"){
     if(!IS_DUNGEON_PAGE){
       actions.innerHTML = `<button onclick="openDungeonPage()">Adentrar na dungeon</button><button onclick="setMode('battle')">Voltar para a batalha</button>`;
@@ -5995,7 +6387,7 @@ function renderActions(){
       return;
     }
     const dungeonSkillButtons = skillInfo.length
-      ? skillInfo.map((skill, index) => `<button class="action-btn" data-tooltip="${skill.description}" onclick="dungeonUseSkill(${index})">${skill.name}</button>`).join("")
+      ? skillInfo.map((skill, index) => renderSkillActionButton(skill, index, `dungeonUseSkill(${index})`)).join("")
       : `<button disabled>Nenhuma habilidade ativa disponivel</button>`;
     actions.innerHTML = `<button class="action-btn" data-tooltip="${getBasicAttackTooltip()}" onclick="dungeonAttack()">${getBasicAttackLabel()}</button>${dungeonSkillButtons}<button onclick="leaveDungeonRoom()">Sair da sala</button>`;
     return false;
@@ -6014,7 +6406,7 @@ function renderActions(){
   }
 
   if(!enemy){
-    actions.innerHTML = `<button onclick="ensureEnemy()">Procurar inimigo</button>`;
+    actions.innerHTML = `<button class="action-btn find-enemy-btn" data-tooltip="Procura uma criatura na regiao atual." onclick="ensureEnemy()">Procurar inimigo</button>`;
     return;
   }
   const skillButtons = skillInfo.length
@@ -6035,20 +6427,62 @@ function toggleLog(){
 function getSkillActionState(skill, actor = player){
   const manaCost = Math.max(0, skill?.cost || 0);
   const canUse = (actor?.mp || 0) >= manaCost;
+  const themeClass = getSkillThemeClass(skill);
   return {
     canUse,
     manaCost,
-    classes: `action-btn skill-action ${canUse ? "skill-ready" : "skill-oom"}`
+    classes: `action-btn skill-action ${themeClass} ${canUse ? "skill-ready" : "skill-disabled"}`
   };
+}
+
+function getSkillThemeClass(skill){
+  const type = (skill?.type || "").toLowerCase();
+  if(type.includes("fire") || type.includes("burn") || type.includes("berserk") || type.includes("judgment") || type.includes("shove") || type.includes("stagger")){
+    return "skill-theme-crimson";
+  }
+  if(type.includes("ice") || type.includes("freeze") || type.includes("blizzard") || type.includes("avalanche") || type.includes("snow")){
+    return "skill-theme-frost";
+  }
+  if(type.includes("shield") || type.includes("faith") || type.includes("cocoon") || type.includes("smoke") || type.includes("focus") || type.includes("camouflage")){
+    return "skill-theme-steel";
+  }
+  if(type.includes("heal") || type.includes("breath") || type.includes("song") || type.includes("crown") || type.includes("wind")){
+    return "skill-theme-verdant";
+  }
+  if(type.includes("nature") || type.includes("seed") || type.includes("root") || type.includes("vine") || type.includes("queen") || type.includes("swamp") || type.includes("rot") || type.includes("forest")){
+    return "skill-theme-nature";
+  }
+  if(type.includes("arcane") || type.includes("mana") || type.includes("magic") || type.includes("corrupt") || type.includes("demon")){
+    return "skill-theme-arcane";
+  }
+  if(type.includes("arrow") || type.includes("shot") || type.includes("snipe") || type.includes("trap") || type.includes("barrage") || type.includes("focus") || type.includes("camouflage")){
+    return "skill-theme-amber";
+  }
+  return "skill-theme-crimson";
 }
 
 function renderSkillActionButton(skill, index, onClick, actor = player){
   const state = getSkillActionState(skill, actor);
-  return `<button class="${state.classes}" data-tooltip="${skill.description}" onclick="${onClick}" ${state.canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
+  const forcedBasicLock = actor === player && playerEffects.forcedBasicTurns > 0;
+  const canUse = state.canUse && !forcedBasicLock;
+  const tooltip = forcedBasicLock ? `${skill.description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : skill.description;
+  return `<button class="${state.classes}${forcedBasicLock ? " skill-locked" : ""}" data-tooltip="${tooltip}" onclick="${onClick}" ${canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
 }
 
 function renderBasicActionButton(label, tooltip, onClick){
   return `<button class="action-btn basic-action-btn" data-tooltip="${tooltip}" onclick="${onClick}">${label}</button>`;
+}
+
+function renderAttributeControls(attribute){
+  const currentValue = Number(allocation[attribute]) || 0;
+  return `
+    <div class="attribute-controls">
+      <button class="attribute-step-large" onclick="adjustAttribute('${attribute}', -5)" ${currentValue < 5 ? "disabled" : ""}>-5</button>
+      <button onclick="adjustAttribute('${attribute}', -1)" ${currentValue === 0 ? "disabled" : ""}>-</button>
+      <span class="attribute-value">${currentValue}</span>
+      <button onclick="adjustAttribute('${attribute}', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
+      <button class="attribute-step-large" onclick="adjustAttribute('${attribute}', 5)" ${levelUpPoints < 5 ? "disabled" : ""}>+5</button>
+    </div>`;
 }
 
 function renderLevelUpPanel(){
@@ -6077,27 +6511,15 @@ function renderLevelUpPanel(){
     <p>Distribua ${levelUpPoints} ponto(s) antes da proxima batalha.</p>
     <div class="attribute-row">
       <div><strong>Vitalidade</strong><br><small>+${getAttributePointGain("vitality")} HP maxima por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('vitality', -1)" ${(allocation.vitality || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.vitality || 0}</span>
-        <button onclick="adjustAttribute('vitality', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("vitality")}
     </div>
     <div class="attribute-row">
       <div><strong>Sabedoria</strong><br><small>+${getAttributePointGain("wisdom")} MP maxima por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('wisdom', -1)" ${(allocation.wisdom || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.wisdom || 0}</span>
-        <button onclick="adjustAttribute('wisdom', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("wisdom")}
     </div>
     <div class="attribute-row">
       <div><strong>Forca</strong><br><small>+${getAttributePointGain("strength")} ATQ e +${getAttributePointGain("strength")} dano de habilidade por ponto</small></div>
-      <div class="attribute-controls">
-        <button onclick="adjustAttribute('strength', -1)" ${(allocation.strength || 0) === 0 ? "disabled" : ""}>-</button>
-        <span class="attribute-value">${allocation.strength || 0}</span>
-        <button onclick="adjustAttribute('strength', 1)" ${levelUpPoints === 0 ? "disabled" : ""}>+</button>
-      </div>
+      ${renderAttributeControls("strength")}
     </div>
     <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
 }
@@ -6159,7 +6581,7 @@ function setEnemyBarWidth(hpValue){
   const enemyHpFill = document.getElementById("enemyHpFill");
   if(!enemyHpFill || !enemy){ return; }
   enemyHpFill.style.transition = "none";
-  enemyHpFill.style.width = `${Math.max(0, hpValue) / enemy.maxHp * 100}%`;
+  applyHpMeterStyle(enemyHpFill, Math.max(0, hpValue), enemy.maxHp);
 }
 
 async function animateEnemyBarTo(targetHp, startHp = null, stepDelay = 16, minFrames = 8, frameDivisor = 3, startDelay = 12){
@@ -6197,18 +6619,21 @@ async function animateEnemyHitSequence(hitDamages){
   displayState.enemyHp = shownHp;
   setEnemyBarWidth(shownHp);
   await wait(animationConfig.missileStartDelay);
+  const hitSequenceDuration = hitDamages.length * animationConfig.missileHitDelay;
+  pulseSpriteClass("enemySpriteBox", "hit-impact", Math.min(520, Math.max(220, hitSequenceDuration)));
   for(const damage of hitDamages){
     shownHp = Math.max(0, shownHp - damage);
     displayState.enemyHp = shownHp;
     setEnemyBarWidth(shownHp);
-    pulseSpriteClass("enemySpriteBox", "hit", 180);
     await wait(animationConfig.missileHitDelay);
   }
 }
 
 async function attack(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  blurActiveControl();
   isProcessingTurn = true;
+  updateUI();
   if(await handlePlayerTurnStartEffects()){
     return;
   }
@@ -6247,6 +6672,7 @@ async function attack(){
 
 async function useSkill(index){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  blurActiveControl();
   if(playerEffects.forcedBasicTurns > 0){
     log("Voce so pode usar o ataque basico enquanto Cortes Ultrasonicos estiver ativo.");
     updateUI();
@@ -6259,6 +6685,7 @@ async function useSkill(index){
     return;
   }
   isProcessingTurn = true;
+  updateUI();
   if(await handlePlayerTurnStartEffects()){
     return;
   }
@@ -6296,7 +6723,9 @@ async function useSkill(index){
 
 async function passTurn(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  blurActiveControl();
   isProcessingTurn = true;
+  updateUI();
   if(await handlePlayerTurnStartEffects()){
     return;
   }
@@ -6314,7 +6743,6 @@ function handleEnemyDefeat(){
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
   log("Inimigo derrotado!");
-  tryEnemyDrop(enemy);
   tryEnemyMaterialDrop(enemy);
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
   const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
@@ -6864,11 +7292,16 @@ function gainXP(amount){
 }
 
 function adjustAttribute(attribute, amount){
-  if(amount > 0 && levelUpPoints <= 0){ return; }
-  if(amount < 0 && allocation[attribute] <= 0){ return; }
+  if(!["vitality", "wisdom", "strength"].includes(attribute)){ return; }
+  const delta = Math.trunc(Number(amount) || 0);
+  if(delta === 0){ return; }
 
-  allocation[attribute] += amount;
-  levelUpPoints -= amount;
+  allocation[attribute] = Number(allocation[attribute]) || 0;
+  if(delta > 0 && levelUpPoints < delta){ return; }
+  if(delta < 0 && allocation[attribute] < Math.abs(delta)){ return; }
+
+  allocation[attribute] += delta;
+  levelUpPoints -= delta;
   updateUI();
 }
 
@@ -7060,18 +7493,35 @@ function chooseSubclass(subclassId){
 
 function log(msg){
   const logBox = document.getElementById("log");
-  logBox.innerHTML += `<p>${msg}</p>`;
+  if(!logBox){ return; }
+  const entry = document.createElement("p");
+  entry.textContent = msg;
+  logBox.appendChild(entry);
+  while(logBox.children.length > MAX_LOG_ENTRIES){
+    logBox.removeChild(logBox.firstElementChild);
+  }
   logBox.scrollTop = logBox.scrollHeight;
 }
 
-if(IS_DUNGEON_PAGE){
+let shouldShowCharacterSelectOnly = false;
+try{
+  shouldShowCharacterSelectOnly = sessionStorage.getItem(CHARACTER_SELECT_EXIT_KEY) === "1";
+  if(shouldShowCharacterSelectOnly){
+    sessionStorage.removeItem(CHARACTER_SELECT_EXIT_KEY);
+    sessionStorage.removeItem(PENDING_PAGE_MODE_KEY);
+  }
+}catch{}
+
+if(shouldShowCharacterSelectOnly){
+  renderSavedCampaign();
+}else if(IS_DUNGEON_PAGE){
   renderSavedCampaign();
 }else{
   let shouldResumeQueuedCampaign = false;
   try{
     shouldResumeQueuedCampaign = !!sessionStorage.getItem(PENDING_PAGE_MODE_KEY);
   }catch{}
-  if(shouldResumeQueuedCampaign && localStorage.getItem(SAVE_KEY)){
+  if(shouldResumeQueuedCampaign && getSavedCharacterState()){
     continueCampaign();
   }else{
     renderSavedCampaign();

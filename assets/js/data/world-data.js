@@ -185,7 +185,19 @@ const enemyMaterialDrops = {
   "Serafim do Fim": { id: "parte_serafim_do_fim", name: "Pena do Serafim do Fim", description: "Pena final, densa e cortante." },
   "Guardiao Temporal": { id: "parte_guardiao_temporal", name: "Engrenagem Temporal", description: "Peca rara que vibra fora do tempo." },
   "Oraculo do Zero": { id: "parte_oraculo_do_zero", name: "Fragmento do Zero", description: "Pedra fria usada em moldes paradoxais." },
-  "Devorador de Eras": { id: "parte_devorador_de_eras", name: "Dente do Devorador de Eras", description: "Trofeu extremo da ultima fronteira." }
+  "Devorador de Eras": { id: "parte_devorador_de_eras", name: "Dente do Devorador de Eras", description: "Trofeu extremo da ultima fronteira." },
+  "Ent Ancestral": { id: "parte_ent_ancestral", name: "Coracao de Raiz Ancestral", description: "Nucleo vivo do guardiao da Floresta, usado em craft de alto grau." },
+  "Troll das Profundezas": { id: "parte_troll_das_profundezas", name: "Dente do Troll das Profundezas", description: "Presa mineralizada arrancada do chefao da Caverna." },
+  "Rei Espectral": { id: "parte_rei_espectral", name: "Coroa Partida do Rei Espectral", description: "Fragmento regio saturado de memoria espiritual." },
+  "Hidra do Lodo": { id: "parte_hidra_do_lodo", name: "Gema Corrosiva da Hidra", description: "Gema viscosa que conserva o veneno do chefao do Pantano." },
+  "Draco Magmatico": { id: "parte_draco_magmatico", name: "Nucleo Magmatico do Draco", description: "Pedra flamejante extraida do peito do draco." },
+  "Arauto do Vazio": { id: "parte_arauto_do_vazio", name: "Selo do Arauto do Vazio", description: "Runa escura capaz de sustentar craft abissal." },
+  "General de Aco": { id: "parte_general_de_aco", name: "Medalhao do General de Aco", description: "Insignia pesada de comando da Fortaleza." },
+  "Lorde da Cripta": { id: "parte_lorde_da_cripta", name: "Pacto Selado do Lorde", description: "Contrato funebre usado em trabalhos necroticos." },
+  "Imperador do Eclipse": { id: "parte_imperador_do_eclipse", name: "Fragmento do Eclipse Imperial", description: "Estilhaço de luz e sombra do chefao da Citadela." },
+  "Avatar do Zenith": { id: "parte_avatar_do_zenith", name: "Centelha do Zenith", description: "Particula solar concentrada em forma de reliquia." },
+  "Deus da Ruina": { id: "parte_deus_da_ruina", name: "Estilhaço da Ruina", description: "Fragmento cataclismico instavel e raro." },
+  "Soberano do Paradoxo": { id: "parte_soberano_do_paradoxo", name: "Nucleo do Paradoxo", description: "Objeto impossivel, frio e quente ao mesmo tempo." }
 };
 
 const advancedBossRegions = ["Ruinas", "Pantano", "Vulcao", "Abismo", "Fortaleza", "Necropole", "Citadela", "Panteao", "Cataclismo", "Paradoxo"];
