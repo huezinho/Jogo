@@ -1,0 +1,829 @@
+{
+  "items": [
+    {
+      "id": "parte_lobo_sombrio",
+      "name": "Pelo do Lobo Sombrio",
+      "type": "primary",
+      "path": "assets/visual/items/parte_lobo_sombrio.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_lobo_sombrio",
+      "name": "Presa Sombria",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_lobo_sombrio.webp?v=20261029"
+    },
+    {
+      "id": "parte_goblin",
+      "name": "Orelha de Goblin",
+      "type": "primary",
+      "path": "assets/visual/items/parte_goblin.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_goblin",
+      "name": "Moeda Goblin Lascada",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_goblin.webp?v=20261029"
+    },
+    {
+      "id": "parte_aranha_gigante",
+      "name": "Presa de Aranha Gigante",
+      "type": "primary",
+      "path": "assets/visual/items/parte_aranha_gigante.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_aranha_gigante",
+      "name": "Fio de Seda Gigante",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_aranha_gigante.webp?v=20261029"
+    },
+    {
+      "id": "parte_ent_ancestral",
+      "name": "Coracao de Raiz Ancestral",
+      "type": "primary",
+      "path": "assets/visual/items/parte_ent_ancestral.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_ent_ancestral",
+      "name": "Seiva Ancestral",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_ent_ancestral.webp?v=20261029"
+    },
+    {
+      "id": "parte_morcego_de_pedra",
+      "name": "Asa de Morcego de Pedra",
+      "type": "primary",
+      "path": "assets/visual/items/parte_morcego_de_pedra.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_morcego_de_pedra",
+      "name": "Fragmento de Rocha Alada",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_morcego_de_pedra.webp?v=20261029"
+    },
+    {
+      "id": "parte_esqueleto_mineiro",
+      "name": "Minerio Ossudo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_esqueleto_mineiro.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_esqueleto_mineiro",
+      "name": "Poeira de Ferro",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_esqueleto_mineiro.webp?v=20261029"
+    },
+    {
+      "id": "parte_slime_toxico",
+      "name": "Nucleo de Slime Toxico",
+      "type": "primary",
+      "path": "assets/visual/items/parte_slime_toxico.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_slime_toxico",
+      "name": "Muco Toxico",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_slime_toxico.webp?v=20261029"
+    },
+    {
+      "id": "parte_troll_das_profundezas",
+      "name": "Dente do Troll das Profundezas",
+      "type": "primary",
+      "path": "assets/visual/items/parte_troll_das_profundezas.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_troll_das_profundezas",
+      "name": "Sangue Petrificado",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_troll_das_profundezas.webp?v=20261029"
+    },
+    {
+      "id": "parte_sentinela_quebrada",
+      "name": "Engrenagem da Sentinela",
+      "type": "primary",
+      "path": "assets/visual/items/parte_sentinela_quebrada.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_sentinela_quebrada",
+      "name": "Nucleo da Sentinela",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_sentinela_quebrada.webp?v=20261029"
+    },
+    {
+      "id": "parte_cultista_perdido",
+      "name": "Manto Rasgado do Cultista",
+      "type": "primary",
+      "path": "assets/visual/items/parte_cultista_perdido.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_cultista_perdido",
+      "name": "Tinta Ritual",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_cultista_perdido.webp?v=20261029"
+    },
+    {
+      "id": "parte_fantasma_antigo",
+      "name": "Essencia do Fantasma Antigo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_fantasma_antigo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_fantasma_antigo",
+      "name": "Ectoplasma Antigo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_fantasma_antigo.webp?v=20261029"
+    },
+    {
+      "id": "parte_rei_espectral",
+      "name": "Coroa Partida do Rei Espectral",
+      "type": "primary",
+      "path": "assets/visual/items/parte_rei_espectral.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_rei_espectral",
+      "name": "Coroa Espectral Quebrada",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_rei_espectral.webp?v=20261029"
+    },
+    {
+      "id": "parte_sapo_colossal",
+      "name": "Pele do Sapo Colossal",
+      "type": "primary",
+      "path": "assets/visual/items/parte_sapo_colossal.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_sapo_colossal",
+      "name": "Glandula Pantanosa",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_sapo_colossal.webp?v=20261029"
+    },
+    {
+      "id": "parte_bruxa_do_brejo",
+      "name": "Totem da Bruxa do Brejo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_bruxa_do_brejo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_bruxa_do_brejo",
+      "name": "Erva do Brejo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_bruxa_do_brejo.webp?v=20261029"
+    },
+    {
+      "id": "parte_serpente_do_lodo",
+      "name": "Escama da Serpente do Lodo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_serpente_do_lodo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_serpente_do_lodo",
+      "name": "Veneno do Lodo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_serpente_do_lodo.webp?v=20261029"
+    },
+    {
+      "id": "parte_hidra_do_lodo",
+      "name": "Gema Corrosiva da Hidra",
+      "type": "primary",
+      "path": "assets/visual/items/parte_hidra_do_lodo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_hidra_do_lodo",
+      "name": "Coracao da Hidra",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_hidra_do_lodo.webp?v=20261029"
+    },
+    {
+      "id": "parte_salamandra_rubra",
+      "name": "Glândula Rubra",
+      "type": "primary",
+      "path": "assets/visual/items/parte_salamandra_rubra.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_salamandra_rubra",
+      "name": "Brasa Rubra",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_salamandra_rubra.webp?v=20261029"
+    },
+    {
+      "id": "parte_golem_de_brasa",
+      "name": "Fragmento do Golem de Brasa",
+      "type": "primary",
+      "path": "assets/visual/items/parte_golem_de_brasa.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_golem_de_brasa",
+      "name": "Nucleo de Magma",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_golem_de_brasa.webp?v=20261029"
+    },
+    {
+      "id": "parte_fenix_sombria",
+      "name": "Pena da Fenix Sombria",
+      "type": "primary",
+      "path": "assets/visual/items/parte_fenix_sombria.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_fenix_sombria",
+      "name": "Cinza da Fenix",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_fenix_sombria.webp?v=20261029"
+    },
+    {
+      "id": "parte_draco_magmatico",
+      "name": "Nucleo Magmatico do Draco",
+      "type": "primary",
+      "path": "assets/visual/items/parte_draco_magmatico.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_draco_magmatico",
+      "name": "Escama Magmatica",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_draco_magmatico.webp?v=20261029"
+    },
+    {
+      "id": "parte_cavaleiro_abissal",
+      "name": "Placa do Cavaleiro Abissal",
+      "type": "primary",
+      "path": "assets/visual/items/parte_cavaleiro_abissal.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_cavaleiro_abissal",
+      "name": "Aco Abissal",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_cavaleiro_abissal.webp?v=20261029"
+    },
+    {
+      "id": "parte_lamia_do_eclipse",
+      "name": "Escama da Lamia do Eclipse",
+      "type": "primary",
+      "path": "assets/visual/items/parte_lamia_do_eclipse.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_lamia_do_eclipse",
+      "name": "Sangue do Eclipse",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_lamia_do_eclipse.webp?v=20261029"
+    },
+    {
+      "id": "parte_colosso_do_vazio",
+      "name": "Fragmento do Colosso do Vazio",
+      "type": "primary",
+      "path": "assets/visual/items/parte_colosso_do_vazio.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_colosso_do_vazio",
+      "name": "Poeira do Vazio",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_colosso_do_vazio.webp?v=20261029"
+    },
+    {
+      "id": "parte_arauto_do_vazio",
+      "name": "Selo do Arauto do Vazio",
+      "type": "primary",
+      "path": "assets/visual/items/parte_arauto_do_vazio.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_arauto_do_vazio",
+      "name": "Lagrima do Arauto",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_arauto_do_vazio.webp?v=20261029"
+    },
+    {
+      "id": "parte_escudeiro_de_ferro",
+      "name": "Rebite de Ferro",
+      "type": "primary",
+      "path": "assets/visual/items/parte_escudeiro_de_ferro.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_escudeiro_de_ferro",
+      "name": "Placa de Escudeiro",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_escudeiro_de_ferro.webp?v=20261029"
+    },
+    {
+      "id": "parte_maga_da_muralha",
+      "name": "Pedra de Foco da Muralha",
+      "type": "primary",
+      "path": "assets/visual/items/parte_maga_da_muralha.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_maga_da_muralha",
+      "name": "Runas da Muralha",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_maga_da_muralha.webp?v=20261029"
+    },
+    {
+      "id": "parte_carrasco_de_guerra",
+      "name": "Lamina do Carrasco",
+      "type": "primary",
+      "path": "assets/visual/items/parte_carrasco_de_guerra.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_carrasco_de_guerra",
+      "name": "Correia de Guerra",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_carrasco_de_guerra.webp?v=20261029"
+    },
+    {
+      "id": "parte_general_de_aco",
+      "name": "Medalhao do General de Aco",
+      "type": "primary",
+      "path": "assets/visual/items/parte_general_de_aco.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_general_de_aco",
+      "name": "Insignia do General",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_general_de_aco.webp?v=20261029"
+    },
+    {
+      "id": "parte_guardiao_funebre",
+      "name": "Fragmento Funebre",
+      "type": "primary",
+      "path": "assets/visual/items/parte_guardiao_funebre.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_guardiao_funebre",
+      "name": "Osso Funebre",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_guardiao_funebre.webp?v=20261029"
+    },
+    {
+      "id": "parte_feiticeira_morta",
+      "name": "Veu da Feiticeira Morta",
+      "type": "primary",
+      "path": "assets/visual/items/parte_feiticeira_morta.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_feiticeira_morta",
+      "name": "Po da Feiticeira",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_feiticeira_morta.webp?v=20261029"
+    },
+    {
+      "id": "parte_ceifador_de_ossos",
+      "name": "Foice do Ceifador",
+      "type": "primary",
+      "path": "assets/visual/items/parte_ceifador_de_ossos.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_ceifador_de_ossos",
+      "name": "Medula do Ceifador",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_ceifador_de_ossos.webp?v=20261029"
+    },
+    {
+      "id": "parte_lorde_da_cripta",
+      "name": "Pacto Selado do Lorde",
+      "type": "primary",
+      "path": "assets/visual/items/parte_lorde_da_cripta.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_lorde_da_cripta",
+      "name": "Selo da Cripta",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_lorde_da_cripta.webp?v=20261029"
+    },
+    {
+      "id": "parte_anjo_caido",
+      "name": "Pluma do Anjo Caido",
+      "type": "primary",
+      "path": "assets/visual/items/parte_anjo_caido.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_anjo_caido",
+      "name": "Fragmento de Halo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_anjo_caido.webp?v=20261029"
+    },
+    {
+      "id": "parte_drake_celeste",
+      "name": "Escama do Drake Celeste",
+      "type": "primary",
+      "path": "assets/visual/items/parte_drake_celeste.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_drake_celeste",
+      "name": "Pena Celeste",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_drake_celeste.webp?v=20261029"
+    },
+    {
+      "id": "parte_executor_astral",
+      "name": "Lacre Astral",
+      "type": "primary",
+      "path": "assets/visual/items/parte_executor_astral.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_executor_astral",
+      "name": "Poeira Astral",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_executor_astral.webp?v=20261029"
+    },
+    {
+      "id": "parte_imperador_do_eclipse",
+      "name": "Fragmento do Eclipse Imperial",
+      "type": "primary",
+      "path": "assets/visual/items/parte_imperador_do_eclipse.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_imperador_do_eclipse",
+      "name": "Sangue do Imperador",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_imperador_do_eclipse.webp?v=20261029"
+    },
+    {
+      "id": "parte_guardiao_aureo",
+      "name": "Lamina Aurea",
+      "type": "primary",
+      "path": "assets/visual/items/parte_guardiao_aureo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_guardiao_aureo",
+      "name": "Ouro Vivo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_guardiao_aureo.webp?v=20261029"
+    },
+    {
+      "id": "parte_oraculo_radiante",
+      "name": "Olho Radiante",
+      "type": "primary",
+      "path": "assets/visual/items/parte_oraculo_radiante.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_oraculo_radiante",
+      "name": "Cristal Radiante",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_oraculo_radiante.webp?v=20261029"
+    },
+    {
+      "id": "parte_quimera_solar",
+      "name": "Presa da Quimera Solar",
+      "type": "primary",
+      "path": "assets/visual/items/parte_quimera_solar.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_quimera_solar",
+      "name": "Essencia Solar",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_quimera_solar.webp?v=20261029"
+    },
+    {
+      "id": "parte_avatar_do_zenith",
+      "name": "Centelha do Zenith",
+      "type": "primary",
+      "path": "assets/visual/items/parte_avatar_do_zenith.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_avatar_do_zenith",
+      "name": "Luz do Zenith",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_avatar_do_zenith.webp?v=20261029"
+    },
+    {
+      "id": "parte_arauto_do_cataclismo",
+      "name": "Selo do Cataclismo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_arauto_do_cataclismo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_arauto_do_cataclismo",
+      "name": "Cinza do Cataclismo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_arauto_do_cataclismo.webp?v=20261029"
+    },
+    {
+      "id": "parte_titan_rachado",
+      "name": "Casco do Titan Rachado",
+      "type": "primary",
+      "path": "assets/visual/items/parte_titan_rachado.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_titan_rachado",
+      "name": "Fragmento da Ruina",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_titan_rachado.webp?v=20261029"
+    },
+    {
+      "id": "parte_serafim_do_fim",
+      "name": "Pena do Serafim do Fim",
+      "type": "primary",
+      "path": "assets/visual/items/parte_serafim_do_fim.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_serafim_do_fim",
+      "name": "Residuo do Fim",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_serafim_do_fim.webp?v=20261029"
+    },
+    {
+      "id": "parte_deus_da_ruina",
+      "name": "Estilhaço da Ruina",
+      "type": "primary",
+      "path": "assets/visual/items/parte_deus_da_ruina.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_deus_da_ruina",
+      "name": "Centelha Divina",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_deus_da_ruina.webp?v=20261029"
+    },
+    {
+      "id": "parte_guardiao_temporal",
+      "name": "Engrenagem Temporal",
+      "type": "primary",
+      "path": "assets/visual/items/parte_guardiao_temporal.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_guardiao_temporal",
+      "name": "Areia Temporal",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_guardiao_temporal.webp?v=20261029"
+    },
+    {
+      "id": "parte_oraculo_do_zero",
+      "name": "Fragmento do Zero",
+      "type": "primary",
+      "path": "assets/visual/items/parte_oraculo_do_zero.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_oraculo_do_zero",
+      "name": "Espiral do Zero",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_oraculo_do_zero.webp?v=20261029"
+    },
+    {
+      "id": "parte_devorador_de_eras",
+      "name": "Dente do Devorador de Eras",
+      "type": "primary",
+      "path": "assets/visual/items/parte_devorador_de_eras.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_devorador_de_eras",
+      "name": "Eco de Outra Era",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_devorador_de_eras.webp?v=20261029"
+    },
+    {
+      "id": "parte_soberano_do_paradoxo",
+      "name": "Nucleo do Paradoxo",
+      "type": "primary",
+      "path": "assets/visual/items/parte_soberano_do_paradoxo.png?v=items-v2-20260511"
+    },
+    {
+      "id": "componente_soberano_do_paradoxo",
+      "name": "Fio do Paradoxo",
+      "type": "secondary",
+      "path": "assets/visual/items/components/componente_soberano_do_paradoxo.webp?v=20261029"
+    },
+    {
+      "name": "Acessório Floresta",
+      "path": "assets/visual/items/floresta_accessory_colar_de_raizes.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Caverna",
+      "path": "assets/visual/items/caverna_accessory_geodo.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Ruinas",
+      "path": "assets/visual/items/ruinas_accessory_tabula_antiga.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Pantano",
+      "path": "assets/visual/items/pantano_accessory_escama_da_hidra.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Vulcao",
+      "path": "assets/visual/items/vulcao_accessory_pedra_de_magma.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Abismo",
+      "path": "assets/visual/items/abismo_accessory_anel_abismal.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Fortaleza",
+      "path": "assets/visual/items/fortaleza_accessory_alma_do_general.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Necropole",
+      "path": "assets/visual/items/necropole_accessory_pacto_do_lorde.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Citadela",
+      "path": "assets/visual/items/citadela_accessory_encanto_do_eclipse.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Panteao",
+      "path": "assets/visual/items/panteao_accessory_colar_da_fe.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Cataclismo",
+      "path": "assets/visual/items/cataclismo_accessory_tesseract.png?v=20261029-accessories"
+    },
+    {
+      "name": "Acessório Paradoxo",
+      "path": "assets/visual/items/paradoxo_accessory_o_fim.png?v=20261029-accessories"
+    }
+  ],
+  "aliases": {
+    "enemies": {
+      "devorador-do-eco": "devorador-de-eras"
+    }
+  },
+  "combat": [
+    {
+      "name": "Lobo Sombrio",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/lobo-sombrio.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Goblin",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/goblin.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Aranha Gigante",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/aranha-gigante.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Ent Ancestral",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/ent-ancestral.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Morcego de Pedra",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/morcego-de-pedra.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Esqueleto Mineiro",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/esqueleto-mineiro.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Slime Toxico",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/slime-toxico.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Troll das Profundezas",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/troll-das-profundezas.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Sentinela Quebrada",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/sentinela-quebrada.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Cultista Perdido",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/cultista-perdido.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Fantasma Antigo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/fantasma-antigo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Rei Espectral",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/rei-espectral.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Sapo Colossal",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/sapo-colossal.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Bruxa do Brejo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/bruxa-do-brejo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Serpente do Lodo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/serpente-do-lodo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Hidra do Lodo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/hidra-do-lodo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Salamandra Rubra",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/salamandra-rubra.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Golem de Brasa",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/golem-de-brasa.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Fenix Sombria",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/fenix-sombria.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Draco Magmatico",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/draco-magmatico.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Cavaleiro Abissal",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/cavaleiro-abissal.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Lamia do Eclipse",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/lamia-do-eclipse.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Colosso do Vazio",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/colosso-do-vazio.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Arauto do Vazio",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/arauto-do-vazio.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Escudeiro de Ferro",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/escudeiro-de-ferro.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Maga da Muralha",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/maga-da-muralha.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Carrasco de Guerra",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/carrasco-de-guerra.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "General de Aco",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/general-de-aco.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Guardiao Funebre",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/guardiao-funebre.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Feiticeira Morta",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/feiticeira-morta.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Ceifador de Ossos",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/ceifador-de-ossos.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Lorde da Cripta",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/lorde-da-cripta.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Anjo Caido",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/anjo-caido.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Drake Celeste",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/drake-celeste.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Executor Astral",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/executor-astral.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Imperador do Eclipse",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/imperador-do-eclipse.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Guardiao Aureo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/guardiao-aureo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Oraculo Radiante",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/oraculo-radiante.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Quimera Solar",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/quimera-solar.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Avatar do Zenith",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/avatar-do-zenith.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Arauto do Cataclismo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/arauto-do-cataclismo.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Titan Rachado",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/titan-rachado.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Serafim do Fim",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/serafim-do-fim.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Deus da Ruina",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/deus-da-ruina.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Guardiao Temporal",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/guardiao-temporal.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Oraculo do Zero",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/oraculo-do-zero.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Devorador de Eras",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/devorador-de-eras.png?v=hd-v8-20260505"
+    },
+    {
+      "name": "Soberano do Paradoxo",
+      "path": "http://127.0.0.1:58514/assets/visual/sprites/enemies/soberano-do-paradoxo.png?v=hd-v8-20260505"
+    }
+  ],
+  "missing": [],
+  "identical": []
+}

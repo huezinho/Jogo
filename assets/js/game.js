@@ -4064,7 +4064,7 @@ function getItemSpritePath(item){
     const icon = item.slot === "weapon" ? `weapon_${toCssToken(weaponClass)}` : item.slot;
     return `assets/visual/items/equipment/${icon}.svg?v=20261028`;
   }
-  if(item?.schemaVersion === 2 && item.slot === "accessory"){ return `assets/visual/items/${bossAccessoryProfiles[item.regionName]?.id || "o_fim"}.png?v=20261028`; }
+  if(item?.schemaVersion === 2 && item.slot === "accessory"){ return `assets/visual/items/${slugify(item.regionName)}_accessory_${bossAccessoryProfiles[item.regionName]?.id || "o_fim"}.png?v=20261029-accessories`; }
   if(item?.type === "material" && item.id?.startsWith("componente_")){ return `assets/visual/items/components/${String(item.id).replace(/[^a-z0-9_-]/gi, "")}.webp?v=20261029`; }
   return `assets/visual/items/${String(getItemAssetId(item)).replace(/[^a-z0-9_-]/gi, "")}.png?v=${ITEM_ASSET_VERSION}`;
 }
