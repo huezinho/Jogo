@@ -4,6 +4,8 @@
 
 ## Estado atual: mapas nos cantos — 29/10/2026
 
+Correção das molduras: a área desenhada por `border-image` coincide com a borda reservada pelo layout, inclusive nos estados ativo/desabilitado e nas regras de celular. Cartões de contrato reservam 22 px verticais e 35 px laterais para a moldura, além do recuo de texto de 10/14 px. A auditoria verifica os trechos de texto dentro da borda e a largura das molduras nos botões visíveis. O mapa de regiões lateral aparece somente na tela de combate/exploração; o mapa de locais continua servindo à navegação. Nas outras telas, a lateral de bolsa/moedas ocupa menos largura.
+
 A faixa superior “Crônicas da campanha” foi retirada; a região continua indicada no mapa, e os pixels liberados passam à aventura. O estudo de escrita e tipografia está em `pesquisa-tipografia/index.html` e `pesquisa-tipografia/analise.md`. As variações de tipografia desse estudo são demonstrações e não são carregadas pelo jogo.
 
 A campanha ocupa toda a largura disponível: mapa dos locais à esquerda, aventura no centro e mapa das regiões à direita. O mapa dos locais usa os pontos da arte para navegar com as restrições reais do jogo. A antiga barra de navegação e o botão de abrir mapa foram removidos. Opções fica no pé da lateral esquerda; bolsa e moedas ficam abaixo do mapa das regiões.

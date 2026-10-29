@@ -44,7 +44,7 @@
       "screen": "mercenary",
       "width": 1366,
       "scroll": 1366,
-      "height": 798,
+      "height": 828,
       "duplicates": [],
       "broken": []
     },
@@ -124,7 +124,7 @@
       "screen": "mercenary",
       "width": 1024,
       "scroll": 1024,
-      "height": 1493,
+      "height": 1553,
       "duplicates": [],
       "broken": []
     },
@@ -204,7 +204,7 @@
       "screen": "mercenary",
       "width": 768,
       "scroll": 768,
-      "height": 1493,
+      "height": 1553,
       "duplicates": [],
       "broken": []
     },
@@ -284,7 +284,7 @@
       "screen": "mercenary",
       "width": 390,
       "scroll": 390,
-      "height": 1780,
+      "height": 1957,
       "duplicates": [],
       "broken": []
     },
@@ -364,7 +364,7 @@
       "screen": "mercenary",
       "width": 320,
       "scroll": 320,
-      "height": 1845,
+      "height": 2045,
       "duplicates": [],
       "broken": []
     },

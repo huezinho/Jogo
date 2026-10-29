@@ -91,8 +91,8 @@ async function screenshot(page,file){
      const content=document.getElementById('enemyInfo').getBoundingClientRect(),actions=document.getElementById('actions').getBoundingClientRect();
      return {oppositeCorners:locations.left<region.left,mapVisible:!document.getElementById('regionInfo').hidden&&!!document.querySelector('#regionInfo .region-map-image'),bottomActions:!actions.height||actions.top>=content.bottom,bagOverlay:document.getElementById('rpgDialog').open&&!!document.querySelector('#rpgDialog .rpg-bag')};
     });
-    assert(layout.oppositeCorners,`${screen}: maps must occupy opposite corners`);
-    assert(layout.mapVisible,`${screen}: persistent map missing`);
+    if(screen==='battle')assert(layout.oppositeCorners,`${screen}: maps must occupy opposite corners`);
+    assert.equal(await page.locator('#regionInfo').isVisible(),screen==='battle',`${screen}: region map belongs only to combat`);
     assert(layout.bottomActions,`${screen}: actions must follow the scene`);
     if(screen==='bag')assert(layout.bagOverlay,'bag must overlay the unchanged game');
     if(screen==='trophies')assert(await page.locator('.trophy-category-hotspot').evaluateAll(nodes=>nodes.length>0&&nodes.every(e=>getComputedStyle(e).borderImageSource==='none'&&getComputedStyle(e).borderTopWidth==='0px')),'achievement artwork must not receive button frames');
@@ -100,8 +100,11 @@ async function screenshot(page,file){
     if(screen==='trophies')assert(await page.locator('.trophy-category-percent,.trophy-overall-percent').evaluateAll(nodes=>nodes.every(e=>e.getBoundingClientRect().width<=54)),'achievement percentages must stay within the illustrated labels');
     await page.evaluate(()=>scrollTo(0,250));
     const mapOnScroll=await page.locator('#regionInfo').evaluate(e=>{const r=e.getBoundingClientRect();return r.top>=-1&&r.top<innerHeight&&r.bottom>0;});
-    assert(mapOnScroll,`${screen}: map must stay visible while scrolling`);
+    if(screen==='battle')assert(mapOnScroll,`${screen}: map must stay visible while scrolling`);
     await page.evaluate(()=>scrollTo(0,0));
+    const frames=await page.evaluate(()=>[...document.querySelectorAll('#campaignHud button')].filter(e=>e.getBoundingClientRect().width&&getComputedStyle(e).borderImageSource!=='none').every(e=>getComputedStyle(e).borderImageWidth==='1'));
+    assert(frames,`${screen}: frame artwork must fit the reserved border`);
+    if(screen==='mercenary')assert(await page.locator('.rpg-contract').evaluateAll(cards=>cards.every(card=>{const box=card.getBoundingClientRect(),style=getComputedStyle(card);return [...card.children].every(child=>{const range=document.createRange();range.selectNodeContents(child);return [...range.getClientRects()].every(r=>r.left>=box.left+parseFloat(style.borderLeftWidth)-1&&r.right<=box.right-parseFloat(style.borderRightWidth)+1&&r.top>=box.top+parseFloat(style.borderTopWidth)-1&&r.bottom<=box.bottom-parseFloat(style.borderBottomWidth)+1);});})),'contract text must fit inside the decorative frame');
     results.screens.push({screen,...metrics});
     assert(metrics.scroll<=width,`${screen} at ${width}: overflow ${metrics.scroll}`);
     assert.equal(metrics.duplicates.length,0,`${screen}: duplicate ids ${metrics.duplicates}`);
