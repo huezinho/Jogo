@@ -2,7 +2,15 @@
 
 28/10/2026.
 
-## Ajustes de navegação — 29/10/2026
+## Estado atual: mapas nos cantos — 29/10/2026
+
+A campanha ocupa toda a largura disponível: mapa dos locais à esquerda, aventura no centro e mapa das regiões à direita. O mapa dos locais usa os pontos da arte para navegar com as restrições reais do jogo. A antiga barra de navegação e o botão de abrir mapa foram removidos. Opções fica no pé da lateral esquerda; bolsa e moedas ficam abaixo do mapa das regiões.
+
+A bolsa usa um diálogo modal sobre a tela corrente, preservando o local e a cena, com fechamento por Escape e as mesmas ações explícitas de inspecionar, equipar, usar e vender. Procurar inimigo e os comandos de combate ficam depois da cena, no rodapé da área central. A navegação anterior no topo foi substituída por essa organização. Em telas estreitas, os mapas ocupam os cantos superiores com a aventura abaixo e ao fundo, sem ocultar as imagens para trocar por uma barra de botões.
+
+As verificações cobrem 50 telas/larguras, mapas em lados opostos e persistentes na rolagem, comandos abaixo da cena, bolsa modal sem mudança de local, navegação pelos pontos do mapa e os fluxos de crafting, equipamentos, contratos, combate e salvamento.
+
+## Histórico: navegação no topo (substituída)
 
 A tipografia continua em Cinzel 650. Rótulos e botões têm alinhamento central explícito. A navegação principal, as ações de combate e as abas Fabricar/Aprimorar precedem o conteúdo variável. No celular, as habilidades ocupam duas colunas, evitando uma última habilidade isolada numa terceira coluna.
 

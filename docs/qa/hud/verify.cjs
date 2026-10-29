@@ -45,12 +45,16 @@ async function screenshot(page,file){
   assert.equal(crafted.rarity,'comum');
   results.flows.push('locked crafting region and common crafting with actual materials/cost');
   // Selection is inspection; only the explicit button equips.
-  await page.locator('#modeTabs [data-value="bag"]').click();
+  await page.locator('#rpgBagButton [data-value="bag"]').click();
+  assert(await page.locator('#rpgDialog .rpg-bag').isVisible());
+  assert.equal(await page.evaluate(()=>currentMode),'village','opening bag must preserve the underlying location');
+  assert(await page.locator('#enemyInfo .rpg-workshop').isVisible());
   const equipmentBefore=await page.evaluate(()=>JSON.stringify(player.equipment));
   await page.locator('[data-hud="inspect-item"]').first().click();
   assert.equal(await page.evaluate(()=>JSON.stringify(player.equipment)),equipmentBefore);
   await page.locator('[data-hud="equip"]').click();
   assert.equal(await page.evaluate(()=>player.equipment.weapon?.uid),crafted.uid);
+  await page.keyboard.press('Escape');
   results.flows.push('bag inspection does not mutate equipment; explicit equip works');
   await page.locator('#modeTabs [data-value="village"]').click();
   await page.locator('[data-hud="service"][data-value="forge"]').click();
@@ -77,17 +81,20 @@ async function screenshot(page,file){
    for(const screen of ['battle','workshop','upgrade','character','bag','mercenary','inn','alchemist','bestiary','trophies']){
     await page.evaluate(screen=>{enemy=null;isDead=false;isProcessingTurn=false;if(screen==='battle'){currentMode='battle';spawnEnemy();}else if(['workshop','upgrade','mercenary','inn','alchemist'].includes(screen)){currentMode='village';villageTab={workshop:'artisan',upgrade:'forge',mercenary:'mercenary',inn:'inn',alchemist:'alchemist'}[screen];}else if(screen==='character'){currentMode='camp';campTab='equipamentos';}else if(screen==='bag'){currentMode='camp';}else currentMode=screen;updateUI();},screen);
     // Clear bag state using the ordinary navigation before entering the next fixture.
-    if(screen==='bag')await page.locator('#modeTabs [data-value="bag"]').click();
+    if(screen==='bag')await page.locator('#rpgBagButton [data-value="bag"]').click();
     if(screen==='mercenary')await page.locator('[data-hud="contract-tab"][data-value="offers"]').click();
     await page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#campaignHud img')].map(img=>{img.loading='eager';return img.decode().catch(()=>{});}));await Promise.all([...document.querySelectorAll('#campaignHud .sheet-sprite')].map(e=>{const url=getComputedStyle(e).backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1];if(!url)return;const image=new Image();image.src=url;return image.decode().catch(()=>{});}));});
     await page.mouse.move(0,0);
     const metrics=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight,duplicates:[...document.querySelectorAll('[id]')].map(e=>e.id).filter((id,i,all)=>all.indexOf(id)!==i),broken:[...document.querySelectorAll('#campaignHud img')].filter(i=>i.complete&&!i.naturalWidth).map(i=>i.src)}));
     const layout=await page.evaluate(()=>{
-     const nav=document.getElementById('modeTabs').getBoundingClientRect(),main=document.getElementById('rpgMain').getBoundingClientRect();
-     return {navigationAbove:nav.bottom<=main.top+1,mapVisible:!document.getElementById('regionInfo').hidden&&!!document.querySelector('#regionInfo .region-map-image')};
+     const locations=document.getElementById('modeTabs').getBoundingClientRect(),region=document.getElementById('regionInfo').getBoundingClientRect(),main=document.getElementById('rpgMain').getBoundingClientRect();
+     const content=document.getElementById('enemyInfo').getBoundingClientRect(),actions=document.getElementById('actions').getBoundingClientRect();
+     return {oppositeCorners:locations.left<region.left,mapVisible:!document.getElementById('regionInfo').hidden&&!!document.querySelector('#regionInfo .region-map-image'),bottomActions:!actions.height||actions.top>=content.bottom,bagOverlay:document.getElementById('rpgDialog').open&&!!document.querySelector('#rpgDialog .rpg-bag')};
     });
-    assert(layout.navigationAbove,`${screen}: navigation must precede changing content`);
+    assert(layout.oppositeCorners,`${screen}: maps must occupy opposite corners`);
     assert(layout.mapVisible,`${screen}: persistent map missing`);
+    assert(layout.bottomActions,`${screen}: actions must follow the scene`);
+    if(screen==='bag')assert(layout.bagOverlay,'bag must overlay the unchanged game');
     if(screen==='trophies')assert(await page.locator('.trophy-category-hotspot').evaluateAll(nodes=>nodes.length>0&&nodes.every(e=>getComputedStyle(e).borderImageSource==='none'&&getComputedStyle(e).borderTopWidth==='0px')),'achievement artwork must not receive button frames');
 
     if(screen==='trophies')assert(await page.locator('.trophy-category-percent,.trophy-overall-percent').evaluateAll(nodes=>nodes.every(e=>e.getBoundingClientRect().width<=54)),'achievement percentages must stay within the illustrated labels');
@@ -103,7 +110,7 @@ async function screenshot(page,file){
     assert(typography.loaded,`${screen}: Cinzel did not load`);
     assert(typography.labels.every(l=>l.family.includes('RPG Cinzel')&&l.weight==='650'),`${screen}: inconsistent font or weight`);
     if([1366,390].includes(width)&&['battle','workshop','character','mercenary','bag','trophies'].includes(screen))await screenshot(page,path.join(__dirname,`${screen}-${width}.png`));
-    if(screen==='bag')await page.locator('#modeTabs [data-value="battle"]').click();
+    if(screen==='bag')await page.keyboard.press('Escape');
    }
   }
   // Different classes use their real skill lists and actual basic mana costs.
@@ -134,6 +141,12 @@ async function screenshot(page,file){
   assert.equal(await page.locator('#campaignHud').count(),1);
   assert.equal(await page.evaluate(()=>player.equipment.weapon?.schemaVersion),2);
   results.flows.push('inn recovery and save/reload persistence');
+  await page.locator('#modeTabs [data-value="camp"]').click();assert.equal(await page.evaluate(()=>currentMode),'camp');
+  await page.locator('#modeTabs [data-value="trophies"]').click();assert.equal(await page.evaluate(()=>currentMode),'trophies');
+  await page.locator('#modeTabs [data-value="bestiary"]').click();assert.equal(await page.evaluate(()=>currentMode),'bestiary');
+  await page.locator('#modeTabs [data-value="battle"]').click();assert.equal(await page.evaluate(()=>currentMode),'battle');
+  results.flows.push('location map navigates to character, trophies, bestiary and adventure');
+
   assert.equal(results.errors.length,0,results.errors.join('\n'));assert.equal(results.badResponses.length,0,JSON.stringify(results.badResponses));
   fs.writeFileSync(path.join(__dirname,'results.json'),JSON.stringify(results,null,2));
   console.log(JSON.stringify({screens:results.screens.length,flows:results.flows,errors:results.errors,badResponses:results.badResponses},null,2));

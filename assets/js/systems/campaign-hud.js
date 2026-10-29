@@ -13,7 +13,7 @@ const CampaignHUD = (() => {
   const enabled = () => typeof player !== 'undefined' && !!player && !IS_DUNGEON_PAGE && !IS_ARENA_PAGE;
   const locked = () => isProcessingTurn || isDead || player.hp <= 0;
   const progressionPending = () => levelUpPoints>0||Object.values(allocation).some(value=>Number(value)>0)||needsSubclassChoice();
-  const pageTitle = () => state.bag ? 'Bolsa do aventureiro' : currentMode === 'battle' ? currentRegion : currentMode === 'camp' ? 'Personagem' : currentMode === 'village' ? ({artisan:'Oficina',forge:'Oficina',inn:'Pousada',alchemist:'Alquimista',mercenary:'Mercenário'}[villageTab]) : ({bestiary:'Bestiário',trophies:'Sala de troféus',arena:'Portal da arena',dungeon:'Portal da dungeon'}[currentMode] || 'Aventura');
+  const pageTitle = () => currentMode === 'battle' ? currentRegion : currentMode === 'camp' ? 'Personagem' : currentMode === 'village' ? ({artisan:'Oficina',forge:'Oficina',inn:'Pousada',alchemist:'Alquimista',mercenary:'Mercenário'}[villageTab]) : ({bestiary:'Bestiário',trophies:'Sala de troféus',arena:'Portal da arena',dungeon:'Portal da dungeon'}[currentMode] || 'Aventura');
   const money = () => `<span class="rpg-coins">${player.coins.toLocaleString('pt-BR')} <small>moedas</small></span>`;
   const itemArt = item => {
     if(item?.type !== 'equipment') return getInventoryItemSymbol(item);
@@ -28,9 +28,12 @@ const CampaignHUD = (() => {
     const log = document.getElementById('log');
     const level = document.getElementById('levelUpPanel');
     game.innerHTML = `<div id="campaignHud" class="game-layout rpg-layout">
-      <header class="rpg-top"><div id="rpgMapButton"></div><div class="rpg-location"><span class="rpg-kicker">Crônicas da campanha</span><h1 id="rpgTitle"></h1></div><div id="rpgAccount"></div></header>
-      <nav id="modeTabs" class="rpg-mainnav" aria-label="Navegação da campanha"></nav>
-      <div class="rpg-world-layout"><aside id="regionInfo" class="rpg-world-map" aria-label="Mapa da campanha"></aside><main id="rpgMain"><div id="actions"></div><div id="rpgLevelMount"></div><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div></main></div>
+      <header class="rpg-top"><div class="rpg-location"><span class="rpg-kicker">Crônicas da campanha</span><h1 id="rpgTitle"></h1></div></header>
+      <div class="rpg-world-layout">
+        <aside class="rpg-locations-rail"><nav id="modeTabs" aria-label="Locais da campanha"></nav><footer id="rpgOptions"></footer></aside>
+        <main id="rpgMain"><div id="rpgLevelMount"></div><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="actions"></div></main>
+        <aside class="rpg-regions-rail"><section id="regionInfo" class="rpg-world-map" aria-label="Mapa de regiões"></section><div id="rpgBagButton"></div><div id="rpgAccount"></div></aside>
+      </div>
       <div id="playerInfo" hidden></div><div id="heroPortraitPanel" hidden></div>
       <dialog id="rpgDialog" aria-labelledby="rpgDialogTitle"><header><h2 id="rpgDialogTitle"></h2><button type="button" data-hud="close-dialog" aria-label="Fechar janela">Fechar ×</button></header><div id="rpgDialogContent"></div><section id="logPanel" hidden><div id="rpgLogMount"></div></section><section id="inventoryInfo" hidden></section></dialog>
     </div>`;
@@ -41,32 +44,33 @@ const CampaignHUD = (() => {
     document.getElementById('actions').addEventListener('mouseover', inspectAction);
     const dialog = document.getElementById('rpgDialog');
     dialog.addEventListener('click', event => { if(event.target === dialog){ const r=dialog.getBoundingClientRect(); if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom) closeDialog(); } });
-    dialog.addEventListener('close', () => { state.dialog=null; if(state.opener?.isConnected) state.opener.focus(); });
+    dialog.addEventListener('close', () => { if(dialog.open)return; state.bag=false;state.dialog=null; if(state.opener?.isConnected) state.opener.focus(); });
     mounted = true;
   }
   function nav(){
-    const active = state.bag ? 'bag' : currentMode === 'camp' ? 'camp' : currentMode === 'village' ? 'village' : currentMode === 'battle' ? 'battle' : 'more';
-    const entries = [['battle','Aventura','map'],['camp','Personagem','item-head'],['bag','Bolsa','item-chest'],['village','Aldeia','item-sword'],['more','Mais','warcry']];
-    document.getElementById('modeTabs').innerHTML = entries.map(([id,label,icon]) => button(`${image(icon.startsWith('item-')?icon:'icon-'+icon)}<span>${label}</span>`, 'navigate', id, `aria-label="${label}" ${active===id?'aria-current="page"':''} ${locked()&&id!=='bag'?'disabled':''}`)).join('');
+    document.getElementById('modeTabs').innerHTML = renderLocationMapNavigation().replace(/onclick="setMode\('([^']+)'\)"/g, 'data-hud="navigate" data-value="$1"');
+    document.getElementById('rpgOptions').innerHTML=button('Opções','settings');
+    document.getElementById('rpgBagButton').innerHTML=button(`${image('item-chest')}<span>Bolsa</span>`,'navigate','bag','aria-label="Abrir bolsa"');
   }
+
   function render(){
     if(!enabled()) return false;
     if(characterId!==player.characterId){state.bag=false;state.item=null;state.region=null;state.upgrade=null;characterId=player.characterId;}
     mount(); document.body.classList.add('rpg-playing');
     if(typeof hideTrophyCategoryPopup==='function')hideTrophyCategoryPopup();
     const root=document.getElementById('campaignHud');
-    root.dataset.mode=state.bag?'bag':currentMode;root.dataset.service=villageTab;
+    root.dataset.mode=currentMode;root.dataset.service=villageTab;
     document.getElementById('rpgTitle').textContent=pageTitle();
-    document.getElementById('rpgAccount').innerHTML=`${money()}${button('Opções','settings')}`;
-    document.getElementById('rpgMapButton').innerHTML=button(`${image('icon-map')}<span>Mapa</span>`,'map','','aria-label="Abrir mapa de regiões"');
+    document.getElementById('rpgAccount').innerHTML=money();
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
-    panel.innerHTML=state.bag?renderBag():currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal">${renderBestiary()}</section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
-    if(!state.bag && currentMode==='battle') dockVitals();
-    document.getElementById('regionInfo').innerHTML=renderRegionMapCard().replace(/<p class="map-current-label">[\s\S]*?<\/p>/,`<div class="rpg-map-caption"><strong>${esc(currentRegion)}</strong>${button('Ampliar mapa','map','','aria-label="Ampliar mapa da campanha"')}</div>`);
+    panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal">${renderBestiary()}</section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
+    if(currentMode==='battle') dockVitals();
+    document.getElementById('regionInfo').innerHTML=renderRegionMapCard().replace(/<p class="map-current-label">[\s\S]*?<\/p>/,`<p class="rpg-map-caption">${esc(currentRegion)}</p>`);
     renderActions(); renderLevelUpPanel(); animateBars(); nav(); syncChronicle();
     for(const control of root.querySelectorAll('button[data-tooltip]:not([aria-label])'))control.setAttribute('aria-label',control.textContent.trim());
-    if(state.bag || (currentMode!=='battle'&&!progressionPending())) document.getElementById('levelUpPanel').style.display='none';
+    if(currentMode!=='battle'&&!progressionPending()) document.getElementById('levelUpPanel').style.display='none';
+    if(state.bag&&document.getElementById('rpgDialog').open)document.getElementById('rpgDialogContent').innerHTML=renderBag();
     return true;
   }
   function renderBattle(){
@@ -106,7 +110,7 @@ const CampaignHUD = (() => {
     if(!enabled()||!mounted) return false;
     const area=document.getElementById('actions');
     area.className='rpg-actions';
-    if(state.bag||currentMode!=='battle'){area.innerHTML='';return true;}
+    if(currentMode!=='battle'){area.innerHTML='';return true;}
     if(isDead){const seconds=Math.max(0,Math.ceil((deadUntil-Date.now())/1000));area.innerHTML=`<div class="rpg-recovery">${button(seconds?`Renascer em ${seconds}s`:'Renascer','respawn','',seconds?'disabled':'')}${button('Reiniciar aventura','restart')}</div>`;return true;}
     if(!enemy){area.innerHTML=`<div class="rpg-recovery">${button(`${image('icon-strike')}<span>Procurar inimigo</span>`,'find','','class="rpg-find" '+(locked()||progressionPending()?'disabled':''))}${getBossUnlockProgress(currentRegion).unlocked?button('Desafiar chefe','boss','',locked()||progressionPending()?'disabled':''):''}</div>`;return true;}
     const skills=getSkillInfo(),busy=locked()||progressionPending();
@@ -121,7 +125,7 @@ const CampaignHUD = (() => {
     if(!mounted) return;
     const last=document.getElementById('log')?.lastElementChild?.textContent||'Uma nova jornada começa.';
     const box=document.getElementById('rpgChronicle');
-    box.hidden=state.bag||currentMode!=='battle';
+    box.hidden=currentMode!=='battle';
     box.replaceChildren();const span=document.createElement('span');span.textContent=last;box.append(span);
     box.insertAdjacentHTML('beforeend',button('Histórico','history'));
   }
@@ -188,7 +192,7 @@ const CampaignHUD = (() => {
     for(const id of ['inventoryInfo','logPanel'])document.getElementById(id).hidden=true;
     document.getElementById('rpgDialog').showModal();
   }
-  function closeDialog(){document.getElementById('rpgDialog')?.close();}
+  function closeDialog(){state.bag=false;document.getElementById('rpgDialog')?.close();}
   function showMap(crafting=false){
     if(crafting){const unlocked=EquipmentSystem.unlockedRegions(player);openDialog('craft-map','Região dos equipamentos',`<div class="region-map-frame crafting-region-map"><img class="region-map-image" src="assets/visual/maps/region-map.webp" alt="Regiões do mundo">${Object.keys(regions).map((region,index)=>{const marker=REGION_MAP_MARKERS[region]||{x:50,y:50};return button(`${index+1}<span class="map-marker-label">${esc(region)}</span>`,'craft-region',region,`class="region-map-marker ${state.region===region?'active':''}" style="--x:${marker.x}%;--y:${marker.y}%" aria-label="Equipamentos de ${esc(region)}${unlocked.includes(region)?'':' — região bloqueada'}" ${unlocked.includes(region)?'':'disabled'}`);}).join('')}</div><p>As receitas acompanham as regiões que você desbloqueou.</p>`);}
     else{openDialog('map','Mapa da campanha',renderRegionMapCard()+`<p>${enemy?'Termine o combate para viajar.':esc(regions[currentRegion].description)}</p>`);}
@@ -196,7 +200,7 @@ const CampaignHUD = (() => {
   function navigate(target){
     if(target==='more'){openDialog('more','Diário e outros caminhos',`<div class="rpg-more">${button('Bestiário','navigate','bestiary')}${button('Troféus e conquistas','navigate','trophies')}${button('Arena','navigate','arena')}${button('Dungeon','navigate','dungeon')}${button('Configurações','settings')}</div>`);return;}
     closeDialog();
-    if(target==='bag'){state.bag=true;updateUI();return;}
+    if(target==='bag'){state.bag=true;openDialog('bag','Bolsa do aventureiro',renderBag());return;}
     state.bag=false;
     if(target==='camp'&&currentMode!=='camp')campTab='equipamentos';
     setMode(target);
