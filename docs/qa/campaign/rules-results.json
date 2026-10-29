@@ -9,26 +9,26 @@
     "lendaria"
   ],
   "offer": {
-    "id": "contract_996241_2862207101_0",
+    "id": "contract_996281_2862207101_0",
     "targetRegion": "Floresta",
-    "targetName": "Goblin",
-    "count": 9,
+    "targetName": "Lobo Sombrio",
+    "count": 10,
     "rewardRegion": "Caverna",
-    "rewardId": "parte_morcego_de_pedra",
+    "rewardId": "componente_esqueleto_mineiro",
     "rewardQty": 2,
-    "difficulty": "Simples",
-    "offeredAt": 1793233800000,
-    "expiresAt": 1793235600000
+    "difficulty": "Media",
+    "offeredAt": 1793305800000,
+    "expiresAt": 1793307600000
   },
   "accepted": {
-    "id": "contract_996241_2862207101_0",
+    "id": "contract_996281_2862207101_0",
     "targetRegion": "Floresta",
-    "targetName": "Goblin",
-    "count": 9,
+    "targetName": "Lobo Sombrio",
+    "count": 10,
     "progress": 0,
-    "rewardId": "parte_morcego_de_pedra",
+    "rewardId": "componente_esqueleto_mineiro",
     "rewardQty": 2,
-    "acceptedAt": 1793233986295
+    "acceptedAt": 1793306804726
   },
   "hasSelect": false,
   "map": true

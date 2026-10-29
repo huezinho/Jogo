@@ -237,3 +237,47 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-vital-dock .scene-vital-stack>.scene-vital-bar{flex:none}
 .rpg-campaign .rpg-chronicle>button{flex:0 0 auto;width:auto}
 @media(max-width:760px){.rpg-campaign .rpg-ability-list,.rpg-campaign .rpg-potion-slot,.rpg-campaign .rpg-turn-actions{grid-column:1}.rpg-campaign .rpg-turn-actions{max-width:62%}.rpg-campaign .rpg-turn-actions button[data-hud=skills]{width:44px}.rpg-campaign .rpg-chronicle>span{min-width:0;flex:1;max-width:none}}
+/* Stable navigation and a persistent world map. */
+.rpg-campaign .rpg-mainnav{border-top:0;border-bottom:1px solid #987445}
+.rpg-campaign .rpg-world-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;align-items:start}
+.rpg-campaign #rpgMain{grid-column:1;grid-row:1}
+.rpg-campaign #regionInfo.rpg-world-map{grid-column:2;grid-row:1;position:sticky;top:8px;min-width:0;padding:14px 12px;background:#19120d;border-left:1px solid #765b36;color:var(--rpg-ink);border-radius:0;margin:0}
+.rpg-campaign .rpg-world-map .map-current-label{font-size:12px;text-align:center;margin:0 0 10px}
+.rpg-campaign :is(.rpg-world-map,#rpgDialog) .region-map-marker{display:grid;place-items:center;border:1px solid #ac8845;border-image:none;border-radius:50%;padding:0;background:#20150c;min-height:26px;width:26px;height:26px;min-width:26px;line-height:1;transform:translate(-50%,-50%)}
+.rpg-campaign :is(.rpg-world-map,#rpgDialog) .region-map-marker.active{background:#97682a;color:#fff;opacity:1}
+.rpg-campaign .rpg-world-map .map-marker-label{display:none}
+.rpg-campaign .rpg-world-map .region-map-boss-btn{border:1px solid #ac8845;border-image:none;padding:4px;min-height:30px;font-size:10px}
+.rpg-campaign .rpg-world-map .region-map-boss-progress{font-size:12px}
+.rpg-campaign button{text-align:center;vertical-align:middle}
+.rpg-campaign button:not(.region-map-marker):not(.trophy-category-hotspot):not(.trophy-category-percent):not(.trophy-overall-percent){align-content:center}
+.rpg-campaign :is(.rpg-service-nav,.rpg-character-tabs,.rpg-forge-tabs,.rpg-contract-tabs,.rpg-bag-filters,.rpg-turn-actions,.rpg-recovery,.rpg-paper,.rpg-more) button{display:inline-flex;align-items:center;justify-content:center;text-align:center}
+.rpg-campaign .rpg-mainnav button>span{flex:0 1 auto;text-align:center;line-height:1.3}
+.rpg-campaign .rpg-ability :is(strong,small){width:100%;text-align:center}
+.rpg-campaign .rpg-target-name{text-align:center}
+/* The illustration already contains its own frames: hotspots are transparent. */
+.rpg-campaign .trophy-category-map{border:0;border-radius:0;box-shadow:none;background:transparent}
+.rpg-campaign .trophy-category-map::after{display:none}
+.rpg-campaign .trophy-category-hotspot{border:0;border-image:none;border-radius:0;background:transparent;box-shadow:none;min-height:0;min-width:0;padding:0}
+.rpg-campaign .trophy-category-hotspot:is(:hover,.active){border:0;background:#ffd87812;box-shadow:none}
+.rpg-campaign :is(.trophy-category-percent,.trophy-overall-percent){display:grid;place-items:center;border:0;border-image:none;min-width:40px;min-height:22px;padding:3px 7px;background:#100c09cc;box-shadow:none;border-radius:3px;line-height:1.2}
+.rpg-campaign :is(.trophy-category-percent,.trophy-overall-percent).active{background:#80602c;color:#fff1c7}
+@media(max-width:1100px){
+ .rpg-campaign .rpg-world-layout{display:flex;flex-direction:column}
+ .rpg-campaign #rpgMain{width:100%}
+ .rpg-campaign #regionInfo.rpg-world-map{width:100%;top:0;z-index:25;padding:6px 12px;border-left:0;border-bottom:1px solid #765b36}
+ .rpg-campaign .rpg-world-map .region-map-card{display:flex;align-items:center;justify-content:center;gap:16px;max-width:100%;margin:0}
+ .rpg-campaign .rpg-world-map .region-map-frame{width:80px;min-width:80px;height:120px;margin:0;order:-1}
+ .rpg-campaign .rpg-world-map .map-current-label{max-width:220px;margin:0;font-size:12px}
+ .rpg-campaign .rpg-world-map .region-map-marker{width:12px;height:12px;min-width:12px;min-height:12px;font-size:7px}
+ .rpg-campaign .rpg-world-map .region-map-boss-hud{display:none}
+}
+.rpg-campaign .rpg-map-caption{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:0 0 10px;text-align:center;font-size:13px}
+.rpg-campaign .rpg-map-caption button{display:flex;align-items:center;justify-content:center;min-height:36px;padding:0 4px;font-size:11px;border-width:10px;border-image-width:12px 18px}
+@media(max-width:1100px){.rpg-campaign .rpg-map-caption{margin:0;max-width:220px}}
+@media(max-width:760px){.rpg-campaign .rpg-ability-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rpg-campaign .rpg-forge-tabs{display:flex;justify-content:center;align-items:center;gap:12px;padding:10px;margin:0;background:#1c140f;border-bottom:1px solid #705030}
+.rpg-campaign .rpg-forge-tabs button{display:inline-flex;align-items:center;justify-content:center;min-width:130px}
+.rpg-campaign :is(.trophy-category-percent,.trophy-overall-percent){width:auto;max-width:54px;font-size:11px}
+.rpg-campaign .trophy-category-percent strong,.rpg-campaign .trophy-overall-percent strong{font-size:11px}
+.rpg-campaign #campaignHud .region-map-marker:hover:not(:disabled){transform:translate(-50%,-50%) scale(1.08)}
+.rpg-campaign #campaignHud .trophy-overall-percent:hover:not(:disabled){transform:translateX(-50%)}

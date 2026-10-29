@@ -1,5 +1,13 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {server,chromium}=require('../2026-10-27/smoke.cjs');
+// OneDrive can briefly lock existing evidence files during synchronization.
+async function screenshot(page,file){
+ const buffer=await page.screenshot({fullPage:true});
+ for(let attempt=0;attempt<5;attempt++){
+  try{fs.writeFileSync(file,buffer);return;}catch(error){if(attempt===4)throw error;await new Promise(resolve=>setTimeout(resolve,600));}
+ }
+}
+
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const browser=await chromium.launch({headless:true,channel:'msedge'});
@@ -74,6 +82,19 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
     await page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('#campaignHud img')].map(img=>{img.loading='eager';return img.decode().catch(()=>{});}));await Promise.all([...document.querySelectorAll('#campaignHud .sheet-sprite')].map(e=>{const url=getComputedStyle(e).backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1];if(!url)return;const image=new Image();image.src=url;return image.decode().catch(()=>{});}));});
     await page.mouse.move(0,0);
     const metrics=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight,duplicates:[...document.querySelectorAll('[id]')].map(e=>e.id).filter((id,i,all)=>all.indexOf(id)!==i),broken:[...document.querySelectorAll('#campaignHud img')].filter(i=>i.complete&&!i.naturalWidth).map(i=>i.src)}));
+    const layout=await page.evaluate(()=>{
+     const nav=document.getElementById('modeTabs').getBoundingClientRect(),main=document.getElementById('rpgMain').getBoundingClientRect();
+     return {navigationAbove:nav.bottom<=main.top+1,mapVisible:!document.getElementById('regionInfo').hidden&&!!document.querySelector('#regionInfo .region-map-image')};
+    });
+    assert(layout.navigationAbove,`${screen}: navigation must precede changing content`);
+    assert(layout.mapVisible,`${screen}: persistent map missing`);
+    if(screen==='trophies')assert(await page.locator('.trophy-category-hotspot').evaluateAll(nodes=>nodes.length>0&&nodes.every(e=>getComputedStyle(e).borderImageSource==='none'&&getComputedStyle(e).borderTopWidth==='0px')),'achievement artwork must not receive button frames');
+
+    if(screen==='trophies')assert(await page.locator('.trophy-category-percent,.trophy-overall-percent').evaluateAll(nodes=>nodes.every(e=>e.getBoundingClientRect().width<=54)),'achievement percentages must stay within the illustrated labels');
+    await page.evaluate(()=>scrollTo(0,250));
+    const mapOnScroll=await page.locator('#regionInfo').evaluate(e=>{const r=e.getBoundingClientRect();return r.top>=-1&&r.top<innerHeight&&r.bottom>0;});
+    assert(mapOnScroll,`${screen}: map must stay visible while scrolling`);
+    await page.evaluate(()=>scrollTo(0,0));
     results.screens.push({screen,...metrics});
     assert(metrics.scroll<=width,`${screen} at ${width}: overflow ${metrics.scroll}`);
     assert.equal(metrics.duplicates.length,0,`${screen}: duplicate ids ${metrics.duplicates}`);
@@ -81,7 +102,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
     const typography=await page.evaluate(()=>({loaded:[...document.fonts].some(f=>f.family==='RPG Cinzel'&&f.status==='loaded'),labels:[...document.querySelectorAll('#campaignHud *')].filter(e=>e.getBoundingClientRect().width>0&&[...e.childNodes].some(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim())).map(e=>({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight}))}));
     assert(typography.loaded,`${screen}: Cinzel did not load`);
     assert(typography.labels.every(l=>l.family.includes('RPG Cinzel')&&l.weight==='650'),`${screen}: inconsistent font or weight`);
-    if([1366,390].includes(width)&&['battle','workshop','character','mercenary','bag'].includes(screen))await page.screenshot({path:path.join(__dirname,`${screen}-${width}.png`),fullPage:true});
+    if([1366,390].includes(width)&&['battle','workshop','character','mercenary','bag','trophies'].includes(screen))await screenshot(page,path.join(__dirname,`${screen}-${width}.png`));
     if(screen==='bag')await page.locator('#modeTabs [data-value="battle"]').click();
    }
   }
@@ -97,6 +118,15 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
    assert.equal(await p.locator('#campaignHud').count(),1);await classContext.close();
   }
   results.flows.push('all four classes render; mage basic cost and mana lock match engine');
+  const restricted=await browser.newContext(),restrictedPage=await restricted.newPage();
+  await restricted.addInitScript(()=>{Storage.prototype.setItem=function(){throw new DOMException('Test storage restriction','QuotaExceededError');};});
+  await restrictedPage.goto('http://127.0.0.1:'+server.address().port);
+  await restrictedPage.evaluate(()=>{selectClass('Guerreiro');GameStorage.setItem('qa-storage','session');GameStorage.announce();});
+  assert.equal(await restrictedPage.locator('#saveStorageNotice').count(),0);
+  assert.equal(await restrictedPage.evaluate(()=>GameStorage.getItem('qa-storage')),'session');
+  assert.equal(await restrictedPage.evaluate(()=>GameStorage.available),false);
+  await restricted.close();results.flows.push('restricted storage preserves session without persistent save overlay');
+
   await page.evaluate(()=>{enemy=null;currentMode='village';villageTab='inn';player.hp=Math.max(1,player.hp-35);player.mp=Math.max(0,player.mp-35);updateUI();});
   await page.locator('[data-hud="heal"]').click();assert(await page.evaluate(()=>player.hp===getCurrentCaps().maxHp));
   await page.locator('[data-hud="mana"]').click();assert(await page.evaluate(()=>player.mp===getCurrentCaps().maxMp));

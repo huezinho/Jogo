@@ -1,18 +1,9 @@
-// Storage failures keep the session playable and are always visible to the player.
+// Storage failures keep the session playable; callers can inspect available.
 const GameStorage = (() => {
   const memory = new Map();
   let failed = false;
-  function announce(){
-    if(!failed || !document.body){ return; }
-    let notice = document.getElementById("saveStorageNotice");
-    if(!notice){
-      notice = document.createElement("div");
-      notice.id = "saveStorageNotice";
-      notice.setAttribute("role", "alert");
-      document.body.appendChild(notice);
-    }
-    notice.textContent = "Nao foi possivel salvar neste navegador. Seu progresso continua nesta sessao. Exporte uma copia em Configuracao antes de fechar.";
-  }
+  // Storage status remains available to settings without a persistent gameplay overlay.
+  function announce(){}
   return {
     getItem(key){
       if(memory.has(key)){ return memory.get(key); }

@@ -2,7 +2,17 @@
 
 28/10/2026.
 
-## Estado atual: layout anterior restaurado
+## Ajustes de navegação — 29/10/2026
+
+A tipografia continua em Cinzel 650. Rótulos e botões têm alinhamento central explícito. A navegação principal, as ações de combate e as abas Fabricar/Aprimorar precedem o conteúdo variável. No celular, as habilidades ocupam duas colunas, evitando uma última habilidade isolada numa terceira coluna.
+
+O mapa de regiões fica permanentemente no painel lateral do desktop e numa faixa compacta no celular. A posição acompanha a rolagem e o botão Ampliar mapa abre a versão maior para consultar nomes e viajar; as restrições de viagem e de chefe continuam no motor da campanha.
+
+Os hotspots das conquistas não recebem a moldura genérica dos botões: a própria ilustração fornece a moldura. O aviso persistente de falha de armazenamento foi retirado; o fallback em memória continua funcionando e a API informa a disponibilidade do armazenamento.
+
+Verificação: 50 combinações de telas/larguras com mapa persistente, navegação acima do conteúdo, ausência de overflow, fontes e imagens; fluxo de armazenamento restrito sem banner e com preservação na sessão; 24 combinações de classe/nível/largura sem cortes nos rótulos. Regras, habilidades e progressão também passaram nesta revisão.
+
+## Layout e tipografia de base
 
 A revisão visual rpg2 foi desfeita após a avaliação do usuário. A campanha voltou às molduras, distribuição, botões e apresentação da oficina anteriores. As correções funcionais de progressão e acessibilidade foram preservadas.
 
