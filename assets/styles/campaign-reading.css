@@ -36,3 +36,10 @@
 @media(max-width:1100px){.rpg-campaign #campaignHud .rpg-quest{top:235px;right:8px;width:170px;max-width:calc(100% - 16px);padding:9px 11px}.rpg-campaign #campaignHud .rpg-quest strong{font-size:12px}.rpg-campaign #campaignHud .rpg-quest>span{font-size:16px}}
 .rpg-campaign #campaignHud :is(.rpg-contract>span,.rpg-contract>small,.rpg-board-intro>small,.rpg-skill-entry p,.rpg-consumable p,.rpg-character-stats>p,.rpg-item-detail>small){font-family:'RPG Leitura',Georgia,serif!important;font-weight:550!important;line-height:1.4;font-size:16px}
 .rpg-campaign #campaignHud .rpg-contract>small{font-size:15px}
+/* The seal rim fills clockwise from twelve o'clock using actual unlock progress. */
+.rpg-campaign #campaignHud .rpg-quest{width:245px;max-width:245px;min-height:116px;padding:12px 12px 12px 86px;border:1px solid #967c49;border-radius:3px;background:#171710ed;gap:5px}
+.rpg-campaign #campaignHud .rpg-quest .rpg-boss-seal{position:absolute;left:12px;top:16px;display:block;width:62px;height:62px;box-sizing:border-box;border-radius:50%;padding:4px;background:conic-gradient(from 0deg,#ecd08a 0deg var(--boss-progress),#4a4535 var(--boss-progress) 360deg);box-shadow:0 0 0 1px #100e09,0 0 0 2px #8d7749;overflow:hidden}
+.rpg-campaign #campaignHud .rpg-boss-seal img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid #171510}
+.rpg-campaign #campaignHud .rpg-quest progress{height:3px;opacity:.65}
+.rpg-campaign #campaignHud .rpg-quest[data-state=ready] .rpg-boss-seal{box-shadow:0 0 0 1px #100e09,0 0 0 2px #a89155,0 0 12px #d8ba6255}
+@media(max-width:1100px){.rpg-campaign #campaignHud .rpg-quest{width:190px;max-width:calc(100% - 16px);padding:10px 10px 10px 66px}.rpg-campaign #campaignHud .rpg-quest .rpg-boss-seal{width:46px;height:46px;left:10px;top:15px;padding:3px}.rpg-campaign #campaignHud .rpg-quest strong{font-size:11px}}

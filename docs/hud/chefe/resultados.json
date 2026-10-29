@@ -1,21 +1,6 @@
 {
   "states": [
     {
-      "style": "compact",
-      "state": "tracking",
-      "width": 1366
-    },
-    {
-      "style": "compact",
-      "state": "tracking",
-      "width": 390
-    },
-    {
-      "style": "compact",
-      "state": "tracking",
-      "width": 320
-    },
-    {
       "style": "seal",
       "state": "tracking",
       "width": 1366
@@ -28,36 +13,6 @@
     {
       "style": "seal",
       "state": "tracking",
-      "width": 320
-    },
-    {
-      "style": "banner",
-      "state": "tracking",
-      "width": 1366
-    },
-    {
-      "style": "banner",
-      "state": "tracking",
-      "width": 390
-    },
-    {
-      "style": "banner",
-      "state": "tracking",
-      "width": 320
-    },
-    {
-      "style": "compact",
-      "state": "ready",
-      "width": 1366
-    },
-    {
-      "style": "compact",
-      "state": "ready",
-      "width": 390
-    },
-    {
-      "style": "compact",
-      "state": "ready",
       "width": 320
     },
     {
@@ -76,36 +31,6 @@
       "width": 320
     },
     {
-      "style": "banner",
-      "state": "ready",
-      "width": 1366
-    },
-    {
-      "style": "banner",
-      "state": "ready",
-      "width": 390
-    },
-    {
-      "style": "banner",
-      "state": "ready",
-      "width": 320
-    },
-    {
-      "style": "compact",
-      "state": "fighting",
-      "width": 1366
-    },
-    {
-      "style": "compact",
-      "state": "fighting",
-      "width": 390
-    },
-    {
-      "style": "compact",
-      "state": "fighting",
-      "width": 320
-    },
-    {
       "style": "seal",
       "state": "fighting",
       "width": 1366
@@ -117,21 +42,6 @@
     },
     {
       "style": "seal",
-      "state": "fighting",
-      "width": 320
-    },
-    {
-      "style": "banner",
-      "state": "fighting",
-      "width": 1366
-    },
-    {
-      "style": "banner",
-      "state": "fighting",
-      "width": 390
-    },
-    {
-      "style": "banner",
       "state": "fighting",
       "width": 320
     }

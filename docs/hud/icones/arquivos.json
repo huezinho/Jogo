@@ -1,0 +1,482 @@
+[
+  {
+    "id": "ent_ancestral",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/ent_ancestral.webp"
+  },
+  {
+    "id": "componente_lobo_sombrio",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_lobo_sombrio.webp"
+  },
+  {
+    "id": "componente_aranha_gigante",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_aranha_gigante.webp"
+  },
+  {
+    "id": "componente_troll_das_profundezas",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_troll_das_profundezas.webp"
+  },
+  {
+    "id": "componente_goblin",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_goblin.webp"
+  },
+  {
+    "id": "rei_espectral",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/rei_espectral.webp"
+  },
+  {
+    "id": "componente_ent_ancestral",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_ent_ancestral.webp"
+  },
+  {
+    "id": "componente_sentinela_quebrada",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_sentinela_quebrada.webp"
+  },
+  {
+    "id": "componente_fantasma_antigo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_fantasma_antigo.webp"
+  },
+  {
+    "id": "troll_das_profundezas",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/troll_das_profundezas.webp"
+  },
+  {
+    "id": "componente_rei_espectral",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_rei_espectral.webp"
+  },
+  {
+    "id": "componente_morcego_de_pedra",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_morcego_de_pedra.webp"
+  },
+  {
+    "id": "componente_cultista_perdido",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_cultista_perdido.webp"
+  },
+  {
+    "id": "hidra_do_lodo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/hidra_do_lodo.webp"
+  },
+  {
+    "id": "componente_esqueleto_mineiro",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_esqueleto_mineiro.webp"
+  },
+  {
+    "id": "componente_sapo_colossal",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_sapo_colossal.webp"
+  },
+  {
+    "id": "componente_golem_de_brasa",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_golem_de_brasa.webp"
+  },
+  {
+    "id": "componente_slime_toxico",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_slime_toxico.webp"
+  },
+  {
+    "id": "componente_draco_magmatico",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_draco_magmatico.webp"
+  },
+  {
+    "id": "componente_bruxa_do_brejo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_bruxa_do_brejo.webp"
+  },
+  {
+    "id": "componente_fenix_sombria",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_fenix_sombria.webp"
+  },
+  {
+    "id": "arauto_do_vazio",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/arauto_do_vazio.webp"
+  },
+  {
+    "id": "componente_serpente_do_lodo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_serpente_do_lodo.webp"
+  },
+  {
+    "id": "componente_lamia_do_eclipse",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_lamia_do_eclipse.webp"
+  },
+  {
+    "id": "componente_cavaleiro_abissal",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_cavaleiro_abissal.webp"
+  },
+  {
+    "id": "componente_colosso_do_vazio",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_colosso_do_vazio.webp"
+  },
+  {
+    "id": "componente_hidra_do_lodo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_hidra_do_lodo.webp"
+  },
+  {
+    "id": "componente_arauto_do_vazio",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_arauto_do_vazio.webp"
+  },
+  {
+    "id": "componente_maga_da_muralha",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_maga_da_muralha.webp"
+  },
+  {
+    "id": "draco_magmatico",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/draco_magmatico.webp"
+  },
+  {
+    "id": "componente_salamandra_rubra",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_salamandra_rubra.webp"
+  },
+  {
+    "id": "componente_carrasco_de_guerra",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_carrasco_de_guerra.webp"
+  },
+  {
+    "id": "general_de_aco",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/general_de_aco.webp"
+  },
+  {
+    "id": "lorde_da_cripta",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/lorde_da_cripta.webp"
+  },
+  {
+    "id": "componente_escudeiro_de_ferro",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_escudeiro_de_ferro.webp"
+  },
+  {
+    "id": "componente_general_de_aco",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_general_de_aco.webp"
+  },
+  {
+    "id": "componente_guardiao_funebre",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_guardiao_funebre.webp"
+  },
+  {
+    "id": "componente_feiticeira_morta",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_feiticeira_morta.webp"
+  },
+  {
+    "id": "componente_imperador_do_eclipse",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_imperador_do_eclipse.webp"
+  },
+  {
+    "id": "componente_ceifador_de_ossos",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_ceifador_de_ossos.webp"
+  },
+  {
+    "id": "avatar_do_zenith",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/avatar_do_zenith.webp"
+  },
+  {
+    "id": "componente_lorde_da_cripta",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_lorde_da_cripta.webp"
+  },
+  {
+    "id": "componente_oraculo_radiante",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_oraculo_radiante.webp"
+  },
+  {
+    "id": "componente_guardiao_aureo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_guardiao_aureo.webp"
+  },
+  {
+    "id": "componente_quimera_solar",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_quimera_solar.webp"
+  },
+  {
+    "id": "imperador_do_eclipse",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/imperador_do_eclipse.webp"
+  },
+  {
+    "id": "componente_titan_rachado",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_titan_rachado.webp"
+  },
+  {
+    "id": "componente_avatar_do_zenith",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_avatar_do_zenith.webp"
+  },
+  {
+    "id": "componente_anjo_caido",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_anjo_caido.webp"
+  },
+  {
+    "id": "componente_serafim_do_fim",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_serafim_do_fim.webp"
+  },
+  {
+    "id": "componente_deus_da_ruina",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_deus_da_ruina.webp"
+  },
+  {
+    "id": "componente_drake_celeste",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_drake_celeste.webp"
+  },
+  {
+    "id": "deus_da_ruina",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/deus_da_ruina.webp"
+  },
+  {
+    "id": "soberano_do_paradoxo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/bosses/soberano_do_paradoxo.webp"
+  },
+  {
+    "id": "componente_arauto_do_cataclismo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_arauto_do_cataclismo.webp"
+  },
+  {
+    "id": "componente_executor_astral",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_executor_astral.webp"
+  },
+  {
+    "id": "componente_guardiao_temporal",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_guardiao_temporal.webp"
+  },
+  {
+    "id": "componente_oraculo_do_zero",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_oraculo_do_zero.webp"
+  },
+  {
+    "id": "componente_devorador_de_eras",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_devorador_de_eras.webp"
+  },
+  {
+    "id": "componente_soberano_do_paradoxo",
+    "size": [
+      256,
+      256
+    ],
+    "file": "assets/visual/items/components/componente_soberano_do_paradoxo.webp"
+  }
+]

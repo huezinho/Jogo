@@ -1,0 +1,470 @@
+[
+  {
+    "kind": "boss",
+    "region": "Floresta",
+    "name": "Ent Ancestral",
+    "id": "ent_ancestral",
+    "path": "assets/visual/bosses/ent_ancestral.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Lobo Sombrio",
+    "name": "Presa Sombria",
+    "id": "componente_lobo_sombrio",
+    "path": "assets/visual/items/components/componente_lobo_sombrio.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Goblin",
+    "name": "Moeda Goblin Lascada",
+    "id": "componente_goblin",
+    "path": "assets/visual/items/components/componente_goblin.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Aranha Gigante",
+    "name": "Fio de Seda Gigante",
+    "id": "componente_aranha_gigante",
+    "path": "assets/visual/items/components/componente_aranha_gigante.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Ent Ancestral",
+    "name": "Seiva Ancestral",
+    "id": "componente_ent_ancestral",
+    "path": "assets/visual/items/components/componente_ent_ancestral.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Caverna",
+    "name": "Troll das Profundezas",
+    "id": "troll_das_profundezas",
+    "path": "assets/visual/bosses/troll_das_profundezas.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Morcego de Pedra",
+    "name": "Fragmento de Rocha Alada",
+    "id": "componente_morcego_de_pedra",
+    "path": "assets/visual/items/components/componente_morcego_de_pedra.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Esqueleto Mineiro",
+    "name": "Poeira de Ferro",
+    "id": "componente_esqueleto_mineiro",
+    "path": "assets/visual/items/components/componente_esqueleto_mineiro.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Slime Toxico",
+    "name": "Muco Toxico",
+    "id": "componente_slime_toxico",
+    "path": "assets/visual/items/components/componente_slime_toxico.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Troll das Profundezas",
+    "name": "Sangue Petrificado",
+    "id": "componente_troll_das_profundezas",
+    "path": "assets/visual/items/components/componente_troll_das_profundezas.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Ruinas",
+    "name": "Rei Espectral",
+    "id": "rei_espectral",
+    "path": "assets/visual/bosses/rei_espectral.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Sentinela Quebrada",
+    "name": "Nucleo da Sentinela",
+    "id": "componente_sentinela_quebrada",
+    "path": "assets/visual/items/components/componente_sentinela_quebrada.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Cultista Perdido",
+    "name": "Tinta Ritual",
+    "id": "componente_cultista_perdido",
+    "path": "assets/visual/items/components/componente_cultista_perdido.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Fantasma Antigo",
+    "name": "Ectoplasma Antigo",
+    "id": "componente_fantasma_antigo",
+    "path": "assets/visual/items/components/componente_fantasma_antigo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Rei Espectral",
+    "name": "Coroa Espectral Quebrada",
+    "id": "componente_rei_espectral",
+    "path": "assets/visual/items/components/componente_rei_espectral.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Pantano",
+    "name": "Hidra do Lodo",
+    "id": "hidra_do_lodo",
+    "path": "assets/visual/bosses/hidra_do_lodo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Sapo Colossal",
+    "name": "Glandula Pantanosa",
+    "id": "componente_sapo_colossal",
+    "path": "assets/visual/items/components/componente_sapo_colossal.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Bruxa do Brejo",
+    "name": "Erva do Brejo",
+    "id": "componente_bruxa_do_brejo",
+    "path": "assets/visual/items/components/componente_bruxa_do_brejo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Serpente do Lodo",
+    "name": "Veneno do Lodo",
+    "id": "componente_serpente_do_lodo",
+    "path": "assets/visual/items/components/componente_serpente_do_lodo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Hidra do Lodo",
+    "name": "Coracao da Hidra",
+    "id": "componente_hidra_do_lodo",
+    "path": "assets/visual/items/components/componente_hidra_do_lodo.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Vulcao",
+    "name": "Draco Magmatico",
+    "id": "draco_magmatico",
+    "path": "assets/visual/bosses/draco_magmatico.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Salamandra Rubra",
+    "name": "Brasa Rubra",
+    "id": "componente_salamandra_rubra",
+    "path": "assets/visual/items/components/componente_salamandra_rubra.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Golem de Brasa",
+    "name": "Nucleo de Magma",
+    "id": "componente_golem_de_brasa",
+    "path": "assets/visual/items/components/componente_golem_de_brasa.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Fenix Sombria",
+    "name": "Cinza da Fenix",
+    "id": "componente_fenix_sombria",
+    "path": "assets/visual/items/components/componente_fenix_sombria.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Draco Magmatico",
+    "name": "Escama Magmatica",
+    "id": "componente_draco_magmatico",
+    "path": "assets/visual/items/components/componente_draco_magmatico.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Abismo",
+    "name": "Arauto do Vazio",
+    "id": "arauto_do_vazio",
+    "path": "assets/visual/bosses/arauto_do_vazio.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Cavaleiro Abissal",
+    "name": "Aco Abissal",
+    "id": "componente_cavaleiro_abissal",
+    "path": "assets/visual/items/components/componente_cavaleiro_abissal.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Lamia do Eclipse",
+    "name": "Sangue do Eclipse",
+    "id": "componente_lamia_do_eclipse",
+    "path": "assets/visual/items/components/componente_lamia_do_eclipse.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Colosso do Vazio",
+    "name": "Poeira do Vazio",
+    "id": "componente_colosso_do_vazio",
+    "path": "assets/visual/items/components/componente_colosso_do_vazio.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Arauto do Vazio",
+    "name": "Lagrima do Arauto",
+    "id": "componente_arauto_do_vazio",
+    "path": "assets/visual/items/components/componente_arauto_do_vazio.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Fortaleza",
+    "name": "General de Aco",
+    "id": "general_de_aco",
+    "path": "assets/visual/bosses/general_de_aco.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Escudeiro de Ferro",
+    "name": "Placa de Escudeiro",
+    "id": "componente_escudeiro_de_ferro",
+    "path": "assets/visual/items/components/componente_escudeiro_de_ferro.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Maga da Muralha",
+    "name": "Runas da Muralha",
+    "id": "componente_maga_da_muralha",
+    "path": "assets/visual/items/components/componente_maga_da_muralha.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Carrasco de Guerra",
+    "name": "Correia de Guerra",
+    "id": "componente_carrasco_de_guerra",
+    "path": "assets/visual/items/components/componente_carrasco_de_guerra.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "General de Aco",
+    "name": "Insignia do General",
+    "id": "componente_general_de_aco",
+    "path": "assets/visual/items/components/componente_general_de_aco.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Necropole",
+    "name": "Lorde da Cripta",
+    "id": "lorde_da_cripta",
+    "path": "assets/visual/bosses/lorde_da_cripta.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Guardiao Funebre",
+    "name": "Osso Funebre",
+    "id": "componente_guardiao_funebre",
+    "path": "assets/visual/items/components/componente_guardiao_funebre.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Feiticeira Morta",
+    "name": "Po da Feiticeira",
+    "id": "componente_feiticeira_morta",
+    "path": "assets/visual/items/components/componente_feiticeira_morta.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Ceifador de Ossos",
+    "name": "Medula do Ceifador",
+    "id": "componente_ceifador_de_ossos",
+    "path": "assets/visual/items/components/componente_ceifador_de_ossos.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Lorde da Cripta",
+    "name": "Selo da Cripta",
+    "id": "componente_lorde_da_cripta",
+    "path": "assets/visual/items/components/componente_lorde_da_cripta.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Citadela",
+    "name": "Imperador do Eclipse",
+    "id": "imperador_do_eclipse",
+    "path": "assets/visual/bosses/imperador_do_eclipse.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Anjo Caido",
+    "name": "Fragmento de Halo",
+    "id": "componente_anjo_caido",
+    "path": "assets/visual/items/components/componente_anjo_caido.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Drake Celeste",
+    "name": "Pena Celeste",
+    "id": "componente_drake_celeste",
+    "path": "assets/visual/items/components/componente_drake_celeste.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Executor Astral",
+    "name": "Poeira Astral",
+    "id": "componente_executor_astral",
+    "path": "assets/visual/items/components/componente_executor_astral.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Imperador do Eclipse",
+    "name": "Sangue do Imperador",
+    "id": "componente_imperador_do_eclipse",
+    "path": "assets/visual/items/components/componente_imperador_do_eclipse.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Panteao",
+    "name": "Avatar do Zenith",
+    "id": "avatar_do_zenith",
+    "path": "assets/visual/bosses/avatar_do_zenith.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Guardiao Aureo",
+    "name": "Ouro Vivo",
+    "id": "componente_guardiao_aureo",
+    "path": "assets/visual/items/components/componente_guardiao_aureo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Oraculo Radiante",
+    "name": "Cristal Radiante",
+    "id": "componente_oraculo_radiante",
+    "path": "assets/visual/items/components/componente_oraculo_radiante.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Quimera Solar",
+    "name": "Essencia Solar",
+    "id": "componente_quimera_solar",
+    "path": "assets/visual/items/components/componente_quimera_solar.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Avatar do Zenith",
+    "name": "Luz do Zenith",
+    "id": "componente_avatar_do_zenith",
+    "path": "assets/visual/items/components/componente_avatar_do_zenith.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Cataclismo",
+    "name": "Deus da Ruina",
+    "id": "deus_da_ruina",
+    "path": "assets/visual/bosses/deus_da_ruina.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Arauto do Cataclismo",
+    "name": "Cinza do Cataclismo",
+    "id": "componente_arauto_do_cataclismo",
+    "path": "assets/visual/items/components/componente_arauto_do_cataclismo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Titan Rachado",
+    "name": "Fragmento da Ruina",
+    "id": "componente_titan_rachado",
+    "path": "assets/visual/items/components/componente_titan_rachado.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Serafim do Fim",
+    "name": "Residuo do Fim",
+    "id": "componente_serafim_do_fim",
+    "path": "assets/visual/items/components/componente_serafim_do_fim.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Deus da Ruina",
+    "name": "Centelha Divina",
+    "id": "componente_deus_da_ruina",
+    "path": "assets/visual/items/components/componente_deus_da_ruina.webp"
+  },
+  {
+    "kind": "boss",
+    "region": "Paradoxo",
+    "name": "Soberano do Paradoxo",
+    "id": "soberano_do_paradoxo",
+    "path": "assets/visual/bosses/soberano_do_paradoxo.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Guardiao Temporal",
+    "name": "Areia Temporal",
+    "id": "componente_guardiao_temporal",
+    "path": "assets/visual/items/components/componente_guardiao_temporal.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Oraculo do Zero",
+    "name": "Espiral do Zero",
+    "id": "componente_oraculo_do_zero",
+    "path": "assets/visual/items/components/componente_oraculo_do_zero.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Devorador de Eras",
+    "name": "Eco de Outra Era",
+    "id": "componente_devorador_de_eras",
+    "path": "assets/visual/items/components/componente_devorador_de_eras.webp"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Soberano do Paradoxo",
+    "name": "Fio do Paradoxo",
+    "id": "componente_soberano_do_paradoxo",
+    "path": "assets/visual/items/components/componente_soberano_do_paradoxo.webp"
+  }
+]

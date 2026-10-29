@@ -1,0 +1,590 @@
+[
+  {
+    "kind": "boss",
+    "region": "Floresta",
+    "name": "Ent Ancestral",
+    "id": "ent_ancestral",
+    "path": "assets/visual/bosses/ent_ancestral.webp",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-dda03bad-f88f-4156-ba99-f00b9bbd472c.png",
+    "prompt": "Create one production game UI icon, square 512x512, no writing or letters, no decorative frame. Subject: Ent Ancestral, ancient living tree guardian boss of an enchanted forest, face carved into gnarled dark bark, moss, small emerald glowing eyes, twig crown, frontal head-and-shoulders bust centered and fully inside an 80% circle so it can be clipped into a round seal. Hand-painted realistic dark fantasy RPG inventory art, earthy brown and emerald, crisp silhouette readable at 48px, nuanced painterly highlights, dark near-black neutral background. This is a unique boss portrait, not a full character scene."
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Lobo Sombrio",
+    "name": "Presa Sombria",
+    "id": "componente_lobo_sombrio",
+    "path": "assets/visual/items/components/componente_lobo_sombrio.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Presa Sombria\", harvested from \"Lobo Sombrio\" in region \"Floresta\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-f23361a4-ffb6-4932-8e9c-a70acb695f67.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Aranha Gigante",
+    "name": "Fio de Seda Gigante",
+    "id": "componente_aranha_gigante",
+    "path": "assets/visual/items/components/componente_aranha_gigante.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Fio de Seda Gigante\", harvested from \"Aranha Gigante\" in region \"Floresta\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-7119ddbe-7680-4399-ac08-6b2259d77a94.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Troll das Profundezas",
+    "name": "Sangue Petrificado",
+    "id": "componente_troll_das_profundezas",
+    "path": "assets/visual/items/components/componente_troll_das_profundezas.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Sangue Petrificado\", harvested from \"Troll das Profundezas\" in region \"Caverna\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-72ec6caa-99b4-4592-a5e0-9c492a4d267e.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Goblin",
+    "name": "Moeda Goblin Lascada",
+    "id": "componente_goblin",
+    "path": "assets/visual/items/components/componente_goblin.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Moeda Goblin Lascada\", harvested from \"Goblin\" in region \"Floresta\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-30584207-d113-4427-a967-0cdb35d36e71.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Ruinas",
+    "name": "Rei Espectral",
+    "id": "rei_espectral",
+    "path": "assets/visual/bosses/rei_espectral.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Rei Espectral\" of region \"Ruinas\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-7beecad7-140d-40ee-a3cd-9f0db6446cd4.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Floresta",
+    "enemy": "Ent Ancestral",
+    "name": "Seiva Ancestral",
+    "id": "componente_ent_ancestral",
+    "path": "assets/visual/items/components/componente_ent_ancestral.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Seiva Ancestral\", harvested from \"Ent Ancestral\" in region \"Floresta\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-1c3d7c24-699d-4ed8-b85b-a4d3063b2738.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Sentinela Quebrada",
+    "name": "Nucleo da Sentinela",
+    "id": "componente_sentinela_quebrada",
+    "path": "assets/visual/items/components/componente_sentinela_quebrada.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Nucleo da Sentinela\", harvested from \"Sentinela Quebrada\" in region \"Ruinas\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-574ec915-1839-456c-9a77-a9152b191d1c.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Fantasma Antigo",
+    "name": "Ectoplasma Antigo",
+    "id": "componente_fantasma_antigo",
+    "path": "assets/visual/items/components/componente_fantasma_antigo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Ectoplasma Antigo\", harvested from \"Fantasma Antigo\" in region \"Ruinas\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-de4a8acc-9eeb-41a9-b81c-30e75c0c04f5.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Caverna",
+    "name": "Troll das Profundezas",
+    "id": "troll_das_profundezas",
+    "path": "assets/visual/bosses/troll_das_profundezas.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Troll das Profundezas\" of region \"Caverna\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-0043e176-b495-4d2a-ad72-b35c276ae122.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Rei Espectral",
+    "name": "Coroa Espectral Quebrada",
+    "id": "componente_rei_espectral",
+    "path": "assets/visual/items/components/componente_rei_espectral.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Coroa Espectral Quebrada\", harvested from \"Rei Espectral\" in region \"Ruinas\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-aae60f72-78c4-4c28-9934-e0bbddb0eb8b.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Morcego de Pedra",
+    "name": "Fragmento de Rocha Alada",
+    "id": "componente_morcego_de_pedra",
+    "path": "assets/visual/items/components/componente_morcego_de_pedra.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Fragmento de Rocha Alada\", harvested from \"Morcego de Pedra\" in region \"Caverna\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-c59017a0-93b7-4932-a69e-560fb2f7b061.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Ruinas",
+    "enemy": "Cultista Perdido",
+    "name": "Tinta Ritual",
+    "id": "componente_cultista_perdido",
+    "path": "assets/visual/items/components/componente_cultista_perdido.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Tinta Ritual\", harvested from \"Cultista Perdido\" in region \"Ruinas\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-2a0bf0f4-fa98-4bd9-bd11-bcfe4e7c2bb0.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Pantano",
+    "name": "Hidra do Lodo",
+    "id": "hidra_do_lodo",
+    "path": "assets/visual/bosses/hidra_do_lodo.webp",
+    "prompt": "One unique production RPG boss portrait, square. Subject: a SWAMP HYDRA, the boss Hidra do Lodo. Precisely THREE clearly distinct living REPTILIAN SERPENT HEADS on three necks rising from one shared scaled body, one forward in center, one on each side. Wet olive green scales, muddy tan horns, glowing amber eyes, fangs, moss-covered swamp predator. NOT a humanoid, NOT a tree, NOT bark, NOT a face made of branches. Hand-painted realistic dark fantasy inventory icon, centered frontal bust fully inside an 80% circular safe area, strong silhouette recognizable at 48px. Near-black green background. No letters, no words, no border, no frame, no text.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-84cef1c6-fdc0-4f8d-a600-7d8d67d07889.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Esqueleto Mineiro",
+    "name": "Poeira de Ferro",
+    "id": "componente_esqueleto_mineiro",
+    "path": "assets/visual/items/components/componente_esqueleto_mineiro.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Poeira de Ferro\", harvested from \"Esqueleto Mineiro\" in region \"Caverna\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-674235ce-5892-420d-802f-92774424d490.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Sapo Colossal",
+    "name": "Glandula Pantanosa",
+    "id": "componente_sapo_colossal",
+    "path": "assets/visual/items/components/componente_sapo_colossal.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Glandula Pantanosa\", harvested from \"Sapo Colossal\" in region \"Pantano\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-271dd277-6362-4ae9-b3e1-be66cea23834.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Golem de Brasa",
+    "name": "Nucleo de Magma",
+    "id": "componente_golem_de_brasa",
+    "path": "assets/visual/items/components/componente_golem_de_brasa.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Nucleo de Magma\", harvested from \"Golem de Brasa\" in region \"Vulcao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-89ae54e5-3b21-43cb-b911-fbab4c9431ea.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Caverna",
+    "enemy": "Slime Toxico",
+    "name": "Muco Toxico",
+    "id": "componente_slime_toxico",
+    "path": "assets/visual/items/components/componente_slime_toxico.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Muco Toxico\", harvested from \"Slime Toxico\" in region \"Caverna\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-25b028fd-92b5-4931-9c1e-8d3d4e748833.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Draco Magmatico",
+    "name": "Escama Magmatica",
+    "id": "componente_draco_magmatico",
+    "path": "assets/visual/items/components/componente_draco_magmatico.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Escama Magmatica\", harvested from \"Draco Magmatico\" in region \"Vulcao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-1cb56680-4785-44d6-8b5d-913263420e57.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Bruxa do Brejo",
+    "name": "Erva do Brejo",
+    "id": "componente_bruxa_do_brejo",
+    "path": "assets/visual/items/components/componente_bruxa_do_brejo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Erva do Brejo\", harvested from \"Bruxa do Brejo\" in region \"Pantano\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-1bfa920b-e67d-4427-a9bd-40b53849fcf7.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Fenix Sombria",
+    "name": "Cinza da Fenix",
+    "id": "componente_fenix_sombria",
+    "path": "assets/visual/items/components/componente_fenix_sombria.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Cinza da Fenix\", harvested from \"Fenix Sombria\" in region \"Vulcao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-f9a950af-7c2c-4bbd-b942-bf0164b1ba2c.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Abismo",
+    "name": "Arauto do Vazio",
+    "id": "arauto_do_vazio",
+    "path": "assets/visual/bosses/arauto_do_vazio.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Arauto do Vazio\" of region \"Abismo\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-8ec7210b-0558-4ae8-8438-f50797f7fd76.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Serpente do Lodo",
+    "name": "Veneno do Lodo",
+    "id": "componente_serpente_do_lodo",
+    "path": "assets/visual/items/components/componente_serpente_do_lodo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Veneno do Lodo\", harvested from \"Serpente do Lodo\" in region \"Pantano\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-532809cd-ae65-4836-85f9-59d6f8c37385.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Lamia do Eclipse",
+    "name": "Sangue do Eclipse",
+    "id": "componente_lamia_do_eclipse",
+    "path": "assets/visual/items/components/componente_lamia_do_eclipse.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Sangue do Eclipse\", harvested from \"Lamia do Eclipse\" in region \"Abismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-ec44671c-d66f-4231-bf49-00bcbfd61296.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Cavaleiro Abissal",
+    "name": "Aco Abissal",
+    "id": "componente_cavaleiro_abissal",
+    "path": "assets/visual/items/components/componente_cavaleiro_abissal.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Aco Abissal\", harvested from \"Cavaleiro Abissal\" in region \"Abismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-70c3eece-a289-4970-a74c-d1b6d750e75b.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Colosso do Vazio",
+    "name": "Poeira do Vazio",
+    "id": "componente_colosso_do_vazio",
+    "path": "assets/visual/items/components/componente_colosso_do_vazio.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Poeira do Vazio\", harvested from \"Colosso do Vazio\" in region \"Abismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-73fd44b5-2574-4ecd-b6e6-229decab3d1c.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Pantano",
+    "enemy": "Hidra do Lodo",
+    "name": "Coracao da Hidra",
+    "id": "componente_hidra_do_lodo",
+    "path": "assets/visual/items/components/componente_hidra_do_lodo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Coracao da Hidra\", harvested from \"Hidra do Lodo\" in region \"Pantano\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-8319bcd4-35e6-46a8-8244-2083a0392743.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Abismo",
+    "enemy": "Arauto do Vazio",
+    "name": "Lagrima do Arauto",
+    "id": "componente_arauto_do_vazio",
+    "path": "assets/visual/items/components/componente_arauto_do_vazio.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Lagrima do Arauto\", harvested from \"Arauto do Vazio\" in region \"Abismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-cafbac09-8d61-49c6-9c5d-e4bf89d43809.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Maga da Muralha",
+    "name": "Runas da Muralha",
+    "id": "componente_maga_da_muralha",
+    "path": "assets/visual/items/components/componente_maga_da_muralha.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Runas da Muralha\", harvested from \"Maga da Muralha\" in region \"Fortaleza\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-1256acc5-a0df-4418-8659-09740d75bd95.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Vulcao",
+    "name": "Draco Magmatico",
+    "id": "draco_magmatico",
+    "path": "assets/visual/bosses/draco_magmatico.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Draco Magmatico\" of region \"Vulcao\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-82af8e7c-b7a3-4a67-8795-48eafa7c12ac.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Vulcao",
+    "enemy": "Salamandra Rubra",
+    "name": "Brasa Rubra",
+    "id": "componente_salamandra_rubra",
+    "path": "assets/visual/items/components/componente_salamandra_rubra.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Brasa Rubra\", harvested from \"Salamandra Rubra\" in region \"Vulcao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-ba1c481e-4e5b-4050-941e-69c0cc138a3a.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Carrasco de Guerra",
+    "name": "Correia de Guerra",
+    "id": "componente_carrasco_de_guerra",
+    "path": "assets/visual/items/components/componente_carrasco_de_guerra.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Correia de Guerra\", harvested from \"Carrasco de Guerra\" in region \"Fortaleza\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-e7915e70-793a-45dd-8d71-74b29f6b50b4.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Fortaleza",
+    "name": "General de Aco",
+    "id": "general_de_aco",
+    "path": "assets/visual/bosses/general_de_aco.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"General de Aco\" of region \"Fortaleza\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-7453e3d4-d7a4-4bdc-bca6-07137803d8d8.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Necropole",
+    "name": "Lorde da Cripta",
+    "id": "lorde_da_cripta",
+    "path": "assets/visual/bosses/lorde_da_cripta.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Lorde da Cripta\" of region \"Necropole\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-fd13ef82-c1d9-4855-9eef-60dac249bee3.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "Escudeiro de Ferro",
+    "name": "Placa de Escudeiro",
+    "id": "componente_escudeiro_de_ferro",
+    "path": "assets/visual/items/components/componente_escudeiro_de_ferro.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Placa de Escudeiro\", harvested from \"Escudeiro de Ferro\" in region \"Fortaleza\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-e7435d91-8369-4fed-9cf7-d59c196d0c9b.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Fortaleza",
+    "enemy": "General de Aco",
+    "name": "Insignia do General",
+    "id": "componente_general_de_aco",
+    "path": "assets/visual/items/components/componente_general_de_aco.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Insignia do General\", harvested from \"General de Aco\" in region \"Fortaleza\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-75fd891c-72ac-4310-8871-aca7fcc03a69.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Guardiao Funebre",
+    "name": "Osso Funebre",
+    "id": "componente_guardiao_funebre",
+    "path": "assets/visual/items/components/componente_guardiao_funebre.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Osso Funebre\", harvested from \"Guardiao Funebre\" in region \"Necropole\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-22f067fa-d0d8-4f49-a2d2-b34b9fb7d936.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Feiticeira Morta",
+    "name": "Po da Feiticeira",
+    "id": "componente_feiticeira_morta",
+    "path": "assets/visual/items/components/componente_feiticeira_morta.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Po da Feiticeira\", harvested from \"Feiticeira Morta\" in region \"Necropole\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-d0fadccc-9208-4c8c-9577-8db0b6aa1602.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Imperador do Eclipse",
+    "name": "Sangue do Imperador",
+    "id": "componente_imperador_do_eclipse",
+    "path": "assets/visual/items/components/componente_imperador_do_eclipse.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Sangue do Imperador\", harvested from \"Imperador do Eclipse\" in region \"Citadela\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-73b47a29-83f0-4698-8fc1-9c48b75673c6.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Ceifador de Ossos",
+    "name": "Medula do Ceifador",
+    "id": "componente_ceifador_de_ossos",
+    "path": "assets/visual/items/components/componente_ceifador_de_ossos.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Medula do Ceifador\", harvested from \"Ceifador de Ossos\" in region \"Necropole\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-cbaa1a1d-630c-4dd0-8ea6-e68504c60807.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Panteao",
+    "name": "Avatar do Zenith",
+    "id": "avatar_do_zenith",
+    "path": "assets/visual/bosses/avatar_do_zenith.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Avatar do Zenith\" of region \"Panteao\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-2f802999-269e-4a68-aab9-036aaad1f361.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Necropole",
+    "enemy": "Lorde da Cripta",
+    "name": "Selo da Cripta",
+    "id": "componente_lorde_da_cripta",
+    "path": "assets/visual/items/components/componente_lorde_da_cripta.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Selo da Cripta\", harvested from \"Lorde da Cripta\" in region \"Necropole\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-456fca3f-a340-49ed-840a-c133d43b69f2.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Oraculo Radiante",
+    "name": "Cristal Radiante",
+    "id": "componente_oraculo_radiante",
+    "path": "assets/visual/items/components/componente_oraculo_radiante.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Cristal Radiante\", harvested from \"Oraculo Radiante\" in region \"Panteao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-aed36018-0c42-4214-8010-fc97d51c88d0.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Guardiao Aureo",
+    "name": "Ouro Vivo",
+    "id": "componente_guardiao_aureo",
+    "path": "assets/visual/items/components/componente_guardiao_aureo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Ouro Vivo\", harvested from \"Guardiao Aureo\" in region \"Panteao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-a436ad1e-cd6a-4f3c-861c-cd513a0cd66e.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Quimera Solar",
+    "name": "Essencia Solar",
+    "id": "componente_quimera_solar",
+    "path": "assets/visual/items/components/componente_quimera_solar.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Essencia Solar\", harvested from \"Quimera Solar\" in region \"Panteao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-e8b26bcb-1a42-4eb6-add3-2e014253854f.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Citadela",
+    "name": "Imperador do Eclipse",
+    "id": "imperador_do_eclipse",
+    "path": "assets/visual/bosses/imperador_do_eclipse.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Imperador do Eclipse\" of region \"Citadela\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-779f0b6d-4a3c-4f92-883a-b84a0e89ddd5.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Titan Rachado",
+    "name": "Fragmento da Ruina",
+    "id": "componente_titan_rachado",
+    "path": "assets/visual/items/components/componente_titan_rachado.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Fragmento da Ruina\", harvested from \"Titan Rachado\" in region \"Cataclismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-df0af269-200e-4064-aaaf-d8107586798b.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Panteao",
+    "enemy": "Avatar do Zenith",
+    "name": "Luz do Zenith",
+    "id": "componente_avatar_do_zenith",
+    "path": "assets/visual/items/components/componente_avatar_do_zenith.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Luz do Zenith\", harvested from \"Avatar do Zenith\" in region \"Panteao\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-31d4c78b-cf0e-4e34-aedd-e92de59ecb5b.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Anjo Caido",
+    "name": "Fragmento de Halo",
+    "id": "componente_anjo_caido",
+    "path": "assets/visual/items/components/componente_anjo_caido.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Fragmento de Halo\", harvested from \"Anjo Caido\" in region \"Citadela\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-b158082f-4ba6-4724-98df-e9eaf7611059.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Serafim do Fim",
+    "name": "Residuo do Fim",
+    "id": "componente_serafim_do_fim",
+    "path": "assets/visual/items/components/componente_serafim_do_fim.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Residuo do Fim\", harvested from \"Serafim do Fim\" in region \"Cataclismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-93d477a4-99d5-4af4-bf9a-fdfb1a1e3c78.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Deus da Ruina",
+    "name": "Centelha Divina",
+    "id": "componente_deus_da_ruina",
+    "path": "assets/visual/items/components/componente_deus_da_ruina.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Centelha Divina\", harvested from \"Deus da Ruina\" in region \"Cataclismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-c7ff4d29-5785-4217-87e9-118321782158.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Drake Celeste",
+    "name": "Pena Celeste",
+    "id": "componente_drake_celeste",
+    "path": "assets/visual/items/components/componente_drake_celeste.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Pena Celeste\", harvested from \"Drake Celeste\" in region \"Citadela\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-5ddcd12c-f250-4907-b1f2-1ebb7e410e47.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Cataclismo",
+    "name": "Deus da Ruina",
+    "id": "deus_da_ruina",
+    "path": "assets/visual/bosses/deus_da_ruina.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Deus da Ruina\" of region \"Cataclismo\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-b2383d0d-3a6a-4627-a590-185e450ed4e5.png"
+  },
+  {
+    "kind": "boss",
+    "region": "Paradoxo",
+    "name": "Soberano do Paradoxo",
+    "id": "soberano_do_paradoxo",
+    "path": "assets/visual/bosses/soberano_do_paradoxo.webp",
+    "prompt": "Production game asset. Unique portrait of boss \"Soberano do Paradoxo\" of region \"Paradoxo\". Frontal head and shoulders, centered in the inner 80% circular safe area. Design identity from its name. Ancient fantasy creature or overlord. Clearly recognizable unique head, NOT a copy of any other character. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-ad5acd6e-dcca-41e7-9660-5f3f57375735.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Cataclismo",
+    "enemy": "Arauto do Cataclismo",
+    "name": "Cinza do Cataclismo",
+    "id": "componente_arauto_do_cataclismo",
+    "path": "assets/visual/items/components/componente_arauto_do_cataclismo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Cinza do Cataclismo\", harvested from \"Arauto do Cataclismo\" in region \"Cataclismo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-f85349d3-f622-44c1-9021-56ac4e0c3e16.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Citadela",
+    "enemy": "Executor Astral",
+    "name": "Poeira Astral",
+    "id": "componente_executor_astral",
+    "path": "assets/visual/items/components/componente_executor_astral.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Poeira Astral\", harvested from \"Executor Astral\" in region \"Citadela\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-11e271ee-b836-49e8-81da-ea48e620019f.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Guardiao Temporal",
+    "name": "Areia Temporal",
+    "id": "componente_guardiao_temporal",
+    "path": "assets/visual/items/components/componente_guardiao_temporal.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Areia Temporal\", harvested from \"Guardiao Temporal\" in region \"Paradoxo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-8788a1c7-0b30-4042-9b67-f9d691e248ed.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Oraculo do Zero",
+    "name": "Espiral do Zero",
+    "id": "componente_oraculo_do_zero",
+    "path": "assets/visual/items/components/componente_oraculo_do_zero.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Espiral do Zero\", harvested from \"Oraculo do Zero\" in region \"Paradoxo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-8b429ea8-49c2-47d3-bcc9-e4991b13fb03.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Devorador de Eras",
+    "name": "Eco de Outra Era",
+    "id": "componente_devorador_de_eras",
+    "path": "assets/visual/items/components/componente_devorador_de_eras.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Eco de Outra Era\", harvested from \"Devorador de Eras\" in region \"Paradoxo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-5ba26086-0204-4c1c-ba57-962460edbf94.png"
+  },
+  {
+    "kind": "drop",
+    "region": "Paradoxo",
+    "enemy": "Soberano do Paradoxo",
+    "name": "Fio do Paradoxo",
+    "id": "componente_soberano_do_paradoxo",
+    "path": "assets/visual/items/components/componente_soberano_do_paradoxo.webp",
+    "prompt": "Production game asset. Unique inventory crafting material named in Portuguese \"Fio do Paradoxo\", harvested from \"Soberano do Paradoxo\" in region \"Paradoxo\". Depict the actual named OBJECT, not the enemy portrait. One isolated tangible object; powders in a tiny shallow dark dish, liquid essence in a distinctive small glass vial, biological items stylized non-gory, abstract temporal materials as distinct luminous relics. Visually specific silhouette and texture matching the name, not a generic gemstone. Hand-painted dark fantasy RPG art, detailed brushwork, earthy bronze and region-appropriate colors, crisp silhouette readable at 48px. Square composition, single centered subject occupying 75% of image with generous safe margins. Dark near-black neutral background. No words, letters, numbers, labels, frames, borders, multiple panels or mockup. High quality illustrated collectible icon.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-de911f00-0a12-4d1e-bf23-c17378015a6a.png"
+  }
+]

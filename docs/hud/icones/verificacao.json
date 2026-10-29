@@ -1,0 +1,24 @@
+{
+  "assets": 60,
+  "regions": [
+    "Floresta",
+    "Caverna",
+    "Ruinas",
+    "Pantano",
+    "Vulcao",
+    "Abismo",
+    "Fortaleza",
+    "Necropole",
+    "Citadela",
+    "Panteao",
+    "Cataclismo",
+    "Paradoxo"
+  ],
+  "progress": [
+    "0deg",
+    "120deg",
+    "240deg",
+    "360deg"
+  ],
+  "errors": []
+}

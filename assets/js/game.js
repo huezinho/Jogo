@@ -4065,7 +4065,7 @@ function getItemSpritePath(item){
     return `assets/visual/items/equipment/${icon}.svg?v=20261028`;
   }
   if(item?.schemaVersion === 2 && item.slot === "accessory"){ return `assets/visual/items/${bossAccessoryProfiles[item.regionName]?.id || "o_fim"}.png?v=20261028`; }
-  if(item?.id?.startsWith("componente_")){ const primary = EquipmentSystem.getMaterials(item.enemyName, item.regionName || item.region)[0]; if(primary){ return `assets/visual/items/${primary.id}.png?v=20261028`; } }
+  if(item?.type === "material" && item.id?.startsWith("componente_")){ return `assets/visual/items/components/${String(item.id).replace(/[^a-z0-9_-]/gi, "")}.webp?v=20261029`; }
   return `assets/visual/items/${String(getItemAssetId(item)).replace(/[^a-z0-9_-]/gi, "")}.png?v=${ITEM_ASSET_VERSION}`;
 }
 

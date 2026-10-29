@@ -2,7 +2,15 @@
 
 28/10/2026.
 
-## Tipografia aplicada e chefe — 29/10/2026
+## Selo progressivo e artes próprias — 29/10/2026
+
+Aplicado o selo escolhido. O retrato circular é próprio do chefe da região, e a borda completa 0/120/240/360 graus conforme as criaturas diferentes vencidas (na região com três criaturas). A mesma regra funciona nas 12 regiões e mantém o círculo completo ao liberar ou enfrentar o chefe. Repetir uma criatura não aumenta esse progresso.
+
+Foram gerados 12 retratos e 48 ícones de materiais secundários com image_gen. Não há mais reutilização da imagem do primeiro drop para o componente secundário. O caminho usa o ID estável do componente, inclusive para saves existentes. Artes: assets/visual/bosses e assets/visual/items/components. Prompts e origem: icones/geracao.json; galeria: icones/index.html. A revisão visual conferiu todos os ícones; a Hidra recebeu uma segunda geração específica para representar as três cabeças reptilianas.
+
+O comando normal agora tem sete suítes, incluindo a conferência dos 60 arquivos distintos, carga das imagens, mapeamento de drops, retratos das 12 regiões em três larguras e progresso real do selo. A galeria registra os quatro estágios da borda.
+
+## Histórico: tipografia aplicada e chefe — 29/10/2026
 
 O estudo foi aplicado: Cinzel 650 permanece nos nomes e comandos; o arquivo variável oficial EB Garamond (eixo 400–800 conferido) foi instalado em assets/visual/fonts e é usado em descrições, custos, quantidades, materiais e histórico. A folha campaign-reading.css está limitada à campanha. Nenhuma mecânica ou fórmula foi alterada.
 
