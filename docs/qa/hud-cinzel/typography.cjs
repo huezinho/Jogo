@@ -19,7 +19,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
      const labels=[...document.querySelectorAll('.rpg-ability strong,.rpg-ability small,.rpg-mainnav button>span,#rpgTitle')].map(e=>({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight}));
      return{overflow:document.documentElement.scrollWidth>innerWidth,clipped,abilityCount:document.querySelectorAll('.rpg-ability').length,loaded:[...document.fonts].some(f=>f.family==='RPG Cinzel'&&f.status==='loaded'),labels};
     });
-    records.push({className,level,width,...result});assert.equal(result.overflow,false);assert.deepEqual(result.clipped,[],`${className} level ${level} at ${width}`);assert(result.loaded);assert(result.labels.every(l=>l.family.includes('RPG Cinzel')&&l.weight==='650'));
+    records.push({className,level,width,...result});assert.equal(result.overflow,false);assert.deepEqual(result.clipped,[],`${className} level ${level} at ${width}`);assert(result.loaded);assert(result.labels.every(l=>(l.family.includes('RPG Cinzel')&&l.weight==='650')||(l.family.includes('RPG Leitura')&&l.weight==='650')));
    }
   }
   await context.close();

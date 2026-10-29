@@ -111,7 +111,7 @@ async function screenshot(page,file){
     assert.equal(metrics.broken.length,0,`${screen}: broken images ${metrics.broken}`);
     const typography=await page.evaluate(()=>({loaded:[...document.fonts].some(f=>f.family==='RPG Cinzel'&&f.status==='loaded'),labels:[...document.querySelectorAll('#campaignHud *')].filter(e=>e.getBoundingClientRect().width>0&&[...e.childNodes].some(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim())).map(e=>({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight}))}));
     assert(typography.loaded,`${screen}: Cinzel did not load`);
-    assert(typography.labels.every(l=>l.family.includes('RPG Cinzel')&&l.weight==='650'),`${screen}: inconsistent font or weight`);
+    assert(typography.labels.every(l=>(l.family.includes('RPG Cinzel')&&l.weight==='650')||(l.family.includes('RPG Leitura')&&['550','650'].includes(l.weight))),`${screen}: inconsistent font or weight`);
     if([1366,390].includes(width)&&['battle','workshop','character','mercenary','bag','trophies'].includes(screen))await screenshot(page,path.join(__dirname,`${screen}-${width}.png`));
     if(screen==='bag')await page.keyboard.press('Escape');
    }
@@ -123,7 +123,7 @@ async function screenshot(page,file){
    await p.goto('http://127.0.0.1:'+server.address().port);
    await p.evaluate(className=>selectClass(className),className);
    const labels=await p.locator('#actions [data-hud="attack"] small').innerText();
-   assert.equal(labels,className==='Mago'?'9 MP':'0 MP');
+   assert.equal(labels,className==='Mago'?'9 mana':'0 mana');
    if(className==='Mago'){await p.evaluate(()=>{player.mp=0;updateUI();});assert(await p.locator('[data-hud="attack"]').isDisabled());}
    assert.equal(await p.locator('#campaignHud').count(),1);await classContext.close();
   }

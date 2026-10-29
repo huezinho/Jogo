@@ -1,0 +1,4 @@
+EB Garamond variável (400–800), usada na leitura da campanha.
+Origem: https://raw.githubusercontent.com/google/fonts/main/ofl/ebgaramond/EBGaramond%5Bwght%5D.ttf
+Licença: SIL OFL, em OFL-EBGaramond.txt
+Eixo wght conferido no fvar. A fonte estática antiga não é carregada pelo jogo.

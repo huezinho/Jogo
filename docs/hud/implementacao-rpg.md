@@ -2,7 +2,17 @@
 
 28/10/2026.
 
-## Estado atual: mapas nos cantos — 29/10/2026
+## Tipografia aplicada e chefe — 29/10/2026
+
+O estudo foi aplicado: Cinzel 650 permanece nos nomes e comandos; o arquivo variável oficial EB Garamond (eixo 400–800 conferido) foi instalado em assets/visual/fonts e é usado em descrições, custos, quantidades, materiais e histórico. A folha campaign-reading.css está limitada à campanha. Nenhuma mecânica ou fórmula foi alterada.
+
+A oficina separa nome, tipo/conjunto e raridade; mostra uma propriedade por linha; usa Forjar com a indicação de resultado comum. Passar agora aparece como Encerrar turno, MP como mana, e os textos de apresentação corrigem acentos e explicam dano periódico sem alterar os dados persistidos.
+
+O quadro de pergaminho do chefe foi substituído por Rastro discreto: fundo escuro contido, filete, progresso real e acesso aos detalhes. O quadro sempre trata do chefe; contratos continuam no objetivo detalhado e no mercenário. Bloqueado, liberado e em combate têm estados próprios; durante outro combate o desafio continua bloqueado. A luta com chefe recebe apenas um detalhe de cor na identificação do alvo.
+
+As alternativas Selo de caçada e Estandarte estão em chefe/index.html, junto às capturas reais de três estados. Somente Rastro discreto é usado pelo jogo. O teste de 27 combinações de estilo/estado/largura entra no comando normal de regressão, que agora executa seis suítes. A galeria também foi verificada em três larguras, com troca de estado e carga das imagens.
+
+## Histórico: mapas nos cantos — 29/10/2026
 
 Correção das molduras: a área desenhada por `border-image` coincide com a borda reservada pelo layout, inclusive nos estados ativo/desabilitado e nas regras de celular. Cartões de contrato reservam 22 px verticais e 35 px laterais para a moldura, além do recuo de texto de 10/14 px. A auditoria verifica os trechos de texto dentro da borda e a largura das molduras nos botões visíveis. O mapa de regiões lateral aparece somente na tela de combate/exploração; o mapa de locais continua servindo à navegação. Nas outras telas, a lateral de bolsa/moedas ocupa menos largura.
 

@@ -2,11 +2,13 @@
 
 Pesquisa e estudo visual: 29/10/2026.
 
+Atualização: a proposta foi aplicada ao jogo. O registro abaixo preserva o diagnóstico e as decisões da pesquisa. Confira o estado atual em ../implementacao-rpg.md e os estilos do chefe em ../chefe/index.html.
+
 ## O que já mudou no jogo
 
-A faixa superior que continha “Crônicas da campanha” foi retirada por inteiro. A identificação da região continua junto ao mapa, e o título da tela permanece disponível semanticamente para leitores de tela. O espaço da faixa passa à área de aventura. Os mapas, a bolsa sobreposta e a posição inferior dos comandos continuam funcionando. A fonte de produção continua Cinzel 650.
+A faixa superior que continha “Crônicas da campanha” foi retirada por inteiro. A identificação da região continua junto ao mapa, e o título da tela permanece disponível semanticamente para leitores de tela. O espaço da faixa passa à área de aventura. Os mapas, a bolsa sobreposta e a posição inferior dos comandos continuam funcionando. A fonte dos títulos continua Cinzel 650; a camada de leitura agora usa EB Garamond.
 
-As imagens de proposta são estudos feitos sobre a interface e os dados reais do jogo. A fonte de leitura, as cores, os rótulos e a apresentação de propriedades sugeridos não foram aplicados à versão jogável. Nenhuma regra, habilidade ou fórmula de equipamento foi alterada.
+As imagens de proposta são estudos feitos sobre a interface e os dados reais do jogo. A fonte de leitura, as cores, os rótulos e a apresentação de propriedades sugeridos foram aplicados à versão jogável após a solicitação do usuário. Nenhuma regra, habilidade ou fórmula de equipamento foi alterada.
 
 ## Referências examinadas
 

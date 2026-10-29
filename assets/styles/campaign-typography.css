@@ -16,7 +16,7 @@ body.rpg-campaign {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
-/* Shared legacy widgets have explicit font shorthands. Keep one face throughout. */
+/* Cinzel is the display default; campaign-reading.css assigns reading roles. */
 .rpg-campaign * {
   font-family: var(--rpg-font-family) !important;
   font-weight: 650 !important;

@@ -1,0 +1,7 @@
+/* Alternatives for review only; production uses the compact tracker. */
+.rpg-campaign #campaignHud[data-boss-style=seal] .rpg-quest{border:1px solid #a58b54;border-image:none;border-radius:3px;padding:14px 12px 12px 66px;background:#16150fed;min-height:116px}
+.rpg-campaign #campaignHud[data-boss-style=seal] .rpg-quest::before{content:'';position:absolute;left:10px;top:18px;width:42px;height:42px;border:1px solid #a58b54;border-radius:50%;background:#231e14 url('/assets/visual/hud/icon-warcry.webp') center/34px no-repeat;box-shadow:0 0 0 3px #100e09,0 0 0 4px #7d683e}
+.rpg-campaign #campaignHud[data-boss-style=banner] .rpg-quest{width:205px;background:linear-gradient(90deg,#391819f2,#5c2524ed,#391819f2);border:1px solid #a58b54;border-top:3px solid #c1a368;padding:14px 16px 22px;clip-path:polygon(0 0,100% 0,100% 91%,50% 100%,0 91%);box-shadow:none;text-align:center;align-items:center}
+.rpg-campaign #campaignHud[data-boss-style=banner] .rpg-quest button{align-self:center}
+.rpg-campaign #campaignHud[data-boss-style=banner] .rpg-quest progress{width:85%}
+@media(max-width:1100px){.rpg-campaign #campaignHud[data-boss-style=seal] .rpg-quest{width:180px;padding-left:54px}.rpg-campaign #campaignHud[data-boss-style=seal] .rpg-quest::before{left:8px;width:34px;height:34px;background-size:28px}.rpg-campaign #campaignHud[data-boss-style=banner] .rpg-quest{width:170px}}
