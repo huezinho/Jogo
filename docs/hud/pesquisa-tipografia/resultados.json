@@ -1,0 +1,33 @@
+{
+  "errors": [],
+  "screens": [
+    "oficina-proposta.png",
+    "combate-proposta.png"
+  ],
+  "productionChecks": [
+    {
+      "width": 1440,
+      "overflow": false,
+      "kicker": false,
+      "height": 1
+    },
+    {
+      "width": 1366,
+      "overflow": false,
+      "kicker": false,
+      "height": 1
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "kicker": false,
+      "height": 1
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "kicker": false,
+      "height": 1
+    }
+  ]
+}

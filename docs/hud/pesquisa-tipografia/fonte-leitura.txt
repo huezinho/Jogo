@@ -1,0 +1,4 @@
+EB Garamond variável (400–800) para estudo visual.
+Origem: https://raw.githubusercontent.com/google/fonts/main/ofl/ebgaramond/EBGaramond%5Bwght%5D.ttf
+Licença: SIL OFL, em OFL-EBGaramond.txt
+Eixo wght conferido no fvar do arquivo. O arquivo antigo do projeto é estático em 400 e não é usado neste estudo.

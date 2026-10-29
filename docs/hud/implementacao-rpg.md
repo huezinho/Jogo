@@ -4,6 +4,8 @@
 
 ## Estado atual: mapas nos cantos — 29/10/2026
 
+A faixa superior “Crônicas da campanha” foi retirada; a região continua indicada no mapa, e os pixels liberados passam à aventura. O estudo de escrita e tipografia está em `pesquisa-tipografia/index.html` e `pesquisa-tipografia/analise.md`. As variações de tipografia desse estudo são demonstrações e não são carregadas pelo jogo.
+
 A campanha ocupa toda a largura disponível: mapa dos locais à esquerda, aventura no centro e mapa das regiões à direita. O mapa dos locais usa os pontos da arte para navegar com as restrições reais do jogo. A antiga barra de navegação e o botão de abrir mapa foram removidos. Opções fica no pé da lateral esquerda; bolsa e moedas ficam abaixo do mapa das regiões.
 
 A bolsa usa um diálogo modal sobre a tela corrente, preservando o local e a cena, com fechamento por Escape e as mesmas ações explícitas de inspecionar, equipar, usar e vender. Procurar inimigo e os comandos de combate ficam depois da cena, no rodapé da área central. A navegação anterior no topo foi substituída por essa organização. Em telas estreitas, os mapas ocupam os cantos superiores com a aventura abaixo e ao fundo, sem ocultar as imagens para trocar por uma barra de botões.

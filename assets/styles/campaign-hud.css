@@ -346,3 +346,15 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 @media(max-width:1100px){.rpg-campaign .rpg-battle-banner{left:50%;min-width:0;width:calc(100% - 240px);max-width:180px;padding:8px 2px 14px;font-size:13px}}
 @media(min-width:1101px) and (max-width:1600px){.rpg-campaign .rpg-potion-slot span{font-size:9px;white-space:nowrap;overflow-wrap:normal}}
 .rpg-campaign #rpgDialog .rpg-item-detail h2{font-size:20px;overflow-wrap:break-word}
+
+/* The location is already shown beside the map: no full-width title strip. */
+.rpg-campaign .rpg-top{position:absolute;width:1px;height:1px;min-height:0;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.rpg-campaign .rpg-top::after{display:none}
+.rpg-campaign .rpg-locations-rail,.rpg-campaign .rpg-regions-rail{height:100dvh}
+.rpg-campaign #rpgMain{min-height:100dvh}
+.rpg-campaign .rpg-battle .battle-scene{height:clamp(370px,calc(100dvh - 236px),744px)}
+@media(max-width:1100px){
+ .rpg-campaign .rpg-locations-rail,.rpg-campaign .rpg-regions-rail{height:230px}
+ .rpg-campaign #rpgMain{min-height:100dvh}
+ .rpg-campaign #campaignHud[data-mode=battle] .rpg-battle .battle-scene{height:calc(100dvh - 191px)}
+}

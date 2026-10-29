@@ -28,7 +28,7 @@ const CampaignHUD = (() => {
     const log = document.getElementById('log');
     const level = document.getElementById('levelUpPanel');
     game.innerHTML = `<div id="campaignHud" class="game-layout rpg-layout">
-      <header class="rpg-top"><div class="rpg-location"><span class="rpg-kicker">Crônicas da campanha</span><h1 id="rpgTitle"></h1></div></header>
+      <header class="rpg-top"><div class="rpg-location"><h1 id="rpgTitle"></h1></div></header>
       <div class="rpg-world-layout">
         <aside class="rpg-locations-rail"><nav id="modeTabs" aria-label="Locais da campanha"></nav><footer id="rpgOptions"></footer></aside>
         <main id="rpgMain"><div id="rpgLevelMount"></div><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="actions"></div></main>

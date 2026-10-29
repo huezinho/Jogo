@@ -9,7 +9,7 @@
     "lendaria"
   ],
   "offer": {
-    "id": "contract_996281_2862207101_0",
+    "id": "contract_996283_2862207101_0",
     "targetRegion": "Floresta",
     "targetName": "Lobo Sombrio",
     "count": 10,
@@ -17,18 +17,18 @@
     "rewardId": "componente_esqueleto_mineiro",
     "rewardQty": 2,
     "difficulty": "Media",
-    "offeredAt": 1793305800000,
-    "expiresAt": 1793307600000
+    "offeredAt": 1793309400000,
+    "expiresAt": 1793311200000
   },
   "accepted": {
-    "id": "contract_996281_2862207101_0",
+    "id": "contract_996283_2862207101_0",
     "targetRegion": "Floresta",
     "targetName": "Lobo Sombrio",
     "count": 10,
     "progress": 0,
     "rewardId": "componente_esqueleto_mineiro",
     "rewardQty": 2,
-    "acceptedAt": 1793306804726
+    "acceptedAt": 1793310232664
   },
   "hasSelect": false,
   "map": true

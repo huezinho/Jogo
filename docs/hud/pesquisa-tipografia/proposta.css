@@ -1,0 +1,28 @@
+/* Research preview only; this file is never loaded by index.html. */
+@font-face{font-family:'RPG Leitura';src:url('/docs/hud/pesquisa-tipografia/ebgaramond-variable.ttf') format('truetype');font-weight:400 800;font-display:swap}
+.rpg-campaign #campaignHud :is(.rpg-chronicle>span,.rpg-skill-hint,.rpg-expedition-note,.rpg-set-summary p,.rpg-board-intro p,.rpg-rule-note,.rpg-item-stats,.rpg-upgrade-stats,.rpg-materials,.rpg-materials *,.rpg-item-detail p,.rpg-item-detail li,.rpg-contract-detail p,.rpg-item-detail dl,.rpg-item-detail dl *){font-family:'RPG Leitura',Georgia,serif!important;font-weight:550!important;font-size:17px;line-height:1.35;letter-spacing:0;text-shadow:none}
+.rpg-campaign #campaignHud .rpg-materials small{font-size:14px;color:#58442d}
+.rpg-campaign #campaignHud .rpg-set-summary p{font-size:16px;color:#eadfc7}
+.rpg-campaign #campaignHud .rpg-set-summary p.set-active{color:#e5d5a6}
+.rpg-campaign #campaignHud :is(.rpg-rule-note,.rpg-skill-hint){font-size:15px}
+.rpg-campaign #campaignHud :is(.scene-vital-text,.rpg-ability small,.rpg-coins,.rpg-materials strong){font-family:'RPG Leitura',Georgia,serif!important;font-weight:650!important;font-variant-numeric:lining-nums tabular-nums}
+.rpg-campaign #campaignHud .scene-vital-text{font-size:16px}
+.rpg-campaign #campaignHud .rpg-ability small{font-size:15px;color:#d3e4ed;line-height:1.2}
+.rpg-campaign #campaignHud .rpg-ability strong{font-size:13px;color:#efe1bd;line-height:1.35}
+.rpg-campaign #campaignHud .rpg-quest strong{font-size:12px;color:#3a281c}
+.rpg-campaign #campaignHud .rpg-quest span{font-family:'RPG Leitura',Georgia,serif!important;font-size:19px;font-weight:650!important}
+.rpg-campaign #campaignHud .rpg-coins{font-size:21px;color:#e1c17e}
+.rpg-campaign #campaignHud .rpg-chronicle>span{color:#e7ddc6}
+.rpg-campaign #campaignHud .rpg-anvil h2{font-size:22px;line-height:1.35;letter-spacing:.025em;color:#ead59b}
+.rpg-campaign #campaignHud .rpg-anvil>p{font-family:'RPG Leitura',Georgia,serif!important;font-weight:550!important;font-size:17px;color:#eddfbf}
+.rpg-campaign #campaignHud .rpg-item-stats{display:grid;gap:4px;text-align:left;color:#36271d;padding:8px 0;border-bottom:1px solid #745a3544}
+.rpg-campaign #campaignHud .rpg-recipe h3{font-size:17px}
+.rpg-campaign #campaignHud .rpg-materials li{padding:8px 0}
+.rpg-campaign #campaignHud .rpg-materials strong{font-size:17px}
+.rpg-campaign #campaignHud .rpg-coin-icon{display:inline-block;margin-right:4px;color:#d6b564}
+.rpg-campaign #campaignHud .rpg-turn-actions button{font-size:10px}
+.rpg-campaign #campaignHud .rpg-quest{max-width:200px}
+.rpg-campaign #campaignHud .rpg-potion-slot span{font-size:11px}
+@media(max-width:760px){.rpg-campaign #campaignHud .rpg-ability strong{font-size:12px}.rpg-campaign #campaignHud .rpg-ability small{font-size:14px}}
+.rpg-campaign #campaignHud .rpg-item-stats span{font-family:'RPG Leitura',Georgia,serif!important;font-weight:550!important;font-size:17px;line-height:1.35;letter-spacing:0;text-shadow:none}
+.rpg-campaign #campaignHud .rpg-rule-note{white-space:normal;overflow-wrap:break-word}

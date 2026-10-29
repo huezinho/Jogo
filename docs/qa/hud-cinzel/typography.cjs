@@ -12,6 +12,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
     await p.setViewportSize({width,height:844});await p.evaluate(()=>document.fonts.ready);
     const result=await p.evaluate(()=>{
      const clipped=[];for(const e of document.querySelectorAll('.rpg-ability strong,.rpg-ability small,.rpg-mainnav button>span,#rpgTitle')){
+      if(e.closest('.rpg-top'))continue; // The redundant visual title strip was removed; its heading remains accessible.
       const range=document.createRange();range.selectNodeContents(e);const r=range.getBoundingClientRect(),box=(e.closest('button')||(e.id==='rpgTitle'?e.parentElement:e)).getBoundingClientRect();
       if(r.left<box.left-1||r.right>box.right+1||r.top<box.top-1||r.bottom>box.bottom+1)clipped.push({text:e.textContent,range:{x:r.x,y:r.y,w:r.width,h:r.height},box:{x:box.x,y:box.y,w:box.width,h:box.height}});
      }
