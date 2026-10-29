@@ -1,0 +1,199 @@
+{
+  "checks": [
+    {
+      "name": "unchanged skill definitions, class stats/subclass bonuses, all point gains1..100",
+      "pass": true
+    },
+    {
+      "name": "eight corrected mechanic invariants",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "mechanics": [
+    {
+      "name": "single15percent",
+      "zero": 4600,
+      "three": 5287,
+      "ratio": 1.1493478260869565
+    },
+    {
+      "name": "flat once per missile action",
+      "flat": 1753,
+      "damage": 4600,
+      "expected": 4600,
+      "missiles": 13,
+      "rolled": 219
+    },
+    {
+      "name": "sniper intended crit",
+      "chance": 0.35
+    },
+    {
+      "name": "faith protects3responses",
+      "rounds": [
+        0,
+        0,
+        0,
+        9576
+      ]
+    },
+    {
+      "name": "ultra allows3basic actions",
+      "counts": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "untouchable": 0
+    },
+    {
+      "name": "unstoppable protects4enemyresponses",
+      "immune": [
+        {
+          "turns": 4,
+          "skip": false
+        },
+        {
+          "turns": 3,
+          "skip": false
+        },
+        {
+          "turns": 2,
+          "skip": false
+        },
+        {
+          "turns": 1,
+          "skip": false
+        },
+        {
+          "turns": 0,
+          "skip": true
+        }
+      ]
+    },
+    {
+      "name": "corruption blocks passive Overflowing shield in campaign",
+      "damage": 150,
+      "blockedShield": 0,
+      "allowedDamage": 150,
+      "allowedShield": 150
+    },
+    {
+      "name": "invalid campaign actions preserve DOT control buffs and turn",
+      "invalidActions": [
+        {
+          "kind": "skill-no-mana",
+          "before": {
+            "hp": 3426,
+            "mp": 0,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 0,
+            "processing": false,
+            "enemyHp": 10000000
+          },
+          "after": {
+            "hp": 3426,
+            "mp": 0,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 0,
+            "processing": false,
+            "enemyHp": 10000000
+          }
+        },
+        {
+          "kind": "basic-no-mana",
+          "before": {
+            "hp": 3426,
+            "mp": 0,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 3,
+            "processing": false,
+            "enemyHp": 10000000
+          },
+          "after": {
+            "hp": 3426,
+            "mp": 0,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 3,
+            "processing": false,
+            "enemyHp": 10000000
+          }
+        },
+        {
+          "kind": "skill-forced-basic",
+          "before": {
+            "hp": 3426,
+            "mp": 3896,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 3,
+            "processing": false,
+            "enemyHp": 10000000
+          },
+          "after": {
+            "hp": 3426,
+            "mp": 3896,
+            "burnTurns": 3,
+            "burnDamage": 10,
+            "skip": true,
+            "forced": 3,
+            "processing": false,
+            "enemyHp": 10000000
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "cases": 9288,
+    "executed": 9288,
+    "activeNames": 59,
+    "forms": 28,
+    "sets": 12,
+    "thresholds": [
+      2,
+      4,
+      5
+    ],
+    "failures": []
+  },
+  "antiShield": [
+    {
+      "targetId": "arquimago",
+      "noShield": 5,
+      "shield": 0,
+      "hp": 94854,
+      "afterHp": 94854,
+      "revision": 2,
+      "afterRevision": 2,
+      "dotTurns": 3
+    },
+    {
+      "targetId": "protetor_da_floresta",
+      "noShield": 5,
+      "shield": 0,
+      "hp": 95254,
+      "afterHp": 95254,
+      "revision": 2,
+      "afterRevision": 2,
+      "dotTurns": 3
+    },
+    {
+      "targetId": "corrompido-passive",
+      "noShield": 2,
+      "shield": 0,
+      "damage": 150
+    }
+  ]
+}

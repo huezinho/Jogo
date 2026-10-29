@@ -1,0 +1,416 @@
+{
+  "screens": [
+    {
+      "screen": "battle",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 812,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "workshop",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 908,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "upgrade",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 1011,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "character",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 924,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bag",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 788,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "mercenary",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 961,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "inn",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 831,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "alchemist",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 994,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bestiary",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 1254,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "trophies",
+      "width": 1366,
+      "scroll": 1366,
+      "height": 4883,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "battle",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 812,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "workshop",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 956,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "upgrade",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1061,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "character",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 898,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bag",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 788,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "mercenary",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1426,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "inn",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 831,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "alchemist",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 994,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bestiary",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 1254,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "trophies",
+      "width": 1024,
+      "scroll": 1024,
+      "height": 4883,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "battle",
+      "width": 768,
+      "scroll": 768,
+      "height": 812,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "workshop",
+      "width": 768,
+      "scroll": 768,
+      "height": 936,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "upgrade",
+      "width": 768,
+      "scroll": 768,
+      "height": 1041,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "character",
+      "width": 768,
+      "scroll": 768,
+      "height": 878,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bag",
+      "width": 768,
+      "scroll": 768,
+      "height": 799,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "mercenary",
+      "width": 768,
+      "scroll": 768,
+      "height": 1406,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "inn",
+      "width": 768,
+      "scroll": 768,
+      "height": 811,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "alchemist",
+      "width": 768,
+      "scroll": 768,
+      "height": 1040,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bestiary",
+      "width": 768,
+      "scroll": 768,
+      "height": 1467,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "trophies",
+      "width": 768,
+      "scroll": 768,
+      "height": 4863,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "battle",
+      "width": 390,
+      "scroll": 390,
+      "height": 903,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "workshop",
+      "width": 390,
+      "scroll": 390,
+      "height": 1582,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "upgrade",
+      "width": 390,
+      "scroll": 390,
+      "height": 1644,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "character",
+      "width": 390,
+      "scroll": 390,
+      "height": 1308,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bag",
+      "width": 390,
+      "scroll": 390,
+      "height": 844,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "mercenary",
+      "width": 390,
+      "scroll": 390,
+      "height": 1693,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "inn",
+      "width": 390,
+      "scroll": 390,
+      "height": 851,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "alchemist",
+      "width": 390,
+      "scroll": 390,
+      "height": 1177,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bestiary",
+      "width": 390,
+      "scroll": 390,
+      "height": 1799,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "trophies",
+      "width": 390,
+      "scroll": 390,
+      "height": 5379,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "battle",
+      "width": 320,
+      "scroll": 320,
+      "height": 887,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "workshop",
+      "width": 320,
+      "scroll": 320,
+      "height": 1662,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "upgrade",
+      "width": 320,
+      "scroll": 320,
+      "height": 1767,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "character",
+      "width": 320,
+      "scroll": 320,
+      "height": 1325,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bag",
+      "width": 320,
+      "scroll": 320,
+      "height": 844,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "mercenary",
+      "width": 320,
+      "scroll": 320,
+      "height": 1758,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "inn",
+      "width": 320,
+      "scroll": 320,
+      "height": 851,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "alchemist",
+      "width": 320,
+      "scroll": 320,
+      "height": 1335,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "bestiary",
+      "width": 320,
+      "scroll": 320,
+      "height": 2622,
+      "duplicates": [],
+      "broken": []
+    },
+    {
+      "screen": "trophies",
+      "width": 320,
+      "scroll": 320,
+      "height": 5500,
+      "duplicates": [],
+      "broken": []
+    }
+  ],
+  "flows": [
+    "basic attack and stable disabled action slots",
+    "skill details dialog, keyboard isolation and Escape",
+    "locked crafting region and common crafting with actual materials/cost",
+    "bag inspection does not mutate equipment; explicit equip works",
+    "sequential rarity upgrade and missing-material guard",
+    "fixed mercenary reward, completion, claim exactly once",
+    "all four classes render; mage basic cost and mana lock match engine",
+    "inn recovery and save/reload persistence"
+  ],
+  "errors": [],
+  "badResponses": []
+}

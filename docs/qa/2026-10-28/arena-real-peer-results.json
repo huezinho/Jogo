@@ -1,0 +1,401 @@
+{
+  "transport": "Real PeerJS/WebRTC",
+  "host": {
+    "hp": 80,
+    "mp": 32,
+    "stats": {
+      "enemiesDefeated": 0,
+      "bossesDefeated": 0,
+      "coinsEarned": 0,
+      "deaths": 0,
+      "regionKills": {},
+      "regionBossKills": {},
+      "dungeonClears": 0,
+      "dungeonBestStep": 0,
+      "craftedEquipment": 0,
+      "itemsSold": 0,
+      "arenaDuels": 1,
+      "arenaWins": 0,
+      "migrations": {
+        "baseHpRebalance_v1": true
+      },
+      "invested": {
+        "vitality": 0,
+        "wisdom": 0,
+        "strength": 0,
+        "hpGain": 0,
+        "mpGain": 0,
+        "attackGain": 0,
+        "skillGain": 0
+      },
+      "arenaResultIds": [
+        "duel-1793205322147-90mkg7cz"
+      ]
+    },
+    "save": {
+      "characterId": "hero-31171792-cf81-42f9-86aa-6de28d018367",
+      "characterName": "Guerreiro",
+      "class": "Guerreiro",
+      "level": 1,
+      "xp": 0,
+      "coins": 0,
+      "baseStats": {
+        "hp": 120,
+        "mp": 60,
+        "attack": 18
+      },
+      "maxHp": 120,
+      "hp": 80,
+      "maxMp": 60,
+      "mp": 32,
+      "attack": 18,
+      "baseAttack": 18,
+      "activeSkills": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind"
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove"
+        }
+      ],
+      "passiveSkills": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction"
+        }
+      ],
+      "inventory": [],
+      "stats": {
+        "enemiesDefeated": 0,
+        "bossesDefeated": 0,
+        "coinsEarned": 0,
+        "deaths": 0,
+        "regionKills": {},
+        "regionBossKills": {},
+        "dungeonClears": 0,
+        "dungeonBestStep": 0,
+        "craftedEquipment": 0,
+        "itemsSold": 0,
+        "arenaDuels": 1,
+        "arenaWins": 0,
+        "migrations": {
+          "baseHpRebalance_v1": true
+        },
+        "invested": {
+          "vitality": 0,
+          "wisdom": 0,
+          "strength": 0,
+          "hpGain": 0,
+          "mpGain": 0,
+          "attackGain": 0,
+          "skillGain": 0
+        },
+        "arenaResultIds": [
+          "duel-1793205322147-90mkg7cz"
+        ]
+      },
+      "equipment": {
+        "head": null,
+        "chest": null,
+        "weapon": null,
+        "legs": null,
+        "feet": null,
+        "accessory": null
+      },
+      "subclass": null,
+      "subclassChoices": {
+        "tier30": null,
+        "tier60": null
+      },
+      "mercenary": {
+        "version": 1,
+        "boardCycle": -1,
+        "unlockSignature": "",
+        "offers": [],
+        "active": [],
+        "claimed": [],
+        "completed": 0
+      },
+      "createdAt": 1793205319364
+    },
+    "result": {
+      "duelId": "duel-1793205322147-90mkg7cz",
+      "winnerId": "2aac0ecb-7114-4489-a84b-2c28902ba17b",
+      "participants": [
+        "PVPUQ9B3",
+        "2aac0ecb-7114-4489-a84b-2c28902ba17b"
+      ]
+    }
+  },
+  "guest": {
+    "hp": 73,
+    "mp": 29,
+    "stats": {
+      "enemiesDefeated": 0,
+      "bossesDefeated": 0,
+      "coinsEarned": 0,
+      "deaths": 0,
+      "regionKills": {},
+      "regionBossKills": {},
+      "dungeonClears": 0,
+      "dungeonBestStep": 0,
+      "craftedEquipment": 0,
+      "itemsSold": 0,
+      "arenaDuels": 1,
+      "arenaWins": 1,
+      "migrations": {
+        "baseHpRebalance_v1": true
+      },
+      "invested": {
+        "vitality": 0,
+        "wisdom": 0,
+        "strength": 0,
+        "hpGain": 0,
+        "mpGain": 0,
+        "attackGain": 0,
+        "skillGain": 0
+      },
+      "arenaResultIds": [
+        "duel-1793205322147-90mkg7cz"
+      ]
+    },
+    "save": {
+      "characterId": "hero-159fd3fd-8a94-4ce0-abfa-9f0428834b40",
+      "characterName": "Guerreiro",
+      "class": "Guerreiro",
+      "level": 1,
+      "xp": 0,
+      "coins": 0,
+      "baseStats": {
+        "hp": 120,
+        "mp": 60,
+        "attack": 18
+      },
+      "maxHp": 120,
+      "hp": 73,
+      "maxMp": 60,
+      "mp": 29,
+      "attack": 18,
+      "baseAttack": 18,
+      "activeSkills": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind"
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove"
+        }
+      ],
+      "passiveSkills": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction"
+        }
+      ],
+      "inventory": [],
+      "stats": {
+        "enemiesDefeated": 0,
+        "bossesDefeated": 0,
+        "coinsEarned": 0,
+        "deaths": 0,
+        "regionKills": {},
+        "regionBossKills": {},
+        "dungeonClears": 0,
+        "dungeonBestStep": 0,
+        "craftedEquipment": 0,
+        "itemsSold": 0,
+        "arenaDuels": 1,
+        "arenaWins": 1,
+        "migrations": {
+          "baseHpRebalance_v1": true
+        },
+        "invested": {
+          "vitality": 0,
+          "wisdom": 0,
+          "strength": 0,
+          "hpGain": 0,
+          "mpGain": 0,
+          "attackGain": 0,
+          "skillGain": 0
+        },
+        "arenaResultIds": [
+          "duel-1793205322147-90mkg7cz"
+        ]
+      },
+      "equipment": {
+        "head": null,
+        "chest": null,
+        "weapon": null,
+        "legs": null,
+        "feet": null,
+        "accessory": null
+      },
+      "subclass": null,
+      "subclassChoices": {
+        "tier30": null,
+        "tier60": null
+      },
+      "mercenary": {
+        "version": 1,
+        "boardCycle": -1,
+        "unlockSignature": "",
+        "offers": [],
+        "active": [],
+        "claimed": [],
+        "completed": 0
+      },
+      "createdAt": 1793205320185
+    },
+    "result": {
+      "duelId": "duel-1793205322147-90mkg7cz",
+      "winnerId": "2aac0ecb-7114-4489-a84b-2c28902ba17b",
+      "participants": [
+        "PVPUQ9B3",
+        "2aac0ecb-7114-4489-a84b-2c28902ba17b"
+      ]
+    }
+  },
+  "reloaded": {
+    "hp": 73,
+    "mp": 29,
+    "stats": {
+      "enemiesDefeated": 0,
+      "bossesDefeated": 0,
+      "coinsEarned": 0,
+      "deaths": 0,
+      "regionKills": {},
+      "regionBossKills": {},
+      "dungeonClears": 0,
+      "dungeonBestStep": 0,
+      "craftedEquipment": 0,
+      "itemsSold": 0,
+      "arenaDuels": 1,
+      "arenaWins": 1,
+      "migrations": {
+        "baseHpRebalance_v1": true
+      },
+      "invested": {
+        "vitality": 0,
+        "wisdom": 0,
+        "strength": 0,
+        "hpGain": 0,
+        "mpGain": 0,
+        "attackGain": 0,
+        "skillGain": 0
+      },
+      "arenaResultIds": [
+        "duel-1793205322147-90mkg7cz"
+      ]
+    },
+    "save": {
+      "characterId": "hero-159fd3fd-8a94-4ce0-abfa-9f0428834b40",
+      "characterName": "Guerreiro",
+      "class": "Guerreiro",
+      "level": 1,
+      "xp": 0,
+      "coins": 0,
+      "baseStats": {
+        "hp": 120,
+        "mp": 60,
+        "attack": 18
+      },
+      "maxHp": 120,
+      "hp": 73,
+      "maxMp": 60,
+      "mp": 29,
+      "attack": 18,
+      "baseAttack": 18,
+      "activeSkills": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind"
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove"
+        }
+      ],
+      "passiveSkills": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction"
+        }
+      ],
+      "inventory": [],
+      "stats": {
+        "enemiesDefeated": 0,
+        "bossesDefeated": 0,
+        "coinsEarned": 0,
+        "deaths": 0,
+        "regionKills": {},
+        "regionBossKills": {},
+        "dungeonClears": 0,
+        "dungeonBestStep": 0,
+        "craftedEquipment": 0,
+        "itemsSold": 0,
+        "arenaDuels": 1,
+        "arenaWins": 1,
+        "migrations": {
+          "baseHpRebalance_v1": true
+        },
+        "invested": {
+          "vitality": 0,
+          "wisdom": 0,
+          "strength": 0,
+          "hpGain": 0,
+          "mpGain": 0,
+          "attackGain": 0,
+          "skillGain": 0
+        },
+        "arenaResultIds": [
+          "duel-1793205322147-90mkg7cz"
+        ]
+      },
+      "equipment": {
+        "head": null,
+        "chest": null,
+        "weapon": null,
+        "legs": null,
+        "feet": null,
+        "accessory": null
+      },
+      "subclass": null,
+      "subclassChoices": {
+        "tier30": null,
+        "tier60": null
+      },
+      "mercenary": {
+        "version": 1,
+        "boardCycle": -1,
+        "unlockSignature": "",
+        "offers": [],
+        "active": [],
+        "claimed": [],
+        "completed": 0
+      },
+      "createdAt": 1793205320185
+    }
+  },
+  "errors": []
+}

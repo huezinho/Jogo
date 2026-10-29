@@ -1,0 +1,297 @@
+{
+  "metrics": [
+    {
+      "screen": "battle",
+      "width": 1366,
+      "scroll": 1366,
+      "fonts": [
+        {
+          "family": "Campaign Garamond",
+          "status": "loaded"
+        }
+      ],
+      "type": [
+        {
+          "text": "Mapa",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Opções",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Detalhes",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "15px"
+        },
+        {
+          "text": "Lobo Sombrio Lv.1",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "22px"
+        },
+        {
+          "text": "Histórico",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "16px"
+        },
+        {
+          "text": "Consumíveis",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Atacar\n0 MP\n1",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Recuperar Fôlego\n38 MP\n2",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Esbarrão\n52 MP\n3",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Contundir\n48 MP\n4",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Passar",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Fugir",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        }
+      ]
+    },
+    {
+      "screen": "workshop",
+      "width": 1366,
+      "scroll": 1366,
+      "fonts": [
+        {
+          "family": "Campaign Garamond",
+          "status": "loaded"
+        }
+      ],
+      "type": [
+        {
+          "text": "Mapa",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Opções",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Oficina",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "21px"
+        },
+        {
+          "text": "Pousada",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "21px"
+        },
+        {
+          "text": "Mercenário",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "21px"
+        },
+        {
+          "text": "Alquimista",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "21px"
+        },
+        {
+          "text": "Floresta · escolher região",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Cabeça",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Peito",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Arma",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Pernas",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        },
+        {
+          "text": "Pés",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "20px"
+        }
+      ]
+    },
+    {
+      "screen": "battle",
+      "width": 390,
+      "scroll": 390,
+      "fonts": [
+        {
+          "family": "Campaign Garamond",
+          "status": "loaded"
+        }
+      ],
+      "type": [
+        {
+          "text": "",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Opções",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "14px"
+        },
+        {
+          "text": "Detalhes",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "13px"
+        },
+        {
+          "text": "Lobo Sombrio Lv.1",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "16px"
+        },
+        {
+          "text": "Histórico",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "15px"
+        },
+        {
+          "text": "Consumíveis",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "16px"
+        },
+        {
+          "text": "Atacar\n0 MP",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Recuperar Fôlego\n38 MP",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Esbarrão\n52 MP",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Contundir\n48 MP",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Passar",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "16px"
+        },
+        {
+          "text": "Fugir",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "16px"
+        }
+      ]
+    },
+    {
+      "screen": "workshop",
+      "width": 390,
+      "scroll": 390,
+      "fonts": [
+        {
+          "family": "Campaign Garamond",
+          "status": "loaded"
+        }
+      ],
+      "type": [
+        {
+          "text": "",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Opções",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "14px"
+        },
+        {
+          "text": "Oficina",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Pousada",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Mercenário",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Alquimista",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "17px"
+        },
+        {
+          "text": "Floresta · escolher região",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Cabeça",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Peito",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Arma",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Pernas",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        },
+        {
+          "text": "Pés",
+          "font": "\"Campaign Garamond\", Georgia, serif",
+          "size": "18px"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

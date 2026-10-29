@@ -788,23 +788,23 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
   .settings-panel{left:10px;bottom:68px;width:calc(100vw - 20px)}
 }
 .battle-scene.region-floresta,.battle-scene.region-caverna,.battle-scene.region-ruinas,.battle-scene.region-pantano,.battle-scene.region-vulcao,.battle-scene.region-abismo,.battle-scene.region-fortaleza,.battle-scene.region-necropole,.battle-scene.region-citadela,.battle-scene.region-panteao,.battle-scene.region-cataclismo,.battle-scene.region-paradoxo{background-size:cover;background-position:center;background-repeat:no-repeat}
-.battle-scene.region-floresta{background-image:url("../visual/backgrounds/regions/floresta.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-caverna{background-image:url("../visual/backgrounds/regions/caverna.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-ruinas{background-image:url("../visual/backgrounds/regions/ruinas.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-pantano{background-image:url("../visual/backgrounds/regions/pantano.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-vulcao{background-image:url("../visual/backgrounds/regions/vulcao.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-abismo{background-image:url("../visual/backgrounds/regions/abismo.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-fortaleza{background-image:url("../visual/backgrounds/regions/fortaleza.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-necropole{background-image:url("../visual/backgrounds/regions/necropole.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-citadela{background-image:url("../visual/backgrounds/regions/citadela.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-panteao{background-image:url("../visual/backgrounds/regions/panteao.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-cataclismo{background-image:url("../visual/backgrounds/regions/cataclismo.png?v=scene-individual-v2-20260519")}
-.battle-scene.region-paradoxo{background-image:url("../visual/backgrounds/regions/paradoxo.png?v=scene-individual-v2-20260519")}
+.battle-scene.region-floresta{background-image:url("../visual/backgrounds/regions/floresta.webp?v=20261028")}
+.battle-scene.region-caverna{background-image:url("../visual/backgrounds/regions/caverna.webp?v=20261028")}
+.battle-scene.region-ruinas{background-image:url("../visual/backgrounds/regions/ruinas.webp?v=20261028")}
+.battle-scene.region-pantano{background-image:url("../visual/backgrounds/regions/pantano.webp?v=20261028")}
+.battle-scene.region-vulcao{background-image:url("../visual/backgrounds/regions/vulcao.webp?v=20261028")}
+.battle-scene.region-abismo{background-image:url("../visual/backgrounds/regions/abismo.webp?v=20261028")}
+.battle-scene.region-fortaleza{background-image:url("../visual/backgrounds/regions/fortaleza.webp?v=20261028")}
+.battle-scene.region-necropole{background-image:url("../visual/backgrounds/regions/necropole.webp?v=20261028")}
+.battle-scene.region-citadela{background-image:url("../visual/backgrounds/regions/citadela.webp?v=20261028")}
+.battle-scene.region-panteao{background-image:url("../visual/backgrounds/regions/panteao.webp?v=20261028")}
+.battle-scene.region-cataclismo{background-image:url("../visual/backgrounds/regions/cataclismo.webp?v=20261028")}
+.battle-scene.region-paradoxo{background-image:url("../visual/backgrounds/regions/paradoxo.webp?v=20261028")}
 .ambient-scene{position:relative;min-height:360px;margin:0 0 16px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background-size:cover;background-position:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 34px rgba(0,0,0,.22);isolation:isolate}
 .ambient-scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.42));z-index:1}
 .ambient-scene-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.22))}
-.camp-scene{background-image:linear-gradient(180deg,rgba(8,10,14,.02),rgba(8,10,14,.2)),url("../visual/backgrounds/scenes/camp.png?v=scene-individual-v2-20260519")}
-.village-scene{background-image:linear-gradient(180deg,rgba(8,10,14,.02),rgba(8,10,14,.18)),url("../visual/backgrounds/scenes/village.png?v=scene-individual-v2-20260519")}
+.camp-scene{background-image:linear-gradient(180deg,rgba(8,10,14,.02),rgba(8,10,14,.2)),url("../visual/backgrounds/scenes/camp.webp?v=20261028")}
+.village-scene{background-image:linear-gradient(180deg,rgba(8,10,14,.02),rgba(8,10,14,.18)),url("../visual/backgrounds/scenes/village.webp?v=20261028")}
 .ambient-scene .combat-entity{z-index:3;bottom:28px}
 .ambient-scene .hero-entity{left:44%;right:auto;margin-left:-96px;transform:none}
 .ambient-scene.village-scene .hero-entity{left:42%;bottom:24px}
@@ -1266,4 +1266,50 @@ img.village-npc-sprite{
     width:132px;
     height:190px;
   }
+}
+/* Accessible navigation and compact combat on touch screens. */
+.map-marker-label{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-size:10px;line-height:1.2;padding:2px 4px;background:#17201eed;color:#fff;border-radius:4px;white-space:nowrap;pointer-events:none}
+.map-current-label{font-size:12px;line-height:1.45;margin:0 0 8px;color:#ede8d4}
+.location-map-marker:focus-visible,.region-map-marker:focus-visible,button:focus-visible{outline:3px solid #ffd866;outline-offset:3px}
+#saveStorageNotice{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:150;max-width:min(92vw,700px);padding:12px;background:#593b07;color:#fff4cf;border:2px solid #d8b554;border-radius:8px;box-sizing:border-box}
+@media(max-width:980px){
+  .game-layout,.game-layout.visual-combat-layout,.game-layout.ambient-scene-layout,.game-layout.wide-center-layout{display:flex!important;flex-direction:column;gap:12px}
+  .game-layout>.main-column{order:0;width:100%;min-width:0}
+  .game-layout>.side-column{order:1;width:100%;min-width:0}
+  .game-layout>.side-column:first-child{order:2}
+  .location-map-frame,.region-map-frame{max-width:240px;margin:auto}
+  .main-column>.button-row{position:sticky;bottom:0;padding:8px 0;background:#242424f5;z-index:60}
+  .inventory-grid{grid-template-columns:repeat(8,minmax(0,1fr))}
+  .settings-fab{top:8px;right:8px;bottom:auto;left:auto;padding:8px 10px;font-size:11px}
+  .settings-panel{right:8px;left:auto;top:46px;bottom:auto;max-width:calc(100vw - 16px);max-height:80vh;overflow:auto;box-sizing:border-box}
+  .bestiary-card,.simple-item-line,.simple-item-copy{min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+  .bestiary-stat-grid,.bestiary-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panel,.main-column,.side-column{box-sizing:border-box;max-width:100%}
+  .visual-combat-panel .battle-scene{min-height:260px;height:clamp(260px,38vh,340px)}
+}
+@media(max-width:520px){
+  body{padding:8px}
+  .container{width:100%;padding:8px}
+  .main-column>.button-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .main-column>.button-row button{min-height:44px;font-size:12px;overflow-wrap:anywhere}
+  .scene-vitals-hero{left:65%;width:150px}
+  .scene-vitals-enemy{left:35%;width:150px}
+  #log{height:100px}
+  .bestiary-card .simple-item-line{flex-wrap:wrap}
+  .inventory-slot-empty{display:none}
+  .inventory-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .trophy-list{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+.equipment-simple-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.equipment-simple-grid .equip-slot{margin:0;display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0;width:100%;height:auto;min-height:130px;color:#fff;overflow-wrap:anywhere}
+@media(max-width:980px){
+  .game-layout>.side-column:first-child{order:-1;padding-top:30px}
+  .location-map-frame{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-width:none;aspect-ratio:auto;margin:0}
+  .location-map-image{display:none}
+  .location-map-frame .location-map-marker{position:static!important;transform:none!important;width:100%;height:auto;min-height:34px;border-radius:8px;font-size:0;padding:6px;margin:0}
+  .location-map-marker .map-marker-label{position:static;transform:none;font-size:11px;padding:0;background:none;white-space:normal}
+  .location-map-card{margin:0}
 }

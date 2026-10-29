@@ -1,0 +1,35 @@
+{
+  "variants": 1200,
+  "materials": 96,
+  "chain": [
+    "comum",
+    "incomum",
+    "rara",
+    "ultra_rara",
+    "lendaria"
+  ],
+  "offer": {
+    "id": "contract_996241_2862207101_0",
+    "targetRegion": "Floresta",
+    "targetName": "Goblin",
+    "count": 9,
+    "rewardRegion": "Caverna",
+    "rewardId": "parte_morcego_de_pedra",
+    "rewardQty": 2,
+    "difficulty": "Simples",
+    "offeredAt": 1793233800000,
+    "expiresAt": 1793235600000
+  },
+  "accepted": {
+    "id": "contract_996241_2862207101_0",
+    "targetRegion": "Floresta",
+    "targetName": "Goblin",
+    "count": 9,
+    "progress": 0,
+    "rewardId": "parte_morcego_de_pedra",
+    "rewardQty": 2,
+    "acceptedAt": 1793233986295
+  },
+  "hasSelect": false,
+  "map": true
+}

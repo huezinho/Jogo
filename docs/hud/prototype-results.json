@@ -1,0 +1,85 @@
+{
+  "measurements": [
+    {
+      "width": 1366,
+      "variant": 0,
+      "appWidth": 1334,
+      "scrollWidth": 1334,
+      "height": 818,
+      "attackTop": 611,
+      "attackBottom": 691,
+      "buttons": 17
+    },
+    {
+      "width": 1366,
+      "variant": 1,
+      "appWidth": 1334,
+      "scrollWidth": 1334,
+      "height": 720,
+      "attackTop": 220,
+      "attackBottom": 312,
+      "buttons": 17
+    },
+    {
+      "width": 1024,
+      "variant": 0,
+      "appWidth": 992,
+      "scrollWidth": 992,
+      "height": 818,
+      "attackTop": 611,
+      "attackBottom": 691,
+      "buttons": 17
+    },
+    {
+      "width": 1024,
+      "variant": 1,
+      "appWidth": 992,
+      "scrollWidth": 992,
+      "height": 720,
+      "attackTop": 220,
+      "attackBottom": 312,
+      "buttons": 17
+    },
+    {
+      "width": 390,
+      "variant": 0,
+      "appWidth": 358,
+      "scrollWidth": 358,
+      "height": 811,
+      "attackTop": 510,
+      "attackBottom": 565,
+      "buttons": 16
+    },
+    {
+      "width": 390,
+      "variant": 1,
+      "appWidth": 358,
+      "scrollWidth": 358,
+      "height": 815,
+      "attackTop": 501,
+      "attackBottom": 563,
+      "buttons": 16
+    },
+    {
+      "width": 320,
+      "variant": 0,
+      "appWidth": 288,
+      "scrollWidth": 288,
+      "height": 877,
+      "attackTop": 556,
+      "attackBottom": 631,
+      "buttons": 16
+    },
+    {
+      "width": 320,
+      "variant": 1,
+      "appWidth": 288,
+      "scrollWidth": 288,
+      "height": 874,
+      "attackTop": 547,
+      "attackBottom": 622,
+      "buttons": 16
+    }
+  ],
+  "errors": []
+}

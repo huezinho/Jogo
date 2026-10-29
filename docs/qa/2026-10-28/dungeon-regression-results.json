@@ -1,0 +1,231 @@
+{
+  "cases": [
+    {
+      "name": "canonical lobby, runtime injection, revision/replay and turnConsumed",
+      "pass": true,
+      "value": {
+        "initial": 4606,
+        "afterInjection": 4606,
+        "after": 99563,
+        "replayed": 99563,
+        "turn": "host",
+        "xss": 0,
+        "html": false
+      }
+    },
+    {
+      "name": "blocked skill does not tick DOT, expire shield or consume turn",
+      "pass": true,
+      "value": {
+        "hp": 4606,
+        "after": 4606,
+        "rev": 1,
+        "afterRev": 1,
+        "burn": 3,
+        "shield": 2,
+        "turn": "guest1"
+      }
+    },
+    {
+      "name": "guest party heal and shield reach each ally once",
+      "pass": true,
+      "value": {
+        "host": {
+          "hp": 884,
+          "shield": 949
+        },
+        "guest1": {
+          "hp": 884,
+          "shield": 949
+        },
+        "guest2": {
+          "hp": 884,
+          "shield": 949
+        }
+      }
+    },
+    {
+      "name": "Avalanche per-target percent, frostburn and DOT ownership",
+      "pass": true,
+      "value": [
+        {
+          "maxHp": 20000,
+          "damage": 10807,
+          "dot": 600,
+          "owner": "guest1-character"
+        },
+        {
+          "maxHp": 50000,
+          "damage": 25807,
+          "dot": 1500,
+          "owner": "guest1-character"
+        },
+        {
+          "maxHp": 90000,
+          "damage": 45807,
+          "dot": 2700,
+          "owner": "guest1-character"
+        }
+      ]
+    },
+    {
+      "name": "Canto uses caster gear and counts effective allied support for Panteao",
+      "pass": true,
+      "value": {
+        "expectedHeal": 977,
+        "expectedShield": 1170,
+        "actions": [
+          {
+            "heals": [
+              977,
+              977
+            ],
+            "shields": [
+              1170,
+              1170
+            ],
+            "sourceHp": 4546,
+            "sourceShield": 0,
+            "support": 1,
+            "ready": 0
+          },
+          {
+            "heals": [
+              977,
+              977
+            ],
+            "shields": [
+              1170,
+              1170
+            ],
+            "sourceHp": 4546,
+            "sourceShield": 0,
+            "support": 2,
+            "ready": 0
+          },
+          {
+            "heals": [
+              977,
+              977
+            ],
+            "shields": [
+              1170,
+              1170
+            ],
+            "sourceHp": 4546,
+            "sourceShield": 0,
+            "support": 0,
+            "ready": 1
+          }
+        ],
+        "ineffectiveSupportActions": 0
+      }
+    },
+    {
+      "name": "authoritative shop, consumable, fountain and allocation intentions",
+      "pass": true,
+      "value": {
+        "bought": {
+          "coins": 75,
+          "qty": 1
+        },
+        "used": {
+          "hp": 111,
+          "items": 0
+        },
+        "fountain": {
+          "hostHp": 291,
+          "guestHp": 291,
+          "hostCoins": 991,
+          "guestCoins": 991,
+          "uses": 1
+        },
+        "allocation": {
+          "before": 291,
+          "after": 338,
+          "points": 0,
+          "expected": 47
+        }
+      }
+    },
+    {
+      "name": "84 encounters preserve completion and apply rewards once",
+      "pass": true,
+      "value": {
+        "finished": true,
+        "intermissions": 83,
+        "guard": 199,
+        "before": {
+          "coins": 21622,
+          "clears": 4,
+          "best": 84,
+          "applied": 1,
+          "material": 7
+        },
+        "after": {
+          "coins": 21622,
+          "clears": 4,
+          "best": 84
+        },
+        "reloaded": {
+          "clears": 4,
+          "best": 84,
+          "coins": 21622,
+          "applied": 1
+        }
+      }
+    },
+    {
+      "name": "dungeon materials and contract kills transfer once from host tally",
+      "pass": true,
+      "value": {
+        "injectionAccepted": false,
+        "tally": [
+          {
+            "name": "Lobo Sombrio",
+            "region": "Floresta",
+            "count": 1
+          }
+        ],
+        "drops": {
+          "parte_lobo_sombrio": 3,
+          "componente_lobo_sombrio": 1
+        },
+        "before": {
+          "progress": 1,
+          "qty": 3,
+          "coins": 10
+        },
+        "after": {
+          "progress": 1,
+          "qty": 3,
+          "coins": 10
+        }
+      }
+    },
+    {
+      "name": "pass turn advances equipment cooldown once",
+      "pass": true,
+      "value": {
+        "cooldown": 2,
+        "turn": 3
+      }
+    },
+    {
+      "name": "shared trophy catalog and sequence are page independent",
+      "pass": true,
+      "value": {
+        "main": {
+          "count": 44,
+          "sequence": 84
+        },
+        "arena": {
+          "count": 44,
+          "sequence": 84,
+          "unknown": false
+        }
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,1064 @@
+{
+  "date": "2026-10-27",
+  "base": "http://127.0.0.1:56868",
+  "errors": [],
+  "badResponses": [],
+  "classes": [
+    {
+      "className": "Guerreiro",
+      "initial": {
+        "player": {
+          "characterId": "hero-7a636eb6-4e2b-425a-9f30-6a9738bd303a",
+          "characterName": "Guerreiro",
+          "class": "Guerreiro",
+          "level": 1,
+          "xp": 0,
+          "coins": 0,
+          "baseStats": {
+            "hp": 120,
+            "mp": 60,
+            "attack": 18
+          },
+          "maxHp": 120,
+          "hp": 120,
+          "maxMp": 60,
+          "mp": 60,
+          "attack": 18,
+          "baseAttack": 18,
+          "activeSkills": [
+            {
+              "level": 1,
+              "id": "recuperar_folego",
+              "name": "Recuperar Folego",
+              "type": "warrior_second_wind"
+            },
+            {
+              "level": 20,
+              "id": "esbarrao",
+              "name": "Esbarrao",
+              "type": "warrior_shove"
+            }
+          ],
+          "passiveSkills": [
+            {
+              "level": 10,
+              "id": "vontade_de_ferro",
+              "name": "Vontade de Ferro",
+              "type": "warrior_flat_reduction"
+            }
+          ],
+          "inventory": [],
+          "stats": {
+            "enemiesDefeated": 0,
+            "bossesDefeated": 0,
+            "coinsEarned": 0,
+            "deaths": 0,
+            "regionKills": {},
+            "regionBossKills": {},
+            "dungeonClears": 0,
+            "dungeonBestStep": 0,
+            "craftedEquipment": 0,
+            "itemsSold": 0,
+            "arenaDuels": 0,
+            "arenaWins": 0,
+            "migrations": {
+              "baseHpRebalance_v1": true
+            },
+            "invested": {
+              "vitality": 0,
+              "wisdom": 0,
+              "strength": 0,
+              "hpGain": 0,
+              "mpGain": 0,
+              "attackGain": 0,
+              "skillGain": 0
+            }
+          },
+          "equipment": {
+            "head": null,
+            "chest": null,
+            "weapon": null,
+            "legs": null,
+            "feet": null,
+            "accessory": null
+          },
+          "subclass": null,
+          "subclassChoices": {
+            "tier30": null,
+            "tier60": null
+          },
+          "mercenary": {
+            "version": 1,
+            "boardCycle": -1,
+            "unlockSignature": "",
+            "offers": [],
+            "active": [],
+            "claimed": [],
+            "completed": 0
+          },
+          "createdAt": 1793171944174
+        },
+        "enemy": {
+          "name": "Lobo Sombrio Lv.1",
+          "baseName": "Lobo Sombrio",
+          "region": "Floresta",
+          "level": 1,
+          "maxHp": 88,
+          "hp": 88,
+          "attack": 10,
+          "armor": 1,
+          "maxHpStrikePercent": 0,
+          "isBoss": false,
+          "rarityKey": "comum",
+          "rarityLabel": "Comum",
+          "rarityClass": "rarity-comum",
+          "possibleDrop": "Pelo do Lobo Sombrio (40%); Presa Sombria (24%)",
+          "maxMp": 0,
+          "mp": 0,
+          "skillName": "",
+          "skillDamage": 0,
+          "skillCost": 0,
+          "bossAbilities": [],
+          "nextDamageTakenPercent": 0,
+          "armorDownPercent": 0,
+          "armorDownTurns": 0,
+          "attackDownPercent": 0,
+          "attackDownTurns": 0,
+          "dotDamagePerTurn": 0,
+          "dotTurns": 0,
+          "dotSourceName": "",
+          "natureMarkTurns": 0,
+          "natureMarkDamage": 0,
+          "naturePoisonTurns": 0,
+          "naturePoisonDamage": 0,
+          "natureDecayTurns": 0,
+          "natureDecayDamage": 0,
+          "rootedTurns": 0,
+          "shieldValue": 0,
+          "shieldTurns": 0,
+          "healReductionPercent": 0,
+          "healReductionTurns": 0,
+          "blizzardSkipChance": 0,
+          "blizzardTurns": 0,
+          "noShieldTurns": 0,
+          "bossBuffTurns": 0,
+          "bossAttackBuffPercent": 0,
+          "bossFlatDamageBonus": 0,
+          "bossPierceBonus": 0,
+          "bossRegenPercent": 0
+        },
+        "actions": "Atacar\nRecuperar Folego\n30 MP\nPassar turno\nFugir",
+        "buttons": [
+          {
+            "text": "Atacar",
+            "handler": "attack()",
+            "disabled": false
+          },
+          {
+            "text": "Recuperar Folego\n30 MP",
+            "handler": "useSkill(0)",
+            "disabled": false
+          },
+          {
+            "text": "Passar turno",
+            "handler": "passTurn()",
+            "disabled": false
+          },
+          {
+            "text": "Fugir",
+            "handler": "fleeBattle()",
+            "disabled": false
+          }
+        ],
+        "body": "1\nBatalha\n2\nVilarejo\n3\nAcampamento\n4\nTrofeus\n5\nBestiario\n6\nDungeon\n7\nArena\nAtacar\nRecuperar Folego\n30 MP\nPassar turno\nFugir\n88/88\n1\nNV\n1\n120/120\n60/60\n0/101\nPOSSIVEL DROP\nPelo do Lobo Sombrio (40%); Presa Sombria (24%)\nLog de batalha\nOcultar\n\nUm Lobo Sombrio Lv.1 apareceu na Floresta!\n\nFloresta · Para enfrentar o chefao, derrote pelo menos 1 vez cada inimigo da regiao. Progresso: 0/3.\n\n1\nFloresta\n2\nCaverna\n3\nRuinas\n4\nPantano\n5\nVulcao\n6\nAbismo\n7\nFortaleza\n8\nNecropole\n9\nCitadela\n10\nPanteao\n11\nCataclismo\n12\nParadoxo\n0/3\nChefao\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao"
+      },
+      "afterAttack": {
+        "hp": 107,
+        "mp": 60,
+        "enemyHp": 71,
+        "processing": false,
+        "log": "Um Lobo Sombrio Lv.1 apareceu na Floresta!\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nVoce causou 17 de dano.\n\nLobo Sombrio Lv.1 prepara um ataque!\n\nO inimigo atacou.\n\nVoce sofreu 13 de dano."
+      },
+      "afterReload": {
+        "class": "Guerreiro",
+        "hp": 107,
+        "mp": 60,
+        "enemyHp": 71
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "initial": {
+        "player": {
+          "characterId": "hero-95118ced-53fa-400c-8b23-849628568feb",
+          "characterName": "Arqueiro",
+          "class": "Arqueiro",
+          "level": 1,
+          "xp": 0,
+          "coins": 0,
+          "baseStats": {
+            "hp": 100,
+            "mp": 80,
+            "attack": 16
+          },
+          "maxHp": 100,
+          "hp": 100,
+          "maxMp": 80,
+          "mp": 80,
+          "attack": 16,
+          "baseAttack": 16,
+          "activeSkills": [
+            {
+              "level": 1,
+              "id": "mirar",
+              "name": "Mirar",
+              "type": "archer_focus"
+            },
+            {
+              "level": 20,
+              "id": "camuflagem",
+              "name": "Camuflagem",
+              "type": "archer_camouflage"
+            }
+          ],
+          "passiveSkills": [
+            {
+              "level": 10,
+              "id": "passos_leves",
+              "name": "Passos Leves",
+              "type": "archer_dodge_level_scaling"
+            }
+          ],
+          "inventory": [],
+          "stats": {
+            "enemiesDefeated": 0,
+            "bossesDefeated": 0,
+            "coinsEarned": 0,
+            "deaths": 0,
+            "regionKills": {},
+            "regionBossKills": {},
+            "dungeonClears": 0,
+            "dungeonBestStep": 0,
+            "craftedEquipment": 0,
+            "itemsSold": 0,
+            "arenaDuels": 0,
+            "arenaWins": 0,
+            "migrations": {
+              "baseHpRebalance_v1": true
+            },
+            "invested": {
+              "vitality": 0,
+              "wisdom": 0,
+              "strength": 0,
+              "hpGain": 0,
+              "mpGain": 0,
+              "attackGain": 0,
+              "skillGain": 0
+            }
+          },
+          "equipment": {
+            "head": null,
+            "chest": null,
+            "weapon": null,
+            "legs": null,
+            "feet": null,
+            "accessory": null
+          },
+          "subclass": null,
+          "subclassChoices": {
+            "tier30": null,
+            "tier60": null
+          },
+          "mercenary": {
+            "version": 1,
+            "boardCycle": -1,
+            "unlockSignature": "",
+            "offers": [],
+            "active": [],
+            "claimed": [],
+            "completed": 0
+          },
+          "createdAt": 1793171948570
+        },
+        "enemy": {
+          "name": "Lobo Sombrio Lv.1",
+          "baseName": "Lobo Sombrio",
+          "region": "Floresta",
+          "level": 1,
+          "maxHp": 88,
+          "hp": 88,
+          "attack": 10,
+          "armor": 1,
+          "maxHpStrikePercent": 0,
+          "isBoss": false,
+          "rarityKey": "comum",
+          "rarityLabel": "Comum",
+          "rarityClass": "rarity-comum",
+          "possibleDrop": "Pelo do Lobo Sombrio (40%); Presa Sombria (24%)",
+          "maxMp": 0,
+          "mp": 0,
+          "skillName": "",
+          "skillDamage": 0,
+          "skillCost": 0,
+          "bossAbilities": [],
+          "nextDamageTakenPercent": 0,
+          "armorDownPercent": 0,
+          "armorDownTurns": 0,
+          "attackDownPercent": 0,
+          "attackDownTurns": 0,
+          "dotDamagePerTurn": 0,
+          "dotTurns": 0,
+          "dotSourceName": "",
+          "natureMarkTurns": 0,
+          "natureMarkDamage": 0,
+          "naturePoisonTurns": 0,
+          "naturePoisonDamage": 0,
+          "natureDecayTurns": 0,
+          "natureDecayDamage": 0,
+          "rootedTurns": 0,
+          "shieldValue": 0,
+          "shieldTurns": 0,
+          "healReductionPercent": 0,
+          "healReductionTurns": 0,
+          "blizzardSkipChance": 0,
+          "blizzardTurns": 0,
+          "noShieldTurns": 0,
+          "bossBuffTurns": 0,
+          "bossAttackBuffPercent": 0,
+          "bossFlatDamageBonus": 0,
+          "bossPierceBonus": 0,
+          "bossRegenPercent": 0
+        },
+        "actions": "Atacar\nMirar\n31 MP\nPassar turno\nFugir",
+        "buttons": [
+          {
+            "text": "Atacar",
+            "handler": "attack()",
+            "disabled": false
+          },
+          {
+            "text": "Mirar\n31 MP",
+            "handler": "useSkill(0)",
+            "disabled": false
+          },
+          {
+            "text": "Passar turno",
+            "handler": "passTurn()",
+            "disabled": false
+          },
+          {
+            "text": "Fugir",
+            "handler": "fleeBattle()",
+            "disabled": false
+          }
+        ],
+        "body": "1\nBatalha\n2\nVilarejo\n3\nAcampamento\n4\nTrofeus\n5\nBestiario\n6\nDungeon\n7\nArena\nAtacar\nMirar\n31 MP\nPassar turno\nFugir\n88/88\n1\nNV\n1\n100/100\n80/80\n0/101\nPOSSIVEL DROP\nPelo do Lobo Sombrio (40%); Presa Sombria (24%)\nLog de batalha\nOcultar\n\nUm Lobo Sombrio Lv.1 apareceu na Floresta!\n\nFloresta · Para enfrentar o chefao, derrote pelo menos 1 vez cada inimigo da regiao. Progresso: 0/3.\n\n1\nFloresta\n2\nCaverna\n3\nRuinas\n4\nPantano\n5\nVulcao\n6\nAbismo\n7\nFortaleza\n8\nNecropole\n9\nCitadela\n10\nPanteao\n11\nCataclismo\n12\nParadoxo\n0/3\nChefao\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao"
+      },
+      "afterAttack": {
+        "hp": 90,
+        "mp": 80,
+        "enemyHp": 69,
+        "processing": false,
+        "log": "Um Lobo Sombrio Lv.1 apareceu na Floresta!\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nVoce causou 19 de dano.\n\nLobo Sombrio Lv.1 prepara um ataque!\n\nO inimigo atacou.\n\nVoce sofreu 10 de dano."
+      },
+      "afterReload": {
+        "class": "Arqueiro",
+        "hp": 90,
+        "mp": 80,
+        "enemyHp": 69
+      }
+    },
+    {
+      "className": "Mago",
+      "initial": {
+        "player": {
+          "characterId": "hero-f538bf03-c480-49c5-9b91-ce0fb856999a",
+          "characterName": "Mago",
+          "class": "Mago",
+          "level": 1,
+          "xp": 0,
+          "coins": 0,
+          "baseStats": {
+            "hp": 80,
+            "mp": 100,
+            "attack": 14
+          },
+          "maxHp": 80,
+          "hp": 80,
+          "maxMp": 100,
+          "mp": 100,
+          "attack": 14,
+          "baseAttack": 14,
+          "activeSkills": [
+            {
+              "level": 20,
+              "id": "explosao_de_mana",
+              "name": "Explosao de Mana",
+              "type": "mage_mana_burst"
+            }
+          ],
+          "passiveSkills": [
+            {
+              "level": 10,
+              "id": "ultimo_recurso",
+              "name": "Ultimo Recurso",
+              "type": "mage_last_resort"
+            }
+          ],
+          "inventory": [],
+          "stats": {
+            "enemiesDefeated": 0,
+            "bossesDefeated": 0,
+            "coinsEarned": 0,
+            "deaths": 0,
+            "regionKills": {},
+            "regionBossKills": {},
+            "dungeonClears": 0,
+            "dungeonBestStep": 0,
+            "craftedEquipment": 0,
+            "itemsSold": 0,
+            "arenaDuels": 0,
+            "arenaWins": 0,
+            "migrations": {
+              "baseHpRebalance_v1": true
+            },
+            "invested": {
+              "vitality": 0,
+              "wisdom": 0,
+              "strength": 0,
+              "hpGain": 0,
+              "mpGain": 0,
+              "attackGain": 0,
+              "skillGain": 0
+            }
+          },
+          "equipment": {
+            "head": null,
+            "chest": null,
+            "weapon": null,
+            "legs": null,
+            "feet": null,
+            "accessory": null
+          },
+          "subclass": null,
+          "subclassChoices": {
+            "tier30": null,
+            "tier60": null
+          },
+          "mercenary": {
+            "version": 1,
+            "boardCycle": -1,
+            "unlockSignature": "",
+            "offers": [],
+            "active": [],
+            "claimed": [],
+            "completed": 0
+          },
+          "createdAt": 1793171952809
+        },
+        "enemy": {
+          "name": "Lobo Sombrio Lv.1",
+          "baseName": "Lobo Sombrio",
+          "region": "Floresta",
+          "level": 1,
+          "maxHp": 88,
+          "hp": 88,
+          "attack": 10,
+          "armor": 1,
+          "maxHpStrikePercent": 0,
+          "isBoss": false,
+          "rarityKey": "comum",
+          "rarityLabel": "Comum",
+          "rarityClass": "rarity-comum",
+          "possibleDrop": "Pelo do Lobo Sombrio (40%); Presa Sombria (24%)",
+          "maxMp": 0,
+          "mp": 0,
+          "skillName": "",
+          "skillDamage": 0,
+          "skillCost": 0,
+          "bossAbilities": [],
+          "nextDamageTakenPercent": 0,
+          "armorDownPercent": 0,
+          "armorDownTurns": 0,
+          "attackDownPercent": 0,
+          "attackDownTurns": 0,
+          "dotDamagePerTurn": 0,
+          "dotTurns": 0,
+          "dotSourceName": "",
+          "natureMarkTurns": 0,
+          "natureMarkDamage": 0,
+          "naturePoisonTurns": 0,
+          "naturePoisonDamage": 0,
+          "natureDecayTurns": 0,
+          "natureDecayDamage": 0,
+          "rootedTurns": 0,
+          "shieldValue": 0,
+          "shieldTurns": 0,
+          "healReductionPercent": 0,
+          "healReductionTurns": 0,
+          "blizzardSkipChance": 0,
+          "blizzardTurns": 0,
+          "noShieldTurns": 0,
+          "bossBuffTurns": 0,
+          "bossAttackBuffPercent": 0,
+          "bossFlatDamageBonus": 0,
+          "bossPierceBonus": 0,
+          "bossRegenPercent": 0
+        },
+        "actions": "Misseis Magicos\nNenhuma habilidade ativa disponivel\nPassar turno\nFugir",
+        "buttons": [
+          {
+            "text": "Misseis Magicos",
+            "handler": "attack()",
+            "disabled": false
+          },
+          {
+            "text": "Nenhuma habilidade ativa disponivel",
+            "handler": null,
+            "disabled": true
+          },
+          {
+            "text": "Passar turno",
+            "handler": "passTurn()",
+            "disabled": false
+          },
+          {
+            "text": "Fugir",
+            "handler": "fleeBattle()",
+            "disabled": false
+          }
+        ],
+        "body": "1\nBatalha\n2\nVilarejo\n3\nAcampamento\n4\nTrofeus\n5\nBestiario\n6\nDungeon\n7\nArena\nMisseis Magicos\nNenhuma habilidade ativa disponivel\nPassar turno\nFugir\n88/88\n1\nNV\n1\n80/80\n100/100\n0/101\nPOSSIVEL DROP\nPelo do Lobo Sombrio (40%); Presa Sombria (24%)\nLog de batalha\nOcultar\n\nUm Lobo Sombrio Lv.1 apareceu na Floresta!\n\nFloresta · Para enfrentar o chefao, derrote pelo menos 1 vez cada inimigo da regiao. Progresso: 0/3.\n\n1\nFloresta\n2\nCaverna\n3\nRuinas\n4\nPantano\n5\nVulcao\n6\nAbismo\n7\nFortaleza\n8\nNecropole\n9\nCitadela\n10\nPanteao\n11\nCataclismo\n12\nParadoxo\n0/3\nChefao\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao"
+      },
+      "afterAttack": {
+        "hp": 69,
+        "mp": 100,
+        "enemyHp": 61,
+        "processing": false,
+        "log": "Um Lobo Sombrio Lv.1 apareceu na Floresta!\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nVoce lançou 3 misseis magicos e causou 27 de dano.\n\nVoce recuperou 9 de mana.\n\nLobo Sombrio Lv.1 prepara um ataque!\n\nO inimigo atacou.\n\nVoce sofreu 11 de dano."
+      },
+      "afterReload": {
+        "class": "Mago",
+        "hp": 69,
+        "mp": 100,
+        "enemyHp": 61
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "initial": {
+        "player": {
+          "characterId": "hero-81486a44-88dc-4f53-a7fd-5817ae068dca",
+          "characterName": "Adepto da Natureza",
+          "class": "Adepto da Natureza",
+          "level": 1,
+          "xp": 0,
+          "coins": 0,
+          "baseStats": {
+            "hp": 100,
+            "mp": 100,
+            "attack": 12
+          },
+          "maxHp": 100,
+          "hp": 100,
+          "maxMp": 100,
+          "mp": 100,
+          "attack": 12,
+          "baseAttack": 12,
+          "activeSkills": [
+            {
+              "level": 1,
+              "id": "semente_viva",
+              "name": "Semente Viva",
+              "type": "nature_living_seed"
+            },
+            {
+              "level": 20,
+              "id": "raizes",
+              "name": "Raizes",
+              "type": "nature_roots"
+            }
+          ],
+          "passiveSkills": [
+            {
+              "level": 10,
+              "id": "ciclo_natural",
+              "name": "Ciclo Natural",
+              "type": "nature_cycle"
+            }
+          ],
+          "inventory": [],
+          "stats": {
+            "enemiesDefeated": 0,
+            "bossesDefeated": 0,
+            "coinsEarned": 0,
+            "deaths": 0,
+            "regionKills": {},
+            "regionBossKills": {},
+            "dungeonClears": 0,
+            "dungeonBestStep": 0,
+            "craftedEquipment": 0,
+            "itemsSold": 0,
+            "arenaDuels": 0,
+            "arenaWins": 0,
+            "migrations": {
+              "baseHpRebalance_v1": true
+            },
+            "invested": {
+              "vitality": 0,
+              "wisdom": 0,
+              "strength": 0,
+              "hpGain": 0,
+              "mpGain": 0,
+              "attackGain": 0,
+              "skillGain": 0
+            }
+          },
+          "equipment": {
+            "head": null,
+            "chest": null,
+            "weapon": null,
+            "legs": null,
+            "feet": null,
+            "accessory": null
+          },
+          "subclass": null,
+          "subclassChoices": {
+            "tier30": null,
+            "tier60": null
+          },
+          "mercenary": {
+            "version": 1,
+            "boardCycle": -1,
+            "unlockSignature": "",
+            "offers": [],
+            "active": [],
+            "claimed": [],
+            "completed": 0
+          },
+          "createdAt": 1793171957063
+        },
+        "enemy": {
+          "name": "Lobo Sombrio Lv.1",
+          "baseName": "Lobo Sombrio",
+          "region": "Floresta",
+          "level": 1,
+          "maxHp": 88,
+          "hp": 88,
+          "attack": 10,
+          "armor": 1,
+          "maxHpStrikePercent": 0,
+          "isBoss": false,
+          "rarityKey": "comum",
+          "rarityLabel": "Comum",
+          "rarityClass": "rarity-comum",
+          "possibleDrop": "Pelo do Lobo Sombrio (40%); Presa Sombria (24%)",
+          "maxMp": 0,
+          "mp": 0,
+          "skillName": "",
+          "skillDamage": 0,
+          "skillCost": 0,
+          "bossAbilities": [],
+          "nextDamageTakenPercent": 0,
+          "armorDownPercent": 0,
+          "armorDownTurns": 0,
+          "attackDownPercent": 0,
+          "attackDownTurns": 0,
+          "dotDamagePerTurn": 0,
+          "dotTurns": 0,
+          "dotSourceName": "",
+          "natureMarkTurns": 0,
+          "natureMarkDamage": 0,
+          "naturePoisonTurns": 0,
+          "naturePoisonDamage": 0,
+          "natureDecayTurns": 0,
+          "natureDecayDamage": 0,
+          "rootedTurns": 0,
+          "shieldValue": 0,
+          "shieldTurns": 0,
+          "healReductionPercent": 0,
+          "healReductionTurns": 0,
+          "blizzardSkipChance": 0,
+          "blizzardTurns": 0,
+          "noShieldTurns": 0,
+          "bossBuffTurns": 0,
+          "bossAttackBuffPercent": 0,
+          "bossFlatDamageBonus": 0,
+          "bossPierceBonus": 0,
+          "bossRegenPercent": 0
+        },
+        "actions": "Atacar\nSemente Viva\n20 MP\nPassar turno\nFugir",
+        "buttons": [
+          {
+            "text": "Atacar",
+            "handler": "attack()",
+            "disabled": false
+          },
+          {
+            "text": "Semente Viva\n20 MP",
+            "handler": "useSkill(0)",
+            "disabled": false
+          },
+          {
+            "text": "Passar turno",
+            "handler": "passTurn()",
+            "disabled": false
+          },
+          {
+            "text": "Fugir",
+            "handler": "fleeBattle()",
+            "disabled": false
+          }
+        ],
+        "body": "1\nBatalha\n2\nVilarejo\n3\nAcampamento\n4\nTrofeus\n5\nBestiario\n6\nDungeon\n7\nArena\nAtacar\nSemente Viva\n20 MP\nPassar turno\nFugir\n88/88\n1\nNV\n1\n100/100\n100/100\n0/101\nPOSSIVEL DROP\nPelo do Lobo Sombrio (40%); Presa Sombria (24%)\nLog de batalha\nOcultar\n\nUm Lobo Sombrio Lv.1 apareceu na Floresta!\n\nFloresta · Para enfrentar o chefao, derrote pelo menos 1 vez cada inimigo da regiao. Progresso: 0/3.\n\n1\nFloresta\n2\nCaverna\n3\nRuinas\n4\nPantano\n5\nVulcao\n6\nAbismo\n7\nFortaleza\n8\nNecropole\n9\nCitadela\n10\nPanteao\n11\nCataclismo\n12\nParadoxo\n0/3\nChefao\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao"
+      },
+      "afterAttack": {
+        "hp": 89,
+        "mp": 100,
+        "enemyHp": 77,
+        "processing": false,
+        "log": "Um Lobo Sombrio Lv.1 apareceu na Floresta!\n\nLobo Sombrio absorveu 1 de dano com a armadura.\n\nVoce causou 11 de dano.\n\nLobo Sombrio Lv.1 prepara um ataque!\n\nO inimigo atacou.\n\nVoce sofreu 11 de dano."
+      },
+      "afterReload": {
+        "class": "Adepto da Natureza",
+        "hp": 89,
+        "mp": 100,
+        "enemyHp": 77
+      }
+    }
+  ],
+  "pages": [
+    {
+      "file": "index.html",
+      "mode": "battle",
+      "width": 390,
+      "scrollWidth": 390,
+      "text": "1\nBatalha\n2\nVilarejo\n3\nAcampamento\n4\nTrofeus\n5\nBestiario\n6\nDungeon\n7\nArena\nAtacar\nRecuperar Folego\n30 MP\nPassar turno\nFugir\n88/88\n1\nNV\n1\n120/120\n60/60\n0/101\nPOSSIVEL DROP\nPelo do Lobo Sombrio (40%); Presa Sombria (24%)\nLog de batalha\nOcultar\n\nUm Lobo Sombrio Lv.1 apareceu na Floresta!\n\nFloresta · Para enfrentar o chefao, derrote pelo menos 1 vez cada inimigo da regiao. Progresso: 0/3.\n\n1\nFloresta\n2\nCaverna\n3\nRuinas\n4\nPantano\n5\nVulcao\n6\nAbismo\n7\nFortaleza\n8\nNecropole\n9\nCitadela\n10\nPanteao\n11\nCataclismo\n12\nParadoxo\n0/3\nChefao\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao",
+      "buttons": [
+        {
+          "text": "1\nBatalha",
+          "handler": "setMode('battle')",
+          "disabled": false
+        },
+        {
+          "text": "2\nVilarejo",
+          "handler": "setMode('village')",
+          "disabled": true
+        },
+        {
+          "text": "3\nAcampamento",
+          "handler": "setMode('camp')",
+          "disabled": true
+        },
+        {
+          "text": "4\nTrofeus",
+          "handler": "setMode('trophies')",
+          "disabled": true
+        },
+        {
+          "text": "5\nBestiario",
+          "handler": "setMode('bestiary')",
+          "disabled": true
+        },
+        {
+          "text": "6\nDungeon",
+          "handler": "setMode('dungeon')",
+          "disabled": true
+        },
+        {
+          "text": "7\nArena",
+          "handler": "setMode('arena')",
+          "disabled": true
+        },
+        {
+          "text": "Atacar",
+          "handler": "attack()",
+          "disabled": false
+        },
+        {
+          "text": "Recuperar Folego\n30 MP",
+          "handler": "useSkill(0)",
+          "disabled": false
+        },
+        {
+          "text": "Passar turno",
+          "handler": "passTurn()",
+          "disabled": false
+        },
+        {
+          "text": "Fugir",
+          "handler": "fleeBattle()",
+          "disabled": false
+        },
+        {
+          "text": "Ocultar",
+          "handler": "toggleLog()",
+          "disabled": false
+        },
+        {
+          "text": "1\nFloresta",
+          "handler": "changeRegion('Floresta')",
+          "disabled": true
+        },
+        {
+          "text": "2\nCaverna",
+          "handler": "changeRegion('Caverna')",
+          "disabled": true
+        },
+        {
+          "text": "3\nRuinas",
+          "handler": "changeRegion('Ruinas')",
+          "disabled": true
+        },
+        {
+          "text": "4\nPantano",
+          "handler": "changeRegion('Pantano')",
+          "disabled": true
+        },
+        {
+          "text": "5\nVulcao",
+          "handler": "changeRegion('Vulcao')",
+          "disabled": true
+        },
+        {
+          "text": "6\nAbismo",
+          "handler": "changeRegion('Abismo')",
+          "disabled": true
+        },
+        {
+          "text": "7\nFortaleza",
+          "handler": "changeRegion('Fortaleza')",
+          "disabled": true
+        },
+        {
+          "text": "8\nNecropole",
+          "handler": "changeRegion('Necropole')",
+          "disabled": true
+        },
+        {
+          "text": "9\nCitadela",
+          "handler": "changeRegion('Citadela')",
+          "disabled": true
+        },
+        {
+          "text": "10\nPanteao",
+          "handler": "changeRegion('Panteao')",
+          "disabled": true
+        },
+        {
+          "text": "11\nCataclismo",
+          "handler": "changeRegion('Cataclismo')",
+          "disabled": true
+        },
+        {
+          "text": "12\nParadoxo",
+          "handler": "changeRegion('Paradoxo')",
+          "disabled": true
+        },
+        {
+          "text": "Chefao",
+          "handler": "challengeBoss()",
+          "disabled": true
+        },
+        {
+          "text": "Fechar",
+          "handler": "toggleInventoryPanel()",
+          "disabled": false
+        },
+        {
+          "text": "Todos",
+          "handler": "setInventoryFilter('all')",
+          "disabled": false
+        },
+        {
+          "text": "Baus",
+          "handler": "setInventoryFilter('chest')",
+          "disabled": false
+        },
+        {
+          "text": "Itens de artesao",
+          "handler": "setInventoryFilter('material')",
+          "disabled": false
+        },
+        {
+          "text": "Consumiveis",
+          "handler": "setInventoryFilter('consumable')",
+          "disabled": false
+        },
+        {
+          "text": "Equipamentos",
+          "handler": "setInventoryFilter('equipment')",
+          "disabled": false
+        },
+        {
+          "text": "Configuracao",
+          "handler": "toggleSettingsPanel()",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "file": "dungeon.html",
+      "mode": "dungeon",
+      "width": 390,
+      "scrollWidth": 390,
+      "text": "Incursao Cooperativa\n\nEsta pagina e exclusiva da dungeon. Monte a sala, entre com seu grupo e avance pela expedicao sem os elementos da campanha principal.\n\nLocais\nDungeon\nVoltar para a campanha [C]\nCriar sala\nEntrar na sala\nVoltar para a batalha\n88/88\nNV\n1\n120/120\n60/60\n0/101\nPOSSIVEL DROP\nTesouros da expedicao ainda nao catalogados\nLog de batalha\nOcultar\n\nCampanha retomada.\n\nSala da Dungeon\n\nUma investida online para ate 3 jogadores, seguindo a ordem completa dos inimigos e chefes do jogo.\n\nEsta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos.\nSala online\nCrie uma sala ou entre com um codigo para jogar com ate 2 amigos.\nCriar sala\nEntrar\nProgressao da run\nCada regiao possui 6 batalhas antes do chefao.\nAs batalhas 1 e 2 so enfrentam inimigos comuns. As 3 e 4 misturam comuns e incomuns. As 5 e 6 podem trazer qualquer raridade da regiao.\nSe houver menos inimigos que herois, o nivel dos monstros sobe proporcionalmente.\nEquipe\n\nNenhum aventureiro conectado ainda.\n\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao",
+      "buttons": [
+        {
+          "text": "Dungeon",
+          "handler": null,
+          "disabled": false
+        },
+        {
+          "text": "Voltar para a campanha [C]",
+          "handler": "returnToMainPage('battle')",
+          "disabled": false
+        },
+        {
+          "text": "Criar sala",
+          "handler": "hostDungeonRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Entrar na sala",
+          "handler": "joinDungeonRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Voltar para a batalha",
+          "handler": "returnToMainPage('battle')",
+          "disabled": false
+        },
+        {
+          "text": "Ocultar",
+          "handler": "toggleLog()",
+          "disabled": false
+        },
+        {
+          "text": "Criar sala",
+          "handler": "hostDungeonRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Entrar",
+          "handler": "joinDungeonRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Fechar",
+          "handler": "toggleInventoryPanel()",
+          "disabled": false
+        },
+        {
+          "text": "Todos",
+          "handler": "setInventoryFilter('all')",
+          "disabled": false
+        },
+        {
+          "text": "Baus",
+          "handler": "setInventoryFilter('chest')",
+          "disabled": false
+        },
+        {
+          "text": "Itens de artesao",
+          "handler": "setInventoryFilter('material')",
+          "disabled": false
+        },
+        {
+          "text": "Consumiveis",
+          "handler": "setInventoryFilter('consumable')",
+          "disabled": false
+        },
+        {
+          "text": "Equipamentos",
+          "handler": "setInventoryFilter('equipment')",
+          "disabled": false
+        },
+        {
+          "text": "Configuracao",
+          "handler": "toggleSettingsPanel()",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "file": "arena.html",
+      "mode": "arena",
+      "width": 390,
+      "scrollWidth": 390,
+      "text": "Arena dos Campeoes\n\nMonte uma sala de duelo, enfrente outro jogador e deixe a iniciativa aleatoria decidir quem abre o combate.\n\nLocais\nArena\nVoltar para a campanha [C]\nCriar sala\nEntrar na sala\nVoltar para a campanha\nPortal da Arena\n\nCrie uma sala ou entre com o codigo de outro jogador.\n\nSala da Arena\n\nCrie ou entre em uma sala para enfrentar outro jogador. O primeiro turno do duelo sempre e escolhido aleatoriamente.\n\nSala de duelo\n\nCrie uma sala ou entre com o codigo de outro jogador.\n\nCodigo da sala\nCriar sala\nEntrar\nDuelistas\nInventario\nFechar\nClique esquerdo usa, equipa ou abre. Botao direito vende apenas no vilarejo.\nTodos\nBaus\nItens de artesao\nConsumiveis\nEquipamentos\n\nSua mochila esta vazia por enquanto.\n\nConfiguracao",
+      "buttons": [
+        {
+          "text": "Arena",
+          "handler": null,
+          "disabled": false
+        },
+        {
+          "text": "Voltar para a campanha [C]",
+          "handler": "returnToMainPage('battle')",
+          "disabled": false
+        },
+        {
+          "text": "Criar sala",
+          "handler": "hostArenaRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Entrar na sala",
+          "handler": "joinArenaRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Voltar para a campanha",
+          "handler": "returnToMainPage('battle')",
+          "disabled": false
+        },
+        {
+          "text": "Criar sala",
+          "handler": "hostArenaRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Entrar",
+          "handler": "joinArenaRoom()",
+          "disabled": false
+        },
+        {
+          "text": "Fechar",
+          "handler": "toggleInventoryPanel()",
+          "disabled": false
+        },
+        {
+          "text": "Todos",
+          "handler": "setInventoryFilter('all')",
+          "disabled": false
+        },
+        {
+          "text": "Baus",
+          "handler": "setInventoryFilter('chest')",
+          "disabled": false
+        },
+        {
+          "text": "Itens de artesao",
+          "handler": "setInventoryFilter('material')",
+          "disabled": false
+        },
+        {
+          "text": "Consumiveis",
+          "handler": "setInventoryFilter('consumable')",
+          "disabled": false
+        },
+        {
+          "text": "Equipamentos",
+          "handler": "setInventoryFilter('equipment')",
+          "disabled": false
+        },
+        {
+          "text": "Configuracao",
+          "handler": "toggleSettingsPanel()",
+          "disabled": false
+        }
+      ]
+    }
+  ]
+}

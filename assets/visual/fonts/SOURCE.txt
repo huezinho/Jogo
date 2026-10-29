@@ -1,0 +1,5 @@
+Family: EB Garamond (variable, 400-800)
+License: SIL Open Font License 1.1, see OFL-EBGaramond.txt
+Official project: https://github.com/google/fonts/tree/main/ofl/ebgaramond
+CSS source: https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400..800&display=swap
+Font source: https://fonts.gstatic.com/s/ebgaramond/v33/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUAw.ttf

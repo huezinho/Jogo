@@ -1,0 +1,3 @@
+const {spawnSync}=require('node:child_process');const path=require('node:path');const root=path.resolve(__dirname,'..');
+const suites=[['campaign/progression','--rules'],['campaign/skills'],['hud/verify'],['hud/progression'],['hud-cinzel/typography']];if(process.argv.includes('--analysis'))suites.push(['campaign/progression'],['campaign/level-matrix']);
+for(const[name,...args]of suites){const r=spawnSync(process.execPath,[`docs/qa/${name}.cjs`,...args],{cwd:root,encoding:'utf8',timeout:1200000,maxBuffer:8*1024*1024,windowsHide:true});if(r.status!==0){console.error(r.stdout,r.stderr,r.error);process.exit(1);}console.log('PASS '+name+' '+args.join(' '));}console.log(suites.length+' suites de campanha aprovadas.');

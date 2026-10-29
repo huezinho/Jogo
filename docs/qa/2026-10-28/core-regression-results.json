@@ -1,0 +1,264 @@
+{
+  "date": "2026-10-28",
+  "checks": [
+    {
+      "name": "native combat button resolves player and enemy turn",
+      "pass": true
+    },
+    {
+      "name": "legacy gear survives two reloads, migration backs up once, preview equals actual",
+      "pass": true,
+      "value": {
+        "inventory": [
+          "legacy-sword",
+          "legacy-hood"
+        ],
+        "weapon": 17,
+        "head": 23,
+        "actual": {
+          "maxHp": 120,
+          "maxMp": 87,
+          "attack": 152
+        },
+        "preview": {
+          "hp": 108,
+          "mp": 60,
+          "maxHp": 120,
+          "maxMp": 87,
+          "attack": 152,
+          "level": 20
+        },
+        "backup": 1
+      }
+    },
+    {
+      "name": "production hides and guards development level control",
+      "pass": true
+    },
+    {
+      "name": "imported item names, tooltips and action identifiers are escaped",
+      "pass": true
+    },
+    {
+      "name": "quota failure retains session save, removal and downloadable export",
+      "pass": true
+    },
+    {
+      "name": "JSON export imports as separate character with original preserved",
+      "pass": true
+    },
+    {
+      "name": "migration backup restores saved character list",
+      "pass": true
+    },
+    {
+      "name": "mobile390 combat and navigation reachable in first screen",
+      "pass": true,
+      "value": {
+        "width": 390,
+        "scroll": 390,
+        "actionY": 665.71875,
+        "actionBottom": 715.71875,
+        "navigation": [
+          {
+            "label": "1\nBatalha",
+            "width": 96
+          },
+          {
+            "label": "2\nVilarejo",
+            "width": 96
+          },
+          {
+            "label": "3\nAcampamento",
+            "width": 96
+          },
+          {
+            "label": "4\nTrofeus",
+            "width": 96
+          },
+          {
+            "label": "5\nBestiario",
+            "width": 96
+          },
+          {
+            "label": "6\nDungeon",
+            "width": 96
+          },
+          {
+            "label": "7\nArena",
+            "width": 96
+          }
+        ]
+      }
+    },
+    {
+      "name": "mobile360 combat and navigation reachable in first screen",
+      "pass": true,
+      "value": {
+        "width": 360,
+        "scroll": 360,
+        "actionY": 665.71875,
+        "actionBottom": 715.71875,
+        "navigation": [
+          {
+            "label": "1\nBatalha",
+            "width": 96
+          },
+          {
+            "label": "2\nVilarejo",
+            "width": 96
+          },
+          {
+            "label": "3\nAcampamento",
+            "width": 96
+          },
+          {
+            "label": "4\nTrofeus",
+            "width": 96
+          },
+          {
+            "label": "5\nBestiario",
+            "width": 96
+          },
+          {
+            "label": "6\nDungeon",
+            "width": 96
+          },
+          {
+            "label": "7\nArena",
+            "width": 96
+          }
+        ]
+      }
+    },
+    {
+      "name": "corrupt bank and partial legacy save recover without exception",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "missingAssets": [],
+  "resources": [
+    {
+      "url": "/assets/styles/game.css",
+      "bytes": 103797
+    },
+    {
+      "url": "/assets/styles/dungeon.css",
+      "bytes": 2105
+    },
+    {
+      "url": "/assets/styles/equipment.css",
+      "bytes": 2185
+    },
+    {
+      "url": "/assets/vendor/peerjs-1.5.4.min.js",
+      "bytes": 92865
+    },
+    {
+      "url": "/assets/js/systems/storage-system.js",
+      "bytes": 1507
+    },
+    {
+      "url": "/assets/js/data/system-data.js",
+      "bytes": 12006
+    },
+    {
+      "url": "/assets/js/data/world-data.js",
+      "bytes": 28277
+    },
+    {
+      "url": "/assets/js/data/class-trees.js",
+      "bytes": 15251
+    },
+    {
+      "url": "/assets/js/data/equipment-data.js",
+      "bytes": 7006
+    },
+    {
+      "url": "/assets/js/systems/equipment-system.js",
+      "bytes": 46553
+    },
+    {
+      "url": "/assets/js/systems/save-tools.js",
+      "bytes": 2967
+    },
+    {
+      "url": "/assets/js/systems/network-validation.js",
+      "bytes": 6182
+    },
+    {
+      "url": "/assets/js/systems/dungeon-shared.js",
+      "bytes": 2299
+    },
+    {
+      "url": "/assets/js/systems/page-navigation.js",
+      "bytes": 1118
+    },
+    {
+      "url": "/assets/js/systems/achievement-system.js",
+      "bytes": 14072
+    },
+    {
+      "url": "/assets/js/game.js",
+      "bytes": 377060
+    },
+    {
+      "url": "/assets/js/systems/dungeon-system.js",
+      "bytes": 122125
+    },
+    {
+      "url": "/assets/visual/sprites/heroes/guerreiro.png",
+      "bytes": 491096
+    },
+    {
+      "url": "/assets/visual/sprites/heroes/arqueiro.png",
+      "bytes": 361977
+    },
+    {
+      "url": "/assets/visual/sprites/heroes/mago.png",
+      "bytes": 398419
+    },
+    {
+      "url": "/assets/visual/sprites/heroes/adepto-da-natureza.png",
+      "bytes": 432165
+    },
+    {
+      "url": "/favicon.ico",
+      "bytes": 9
+    },
+    {
+      "url": "/assets/visual/maps/locations-map.webp",
+      "bytes": 561652
+    },
+    {
+      "url": "/assets/visual/maps/region-map.webp",
+      "bytes": 528040
+    },
+    {
+      "url": "/assets/visual/ui/rarity-gem-comum.png",
+      "bytes": 20803
+    },
+    {
+      "url": "/assets/visual/backgrounds/regions/floresta.webp",
+      "bytes": 355752
+    },
+    {
+      "url": "/assets/visual/sprites/enemies/lobo-sombrio.png",
+      "bytes": 356606
+    },
+    {
+      "url": "/favicon.ico",
+      "bytes": 9
+    },
+    {
+      "url": "/assets/visual/projectiles/slash.png",
+      "bytes": 33397
+    },
+    {
+      "url": "/assets/visual/projectiles/enemy-claw.png",
+      "bytes": 31725
+    }
+  ],
+  "coldSelectionAndBattleBytes": 4409025
+}

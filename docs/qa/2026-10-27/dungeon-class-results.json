@@ -1,0 +1,350 @@
+[
+  {
+    "form": "espirito_da_floresta",
+    "type": "party_heal",
+    "actor": "host",
+    "before": {
+      "guest1": {
+        "hp": 236,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 236,
+        "shield": 0
+      },
+      "host": {
+        "hp": 236,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 573,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 573,
+        "shield": 0
+      },
+      "host": {
+        "hp": 573,
+        "shield": 0
+      }
+    }
+  },
+  {
+    "form": "espirito_da_floresta",
+    "type": "party_heal",
+    "actor": "guest1",
+    "before": {
+      "guest1": {
+        "hp": 236,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 236,
+        "shield": 0
+      },
+      "host": {
+        "hp": 236,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 675,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 573,
+        "shield": 0
+      },
+      "host": {
+        "hp": 236,
+        "shield": 0
+      }
+    }
+  },
+  {
+    "form": "fada_monarca",
+    "type": "party_heal",
+    "actor": "host",
+    "before": {
+      "guest1": {
+        "hp": 752,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 752,
+        "shield": 0
+      },
+      "host": {
+        "hp": 752,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 1720,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 1720,
+        "shield": 0
+      },
+      "host": {
+        "hp": 1720,
+        "shield": 0
+      }
+    }
+  },
+  {
+    "form": "fada_monarca",
+    "type": "party_heal",
+    "actor": "guest1",
+    "before": {
+      "guest1": {
+        "hp": 752,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 752,
+        "shield": 0
+      },
+      "host": {
+        "hp": 752,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 2150,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 1720,
+        "shield": 0
+      },
+      "host": {
+        "hp": 752,
+        "shield": 0
+      }
+    }
+  },
+  {
+    "form": "protetor_da_floresta",
+    "type": "party_heal",
+    "actor": "host",
+    "before": {
+      "guest1": {
+        "hp": 892,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 892,
+        "shield": 0
+      },
+      "host": {
+        "hp": 892,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 1845,
+        "shield": 1154
+      },
+      "guest2": {
+        "hp": 1845,
+        "shield": 1154
+      },
+      "host": {
+        "hp": 1845,
+        "shield": 1154
+      }
+    }
+  },
+  {
+    "form": "protetor_da_floresta",
+    "type": "party_heal",
+    "actor": "guest1",
+    "before": {
+      "guest1": {
+        "hp": 892,
+        "shield": 0
+      },
+      "guest2": {
+        "hp": 892,
+        "shield": 0
+      },
+      "host": {
+        "hp": 892,
+        "shield": 0
+      }
+    },
+    "after": {
+      "guest1": {
+        "hp": 2550,
+        "shield": 2417
+      },
+      "guest2": {
+        "hp": 1845,
+        "shield": 1154
+      },
+      "host": {
+        "hp": 892,
+        "shield": 0
+      }
+    }
+  },
+  {
+    "form": "mago_frigido",
+    "type": "mage_blizzard",
+    "actor": "host",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      },
+      {
+        "maxHp": 50000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      },
+      {
+        "maxHp": 90000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      }
+    ]
+  },
+  {
+    "form": "mago_frigido",
+    "type": "mage_blizzard",
+    "actor": "guest1",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      },
+      {
+        "maxHp": 50000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      },
+      {
+        "maxHp": 90000,
+        "damage": 0,
+        "slowChance": 0.15,
+        "turns": 6
+      }
+    ]
+  },
+  {
+    "form": "mago_frigido",
+    "type": "mage_avalanche",
+    "actor": "host",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 50000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 90000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      }
+    ]
+  },
+  {
+    "form": "mago_frigido",
+    "type": "mage_avalanche",
+    "actor": "guest1",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 50000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 90000,
+        "damage": 10928,
+        "slowChance": 0,
+        "turns": 0
+      }
+    ]
+  },
+  {
+    "form": "fada_monarca",
+    "type": "nature_queen_decree",
+    "actor": "host",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 50000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 90000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      }
+    ]
+  },
+  {
+    "form": "fada_monarca",
+    "type": "nature_queen_decree",
+    "actor": "guest1",
+    "targets": [
+      {
+        "maxHp": 20000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 50000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      },
+      {
+        "maxHp": 90000,
+        "damage": 1384,
+        "slowChance": 0,
+        "turns": 0
+      }
+    ]
+  }
+]

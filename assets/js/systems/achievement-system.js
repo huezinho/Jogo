@@ -74,6 +74,10 @@ function getTrophies(){
     { category: "Dungeon", name: "Meio Caminho", done: (player.stats.dungeonBestStep || 0) >= Math.floor(getDungeonSequence().length / 2), description: "Alcance metade da sequencia fixa da dungeon." },
     { category: "Dungeon", name: "Fim da Incursao", done: (player.stats.dungeonClears || 0) >= 1, description: "Conclua a dungeon inteira uma vez." },
     { category: "Dungeon", name: "Grupo Persistente", done: (player.stats.dungeonClears || 0) >= 3, description: "Conclua a dungeon inteira 3 vezes." },
+    { category: "Dungeon", name: "Loja da Expediccao", done: (player.stats.dungeonShopPurchases || 0) >= 3, description: "Compre 3 itens na loja da dungeon." },
+    { category: "Dungeon", name: "Agua Milagrosa", done: (player.stats.dungeonFountainUses || 0) >= 2, description: "Use a fonte da dungeon 2 vezes." },
+    { category: "Dungeon", name: "Patrulhas Variadas", done: (player.stats.dungeonMultiEncounterWins || 0) >= 3, description: "Venca 3 batalhas da dungeon contra grupos com mais de um inimigo." },
+    { category: "Dungeon", name: "Regioes Vencidas", done: (player.stats.dungeonRegionsCleared || 0) >= 3, description: "Derrote o chefao de 3 regioes diferentes dentro da dungeon." },
 
     { category: "Arena", name: "Portao da Arena", done: getArenaDuelCount() >= 1, description: "Participe de um duelo na arena." },
     { category: "Arena", name: "Primeira Vitoria", done: getArenaWinCount() >= 1, description: "Venca um duelo na arena." },
@@ -86,7 +90,7 @@ function getTrophies(){
 
     { category: "Equipamentos", name: "Colecionador de Aco", done: getCollectedEquipmentCount() >= 8, description: "Junte 8 equipamentos entre inventario e equipamento atual." },
     { category: "Equipamentos", name: "Tesouro Lendario", done: getLegendaryEquipmentCount() >= 1, description: "Obtenha pelo menos 1 equipamento lendario." },
-    { category: "Equipamentos", name: "Vestido para Guerra", done: Object.values(player.equipment || {}).filter(Boolean).length >= 5, description: "Equipe todos os 5 slots de equipamento." },
+    { category: "Equipamentos", name: "Vestido para Guerra", done: ["head", "chest", "weapon", "legs", "feet"].every(slot => !!player.equipment?.[slot]), description: "Equipe os 5 slots de arma e armadura." },
     { category: "Equipamentos", name: "Mestre dos Sets", done: getCompletedSetCount() >= 1, description: "Ative um set completo de regiao." },
 
     { category: "Classes", name: "Caminho Escolhido", done: getSubclassCount() >= 1, description: "Escolha sua primeira subclasse." },
@@ -217,7 +221,7 @@ function renderTrophyCategorySelector(categorySummary, overall){
   const allEntry = entries.find(entry => entry.category === "Todas");
   return `
     <div class="trophy-category-map">
-      <img class="trophy-category-map-image" src="assets/visual/maps/trophy-categories.png?v=${TROPHY_CATEGORY_ASSET_VERSION}" alt="Mapa visual das categorias de trofeus" />
+      <img class="trophy-category-map-image" src="assets/visual/maps/trophy-categories.webp?v=${TROPHY_CATEGORY_ASSET_VERSION}" alt="Mapa visual das categorias de trofeus" />
       <div class="trophy-category-hotspots">
         ${layout.hotspots.map(({ entry, className }) => `
           <button class="trophy-category-hotspot ${className} ${selectedTrophyCategory === entry.category ? "active" : ""}" ${getTrophyHoverAttrs(entry)} onclick="setTrophyCategory('${escapeJsString(entry.category)}')" aria-label="Filtrar ${escapeHtml(entry.category)}"></button>`).join("")}

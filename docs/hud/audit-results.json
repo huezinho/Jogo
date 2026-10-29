@@ -1,0 +1,195 @@
+{
+  "results": [
+    {
+      "width": 1366,
+      "mode": "battle",
+      "height": 1408,
+      "scrollWidth": 1366,
+      "actions": [
+        {
+          "text": "Atacar",
+          "top": 495,
+          "height": 42
+        },
+        {
+          "text": "Recuperar Folego\n38 MP",
+          "top": 495,
+          "height": 42
+        },
+        {
+          "text": "Esbarrao\n52 MP",
+          "top": 495,
+          "height": 42
+        },
+        {
+          "text": "Contundir\n48 MP",
+          "top": 495,
+          "height": 42
+        },
+        {
+          "text": "Passar turno",
+          "top": 547,
+          "height": 35
+        },
+        {
+          "text": "Fugir",
+          "top": 547,
+          "height": 35
+        }
+      ],
+      "visibleButtons": 34
+    },
+    {
+      "width": 1366,
+      "mode": "camp",
+      "height": 1863,
+      "scrollWidth": 1366,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 1166,
+          "height": 35
+        }
+      ],
+      "visibleButtons": 13
+    },
+    {
+      "width": 1366,
+      "mode": "artisan",
+      "height": 2227,
+      "scrollWidth": 1366,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 2152,
+          "height": 35
+        }
+      ],
+      "visibleButtons": 21
+    },
+    {
+      "width": 1366,
+      "mode": "mercenary",
+      "height": 1419,
+      "scrollWidth": 1366,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 1344,
+          "height": 35
+        }
+      ],
+      "visibleButtons": 19
+    },
+    {
+      "width": 1366,
+      "mode": "trophies",
+      "height": 3818,
+      "scrollWidth": 1366,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 3743,
+          "height": 35
+        }
+      ],
+      "visibleButtons": 30
+    },
+    {
+      "width": 390,
+      "mode": "battle",
+      "height": 1804,
+      "scrollWidth": 390,
+      "actions": [
+        {
+          "text": "Atacar",
+          "top": 666,
+          "height": 50
+        },
+        {
+          "text": "Recuperar Folego\n38 MP",
+          "top": 666,
+          "height": 50
+        },
+        {
+          "text": "Esbarrao\n52 MP",
+          "top": 722,
+          "height": 44
+        },
+        {
+          "text": "Contundir\n48 MP",
+          "top": 722,
+          "height": 44
+        },
+        {
+          "text": "Passar turno",
+          "top": 772,
+          "height": 44
+        },
+        {
+          "text": "Fugir",
+          "top": 772,
+          "height": 44
+        }
+      ],
+      "visibleButtons": 14
+    },
+    {
+      "width": 390,
+      "mode": "camp",
+      "height": 2405,
+      "scrollWidth": 390,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 792,
+          "height": 44
+        }
+      ],
+      "visibleButtons": 14
+    },
+    {
+      "width": 390,
+      "mode": "artisan",
+      "height": 3681,
+      "scrollWidth": 390,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 792,
+          "height": 44
+        }
+      ],
+      "visibleButtons": 14
+    },
+    {
+      "width": 390,
+      "mode": "mercenary",
+      "height": 3067,
+      "scrollWidth": 390,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 792,
+          "height": 44
+        }
+      ],
+      "visibleButtons": 14
+    },
+    {
+      "width": 390,
+      "mode": "trophies",
+      "height": 5115,
+      "scrollWidth": 390,
+      "actions": [
+        {
+          "text": "Voltar para a batalha",
+          "top": 792,
+          "height": 44
+        }
+      ],
+      "visibleButtons": 9
+    }
+  ],
+  "errors": []
+}

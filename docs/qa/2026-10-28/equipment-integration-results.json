@@ -1,0 +1,195 @@
+{
+  "tests": [
+    {
+      "name": "actual-mercenary-ui-accept-native-kills-claim-foreign-component",
+      "pass": true,
+      "result": {
+        "completed": 1,
+        "reward": 3,
+        "duplicate": false,
+        "unlocked": [
+          "Floresta"
+        ],
+        "kills": 4
+      }
+    },
+    {
+      "name": "actual-artisan-ui-crafts-regional-weapon-using-quest-material",
+      "pass": true,
+      "result": {
+        "item": "Espada - Raizes Vivas (Ofensivo) Rara",
+        "crafted": 1,
+        "availableRegions": [
+          "Floresta"
+        ]
+      }
+    },
+    {
+      "name": "craft-equip-all-five-slots-save-reload-and-region-guard",
+      "pass": true,
+      "result": {
+        "pieces": 5,
+        "lockedRecipes": 0
+      }
+    },
+    {
+      "name": "v2-forge-UI-honors-additional-foreign-ingredients",
+      "pass": true,
+      "result": {
+        "before": "rara",
+        "after": "ultra_rara",
+        "ingredientIds": [
+          "parte_aranha_gigante",
+          "componente_aranha_gigante",
+          "parte_lobo_sombrio",
+          "parte_ent_ancestral",
+          "componente_ent_ancestral",
+          "componente_slime_toxico"
+        ]
+      }
+    },
+    {
+      "name": "native-set-action-hooks-all12",
+      "pass": true,
+      "result": [
+        {
+          "region": "Floresta",
+          "pass": true,
+          "state": {
+            "cooldowns": {},
+            "turn": 3,
+            "dotHealUsed": 0,
+            "current": null,
+            "lastSkill": "bola_de_fogo",
+            "dotActions": 0,
+            "forestReady": true
+          }
+        },
+        {
+          "region": "Caverna",
+          "pass": true,
+          "shield": 262
+        },
+        {
+          "region": "Ruinas",
+          "pass": true,
+          "state": {
+            "cooldowns": {
+              "echo": 3
+            },
+            "turn": 3,
+            "dotHealUsed": 0,
+            "current": null,
+            "lastSkill": "brado",
+            "ruinReady": 0
+          }
+        },
+        {
+          "region": "Pantano",
+          "pass": true,
+          "state": {
+            "cooldowns": {
+              "poison": 3
+            },
+            "turn": 1,
+            "dotHealUsed": 0,
+            "current": null
+          }
+        },
+        {
+          "region": "Vulcao",
+          "pass": true,
+          "dot": 49
+        },
+        {
+          "region": "Abismo",
+          "pass": true,
+          "penetration": 0.15
+        },
+        {
+          "region": "Fortaleza",
+          "pass": true,
+          "stored": 86
+        },
+        {
+          "region": "Necropole",
+          "pass": true,
+          "owners": {
+            "natureMarkTurns": "hero-7f51a139-d3c7-493a-86de-cb8bf5edbc46",
+            "naturePoisonTurns": "hero-7f51a139-d3c7-493a-86de-cb8bf5edbc46",
+            "natureDecayTurns": "hero-7f51a139-d3c7-493a-86de-cb8bf5edbc46"
+          },
+          "extensions": {
+            "natureMarkTurns": 1,
+            "naturePoisonTurns": 1,
+            "natureDecayTurns": 1
+          }
+        },
+        {
+          "region": "Citadela",
+          "pass": true,
+          "state": {
+            "cooldowns": {
+              "critical": 1
+            },
+            "turn": 2,
+            "dotHealUsed": 0,
+            "current": null,
+            "critPenReady": false,
+            "lastSkill": "headshot"
+          }
+        },
+        {
+          "region": "Panteao",
+          "pass": true,
+          "state": {
+            "cooldowns": {
+              "support": 1
+            },
+            "turn": 4,
+            "dotHealUsed": 0,
+            "current": null,
+            "lastSkill": "recuperar_folego",
+            "supportActions": 0,
+            "supportReady": 0
+          }
+        },
+        {
+          "region": "Cataclismo",
+          "pass": true,
+          "shield": 598
+        },
+        {
+          "region": "Paradoxo",
+          "pass": true,
+          "state": {
+            "cooldowns": {
+              "cycle": 4
+            },
+            "turn": 4,
+            "dotHealUsed": 0,
+            "current": null,
+            "distinctSkills": [
+              "recuperar_folego"
+            ],
+            "lastSkill": "recuperar_folego",
+            "paradoxReady": 1,
+            "cycleReady": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "accessory-v2-canonical-caps-no-set-membership",
+      "pass": true,
+      "result": {
+        "newBonus": 0.1399,
+        "legacy": 12
+      }
+    }
+  ],
+  "errors": [],
+  "missingAssets": [],
+  "passed": 6,
+  "failed": 0
+}

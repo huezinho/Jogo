@@ -1,0 +1,55 @@
+{
+  "cases": [
+    {
+      "name": "three-client battle, shop, potion, fountain, allocation, silent guest timeout",
+      "pass": true,
+      "bought": {
+        "coins": 947,
+        "qty": 1
+      },
+      "healed": 48,
+      "allocation": {
+        "maxHp": 93,
+        "points": 0
+      },
+      "timeoutMs": 12390,
+      "ended": {
+        "active": false,
+        "best": 1,
+        "coins": 992,
+        "applied": 1
+      }
+    },
+    {
+      "name": "real final reward transfer to host and guest",
+      "pass": true,
+      "results": [
+        {
+          "clears": 1,
+          "best": 84,
+          "coins": 368,
+          "applied": 1,
+          "materials": 1
+        },
+        {
+          "clears": 1,
+          "best": 84,
+          "coins": 368,
+          "applied": 1,
+          "materials": 2
+        }
+      ]
+    },
+    {
+      "name": "silent host timeout preserves last confirmed reward",
+      "pass": true,
+      "timeoutMs": 13895,
+      "guest": {
+        "coins": 50,
+        "applied": 1
+      }
+    }
+  ],
+  "errors": [],
+  "transport": "Real PeerJS/WebRTC, isolated browser contexts on one machine"
+}

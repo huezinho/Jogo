@@ -7,10 +7,14 @@ function getDungeonRequirement(){
 }
 
 function getDungeonSequence(){
-  return Object.entries(regions).flatMap(([regionName, regionData]) => [
-    ...regionData.enemies.map(template => ({ regionName, template, isBoss: false })),
-    { regionName, template: regionData.boss, isBoss: true }
-  ]);
+  return Object.entries(regions).flatMap(([regionName, regionData]) =>
+    Array.from({ length: 7 }, (_, encounterIndex) => ({
+      regionName,
+      encounterIndex,
+      isBoss: encounterIndex === 6,
+      template: encounterIndex === 6 ? regionData.boss : regionData.enemies[0]
+    }))
+  );
 }
 
 function getDungeonStepEntry(stepIndex = dungeonMultiplayer?.dungeonStepIndex || 0){
@@ -59,6 +63,7 @@ function getRegionRequirement(region){
 function isRegionUnlockedForBattle(region){
   const regionNames = Object.keys(regions);
   const index = regionNames.indexOf(region);
+  if(index < 0){ return false; }
   if(index <= 0){ return true; }
   const previousRegion = regionNames[index - 1];
   return !!player?.stats?.regionBossKills?.[previousRegion];

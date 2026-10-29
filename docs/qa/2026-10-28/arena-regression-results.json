@@ -1,0 +1,100 @@
+{
+  "cases": [
+    {
+      "name": "canonical lobby, injection, malformed message",
+      "pass": true,
+      "value": {
+        "hp": 120
+      }
+    },
+    {
+      "name": "shield and invulnerability use defender state",
+      "pass": true,
+      "value": {
+        "hp": 120,
+        "protectedHp": 120,
+        "after": 120,
+        "shield": 480
+      }
+    },
+    {
+      "name": "blocked skill preserves turn and DOT",
+      "pass": true,
+      "value": {
+        "hp": 120,
+        "after": 120,
+        "turn": "PVPIQ0V3",
+        "revision": 2,
+        "afterRevision": 2,
+        "dot": 3
+      }
+    },
+    {
+      "name": "defeat cannot poison campaign and result is idempotent",
+      "pass": true,
+      "value": {
+        "hp": 120,
+        "savedHp": 120,
+        "duels": 1,
+        "wins": 0,
+        "active": false,
+        "result": {
+          "duelId": "duel-1793205289615-dcd5qh9h",
+          "winnerId": "guest",
+          "participants": [
+            "PVP1BRL7",
+            "guest"
+          ]
+        }
+      }
+    },
+    {
+      "name": "action revision and replay guards",
+      "pass": true,
+      "value": {
+        "after": 100,
+        "replayed": 100
+      }
+    },
+    {
+      "name": "periodic equipment bonuses heal the attacker in arena",
+      "pass": true,
+      "value": {
+        "damage": 108,
+        "healed": 2,
+        "remaining": 1
+      }
+    },
+    {
+      "name": "pass advances equipment action cooldowns",
+      "pass": true,
+      "value": {
+        "turn": 4,
+        "cooldowns": {
+          "stone": 1
+        },
+        "dotHealUsed": 0,
+        "current": null
+      }
+    },
+    {
+      "name": "natural DOT keeps mastery and Sap in arena",
+      "pass": true,
+      "value": {
+        "damage": 130,
+        "healed": 10,
+        "remaining": 1
+      }
+    },
+    {
+      "name": "heartbeat ends abandoned duel with campaign intact",
+      "pass": true,
+      "value": {
+        "active": false,
+        "hp": 120,
+        "members": 1
+      }
+    }
+  ],
+  "errors": []
+}

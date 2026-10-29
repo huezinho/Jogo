@@ -57,12 +57,8 @@
 
 ## 3. Conteudo
 
-- Completar todas as arvores de habilidades das classes que ainda estao parciais.
-- Preencher qualquer classe nova com:
-  - habilidades ativas
-  - passivas
-  - upgrades de subclasse
-  - descricoes finais
+- Validar as arvores atuais com os equipamentos novos. O catalogo executavel cobre 4 classes e 28 formas contando subclasses, com ativas e passivas documentadas na [referencia atual de habilidades](referencia_habilidades_atual.md).
+- Para classes adicionadas no futuro, manter ativas, passivas, upgrades de subclasse e descricoes sincronizados com esse catalogo gerado do codigo.
 - Revisar todas as regioes para garantir:
   - 3 inimigos comuns da regiao
   - boss coerente

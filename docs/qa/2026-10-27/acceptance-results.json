@@ -1,0 +1,539 @@
+{
+  "tests": [
+    {
+      "name": "economia-pocoes-vendas-forja-morte",
+      "result": {
+        "blockedPurchase": true,
+        "healed": {
+          "cost": 15,
+          "hp": 120,
+          "maxHp": 120,
+          "coins": 985
+        },
+        "coinsBefore": 985,
+        "afterBuy": {
+          "coins": 943,
+          "qty": 1
+        },
+        "afterPotion": {
+          "hp": 62,
+          "qty": 0
+        },
+        "saleCorrect": true,
+        "forgeBefore": {
+          "coins": 913,
+          "rarity": "comum"
+        },
+        "forgeAfter": {
+          "coins": 73,
+          "rarity": "incomum"
+        },
+        "dead": {
+          "isDead": true,
+          "hp": 0,
+          "deaths": 1
+        },
+        "respawn": {
+          "isDead": false,
+          "hp": 120,
+          "mode": "battle"
+        }
+      }
+    },
+    {
+      "name": "preview-save-diverge-dos-atributos-reais",
+      "result": {
+        "actual": {
+          "maxHp": 120,
+          "maxMp": 60,
+          "attack": 135
+        },
+        "card": {
+          "hp": 120,
+          "mp": 60,
+          "maxHp": 120,
+          "maxMp": 60,
+          "attack": 170,
+          "level": 20
+        },
+        "invested": {
+          "vitality": 0,
+          "wisdom": 0,
+          "strength": 19,
+          "hpGain": 0,
+          "mpGain": 0,
+          "attackGain": 117,
+          "skillGain": 117
+        }
+      }
+    },
+    {
+      "name": "ciclo-natural-reembolso-mana",
+      "result": {
+        "skill": "Raizes",
+        "cost": 42,
+        "before": 500,
+        "after": 462,
+        "expectedRefund": 4,
+        "refundObserved": 4,
+        "result": {
+          "blocked": false,
+          "message": "Voce usou Raizes e causou 104 de dano.",
+          "damage": 104,
+          "freeTurn": false,
+          "freezeApplied": false
+        }
+      }
+    },
+    {
+      "name": "recursos-dinamicos-e-peso-inicial",
+      "result": {
+        "checkedDynamicPaths": 148,
+        "missing": [],
+        "localResources": 21,
+        "localResourceBodyBytes": 17467813,
+        "largestResources": [
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/backgrounds/regions/floresta.png?v=scene-individual-v2-20260519",
+            "encodedBodySize": 6198221,
+            "decodedBodySize": 6198221
+          },
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/maps/region-map.png?v=region-map-v1-20260519",
+            "encodedBodySize": 4825813,
+            "decodedBodySize": 4825813
+          },
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/maps/locations-map.png?v=locations-map-v1-20260520",
+            "encodedBodySize": 3741831,
+            "decodedBodySize": 3741831
+          },
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/sprites/heroes/guerreiro.png?v=hd-v8-20260505",
+            "encodedBodySize": 491096,
+            "decodedBodySize": 491096
+          },
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/sprites/heroes/adepto-da-natureza.png?v=hd-v8-20260505",
+            "encodedBodySize": 432165,
+            "decodedBodySize": 432165
+          },
+          {
+            "name": "http://127.0.0.1:57374/assets/visual/sprites/heroes/mago.png?v=hd-v8-20260505",
+            "encodedBodySize": 398419,
+            "decodedBodySize": 398419
+          }
+        ],
+        "trophies": 44
+      }
+    },
+    {
+      "name": "dungeon-turnConsumed-false-e-run-completa",
+      "result": {
+        "exploit": {
+          "beforeIndex": 1,
+          "afterIndex": 1,
+          "phase": "battle"
+        },
+        "guard": 203,
+        "heroActions": 120,
+        "intermissions": 83,
+        "expectedEncounterCount": 84,
+        "finished": true,
+        "mode": "dungeon",
+        "liveStats": {
+          "enemiesDefeated": 0,
+          "bossesDefeated": 0,
+          "coinsEarned": 21588,
+          "deaths": 0,
+          "regionKills": {},
+          "regionBossKills": {},
+          "dungeonClears": 0,
+          "dungeonBestStep": 0,
+          "craftedEquipment": 0,
+          "itemsSold": 0,
+          "arenaDuels": 0,
+          "arenaWins": 0,
+          "migrations": {
+            "baseHpRebalance_v1": true
+          },
+          "invested": {
+            "vitality": 99,
+            "wisdom": 0,
+            "strength": 0,
+            "hpGain": 999880,
+            "mpGain": 99940,
+            "attackGain": 99982,
+            "skillGain": 99982
+          },
+          "dungeonMultiEncounterWins": 36,
+          "dungeonRegionsCleared": 12
+        },
+        "savedStats": {
+          "enemiesDefeated": 0,
+          "bossesDefeated": 0,
+          "coinsEarned": 21588,
+          "deaths": 0,
+          "regionKills": {},
+          "regionBossKills": {},
+          "dungeonClears": 0,
+          "dungeonBestStep": 0,
+          "craftedEquipment": 0,
+          "itemsSold": 0,
+          "arenaDuels": 0,
+          "arenaWins": 0,
+          "migrations": {
+            "baseHpRebalance_v1": true
+          },
+          "invested": {
+            "vitality": 99,
+            "wisdom": 0,
+            "strength": 0,
+            "hpGain": 999880,
+            "mpGain": 99940,
+            "attackGain": 99982,
+            "skillGain": 99982
+          },
+          "dungeonMultiEncounterWins": 36,
+          "dungeonRegionsCleared": 12
+        },
+        "lastLog": "u 484 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99537 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 900 XP e 452 moedas da dungeon.\n\nA equipe entrou em Paradoxo para batalha 2/6.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99724 de dano.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99724 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 900 XP e 452 moedas da dungeon.\n\nA equipe entrou em Paradoxo para batalha 3/6.\n\nGuardiao Temporal absorveu 484 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99539 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 900 XP e 452 moedas da dungeon.\n\nA equipe entrou em Paradoxo para batalha 4/6.\n\nOraculo do Zero absorveu 301 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99721 de dano.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99720 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 908 XP e 456 moedas da dungeon.\n\nA equipe entrou em Paradoxo para batalha 5/6.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99722 de dano.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99724 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 900 XP e 452 moedas da dungeon.\n\nA equipe entrou em Paradoxo para batalha 6/6.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99725 de dano.\n\nGuardiao Temporal absorveu 298 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99724 de dano.\n\nA patrulha foi derrotada. Cada aventureiro ganhou 900 XP e 452 moedas da dungeon.\n\nA equipe entrou em Paradoxo para chefao da regiao.\n\nSoberano do Paradoxo absorveu 574 de dano com a armadura.\n\nAura Divina concedeu 20022 de escudo.\n\nPaladino Lv.100 causou 99449 de dano.\n\nO chefao de Paradoxo caiu. Cada aventureiro ganhou 1452 XP e 728 moedas da dungeon.\n\nAo deixar a dungeon, voce levou 21588 moedas para a campanha principal e preservou o nivel alcancado na run.\n\nA dungeon inteira foi concluida. Retornando para a campanha principal.",
+        "phases": [
+          {
+            "region": 0,
+            "encounter": 1
+          },
+          {
+            "region": 0,
+            "encounter": 2
+          },
+          {
+            "region": 0,
+            "encounter": 3
+          },
+          {
+            "region": 0,
+            "encounter": 4
+          },
+          {
+            "region": 0,
+            "encounter": 5
+          },
+          {
+            "region": 0,
+            "encounter": 6
+          },
+          {
+            "region": 1,
+            "encounter": 0
+          },
+          {
+            "region": 1,
+            "encounter": 1
+          },
+          {
+            "region": 1,
+            "encounter": 2
+          },
+          {
+            "region": 1,
+            "encounter": 3
+          },
+          {
+            "region": 1,
+            "encounter": 4
+          },
+          {
+            "region": 1,
+            "encounter": 5
+          },
+          {
+            "region": 1,
+            "encounter": 6
+          },
+          {
+            "region": 2,
+            "encounter": 0
+          },
+          {
+            "region": 2,
+            "encounter": 1
+          },
+          {
+            "region": 2,
+            "encounter": 2
+          },
+          {
+            "region": 2,
+            "encounter": 3
+          },
+          {
+            "region": 2,
+            "encounter": 4
+          },
+          {
+            "region": 2,
+            "encounter": 5
+          },
+          {
+            "region": 2,
+            "encounter": 6
+          },
+          {
+            "region": 3,
+            "encounter": 0
+          },
+          {
+            "region": 3,
+            "encounter": 1
+          },
+          {
+            "region": 3,
+            "encounter": 2
+          },
+          {
+            "region": 3,
+            "encounter": 3
+          },
+          {
+            "region": 3,
+            "encounter": 4
+          },
+          {
+            "region": 3,
+            "encounter": 5
+          },
+          {
+            "region": 3,
+            "encounter": 6
+          },
+          {
+            "region": 4,
+            "encounter": 0
+          },
+          {
+            "region": 4,
+            "encounter": 1
+          },
+          {
+            "region": 4,
+            "encounter": 2
+          },
+          {
+            "region": 4,
+            "encounter": 3
+          },
+          {
+            "region": 4,
+            "encounter": 4
+          },
+          {
+            "region": 4,
+            "encounter": 5
+          },
+          {
+            "region": 4,
+            "encounter": 6
+          },
+          {
+            "region": 5,
+            "encounter": 0
+          },
+          {
+            "region": 5,
+            "encounter": 1
+          },
+          {
+            "region": 5,
+            "encounter": 2
+          },
+          {
+            "region": 5,
+            "encounter": 3
+          },
+          {
+            "region": 5,
+            "encounter": 4
+          },
+          {
+            "region": 5,
+            "encounter": 5
+          },
+          {
+            "region": 5,
+            "encounter": 6
+          },
+          {
+            "region": 6,
+            "encounter": 0
+          },
+          {
+            "region": 6,
+            "encounter": 1
+          },
+          {
+            "region": 6,
+            "encounter": 2
+          },
+          {
+            "region": 6,
+            "encounter": 3
+          },
+          {
+            "region": 6,
+            "encounter": 4
+          },
+          {
+            "region": 6,
+            "encounter": 5
+          },
+          {
+            "region": 6,
+            "encounter": 6
+          },
+          {
+            "region": 7,
+            "encounter": 0
+          },
+          {
+            "region": 7,
+            "encounter": 1
+          },
+          {
+            "region": 7,
+            "encounter": 2
+          },
+          {
+            "region": 7,
+            "encounter": 3
+          },
+          {
+            "region": 7,
+            "encounter": 4
+          },
+          {
+            "region": 7,
+            "encounter": 5
+          },
+          {
+            "region": 7,
+            "encounter": 6
+          },
+          {
+            "region": 8,
+            "encounter": 0
+          },
+          {
+            "region": 8,
+            "encounter": 1
+          },
+          {
+            "region": 8,
+            "encounter": 2
+          },
+          {
+            "region": 8,
+            "encounter": 3
+          },
+          {
+            "region": 8,
+            "encounter": 4
+          },
+          {
+            "region": 8,
+            "encounter": 5
+          },
+          {
+            "region": 8,
+            "encounter": 6
+          },
+          {
+            "region": 9,
+            "encounter": 0
+          },
+          {
+            "region": 9,
+            "encounter": 1
+          },
+          {
+            "region": 9,
+            "encounter": 2
+          },
+          {
+            "region": 9,
+            "encounter": 3
+          },
+          {
+            "region": 9,
+            "encounter": 4
+          },
+          {
+            "region": 9,
+            "encounter": 5
+          },
+          {
+            "region": 9,
+            "encounter": 6
+          },
+          {
+            "region": 10,
+            "encounter": 0
+          },
+          {
+            "region": 10,
+            "encounter": 1
+          },
+          {
+            "region": 10,
+            "encounter": 2
+          },
+          {
+            "region": 10,
+            "encounter": 3
+          },
+          {
+            "region": 10,
+            "encounter": 4
+          },
+          {
+            "region": 10,
+            "encounter": 5
+          },
+          {
+            "region": 10,
+            "encounter": 6
+          },
+          {
+            "region": 11,
+            "encounter": 0
+          },
+          {
+            "region": 11,
+            "encounter": 1
+          },
+          {
+            "region": 11,
+            "encounter": 2
+          },
+          {
+            "region": 11,
+            "encounter": 3
+          },
+          {
+            "region": 11,
+            "encounter": 4
+          },
+          {
+            "region": 11,
+            "encounter": 5
+          },
+          {
+            "region": 11,
+            "encounter": 6
+          }
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

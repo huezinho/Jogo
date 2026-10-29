@@ -1,0 +1,449 @@
+{
+  "date": "2026-10-27",
+  "tests": [
+    {
+      "name": "campanha-vitoria-nivel-regioes",
+      "result": {
+        "locked": true,
+        "victory": {
+          "coins": 8,
+          "xp": 30,
+          "kills": 1
+        },
+        "level": {
+          "level": 2,
+          "maxHp": 133,
+          "points": 0,
+          "invested": {
+            "vitality": 1,
+            "wisdom": 0,
+            "strength": 0,
+            "hpGain": 13,
+            "mpGain": 0,
+            "attackGain": 0,
+            "skillGain": 0
+          }
+        },
+        "unlocked": true,
+        "bossGate": {
+          "defeated": 1,
+          "total": 3,
+          "unlocked": false,
+          "missing": [
+            "Goblin",
+            "Aranha Gigante"
+          ]
+        }
+      }
+    },
+    {
+      "name": "equipamentos-persistencia",
+      "result": {
+        "before": {
+          "inventory": [
+            {
+              "name": "Espada da Floresta Rara",
+              "slot": "weapon"
+            },
+            {
+              "name": "Capuz da Floresta Rara",
+              "slot": "head"
+            },
+            {
+              "name": "Colar de Raizes Incomum",
+              "slot": "accessory"
+            }
+          ]
+        },
+        "after": {
+          "inventory": [
+            {
+              "name": "Colar de Raizes Incomum",
+              "slot": "accessory"
+            }
+          ],
+          "weapon": null
+        }
+      }
+    },
+    {
+      "name": "habilidade-gratis-e-custo-vida-interface",
+      "result": {
+        "skill": "Recuperar Folego",
+        "uiCanUse": false,
+        "actualBlocked": false,
+        "mp": 0
+      }
+    },
+    {
+      "name": "cobertura-arvores-habilidades",
+      "result": {
+        "cases": 592,
+        "uniqueTypes": 55,
+        "problems": []
+      }
+    },
+    {
+      "name": "telas-subsecoes-desktop-mobile",
+      "result": [
+        {
+          "width": 1920,
+          "mode": "battle",
+          "scrollWidth": 1920,
+          "actionsY": 495.4375,
+          "bodyHeight": 1313,
+          "smallButtons": 0
+        },
+        {
+          "width": 1920,
+          "mode": "village",
+          "scrollWidth": 1920,
+          "actionsY": 827,
+          "bodyHeight": 1035,
+          "smallButtons": 0
+        },
+        {
+          "width": 1920,
+          "mode": "camp",
+          "scrollWidth": 1920,
+          "actionsY": 1059,
+          "bodyHeight": 1513,
+          "smallButtons": 0
+        },
+        {
+          "width": 1920,
+          "mode": "bestiary",
+          "scrollWidth": 1920,
+          "actionsY": 1019.3125,
+          "bodyHeight": 1313,
+          "smallButtons": 0
+        },
+        {
+          "width": 1920,
+          "mode": "trophies",
+          "scrollWidth": 1920,
+          "actionsY": 3743.4375,
+          "bodyHeight": 3818,
+          "smallButtons": 11
+        },
+        {
+          "width": 1920,
+          "mode": "arena",
+          "scrollWidth": 1920,
+          "actionsY": 153.4375,
+          "bodyHeight": 1023,
+          "smallButtons": 0
+        },
+        {
+          "width": 1920,
+          "mode": "dungeon",
+          "scrollWidth": 1920,
+          "actionsY": 153.4375,
+          "bodyHeight": 1038,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "battle",
+          "scrollWidth": 1366,
+          "actionsY": 495.4375,
+          "bodyHeight": 1348,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "village",
+          "scrollWidth": 1366,
+          "actionsY": 827,
+          "bodyHeight": 1193,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "camp",
+          "scrollWidth": 1366,
+          "actionsY": 1059,
+          "bodyHeight": 1812,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "bestiary",
+          "scrollWidth": 1366,
+          "actionsY": 1019.3125,
+          "bodyHeight": 1348,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "trophies",
+          "scrollWidth": 1366,
+          "actionsY": 3743.4375,
+          "bodyHeight": 3818,
+          "smallButtons": 11
+        },
+        {
+          "width": 1366,
+          "mode": "arena",
+          "scrollWidth": 1366,
+          "actionsY": 153.4375,
+          "bodyHeight": 1181,
+          "smallButtons": 0
+        },
+        {
+          "width": 1366,
+          "mode": "dungeon",
+          "scrollWidth": 1366,
+          "actionsY": 153.4375,
+          "bodyHeight": 1196,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "battle",
+          "scrollWidth": 768,
+          "actionsY": 1094.875,
+          "bodyHeight": 2450,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "village",
+          "scrollWidth": 768,
+          "actionsY": 1314.3125,
+          "bodyHeight": 1940,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "camp",
+          "scrollWidth": 768,
+          "actionsY": 1546.3125,
+          "bodyHeight": 2596,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "bestiary",
+          "scrollWidth": 768,
+          "actionsY": 1542.5,
+          "bodyHeight": 2524,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "trophies",
+          "scrollWidth": 768,
+          "actionsY": 4223.4375,
+          "bodyHeight": 5110,
+          "smallButtons": 11
+        },
+        {
+          "width": 768,
+          "mode": "arena",
+          "scrollWidth": 768,
+          "actionsY": 663.4375,
+          "bodyHeight": 1365,
+          "smallButtons": 0
+        },
+        {
+          "width": 768,
+          "mode": "dungeon",
+          "scrollWidth": 768,
+          "actionsY": 663.4375,
+          "bodyHeight": 1681,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "battle",
+          "scrollWidth": 390,
+          "actionsY": 1045,
+          "bodyHeight": 2685,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "village",
+          "scrollWidth": 390,
+          "actionsY": 1358,
+          "bodyHeight": 2328,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "camp",
+          "scrollWidth": 390,
+          "actionsY": 2132,
+          "bodyHeight": 3594,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "bestiary",
+          "scrollWidth": 390,
+          "actionsY": 2287.34375,
+          "bodyHeight": 3564,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "trophies",
+          "scrollWidth": 390,
+          "actionsY": 4550.4375,
+          "bodyHeight": 5441,
+          "smallButtons": 11
+        },
+        {
+          "width": 390,
+          "mode": "arena",
+          "scrollWidth": 390,
+          "actionsY": 678.4375,
+          "bodyHeight": 1730,
+          "smallButtons": 0
+        },
+        {
+          "width": 390,
+          "mode": "dungeon",
+          "scrollWidth": 390,
+          "actionsY": 678.4375,
+          "bodyHeight": 2014,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "battle",
+          "scrollWidth": 360,
+          "actionsY": 1045,
+          "bodyHeight": 2647,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "village",
+          "scrollWidth": 360,
+          "actionsY": 1358,
+          "bodyHeight": 2293,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "camp",
+          "scrollWidth": 360,
+          "actionsY": 2132,
+          "bodyHeight": 3559,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "bestiary",
+          "scrollWidth": 370,
+          "actionsY": 2287.34375,
+          "bodyHeight": 3553,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "trophies",
+          "scrollWidth": 360,
+          "actionsY": 4586.4375,
+          "bodyHeight": 5432,
+          "smallButtons": 11
+        },
+        {
+          "width": 360,
+          "mode": "arena",
+          "scrollWidth": 360,
+          "actionsY": 678.4375,
+          "bodyHeight": 1695,
+          "smallButtons": 0
+        },
+        {
+          "width": 360,
+          "mode": "dungeon",
+          "scrollWidth": 360,
+          "actionsY": 696.4375,
+          "bodyHeight": 1997,
+          "smallButtons": 0
+        }
+      ]
+    },
+    {
+      "name": "arena-defesas-do-alvo",
+      "result": {
+        "before": 1000,
+        "after": 896,
+        "shieldEffects": 500,
+        "shieldTopLevel": 0,
+        "invulnerableTurns": 3,
+        "log": "Campanha retomada.O duelo comecou. Guerreiro Lv.1 joga primeiro.Guerreiro causou 104 de dano."
+      }
+    },
+    {
+      "name": "arena-habilidade-bloqueada-consome-turno",
+      "result": {
+        "before": "host",
+        "after": "guest",
+        "log": "Campanha retomada.O duelo comecou. Guerreiro Lv.1 joga primeiro.Mana insuficiente!"
+      }
+    },
+    {
+      "name": "arena-derrota-contamina-campanha",
+      "result": {
+        "live": {
+          "hp": 0,
+          "duels": 1,
+          "wins": 0
+        },
+        "saved": {
+          "hp": 0,
+          "duels": 1,
+          "wins": 0
+        },
+        "reloaded": {
+          "hp": 0,
+          "duels": 1,
+          "wins": 0,
+          "isDead": true
+        }
+      }
+    },
+    {
+      "name": "arena-protocolo-perfil-injetado",
+      "result": {
+        "before": 120,
+        "after": 999999,
+        "attack": 999999,
+        "htmlExecuted": true,
+        "duelActive": true
+      }
+    },
+    {
+      "name": "dungeon-protocolo-estado-injetado",
+      "result": {
+        "original": 120,
+        "received": 999999,
+        "attack": 999999,
+        "sequence": 84,
+        "trophyCount": 44
+      }
+    },
+    {
+      "name": "limite-personagens-e-separacao",
+      "result": {
+        "firstCoins": 123,
+        "secondCoins": 456,
+        "count": 6,
+        "canCreate": false
+      }
+    },
+    {
+      "name": "save-corrompido-valido-json",
+      "result": {
+        "startVisible": true,
+        "body": "RPG POR TURNOS\nEscolha um heroi\n\nContinue uma aventura salva ou crie um novo personagem com progresso separado.\n\nContinuar aventura\nCriar personagem 1/6\nCONTINUAR\nPersonagens salvos\nPERSONAGEM SALVO\nGuerreiro\nNV\n1\nGuerreiro - Atualizado 27/10, 21:09\nVIDA\n120/120\nMANA\n60/60\nDANO\n18\nContinuar\nApagar\nC"
+      }
+    }
+  ],
+  "errors": []
+}

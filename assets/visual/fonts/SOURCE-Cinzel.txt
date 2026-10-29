@@ -1,0 +1,6 @@
+Family: Cinzel
+Variable axes: [('wght', 400.0, 400.0, 900.0)]
+Source: https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/Cinzel%5Bwght%5D.ttf
+License: https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/OFL.txt
+SHA256: f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34
+Chosen UI weight: 650

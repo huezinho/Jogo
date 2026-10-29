@@ -1,0 +1,20 @@
+[
+  {
+    "family": "Vollkorn",
+    "css": "https://fonts.googleapis.com/css2?family=Vollkorn:wght@600&display=swap",
+    "file": "https://fonts.gstatic.com/s/vollkorn/v30/0ybgGDoxxrvAnPhYGzMlQLzuMasz6Df27nauGQ.ttf",
+    "license": "https://raw.githubusercontent.com/google/fonts/main/ofl/vollkorn/OFL.txt"
+  },
+  {
+    "family": "Cinzel",
+    "css": "https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap",
+    "file": "https://fonts.gstatic.com/s/cinzel/v26/8vIU7ww63mVu7gtR-kwKxNvkNOjw-gjgTYo.ttf",
+    "license": "https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/OFL.txt"
+  },
+  {
+    "family": "Grenze",
+    "css": "https://fonts.googleapis.com/css2?family=Grenze:wght@600&display=swap",
+    "file": "https://fonts.gstatic.com/s/grenze/v18/O4ZOFGb7hR12Bxqt9ErXQpCpkHScylXT2HA.ttf",
+    "license": "https://raw.githubusercontent.com/google/fonts/main/ofl/grenze/OFL.txt"
+  }
+]

@@ -1,0 +1,3847 @@
+{
+  "source": [
+    "assets/js/game.js:getSkillInfo",
+    "assets/js/game.js:getPassiveStatusDescription",
+    "assets/js/data/class-trees.js"
+  ],
+  "conditions": {
+    "build": "equilibrada",
+    "equipment": "nenhum",
+    "enemyMaxHp": 20000,
+    "arcaneCharges": 0,
+    "natureCadence": 0,
+    "shield": 0,
+    "tierLevels": [
+      20,
+      50,
+      100
+    ]
+  },
+  "counts": {
+    "forms": 28,
+    "activeNames": 59,
+    "passiveIds": 29
+  },
+  "forms": [
+    {
+      "className": "Guerreiro",
+      "id": "Guerreiro",
+      "name": "Guerreiro",
+      "tier30": null,
+      "tier60": null,
+      "tier": 0,
+      "levels": [
+        1,
+        10,
+        20
+      ],
+      "level": 20,
+      "stats": {
+        "maxHp": 291,
+        "maxMp": 222,
+        "attack": 62
+      },
+      "invested": {
+        "vitality": 6,
+        "wisdom": 6,
+        "strength": 7,
+        "hpGain": 171,
+        "mpGain": 162,
+        "attackGain": 44,
+        "skillGain": 44
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 62 e 67."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 34,
+          "heal": 29,
+          "turns": 0,
+          "damageBuff": 0,
+          "description": "Recuperar Folego: consome 34 MP e recupera 29 de vida.",
+          "effectiveCost": 34
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove",
+          "cost": 42,
+          "damage": 103,
+          "enemyAttackDownPercent": 0,
+          "enemyAttackDownTurns": 0,
+          "description": "Esbarrao: consome 42 MP e causa 103 de dano.",
+          "effectiveCost": 42
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction",
+          "description": "Vontade de Ferro: reduz 12 de dano por ataque recebido."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 0,
+        "flatReduction": 12,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "cavaleiro",
+      "name": "Cavaleiro",
+      "tier30": "cavaleiro",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 1148,
+        "maxMp": 852,
+        "attack": 170
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 170 e 175."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 40,
+          "heal": 172,
+          "turns": 0,
+          "damageBuff": 0,
+          "description": "Recuperar Folego: consome 40 MP e recupera 172 de vida.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove",
+          "cost": 54,
+          "damage": 316,
+          "enemyAttackDownPercent": 0.3,
+          "enemyAttackDownTurns": 3,
+          "description": "Esbarrao: consome 54 MP e causa 316 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
+          "effectiveCost": 54
+        },
+        {
+          "level": 30,
+          "id": "contundir",
+          "name": "Contundir",
+          "type": "warrior_stagger",
+          "cost": 50,
+          "damage": 271,
+          "skipChance": 0.3,
+          "description": "Contundir: consome 50 MP e causa 271 de dano. Tem 30% de chance de fazer o inimigo perder o proximo turno.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 50,
+          "id": "brado",
+          "name": "Brado",
+          "type": "warrior_warcry",
+          "cost": 50,
+          "turns": 5,
+          "attackPercent": 0.3,
+          "damageReductionPercent": 0,
+          "description": "Brado: consome 50 MP e aumenta o ataque em 30% por 5 turnos.",
+          "effectiveCost": 50
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction",
+          "description": "Vontade de Ferro: reduz 30 de dano por ataque recebido. Alem disso, recupera 34 de vida por turno."
+        },
+        {
+          "level": 40,
+          "id": "refletir",
+          "name": "Refletir",
+          "type": "warrior_reflect",
+          "description": "Refletir: reflete 18% do dano recebido para o inimigo."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 140,
+        "bonusMp": 0,
+        "bonusAttack": 8,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 8,
+        "flatReduction": 30,
+        "reflectPercent": 0.18,
+        "turnHealPercent": 0.03,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "paladino",
+      "name": "Paladino",
+      "tier30": "cavaleiro",
+      "tier60": "paladino",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 4606,
+        "maxMp": 2956,
+        "attack": 433
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 433 e 438."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 50,
+          "heal": 690,
+          "turns": 0,
+          "damageBuff": 0,
+          "description": "Recuperar Folego: consome 50 MP e recupera 690 de vida.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove",
+          "cost": 64,
+          "damage": 940,
+          "enemyAttackDownPercent": 0.3,
+          "enemyAttackDownTurns": 3,
+          "description": "Esbarrao: consome 64 MP e causa 940 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
+          "effectiveCost": 64
+        },
+        {
+          "level": 30,
+          "id": "contundir",
+          "name": "Contundir",
+          "type": "warrior_stagger",
+          "cost": 60,
+          "damage": 774,
+          "skipChance": 0.3,
+          "description": "Contundir: consome 60 MP e causa 774 de dano. Tem 30% de chance de fazer o inimigo perder o proximo turno.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "brado",
+          "name": "Brado",
+          "type": "warrior_warcry",
+          "cost": 60,
+          "turns": 5,
+          "attackPercent": 0.3,
+          "damageReductionPercent": 0.16,
+          "description": "Brado: consome 60 MP e aumenta o ataque em 30% por 5 turnos. Tambem bloqueia 16% do dano sofrido nesse periodo.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 60,
+          "id": "julgamento",
+          "name": "Julgamento",
+          "type": "warrior_judgment",
+          "cost": 120,
+          "damage": 2468,
+          "description": "Julgamento: consome 120 MP e causa 2468 de dano.",
+          "effectiveCost": 120
+        },
+        {
+          "level": 80,
+          "id": "escudo_de_fe",
+          "name": "Escudo de Fe",
+          "type": "warrior_faith_shield",
+          "cost": 2089,
+          "turns": 3,
+          "description": "Escudo de Fe: consome 2089 MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano que teria sido absorvido ao inimigo.",
+          "effectiveCost": 2089
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction",
+          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 138 de vida por turno."
+        },
+        {
+          "level": 40,
+          "id": "refletir",
+          "name": "Refletir",
+          "type": "warrior_reflect",
+          "description": "Refletir: reflete 32% do dano recebido para o inimigo."
+        },
+        {
+          "level": 70,
+          "id": "aura_divina",
+          "name": "Aura Divina",
+          "type": "warrior_aura_shield",
+          "description": "Aura Divina: a cada turno, ganha um escudo persistente de 92."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 1140,
+        "bonusMp": 0,
+        "bonusAttack": 18,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 16,
+        "flatReduction": 60,
+        "reflectPercent": 0.32,
+        "turnHealPercent": 0.03,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "berserker",
+      "name": "Berserker",
+      "tier30": "cavaleiro",
+      "tier60": "berserker",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3606,
+        "maxMp": 2956,
+        "attack": 493
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 493 e 498."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 50,
+          "heal": 540,
+          "turns": 0,
+          "damageBuff": 0,
+          "description": "Recuperar Folego: consome 50 MP e recupera 540 de vida.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 20,
+          "id": "esbarrao",
+          "name": "Esbarrao",
+          "type": "warrior_shove",
+          "cost": 64,
+          "damage": 882,
+          "enemyAttackDownPercent": 0.3,
+          "enemyAttackDownTurns": 3,
+          "description": "Esbarrao: consome 64 MP e causa 882 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
+          "effectiveCost": 64
+        },
+        {
+          "level": 30,
+          "id": "contundir",
+          "name": "Contundir",
+          "type": "warrior_stagger",
+          "cost": 60,
+          "damage": 3119,
+          "skipChance": 0,
+          "description": "Contundir: consome 60 MP e causa 3119 de dano.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "ira",
+          "name": "Ira",
+          "type": "warrior_warcry",
+          "cost": 20,
+          "hpCostPercent": 0.8,
+          "turns": 4,
+          "totalDamagePercent": 1.5,
+          "description": "Ira: consome 20 MP e 80% da sua vida maxima, aumentando o dano total em 150% por 4 turnos.",
+          "effectiveCost": 20
+        },
+        {
+          "level": 60,
+          "id": "valhala",
+          "name": "Vallhala",
+          "type": "warrior_valhalla",
+          "cost": 120,
+          "turns": 5,
+          "incomingDamagePercent": 2,
+          "enemyMaxHpBonusDamagePercent": 0.15,
+          "description": "Vallhala: consome 120 MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.",
+          "effectiveCost": 120
+        },
+        {
+          "level": 80,
+          "id": "voce_ira_me_parar",
+          "name": "Voce Ira Me Parar?",
+          "type": "warrior_unstoppable",
+          "cost": 120,
+          "hpCostPercent": 0.3,
+          "turns": 4,
+          "attackBuffAmount": 50,
+          "description": "Voce Ira Me Parar?: consome 120 MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque basico em 50 por 4 turnos.",
+          "effectiveCost": 120
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "vontade_de_ferro",
+          "name": "Vontade de Ferro",
+          "type": "warrior_flat_reduction",
+          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 108 de vida por turno."
+        },
+        {
+          "level": 40,
+          "id": "refletir",
+          "name": "Refletir",
+          "type": "warrior_reflect",
+          "description": "Refletir: ao sofrer dano, tem 50% de chance de responder com um ataque basico."
+        },
+        {
+          "level": 70,
+          "id": "voce_nao_e_digno",
+          "name": "Voce Nao e Digno",
+          "type": "warrior_last_stand",
+          "description": "Voce Nao e Digno: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 140,
+        "bonusMp": 0,
+        "bonusAttack": 78,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 8,
+        "flatReduction": 60,
+        "reflectPercent": 0,
+        "turnHealPercent": 0.03,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "espadachim",
+      "name": "Espadachim",
+      "tier30": "espadachim",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 1008,
+        "maxMp": 852,
+        "attack": 187
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 187 e 192."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 40,
+          "heal": 100,
+          "turns": 3,
+          "damageBuff": 0.2,
+          "description": "Recuperar Folego: consome 40 MP e recupera 100 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 20,
+          "id": "investida",
+          "name": "Investida",
+          "type": "warrior_shove",
+          "cost": 60,
+          "damage": 448,
+          "enemyAttackDownPercent": 0,
+          "enemyAttackDownTurns": 0,
+          "description": "Investida: consome 60 MP e causa 448 de dano.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 30,
+          "id": "golpes_velozes",
+          "name": "Golpes Velozes",
+          "type": "warrior_swift_strikes",
+          "cost": 54,
+          "hits": 2,
+          "bleedPercent": 0,
+          "description": "Golpes Velozes: consome 54 MP e executa 2 ataques basicos.",
+          "effectiveCost": 54
+        },
+        {
+          "level": 50,
+          "id": "corte_profundo",
+          "name": "Corte Profundo",
+          "type": "warrior_deep_cut",
+          "cost": 62,
+          "damage": 402,
+          "ignoreArmor": false,
+          "bleedPercent": 0.15,
+          "bleedTurns": 3,
+          "description": "Corte Profundo: consome 62 MP e causa 402 de dano. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.",
+          "effectiveCost": 62
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "veloz",
+          "name": "Veloz",
+          "type": "warrior_enemy_miss",
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+        },
+        {
+          "level": 40,
+          "id": "contra_ataque",
+          "name": "Contra-Ataque",
+          "type": "warrior_counter_on_dodge",
+          "description": "Contra-Ataque: ao desviar de um ataque, executa um contra-ataque com seu ataque basico."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 25,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 15,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.2,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "samurai",
+      "name": "Samurai",
+      "tier30": "espadachim",
+      "tier60": "samurai",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3966,
+        "maxMp": 2956,
+        "attack": 475
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 475 e 480."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 50,
+          "heal": 396,
+          "turns": 3,
+          "damageBuff": 0.2,
+          "description": "Recuperar Folego: consome 50 MP e recupera 396 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 20,
+          "id": "investida",
+          "name": "Investida",
+          "type": "warrior_shove",
+          "cost": 70,
+          "damage": 1236,
+          "enemyAttackDownPercent": 0,
+          "enemyAttackDownTurns": 0,
+          "description": "Investida: consome 70 MP e causa 1236 de dano.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 30,
+          "id": "golpes_velozes",
+          "name": "Golpes Velozes",
+          "type": "warrior_swift_strikes",
+          "cost": 64,
+          "hits": 2,
+          "bleedPercent": 0.15,
+          "description": "Golpes Velozes: consome 64 MP e executa 2 ataques basicos. Tambem aplica sangramento por 3 turnos.",
+          "effectiveCost": 64
+        },
+        {
+          "level": 50,
+          "id": "corte_profundo",
+          "name": "Corte Profundo",
+          "type": "warrior_deep_cut",
+          "cost": 72,
+          "damage": 933,
+          "ignoreArmor": true,
+          "bleedPercent": 0.15,
+          "bleedTurns": 3,
+          "description": "Corte Profundo: consome 72 MP e causa 933 de dano. Ignora armadura. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.",
+          "effectiveCost": 72
+        },
+        {
+          "level": 60,
+          "id": "furar_blindagem",
+          "name": "Furar Blindagem",
+          "type": "warrior_armor_piercer",
+          "cost": 102,
+          "damage": 1071,
+          "description": "Furar Blindagem: consome 102 MP e causa 1071 de dano.",
+          "effectiveCost": 102
+        },
+        {
+          "level": 80,
+          "id": "cortes_ultrasonicos",
+          "name": "Cortes Ultrasonicos",
+          "type": "warrior_ultrasonic_cuts",
+          "cost": 260,
+          "turns": 3,
+          "description": "Cortes Ultrasonicos: consome 260 MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido.",
+          "effectiveCost": 260
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "veloz",
+          "name": "Veloz",
+          "type": "warrior_enemy_miss",
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+        },
+        {
+          "level": 40,
+          "id": "contra_ataque",
+          "name": "Contra-Ataque",
+          "type": "warrior_counter_on_dodge",
+          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria."
+        },
+        {
+          "level": 70,
+          "id": "mente_limpa",
+          "name": "Mente Limpa",
+          "type": "warrior_first_strike_echo",
+          "description": "Mente Limpa: o primeiro ataque do combate acerta duas vezes, com o segundo golpe causando 50% do dano, mas repetindo os efeitos."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 500,
+        "bonusMp": 0,
+        "bonusAttack": 60,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 30,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.2,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Guerreiro",
+      "id": "ninja",
+      "name": "Ninja",
+      "tier30": "espadachim",
+      "tier60": "ninja",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3466,
+        "maxMp": 2956,
+        "attack": 480
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 480 e 485."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "recuperar_folego",
+          "name": "Recuperar Folego",
+          "type": "warrior_second_wind",
+          "cost": 50,
+          "heal": 346,
+          "turns": 3,
+          "damageBuff": 0.2,
+          "description": "Recuperar Folego: consome 50 MP e recupera 346 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 20,
+          "id": "investida",
+          "name": "Investida",
+          "type": "warrior_shove",
+          "cost": 70,
+          "damage": 1224,
+          "enemyAttackDownPercent": 0,
+          "enemyAttackDownTurns": 0,
+          "description": "Investida: consome 70 MP e causa 1224 de dano.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 30,
+          "id": "golpes_velozes",
+          "name": "Golpes Velozes",
+          "type": "warrior_swift_strikes",
+          "cost": 64,
+          "hits": 3,
+          "bleedPercent": 0,
+          "description": "Golpes Velozes: consome 64 MP e executa 3 ataques basicos.",
+          "effectiveCost": 64
+        },
+        {
+          "level": 50,
+          "id": "corte_profundo",
+          "name": "Corte Profundo",
+          "type": "warrior_deep_cut",
+          "cost": 72,
+          "damage": 951,
+          "ignoreArmor": false,
+          "bleedPercent": 0.3,
+          "bleedTurns": 3,
+          "description": "Corte Profundo: consome 72 MP e causa 951 de dano. Aplica sangramento equivalente a 30% do dano causado por 3 turnos.",
+          "effectiveCost": 72
+        },
+        {
+          "level": 60,
+          "id": "bomba_de_fumaca",
+          "name": "Bomba de Fumaca",
+          "type": "warrior_smoke_bomb",
+          "cost": 60,
+          "turns": 1,
+          "nextDamageBonus": 0.3,
+          "description": "Bomba de Fumaca: consome 60 MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 80,
+          "id": "mata_gigantes",
+          "name": "Mata-Gigantes",
+          "type": "warrior_giant_slayer",
+          "cost": 220,
+          "damage": 8000,
+          "description": "Mata-Gigantes: consome 220 MP e causa 8000 de dano com base na vida atual do inimigo.",
+          "effectiveCost": 220
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "veloz",
+          "name": "Veloz",
+          "type": "warrior_enemy_miss",
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+        },
+        {
+          "level": 40,
+          "id": "contra_ataque",
+          "name": "Contra-Ataque",
+          "type": "warrior_counter_on_dodge",
+          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo."
+        },
+        {
+          "level": 70,
+          "id": "eliminar",
+          "name": "Eliminar",
+          "type": "warrior_execute_bonus",
+          "description": "Eliminar: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 65,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 45,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.2,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "Mago",
+      "name": "Mago",
+      "tier30": null,
+      "tier60": null,
+      "tier": 0,
+      "levels": [
+        1,
+        10,
+        20
+      ],
+      "level": 20,
+      "stats": {
+        "maxHp": 251,
+        "maxMp": 262,
+        "attack": 58
+      },
+      "invested": {
+        "vitality": 6,
+        "wisdom": 6,
+        "strength": 7,
+        "hpGain": 171,
+        "mpGain": 162,
+        "attackGain": 44,
+        "skillGain": 44
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: consome 15 MP, dispara 5 misseis e cada um causa entre 16 e 34 de dano."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 24,
+          "damage": 82,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 24 MP e causa 82 de dano.",
+          "effectiveCost": 24
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 0,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "elementalista",
+      "name": "Elementalista",
+      "tier30": "elementalista",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 1434,
+        "maxMp": 932,
+        "attack": 158
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: consome 24 MP, dispara 8 misseis e cada um causa entre 53 e 101 de dano."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 30,
+          "damage": 297,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 30 MP e causa 297 de dano.",
+          "effectiveCost": 30
+        },
+        {
+          "level": 30,
+          "id": "bola_de_fogo",
+          "name": "Bola de Fogo",
+          "type": "mage_fireball",
+          "cost": 40,
+          "damage": 276,
+          "burnDamage": 600,
+          "burnTurns": 3,
+          "healReductionPercent": 0.3,
+          "chillTurns": 0,
+          "chillAttackDownPercent": 0,
+          "appliesBurn": true,
+          "appliesChill": false,
+          "description": "Bola de Fogo: consome 40 MP e causa 276 de dano de fogo. A queimadura causa 600 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 50,
+          "id": "congelar",
+          "name": "Congelar",
+          "type": "mage_freeze",
+          "cost": 50,
+          "damage": 216,
+          "freezeChance": 0.3,
+          "burnDamage": 600,
+          "burnTurns": 0,
+          "chillTurns": 0,
+          "chillAttackDownPercent": 0,
+          "freezeVulnerabilityPercent": 0,
+          "description": "Congelar: consome 50 MP, causa 216 de dano e tem 30% de chance de impedir o proximo ataque do inimigo.",
+          "effectiveCost": 50
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "mana_e_vida",
+          "name": "Mana e Vida",
+          "type": "mage_mana_to_life",
+          "description": "Mana e Vida: converte 50% da mana maxima em vida maxima."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 466,
+        "bonusMp": 40,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 30,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0.5
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "mago_incendiario",
+      "name": "Mago Incendiario",
+      "tier30": "elementalista",
+      "tier60": "mago_incendiario",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 4944,
+        "maxMp": 3036,
+        "attack": 411
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 190 e 313 de dano."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 40,
+          "damage": 1366,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 40 MP e causa 1366 de dano.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 30,
+          "id": "bola_de_fogo",
+          "name": "Bola de Fogo",
+          "type": "mage_fireball",
+          "cost": 40,
+          "damage": 2392,
+          "burnDamage": 1000,
+          "burnTurns": 3,
+          "healReductionPercent": 0.3,
+          "chillTurns": 0,
+          "chillAttackDownPercent": 0,
+          "appliesBurn": true,
+          "appliesChill": false,
+          "description": "Bola de Fogo: consome 40 MP e causa 2392 de dano de fogo. A queimadura causa 1000 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 50,
+          "id": "bafo_de_fogo",
+          "name": "Bafo de Fogo",
+          "type": "mage_freeze",
+          "cost": 60,
+          "damage": 989,
+          "freezeChance": 0,
+          "burnDamage": 1000,
+          "burnTurns": 6,
+          "chillTurns": 0,
+          "chillAttackDownPercent": 0,
+          "freezeVulnerabilityPercent": 0,
+          "description": "Bafo de Fogo: consome 60 MP, causa 989 de dano e aplica queimadura por 6 turnos.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 60,
+          "id": "fenix_sagrada",
+          "name": "Fenix Sagrada",
+          "type": "mage_sacred_phoenix",
+          "cost": 1233,
+          "damage": 1959,
+          "burnDamage": 1000,
+          "burnTurns": 1,
+          "healReductionPercent": 0.3,
+          "description": "Fenix Sagrada: consome 1233 MP e causa 1959 de dano, aplicando queimadura por 1 turno.",
+          "effectiveCost": 1233
+        },
+        {
+          "level": 80,
+          "id": "explodir",
+          "name": "Explodir",
+          "type": "mage_explode",
+          "cost": 500,
+          "hpCostPercent": 0.5,
+          "damage": 14014,
+          "description": "Explodir: consome 500 MP, 50% da sua vida maxima e causa 14014 de dano.",
+          "effectiveCost": 500
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "mana_e_vida",
+          "name": "Mana e Vida",
+          "type": "mage_mana_to_life",
+          "description": "Mana e Vida: converte 50% da mana maxima em vida maxima. Alem disso, concede 546 de dano de habilidade."
+        },
+        {
+          "level": 70,
+          "id": "fogo_do_inferno",
+          "name": "Fogo do Inferno",
+          "type": "mage_hellfire",
+          "description": "Fogo do Inferno: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 1518,
+        "bonusMp": 40,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 636,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0.5
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "mago_frigido",
+      "name": "Mago Frigido",
+      "tier30": "elementalista",
+      "tier60": "mago_frigido",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 5659,
+        "maxMp": 3436,
+        "attack": 411
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 133 e 256 de dano."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 40,
+          "damage": 840,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 40 MP e causa 840 de dano.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 30,
+          "id": "bola_de_neve",
+          "name": "Bola de Neve",
+          "type": "mage_fireball",
+          "cost": 40,
+          "damage": 657,
+          "burnDamage": 600,
+          "burnTurns": 3,
+          "healReductionPercent": 0.3,
+          "chillTurns": 3,
+          "chillAttackDownPercent": 0.3,
+          "appliesBurn": false,
+          "appliesChill": true,
+          "description": "Bola de Neve: consome 40 MP e causa 657 de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 50,
+          "id": "congelar",
+          "name": "Congelar",
+          "type": "mage_freeze",
+          "cost": 60,
+          "damage": 480,
+          "freezeChance": 0.3,
+          "burnDamage": 600,
+          "burnTurns": 0,
+          "chillTurns": 2,
+          "chillAttackDownPercent": 0.3,
+          "freezeVulnerabilityPercent": 0.5,
+          "description": "Congelar: consome 60 MP, causa 480 de dano e tem 30% de chance de impedir o proximo ataque do inimigo. Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 60,
+          "id": "nevasca",
+          "name": "Nevasca",
+          "type": "mage_blizzard",
+          "cost": 120,
+          "turns": 6,
+          "enemySkipChance": 0.15,
+          "description": "Nevasca: consome 120 MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.",
+          "effectiveCost": 120
+        },
+        {
+          "level": 80,
+          "id": "avalanche",
+          "name": "Avalanche",
+          "type": "mage_avalanche",
+          "cost": 400,
+          "damage": 10807,
+          "chillTurns": 4,
+          "chillAttackDownPercent": 0.3,
+          "description": "Avalanche: consome 400 MP, causa 10807 de dano e aplica resfriamento por 4 turnos.",
+          "effectiveCost": 400
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "mana_e_vida",
+          "name": "Mana e Vida",
+          "type": "mage_mana_to_life",
+          "description": "Mana e Vida: converte 65% da mana maxima em vida maxima."
+        },
+        {
+          "level": 70,
+          "id": "gelo_queima",
+          "name": "Gelo Queima",
+          "type": "mage_frostburn",
+          "description": "Gelo Queima: sempre que aplicar resfriamento, tambem causa queimadura de 3% da vida maxima por 1 turno."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 2233,
+        "bonusMp": 440,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 70,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0.65
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "arcanista",
+      "name": "Arcanista",
+      "tier30": "arcanista",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 968,
+        "maxMp": 992,
+        "attack": 168
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: bonus fixo de 297 por acao, dividido entre os projeteis.  consome 24 MP, dispara 8 misseis e cada um causa entre 38 e 89 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 129,
+          "damage": 560,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 129 MP e causa 560 de dano.",
+          "effectiveCost": 129
+        },
+        {
+          "level": 30,
+          "id": "descarregar",
+          "name": "Descarregar",
+          "type": "mage_discharge",
+          "cost": 99,
+          "damage": 411,
+          "charges": 0,
+          "description": "Descarregar: consome 99 MP, gasta todas as cargas arcanas e causa 411 de dano.",
+          "effectiveCost": 99
+        },
+        {
+          "level": 50,
+          "id": "escudo_de_mana",
+          "name": "Escudo de Mana",
+          "type": "mage_mana_shield",
+          "cost": 247,
+          "shield": 337,
+          "turns": 2,
+          "description": "Escudo de Mana: consome 247 MP e concede 337 de escudo por 2 turnos.",
+          "effectiveCost": 247
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "transbordando",
+          "name": "Transbordando",
+          "type": "mage_overflowing",
+          "description": "Transbordando: concede 297 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 99."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 100,
+        "bonusAttack": 10,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 15,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 99,
+        "totalDamageFlat": 297,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "arquimago",
+      "name": "Arquimago",
+      "tier30": "arcanista",
+      "tier60": "arquimago",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3426,
+        "maxMp": 3896,
+        "attack": 431
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: bonus fixo de 1753 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 91 e 220 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 819,
+          "damage": 2581,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 819 MP e causa 2581 de dano.",
+          "effectiveCost": 819
+        },
+        {
+          "level": 30,
+          "id": "descarregar",
+          "name": "Descarregar",
+          "type": "mage_discharge",
+          "cost": 779,
+          "damage": 1753,
+          "charges": 0,
+          "description": "Descarregar: consome 779 MP, gasta todas as cargas arcanas e causa 1753 de dano.",
+          "effectiveCost": 779
+        },
+        {
+          "level": 50,
+          "id": "escudo_de_mana",
+          "name": "Escudo de Mana",
+          "type": "mage_mana_shield",
+          "cost": 1246,
+          "shield": 1598,
+          "turns": 2,
+          "description": "Escudo de Mana: consome 1246 MP e concede 1598 de escudo por 2 turnos.",
+          "effectiveCost": 1246
+        },
+        {
+          "level": 60,
+          "id": "concentracao",
+          "name": "Concentracao",
+          "type": "mage_concentration",
+          "cost": 979,
+          "turns": 4,
+          "percent": 0.2,
+          "manaRegenPercent": 0.1,
+          "description": "Concentracao: consome 979 MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.",
+          "effectiveCost": 979
+        },
+        {
+          "level": 80,
+          "id": "sobrecarregar",
+          "name": "Sobrecarregar",
+          "type": "mage_overcharge",
+          "cost": 3896,
+          "damage": 5849,
+          "charges": 0,
+          "description": "Sobrecarregar: consome 3896 MP e causa 5849 de dano usando sua mana maxima e as cargas arcanas.",
+          "effectiveCost": 3896
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "transbordando",
+          "name": "Transbordando",
+          "type": "mage_overflowing",
+          "description": "Transbordando: concede 1753 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 779."
+        },
+        {
+          "level": 70,
+          "id": "carregar",
+          "name": "Carregar",
+          "type": "mage_charge_damage",
+          "description": "Carregar: cada carga arcana aumenta o dano total em 5%. Atualmente: 0%."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 900,
+        "bonusAttack": 20,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 25,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 779,
+        "totalDamageFlat": 1753,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Mago",
+      "id": "corrompido",
+      "name": "Corrompido",
+      "tier30": "arcanista",
+      "tier60": "corrompido",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3426,
+        "maxMp": 3396,
+        "attack": 446
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Misseis Magicos",
+        "description": "Missel Magico: bonus fixo de 1018 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 94 e 228 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+      },
+      "active": [
+        {
+          "level": 20,
+          "id": "explosao_de_mana",
+          "name": "Explosao de Mana",
+          "type": "mage_mana_burst",
+          "cost": 379,
+          "damage": 1785,
+          "enemyManaBurnAmount": 0,
+          "description": "Explosao de Mana: consome 379 MP e causa 1785 de dano.",
+          "effectiveCost": 379
+        },
+        {
+          "level": 30,
+          "id": "descarregar",
+          "name": "Descarregar",
+          "type": "mage_discharge",
+          "cost": 339,
+          "damage": 1256,
+          "charges": 0,
+          "description": "Descarregar: consome 339 MP, gasta todas as cargas arcanas e causa 1256 de dano.",
+          "effectiveCost": 339
+        },
+        {
+          "level": 50,
+          "id": "escudo_de_mana",
+          "name": "Escudo de Mana",
+          "type": "mage_mana_shield",
+          "cost": 848,
+          "shield": 1058,
+          "turns": 2,
+          "description": "Escudo de Mana: consome 848 MP e concede 1058 de escudo por 2 turnos.",
+          "effectiveCost": 848
+        },
+        {
+          "level": 60,
+          "id": "corrupcao",
+          "name": "Corrupcao",
+          "type": "mage_corruption",
+          "cost": 1018,
+          "damage": 2573,
+          "armorBreakPercent": 1,
+          "armorBreakTurns": 5,
+          "noShieldTurns": 5,
+          "description": "Corrupcao: consome 1018 MP, causa 2573 de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.",
+          "effectiveCost": 1018
+        },
+        {
+          "level": 80,
+          "id": "incorporar_demonio",
+          "name": "Incorporar Demonio",
+          "type": "mage_demon_form",
+          "cost": 1018,
+          "turns": 3,
+          "damagePercent": 2,
+          "vulnerabilityPercent": 0.3,
+          "description": "Incorporar Demonio: consome 1018 MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.",
+          "effectiveCost": 1018
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ultimo_recurso",
+          "name": "Ultimo Recurso",
+          "type": "mage_last_resort",
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+        },
+        {
+          "level": 40,
+          "id": "transbordando",
+          "name": "Transbordando",
+          "type": "mage_overflowing",
+          "description": "Transbordando: concede 1018 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 339."
+        },
+        {
+          "level": 70,
+          "id": "canhao_de_vidro",
+          "name": "Canhao de Vidro",
+          "type": "mage_glass_cannon",
+          "description": "Canhao de Vidro: o primeiro ataque do combate causa o dobro de dano, mas voce sofre 50% de dano adicional nos 2 primeiros turnos do combate."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 400,
+        "bonusAttack": 35,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 40,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 339,
+        "totalDamageFlat": 1018,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": true,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "Arqueiro",
+      "name": "Arqueiro",
+      "tier30": null,
+      "tier60": null,
+      "tier": 0,
+      "levels": [
+        1,
+        10,
+        20
+      ],
+      "level": 20,
+      "stats": {
+        "maxHp": 271,
+        "maxMp": 242,
+        "attack": 60
+      },
+      "invested": {
+        "vitality": 6,
+        "wisdom": 6,
+        "strength": 7,
+        "hpGain": 171,
+        "mpGain": 162,
+        "attackGain": 44,
+        "skillGain": 44
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 60 e 65. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 50,
+          "turns": 5,
+          "attackBonus": 25,
+          "description": "Mirar: consome 50 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 25.",
+          "effectiveCost": 50
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 50,
+          "turns": 4,
+          "dodge": 0.2,
+          "nextDamageBonus": 0,
+          "description": "Camuflagem: consome 50 MP e concede 20% de esquiva adicional por 4 turnos.",
+          "effectiveCost": 50
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_level_scaling",
+          "description": "Passos Leves: concede 15% de chance do inimigo errar o ataque contra voce."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 0,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.15000000000000002,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "atirador",
+      "name": "Atirador",
+      "tier30": "atirador",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 988,
+        "maxMp": 922,
+        "attack": 220
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 220 e 225. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 80,
+          "turns": 5,
+          "attackBonus": 55,
+          "description": "Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 55, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 65,
+          "turns": 4,
+          "dodge": 0.2,
+          "nextDamageBonus": 0.3,
+          "description": "Camuflagem: consome 65 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.",
+          "effectiveCost": 65
+        },
+        {
+          "level": 30,
+          "id": "headshot",
+          "name": "Headshot",
+          "type": "archer_headshot",
+          "cost": 75,
+          "damage": 367,
+          "critChance": 0.1,
+          "marksOnNonCrit": false,
+          "description": "Headshot: consome 75 MP e causa 367 de dano, com 15% de chance total de critico.",
+          "effectiveCost": 75
+        },
+        {
+          "level": 50,
+          "id": "tiro_perfurante",
+          "name": "Tiro Perfurante",
+          "type": "archer_piercing_shot",
+          "cost": 80,
+          "damage": 389,
+          "ignoreArmor": true,
+          "ignoreShield": true,
+          "shattersShield": false,
+          "description": "Tiro Perfurante: consome 80 MP e causa 389 de dano, ignorando armadura e escudo do inimigo.",
+          "effectiveCost": 80
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_double_bonus",
+          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+        },
+        {
+          "level": 40,
+          "id": "pulso_firme",
+          "name": "Pulso Firme",
+          "type": "archer_attack_level_bonus",
+          "description": "Pulso Firme: concede 45 de dano de ataque basico e 45 de dano de habilidade no nivel atual."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 50,
+        "bonusAttack": 60,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 60,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.3,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "atirador_arcano",
+      "name": "Atirador Arcano",
+      "tier30": "atirador",
+      "tier60": "atirador_arcano",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3446,
+        "maxMp": 3426,
+        "attack": 518
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 518 e 523. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 130,
+          "turns": 5,
+          "attackBonus": 105,
+          "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 105, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
+          "effectiveCost": 130
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 90,
+          "turns": 4,
+          "dodge": 0.2,
+          "nextDamageBonus": 0.3,
+          "description": "Camuflagem: consome 90 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "headshot",
+          "name": "Headshot",
+          "type": "archer_headshot",
+          "cost": 90,
+          "damage": 2954,
+          "critChance": 0.1,
+          "marksOnNonCrit": true,
+          "description": "Headshot: consome 90 MP e causa 2954 de dano, com 15% de chance total de critico. Se nao critar, marca o alvo para receber 15% a mais no proximo golpe.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 50,
+          "id": "tiro_perfurante",
+          "name": "Tiro Perfurante",
+          "type": "archer_piercing_shot",
+          "cost": 80,
+          "damage": 1379,
+          "ignoreArmor": true,
+          "ignoreShield": true,
+          "shattersShield": false,
+          "description": "Tiro Perfurante: consome 80 MP e causa 1379 de dano, ignorando armadura e escudo do inimigo.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "emergencia_arcana",
+          "name": "Emergencia Arcana",
+          "type": "archer_arcane_shot",
+          "cost": 100,
+          "damage": 823,
+          "description": "Emergencia Arcana: consome 100 MP e causa 823 de dano arcano. O dano aumenta conforme sua mana atual estiver abaixo da mana maxima.",
+          "effectiveCost": 100
+        },
+        {
+          "level": 80,
+          "id": "sobreaquecer",
+          "name": "Sobreaquecer",
+          "type": "archer_overcharge",
+          "cost": 3426,
+          "damage": 3355,
+          "description": "Sobreaquecer: gasta toda a mana atual (3426) e causa 3355 de dano.",
+          "effectiveCost": 3426
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_double_bonus",
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+        },
+        {
+          "level": 40,
+          "id": "pulso_firme",
+          "name": "Pulso Firme",
+          "type": "archer_attack_level_bonus",
+          "description": "Pulso Firme: concede 90 de dano de ataque basico e 130 de dano de habilidade no nivel atual."
+        },
+        {
+          "level": 70,
+          "id": "cristalizar_mana",
+          "name": "Cristalizar Mana",
+          "type": "archer_mana_to_skill_bonus",
+          "description": "Cristalizar Mana: converte 171 de mana maxima em dano de habilidade."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 450,
+        "bonusAttack": 105,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 366,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.55,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "sniper",
+      "name": "Sniper",
+      "tier30": "atirador",
+      "tier60": "sniper",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3446,
+        "maxMp": 3026,
+        "attack": 588
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 588 e 593. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 130,
+          "turns": 5,
+          "attackBonus": 105,
+          "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 105, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
+          "effectiveCost": 130
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 90,
+          "turns": 4,
+          "dodge": 0.2,
+          "nextDamageBonus": 0.3,
+          "description": "Camuflagem: consome 90 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "headshot",
+          "name": "Headshot",
+          "type": "archer_headshot",
+          "cost": 90,
+          "damage": 892,
+          "critChance": 0.7,
+          "marksOnNonCrit": false,
+          "description": "Headshot: consome 90 MP e causa 892 de dano, com 104% de chance total de critico. O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em 104% de dano extra.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 50,
+          "id": "tiro_perfurante",
+          "name": "Tiro Perfurante",
+          "type": "archer_piercing_shot",
+          "cost": 80,
+          "damage": 1156,
+          "ignoreArmor": true,
+          "ignoreShield": true,
+          "shattersShield": true,
+          "description": "Tiro Perfurante: consome 80 MP e causa 1156 de dano, ignorando armadura e escudo do inimigo. Alem disso, remove totalmente o escudo do alvo.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "executar",
+          "name": "Executar",
+          "type": "archer_execute",
+          "cost": 120,
+          "damage": 1157,
+          "executeThreshold": 0.4,
+          "executeMultiplier": 3,
+          "description": "Executar: consome 120 MP e causa 1157 de dano. Se o inimigo estiver abaixo de 40% da vida, o dano e triplicado.",
+          "effectiveCost": 120
+        },
+        {
+          "level": 80,
+          "id": "ponto_fraco",
+          "name": "Ponto Fraco",
+          "type": "archer_weak_spot",
+          "cost": 120,
+          "damage": 5485,
+          "description": "Ponto Fraco: consome 120 MP e causa 5485 de dano, explorando a vida atual do alvo.",
+          "effectiveCost": 120
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_double_bonus",
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+        },
+        {
+          "level": 40,
+          "id": "pulso_firme",
+          "name": "Pulso Firme",
+          "type": "archer_attack_level_bonus",
+          "description": "Pulso Firme: concede 90 de dano de ataque basico e 90 de dano de habilidade no nivel atual. Alem disso, seus ataques e habilidades ganham 15% de chance adicional de critico."
+        },
+        {
+          "level": 70,
+          "id": "olhos_de_falcao",
+          "name": "Olhos de Falcao",
+          "type": "archer_sniper_bonus_crit",
+          "description": "Olhos de Falcao: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 50,
+        "bonusAttack": 175,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 105,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.55,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "cacador",
+      "name": "Cacador",
+      "tier30": "cacador",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 1088,
+        "maxMp": 872,
+        "attack": 180
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 180 e 185. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 80,
+          "turns": 5,
+          "attackBonus": 55,
+          "description": "Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 55, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 65,
+          "turns": 4,
+          "dodge": 0.25,
+          "nextDamageBonus": 0,
+          "description": "Camuflagem: consome 65 MP e concede 25% de esquiva adicional por 4 turnos.",
+          "effectiveCost": 65
+        },
+        {
+          "level": 30,
+          "id": "rajada_de_flechas",
+          "name": "Rajada de Flechas",
+          "type": "archer_barrage",
+          "cost": 60,
+          "hits": 2,
+          "extraShotChance": 0,
+          "description": "Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "armadilha",
+          "name": "Armadilha",
+          "type": "archer_trap",
+          "cost": 80,
+          "damage": 188,
+          "skipChance": 0.3,
+          "nextBarrageBonus": 0,
+          "description": "Armadilha: consome 80 MP, causa 188 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.",
+          "effectiveCost": 80
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_coin_bonus",
+          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos."
+        },
+        {
+          "level": 40,
+          "id": "errou",
+          "name": "Errou",
+          "type": "archer_dodge_damage_buff",
+          "description": "Errou: ao esquivar de um ataque, voce ganha 10% de dano total por 2 turnos."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 100,
+        "bonusMp": 0,
+        "bonusAttack": 20,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0.1,
+        "skillPower": 0,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.3,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "espreitador",
+      "name": "Espreitador",
+      "tier30": "cacador",
+      "tier60": "espreitador",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3546,
+        "maxMp": 3076,
+        "attack": 463
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 463 e 468. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 130,
+          "turns": 5,
+          "attackBonus": 105,
+          "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 105, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
+          "effectiveCost": 130
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 90,
+          "turns": 4,
+          "dodge": 0.25,
+          "nextDamageBonus": 0,
+          "description": "Camuflagem: consome 90 MP e concede 25% de esquiva adicional por 4 turnos.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "rajada_de_flechas",
+          "name": "Rajada de Flechas",
+          "type": "archer_barrage",
+          "cost": 60,
+          "hits": 2,
+          "extraShotChance": 0,
+          "description": "Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "armadilha",
+          "name": "Armadilha",
+          "type": "archer_trap",
+          "cost": 80,
+          "damage": 2083,
+          "skipChance": 0.3,
+          "nextBarrageBonus": 0,
+          "description": "Armadilha: consome 80 MP, causa 2083 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. O dano inclui 8% da vida atual do inimigo.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "surpresa",
+          "name": "Surpresa",
+          "type": "archer_surprise",
+          "cost": 80,
+          "damage": 764,
+          "empoweredFromCamouflage": false,
+          "description": "Surpresa: consome 80 MP e causa 764 de dano.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 80,
+          "id": "mirar_no_pe",
+          "name": "Mirar no Pe",
+          "type": "archer_aim_leg",
+          "cost": 100,
+          "damage": 558,
+          "enemyAttackDownPercent": 0.15,
+          "enemyAttackDownTurns": 3,
+          "enemyArmorDownPercent": 0.5,
+          "enemyArmorDownTurns": 3,
+          "skipChance": 0.1,
+          "description": "Mirar no Pe: consome 100 MP, causa 558 de dano, reduz em 15% o dano do inimigo, corta 50% da armadura por 3 turnos e tem 10% de chance de fazer o alvo perder o proximo turno.",
+          "effectiveCost": 100
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_coin_bonus",
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos."
+        },
+        {
+          "level": 40,
+          "id": "errou",
+          "name": "Errou",
+          "type": "archer_dodge_damage_buff",
+          "description": "Errou: ao esquivar de um ataque, seu proximo dano causado fica 50% mais forte."
+        },
+        {
+          "level": 70,
+          "id": "passos_silenciosos",
+          "name": "Passos Silenciosos",
+          "type": "archer_enemy_skip_chance",
+          "description": "Passos Silenciosos: concede 7% de chance do inimigo perder o turno sem atacar."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 100,
+        "bonusMp": 100,
+        "bonusAttack": 50,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0.1,
+        "skillPower": 15,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.55,
+        "enemySkipChance": 0.07,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Arqueiro",
+      "id": "guarda_florestal",
+      "name": "Guarda Florestal",
+      "tier30": "cacador",
+      "tier60": "guarda_florestal",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 4046,
+        "maxMp": 2976,
+        "attack": 458
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 458 e 463. Chance de acerto: 84%."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "mirar",
+          "name": "Mirar",
+          "type": "archer_focus",
+          "cost": 130,
+          "turns": 5,
+          "attackBonus": 105,
+          "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 105, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
+          "effectiveCost": 130
+        },
+        {
+          "level": 20,
+          "id": "camuflagem",
+          "name": "Camuflagem",
+          "type": "archer_camouflage",
+          "cost": 90,
+          "turns": 4,
+          "dodge": 0.25,
+          "nextDamageBonus": 0,
+          "description": "Camuflagem: consome 90 MP e concede 25% de esquiva adicional por 4 turnos.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "rajada_de_flechas",
+          "name": "Rajada de Flechas",
+          "type": "archer_barrage",
+          "cost": 60,
+          "hits": 3,
+          "extraShotChance": 0,
+          "description": "Rajada de Flechas: consome 60 MP e realiza 3 ataques basicos no mesmo turno.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "armadilha",
+          "name": "Armadilha",
+          "type": "archer_trap",
+          "cost": 80,
+          "damage": 466,
+          "skipChance": 0.3,
+          "nextBarrageBonus": 0.15,
+          "description": "Armadilha: consome 80 MP, causa 466 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. Se prender o alvo, sua proxima Rajada de Flechas causara 15% de dano adicional.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "tranquilizante",
+          "name": "Tranquilizante",
+          "type": "archer_tranquilizer",
+          "cost": 80,
+          "damage": 664,
+          "enemyAttackDownPercent": 0.3,
+          "enemyAttackDownTurns": 3,
+          "description": "Tranquilizante: consome 80 MP, causa 664 de dano e reduz em 30% o dano do inimigo por 3 turnos.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 80,
+          "id": "tiro_cortante",
+          "name": "Tiro Cortante",
+          "type": "archer_cutting_shot",
+          "cost": 80,
+          "damage": 0,
+          "totalDamage": 1145,
+          "dotDamage": 381,
+          "dotTurns": 3,
+          "description": "Tiro Cortante: consome 80 MP e faz o alvo sofrer 381 de dano por rodada durante 3 rodadas (1143 no total).",
+          "effectiveCost": 80
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "passos_leves",
+          "name": "Passos Leves",
+          "type": "archer_dodge_coin_bonus",
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos."
+        },
+        {
+          "level": 40,
+          "id": "errou",
+          "name": "Errou",
+          "type": "archer_dodge_damage_buff",
+          "description": "Errou: ao esquivar de um ataque, voce recupera 525 de vida."
+        },
+        {
+          "level": 70,
+          "id": "resistencia_florestal",
+          "name": "Resistencia Florestal",
+          "type": "archer_flat_reduction_level",
+          "description": "Resistencia Florestal: reduz 20 de dano por ataque recebido."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 600,
+        "bonusMp": 0,
+        "bonusAttack": 45,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0.1,
+        "skillPower": 0,
+        "flatReduction": 20,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.55,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "Adepto da Natureza",
+      "name": "Adepto da Natureza",
+      "tier30": null,
+      "tier60": null,
+      "tier": 0,
+      "levels": [
+        1,
+        10,
+        20
+      ],
+      "level": 20,
+      "stats": {
+        "maxHp": 271,
+        "maxMp": 262,
+        "attack": 56
+      },
+      "invested": {
+        "vitality": 6,
+        "wisdom": 6,
+        "strength": 7,
+        "hpGain": 171,
+        "mpGain": 162,
+        "attackGain": 44,
+        "skillGain": 44
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 56 e 61."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 30,
+          "damage": 62,
+          "markTurns": 3,
+          "markDamage": 0,
+          "enemyDamageDown": 0,
+          "description": "Semente Viva: consome 30 MP, causa 62 de dano e marca o alvo por 3 turnos.",
+          "effectiveCost": 30
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 42,
+          "damage": 99,
+          "rootChance": 0.45,
+          "armorDownPercent": 0,
+          "description": "Raizes: consome 42 MP, causa 99 de dano e tem 45% de chance de enraizar.",
+          "effectiveCost": 42
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 0,
+        "bonusAttack": 0,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 0,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "druida",
+      "name": "Druida",
+      "tier30": "druida",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 1088,
+        "maxMp": 892,
+        "attack": 166
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 166 e 171."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 45,
+          "damage": 170,
+          "markTurns": 4,
+          "markDamage": 119,
+          "enemyDamageDown": 0,
+          "description": "Semente Viva: consome 45 MP, causa 170 de dano e marca o alvo por 4 turnos. A marca tambem causa 119 por turno.",
+          "effectiveCost": 45
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 60,
+          "damage": 271,
+          "rootChance": 0.6,
+          "armorDownPercent": 0,
+          "description": "Raizes: consome 60 MP, causa 271 de dano e tem 60% de chance de enraizar.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 30,
+          "id": "flor_do_pantano",
+          "name": "Flor do Pantano",
+          "type": "nature_swamp_flower",
+          "cost": 40,
+          "damage": 261,
+          "poisonTurns": 4,
+          "poisonDamage": 59,
+          "description": "Flor do Pantano: consome 40 MP e causa 261 de dano. Se o alvo estiver enraizado, aplica veneno de 59 por 4 turnos.",
+          "effectiveCost": 40
+        },
+        {
+          "level": 50,
+          "id": "colheita",
+          "name": "Colheita",
+          "type": "nature_harvest",
+          "cost": 55,
+          "damage": 229,
+          "description": "Colheita: consome 55 MP, causa 229 de dano e consome efeitos naturais ativos para explodir o dano restante.",
+          "effectiveCost": 55
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+        },
+        {
+          "level": 40,
+          "id": "seiva",
+          "name": "Seiva",
+          "type": "nature_sap",
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 100,
+        "bonusMp": 0,
+        "bonusAttack": 10,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 5,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "druida_sombrio",
+      "name": "Druida Sombrio",
+      "tier30": "druida",
+      "tier60": "druida_sombrio",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3546,
+        "maxMp": 3196,
+        "attack": 439
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 439 e 444."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 70,
+          "damage": 446,
+          "markTurns": 4,
+          "markDamage": 345,
+          "enemyDamageDown": 0,
+          "description": "Semente Viva: consome 70 MP, causa 446 de dano e marca o alvo por 4 turnos. A marca tambem causa 345 por turno.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 90,
+          "damage": 716,
+          "rootChance": 0.6,
+          "armorDownPercent": 0,
+          "description": "Raizes: consome 90 MP, causa 716 de dano e tem 60% de chance de enraizar.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "flor_do_pantano",
+          "name": "Flor do Pantano",
+          "type": "nature_swamp_flower",
+          "cost": 60,
+          "damage": 706,
+          "poisonTurns": 7,
+          "poisonDamage": 172,
+          "description": "Flor do Pantano: consome 60 MP e causa 706 de dano. Se o alvo estiver enraizado, aplica veneno de 172 por 7 turnos.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "colheita",
+          "name": "Colheita",
+          "type": "nature_harvest",
+          "cost": 70,
+          "damage": 556,
+          "description": "Colheita: consome 70 MP, causa 556 de dano e consome efeitos naturais ativos para explodir o dano restante.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 60,
+          "id": "apodrecer",
+          "name": "Apodrecer",
+          "type": "nature_decay",
+          "cost": 90,
+          "damage": 576,
+          "decayTurns": 5,
+          "decayDamage": 300,
+          "description": "Apodrecer: consome 90 MP, causa 576 de dano e aplica apodrecimento por 5 turnos.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 80,
+          "id": "colapso_do_brejo",
+          "name": "Colapso do Brejo",
+          "type": "nature_swamp_collapse",
+          "cost": 2716,
+          "damage": 1567,
+          "description": "Colapso do Brejo: consome 2716 MP e causa 1567 de dano. Se o alvo nao tiver DOT natural, aplica marca, veneno e apodrecimento por 4 turnos.",
+          "effectiveCost": 2716
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+        },
+        {
+          "level": 40,
+          "id": "seiva",
+          "name": "Seiva",
+          "type": "nature_sap",
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem considera apodrecimento."
+        },
+        {
+          "level": 70,
+          "id": "podridao",
+          "name": "Podridao",
+          "type": "nature_dot_mastery",
+          "description": "Podridao: aumenta marca, veneno e apodrecimento em 30%."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 100,
+        "bonusMp": 200,
+        "bonusAttack": 30,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 35,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "avatar_da_natureza",
+      "name": "Avatar da Natureza",
+      "tier30": "druida",
+      "tier60": "avatar_da_natureza",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 4359,
+        "maxMp": 2996,
+        "attack": 439
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 439 e 444."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 70,
+          "damage": 442,
+          "markTurns": 4,
+          "markDamage": 333,
+          "enemyDamageDown": 0,
+          "description": "Semente Viva: consome 70 MP, causa 442 de dano e marca o alvo por 4 turnos. A marca tambem causa 333 por turno.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 90,
+          "damage": 704,
+          "rootChance": 0.6,
+          "armorDownPercent": 0,
+          "description": "Raizes: consome 90 MP, causa 704 de dano e tem 60% de chance de enraizar.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "flor_do_pantano",
+          "name": "Flor do Pantano",
+          "type": "nature_swamp_flower",
+          "cost": 60,
+          "damage": 913,
+          "poisonTurns": 3,
+          "poisonDamage": 166,
+          "description": "Flor do Pantano: consome 60 MP e causa 913 de dano. Se o alvo estiver enraizado, aplica veneno de 166 por 3 turnos.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "colheita",
+          "name": "Colheita",
+          "type": "nature_harvest",
+          "cost": 70,
+          "damage": 556,
+          "description": "Colheita: consome 70 MP, causa 556 de dano e consome efeitos naturais ativos para explodir o dano restante.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 60,
+          "id": "forma_verdadeira",
+          "name": "Forma Verdadeira",
+          "type": "nature_true_form",
+          "cost": 2996,
+          "turns": 5,
+          "attackPercent": 0.26,
+          "damageReductionPercent": 0.18,
+          "description": "Forma Verdadeira: consome toda a mana maxima, aumenta ataque em 26%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.",
+          "effectiveCost": 2996
+        },
+        {
+          "level": 80,
+          "id": "esmagar_invasor",
+          "name": "Esmagar Invasor",
+          "type": "nature_crush_invader",
+          "cost": 380,
+          "damage": 878,
+          "description": "Esmagar Invasor: consome 380 MP e causa 878 de dano, com bonus contra alvo enraizado e na Forma Verdadeira.",
+          "effectiveCost": 380
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+        },
+        {
+          "level": 40,
+          "id": "seiva",
+          "name": "Seiva",
+          "type": "nature_sap",
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem aumenta sua vida maxima em 12%."
+        },
+        {
+          "level": 70,
+          "id": "casca_ancestral",
+          "name": "Casca Ancestral",
+          "type": "nature_ancestral_bark",
+          "description": "Casca Ancestral: reduz 54 de dano recebido por ataque."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 913,
+        "bonusMp": 0,
+        "bonusAttack": 30,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 20,
+        "flatReduction": 54,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "espirito_da_floresta",
+      "name": "Espirito da Floresta",
+      "tier30": "espirito_da_floresta",
+      "tier60": null,
+      "tier": 1,
+      "levels": [
+        30,
+        40,
+        50
+      ],
+      "level": 50,
+      "stats": {
+        "maxHp": 988,
+        "maxMp": 992,
+        "attack": 161
+      },
+      "invested": {
+        "vitality": 16,
+        "wisdom": 16,
+        "strength": 17,
+        "hpGain": 888,
+        "mpGain": 792,
+        "attackGain": 144,
+        "skillGain": 144
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 161 e 166."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 45,
+          "damage": 184,
+          "markTurns": 3,
+          "markDamage": 0,
+          "enemyDamageDown": 0.24,
+          "description": "Semente Viva: consome 45 MP, causa 184 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
+          "effectiveCost": 45
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 60,
+          "damage": 313,
+          "rootChance": 0.45,
+          "armorDownPercent": 0.5,
+          "description": "Raizes: consome 60 MP, causa 313 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 30,
+          "id": "encanto_da_brisa",
+          "name": "Encanto da Brisa",
+          "type": "nature_breeze_charm",
+          "cost": 45,
+          "damage": 247,
+          "skipChance": 0.2,
+          "rootChance": 0.2,
+          "shieldFromDamagePercent": 0,
+          "description": "Encanto da Brisa: consome 45 MP, causa 247 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
+          "effectiveCost": 45
+        },
+        {
+          "level": 50,
+          "id": "cancao_ancestral",
+          "name": "Cancao Ancestral",
+          "type": "nature_ancestral_song",
+          "cost": 60,
+          "heal": 289,
+          "shield": 0,
+          "enemyDamageDownPercent": 0,
+          "description": "Cancao Ancestral: consome 60 MP e cura 289.",
+          "effectiveCost": 60
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+        },
+        {
+          "level": 40,
+          "id": "aura_feerica",
+          "name": "Aura Feerica",
+          "type": "nature_fairy_aura",
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 100,
+        "bonusAttack": 5,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 63,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "fada_monarca",
+      "name": "Fada Monarca",
+      "tier30": "espirito_da_floresta",
+      "tier60": "fada_monarca",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3446,
+        "maxMp": 3496,
+        "attack": 414
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 414 e 419."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 70,
+          "damage": 470,
+          "markTurns": 3,
+          "markDamage": 0,
+          "enemyDamageDown": 0.24,
+          "description": "Semente Viva: consome 70 MP, causa 470 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 90,
+          "damage": 807,
+          "rootChance": 0.45,
+          "armorDownPercent": 0.5,
+          "description": "Raizes: consome 90 MP, causa 807 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "encanto_da_brisa",
+          "name": "Encanto da Brisa",
+          "type": "nature_breeze_charm",
+          "cost": 60,
+          "damage": 648,
+          "skipChance": 0.3,
+          "rootChance": 0.3,
+          "shieldFromDamagePercent": 0,
+          "description": "Encanto da Brisa: consome 60 MP, causa 648 de dano e tem 30% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "cancao_ancestral",
+          "name": "Cancao Ancestral",
+          "type": "nature_ancestral_song",
+          "cost": 80,
+          "heal": 799,
+          "shield": 0,
+          "enemyDamageDownPercent": 0.12,
+          "description": "Cancao Ancestral: consome 80 MP e cura 799.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "decreto_da_rainha",
+          "name": "Decreto da Rainha",
+          "type": "nature_queen_decree",
+          "cost": 90,
+          "damage": 1142,
+          "description": "Decreto da Rainha: consome 90 MP e causa 1142 de dano. Com 3 Cadencias, o fator sobe para 2.9.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 80,
+          "id": "coroar",
+          "name": "Coroar",
+          "type": "nature_crown",
+          "cost": 500,
+          "turns": 5,
+          "skillPercent": 0.3,
+          "healPercent": 0.2,
+          "chanceBonus": 0.2,
+          "description": "Coroar: consome 500 MP e fica coroada por 5 turnos, com +30% poder de habilidade, +20% curas e +20% nas chances de controle.",
+          "effectiveCost": 500
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+        },
+        {
+          "level": 40,
+          "id": "aura_feerica",
+          "name": "Aura Feerica",
+          "type": "nature_fairy_aura",
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 6% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 10%."
+        },
+        {
+          "level": 70,
+          "id": "asas_da_realeza",
+          "name": "Asas da Realeza",
+          "type": "nature_royal_wings",
+          "description": "Asas da Realeza: concede 20% de chance de esquiva."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 0,
+        "bonusMp": 500,
+        "bonusAttack": 5,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 174,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0.2,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    },
+    {
+      "className": "Adepto da Natureza",
+      "id": "protetor_da_floresta",
+      "name": "Protetor da Floresta",
+      "tier30": "espirito_da_floresta",
+      "tier60": "protetor_da_floresta",
+      "tier": 2,
+      "levels": [
+        60,
+        70,
+        80,
+        100
+      ],
+      "level": 100,
+      "stats": {
+        "maxHp": 3846,
+        "maxMp": 3096,
+        "attack": 429
+      },
+      "invested": {
+        "vitality": 33,
+        "wisdom": 33,
+        "strength": 33,
+        "hpGain": 3346,
+        "mpGain": 2896,
+        "attackGain": 397,
+        "skillGain": 397
+      },
+      "basic": {
+        "name": "Atacar",
+        "description": "Ataque basico. Dano entre 429 e 434."
+      },
+      "active": [
+        {
+          "level": 1,
+          "id": "semente_viva",
+          "name": "Semente Viva",
+          "type": "nature_living_seed",
+          "cost": 70,
+          "damage": 478,
+          "markTurns": 3,
+          "markDamage": 0,
+          "enemyDamageDown": 0.24,
+          "description": "Semente Viva: consome 70 MP, causa 478 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
+          "effectiveCost": 70
+        },
+        {
+          "level": 20,
+          "id": "raizes",
+          "name": "Raizes",
+          "type": "nature_roots",
+          "cost": 90,
+          "damage": 811,
+          "rootChance": 0.45,
+          "armorDownPercent": 0.5,
+          "description": "Raizes: consome 90 MP, causa 811 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
+          "effectiveCost": 90
+        },
+        {
+          "level": 30,
+          "id": "encanto_da_brisa",
+          "name": "Encanto da Brisa",
+          "type": "nature_breeze_charm",
+          "cost": 60,
+          "damage": 636,
+          "skipChance": 0.2,
+          "rootChance": 0.2,
+          "shieldFromDamagePercent": 1,
+          "description": "Encanto da Brisa: consome 60 MP, causa 636 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
+          "effectiveCost": 60
+        },
+        {
+          "level": 50,
+          "id": "cancao_ancestral",
+          "name": "Cancao Ancestral",
+          "type": "nature_ancestral_song",
+          "cost": 80,
+          "heal": 784,
+          "shield": 896,
+          "enemyDamageDownPercent": 0,
+          "description": "Cancao Ancestral: consome 80 MP e cura 784. Tambem concede 896 de escudo.",
+          "effectiveCost": 80
+        },
+        {
+          "level": 60,
+          "id": "casulo_de_vinhas",
+          "name": "Casulo de Vinhas",
+          "type": "nature_vine_cocoon",
+          "cost": 120,
+          "shield": 1384,
+          "description": "Casulo de Vinhas: consome 120 MP e concede 1384 de escudo.",
+          "effectiveCost": 120
+        },
+        {
+          "level": 80,
+          "id": "jogar_espinhos",
+          "name": "Jogar Espinhos",
+          "type": "nature_throw_thorns",
+          "cost": 400,
+          "hpCostPercent": 0.2,
+          "damage": 0,
+          "consumeShield": true,
+          "ignoreArmor": true,
+          "ignoreShield": true,
+          "description": "Jogar Espinhos: consome 400 MP, 20% da vida maxima e todo seu escudo atual para causar 0 de dano ignorando armadura e escudo.",
+          "effectiveCost": 400
+        }
+      ],
+      "passive": [
+        {
+          "level": 10,
+          "id": "ciclo_natural",
+          "name": "Ciclo Natural",
+          "type": "nature_cycle",
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+        },
+        {
+          "level": 40,
+          "id": "aura_feerica",
+          "name": "Aura Feerica",
+          "type": "nature_fairy_aura",
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%."
+        },
+        {
+          "level": 70,
+          "id": "juramento_do_bosque",
+          "name": "Juramento do Bosque",
+          "type": "nature_forest_oath",
+          "description": "Juramento do Bosque: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo."
+        }
+      ],
+      "modifiers": {
+        "bonusHp": 400,
+        "bonusMp": 100,
+        "bonusAttack": 20,
+        "manaRegen": 0,
+        "manaRegenPercent": 0,
+        "manaRegenPercentSet": null,
+        "damageReduction": 0,
+        "coinBonus": 0,
+        "skillPower": 163,
+        "flatReduction": 0,
+        "reflectPercent": 0,
+        "turnHealPercent": 0,
+        "skillCostIncrease": 0,
+        "totalDamageFlat": 0,
+        "totalDamagePercent": 0,
+        "enemyMissChance": 0,
+        "enemySkipChance": 0,
+        "xpBonus": 0,
+        "burnDamageReductionPercent": 0,
+        "bonusHpPercentAccessory": 0,
+        "bonusMpPercentAccessory": 0,
+        "fatalSaveHealPercent": 0,
+        "critChanceBonus": 0,
+        "preciousMana": false,
+        "equipmentRating": 0,
+        "manaToLifePercent": 0
+      }
+    }
+  ]
+}

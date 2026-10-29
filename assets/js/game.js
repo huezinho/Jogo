@@ -4,6 +4,8 @@ const ACTIVE_CHARACTER_KEY = "rpg_turnos_active_character_v1";
 const CHARACTER_SELECT_EXIT_KEY = "rpg_turnos_character_select_exit_v1";
 const UI_SETTINGS_KEY = "rpg_turnos_ui_settings_v1";
 const MAX_LEVEL = 100;
+const SAVE_SCHEMA_VERSION = 3;
+const DEV_MODE = new URLSearchParams(location.search).get("dev") === "1";
 const MAX_CHARACTER_SAVES = 6;
 const START_CLASS_ORDER = ["Guerreiro", "Arqueiro", "Mago", "Adepto da Natureza"];
 const START_CLASS_COPY = {
@@ -67,12 +69,13 @@ const villageNpcProfiles = {
   inn: { label: "Pousadeira", className: "npc-inn", asset: "innkeeper.png" },
   alchemist: { label: "Alquimista", className: "npc-alchemist", asset: "alchemist.png" },
   forge: { label: "Ferreiro", className: "npc-forge", asset: "blacksmith.png" },
-  artisan: { label: "Artesao", className: "npc-artisan", asset: "artisan.png" }
+  artisan: { label: "Artesao", className: "npc-artisan", asset: "artisan.png" },
+  mercenary: { label: "Mercenario", className: "npc-mercenary", asset: "artisan.png" }
 };
 const VILLAGE_NPC_ASSET_VERSION = "village-npc-v3-20260506";
 
 function setVillageTab(tab){
-  if(!["inn", "alchemist", "forge", "artisan"].includes(tab)){ return; }
+  if(!["inn", "alchemist", "forge", "artisan", "mercenary"].includes(tab)){ return; }
   const previousTab = villageTab;
   villageTab = tab;
   if(previousTab !== tab){
@@ -95,7 +98,7 @@ function consumeVillageNpcEntry(tab = villageTab){
 }
 
 function setArtisanRegion(regionName){
-  if(!regions[regionName]){ return; }
+  if(!regions[regionName] || !isRegionUnlockedForBattle(regionName)){ return; }
   artisanRegionFilter = regionName;
   if(currentMode === "village" && villageTab === "artisan"){
     updateUI();
@@ -159,7 +162,9 @@ function createDefaultPlayerEffects(){
     natureCrownedTurns: 0,
     natureTrueFormTurns: 0,
     natureShieldBonusTurns: 0,
-    natureShieldBonusPercent: 0
+    natureShieldBonusPercent: 0,
+    controlImmuneTurns: 0,
+    equipmentRuntime: {}
   };
 }
 
@@ -209,7 +214,7 @@ function escapeHtml(value){
 }
 
 function escapeJsString(value){
-  return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "");
+  return escapeHtml(String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, ""));
 }
 
 function createCharacterId(){
@@ -221,7 +226,7 @@ function createCharacterId(){
 
 function readCharacterSavesRaw(){
   try{
-    const parsed = JSON.parse(localStorage.getItem(CHARACTER_SAVES_KEY) || "[]");
+    const parsed = JSON.parse(GameStorage.getItem(CHARACTER_SAVES_KEY) || "[]");
     return Array.isArray(parsed) ? parsed.filter(entry => entry?.player?.class) : [];
   }catch{
     return [];
@@ -229,12 +234,34 @@ function readCharacterSavesRaw(){
 }
 
 function writeCharacterSaves(saves){
-  localStorage.setItem(CHARACTER_SAVES_KEY, JSON.stringify(saves));
+  return GameStorage.setItem(CHARACTER_SAVES_KEY, JSON.stringify(saves));
 }
 
 function normalizeSavedCharacterState(state){
-  if(!state?.player?.class){ return null; }
-  const normalized = { ...state };
+  if(!state?.player || typeof state.player !== "object" || Array.isArray(state.player) || !Object.prototype.hasOwnProperty.call(classes, state.player.class)){ return null; }
+  const normalized = JSON.parse(JSON.stringify(state));
+  const record = value => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const base = classes[normalized.player.class];
+  if(!base){ return null; }
+  normalized.player.stats = record(normalized.player.stats);
+  for(const key of ["migrations", "invested", "regionKills", "regionBossKills"]){ normalized.player.stats[key] = record(normalized.player.stats[key]); }
+  normalized.player.equipment = record(normalized.player.equipment);
+  normalized.playerEffects = record(normalized.playerEffects);
+  if(!normalized.player.baseStats || typeof normalized.player.baseStats !== "object" || Array.isArray(normalized.player.baseStats)){ normalized.player.baseStats = {hp:base.hp,mp:base.mp,attack:base.attack}; }
+  for(const [key,fallback] of Object.entries({hp:base.hp,mp:base.mp,attack:base.attack})){ if(!Number.isFinite(normalized.player.baseStats[key]) || normalized.player.baseStats[key] < 0){ normalized.player.baseStats[key] = fallback; } }
+  normalized.player.subclassChoices = record(normalized.player.subclassChoices);
+  normalized.player.level = Math.min(MAX_LEVEL, Math.max(1, Math.floor(Number(normalized.player.level) || 1)));
+  for(const [key, value] of Object.entries({maxHp:base.hp,hp:base.hp,maxMp:base.mp,mp:base.mp,attack:base.attack,xp:0,coins:0})){
+    if(!Number.isFinite(normalized.player[key]) || normalized.player[key] < 0){ normalized.player[key] = value; }
+  }
+  normalized.pendingLevelUps = Math.max(0, Math.floor(Number(normalized.pendingLevelUps) || 0));
+  normalized.levelUpPoints = Math.max(0, Math.floor(Number(normalized.levelUpPoints) || 0));
+  normalized.allocation = getSavedAllocation(record(normalized.allocation));
+  normalized.currentRegion = regions[normalized.currentRegion] ? normalized.currentRegion : "Floresta";
+  const savedEnemy = record(normalized.enemy);
+  const savedEnemyName = typeof savedEnemy.baseName === "string" ? savedEnemy.baseName : typeof savedEnemy.name === "string" ? getBaseEnemyName(savedEnemy.name) : "";
+  normalized.enemy = savedEnemyName && getEnemyTemplateByName(savedEnemyName) ? savedEnemy : null;
+  if(!Array.isArray(normalized.player.inventory)){ normalized.player.inventory = []; }
   normalized.characterId = normalized.characterId || normalized.player.characterId || createCharacterId();
   normalized.player.characterId = normalized.characterId;
   normalized.player.characterName = normalized.player.characterName || normalized.characterName || normalized.player.class;
@@ -245,7 +272,7 @@ function normalizeSavedCharacterState(state){
 }
 
 function migrateLegacySaveIfNeeded(){
-  const rawLegacy = localStorage.getItem(SAVE_KEY);
+  const rawLegacy = GameStorage.getItem(SAVE_KEY);
   if(!rawLegacy){ return; }
   let legacyState = null;
   try{
@@ -259,7 +286,7 @@ function migrateLegacySaveIfNeeded(){
     legacyState = null;
   }
   if(!legacyState){ return; }
-  localStorage.setItem(SAVE_KEY, JSON.stringify(legacyState));
+  GameStorage.setItem(SAVE_KEY, JSON.stringify(legacyState));
   const saves = readCharacterSavesRaw();
   if(!saves.some(save => save.characterId === legacyState.characterId)){
     saves.push(legacyState);
@@ -277,7 +304,7 @@ function getCharacterSaves(){
 
 function getSavedCharacterState(characterId = ""){
   const saves = getCharacterSaves();
-  const activeId = characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || saves[0]?.characterId || "";
+  const activeId = characterId || GameStorage.getItem(ACTIVE_CHARACTER_KEY) || saves[0]?.characterId || "";
   return saves.find(save => save.characterId === activeId) || saves[0] || null;
 }
 
@@ -289,7 +316,7 @@ function upsertCharacterSave(state, options = {}){
   saves.push(normalized);
   writeCharacterSaves(saves);
   if(setActive){
-    localStorage.setItem(ACTIVE_CHARACTER_KEY, normalized.characterId);
+    GameStorage.setItem(ACTIVE_CHARACTER_KEY, normalized.characterId);
   }
 }
 
@@ -299,7 +326,7 @@ function getNextCharacterName(className){
 
 function loadUiSettings(){
   try{
-    const saved = JSON.parse(localStorage.getItem(UI_SETTINGS_KEY) || "{}");
+    const saved = JSON.parse(GameStorage.getItem(UI_SETTINGS_KEY) || "{}");
     return {
       enemyBarSpeed: saved.enemyBarSpeed || "rapida",
       disableRespawnTimer: !!saved.disableRespawnTimer,
@@ -314,7 +341,7 @@ function loadUiSettings(){
 }
 
 function saveUiSettings(){
-  localStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(uiSettings));
+  GameStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(uiSettings));
   renderSettingsPanel();
 }
 
@@ -332,7 +359,7 @@ function setDevUnlockBestiary(enabled){
 }
 
 function isBestiaryDevUnlocked(){
-  return !!uiSettings.devUnlockBestiary;
+  return DEV_MODE && !!uiSettings.devUnlockBestiary;
 }
 
 function exitToCharacterSelect(){
@@ -354,7 +381,7 @@ function exitToCharacterSelect(){
   isProcessingTurn = false;
   isSettingsOpen = false;
   try{
-    localStorage.removeItem(ACTIVE_CHARACTER_KEY);
+    GameStorage.removeItem(ACTIVE_CHARACTER_KEY);
     sessionStorage.setItem(CHARACTER_SELECT_EXIT_KEY, "1");
     sessionStorage.removeItem(PENDING_PAGE_MODE_KEY);
   }catch{}
@@ -587,14 +614,14 @@ function renderSettingsPanel(){
       ${options.map(option => `<button class="${uiSettings.enemyBarSpeed === option.id ? "active" : ""}" onclick="setEnemyBarSpeed('${option.id}')">${option.label}</button>`).join("")}
     </div>
     <span class="settings-note">Para Guerreiro e Arqueiro, as opcoes continuam mais rapidas que para o Mago para preservar o impacto do Missel Magico.</span>
-    <div style="margin-top:14px;">
+    ${DEV_MODE ? `<div style="margin-top:14px;">
       <span class="lock-note">Testes de renascimento</span>
       <div class="settings-options">
         <button class="${uiSettings.disableRespawnTimer ? "active" : ""}" onclick="setDisableRespawnTimer(true)">Sem espera</button>
         <button class="${!uiSettings.disableRespawnTimer ? "active" : ""}" onclick="setDisableRespawnTimer(false)">Normal</button>
       </div>
       <span class="settings-note">Opcao de teste para renascer sem tempo de espera.</span>
-    </div>
+    </div>` : ""}
     <div style="margin-top:14px;">
       <span class="lock-note">Volume da musica</span>
       <div class="settings-options">
@@ -604,14 +631,15 @@ function renderSettingsPanel(){
       </div>
       <span class="settings-note">Volume atual: ${Math.round((uiSettings.musicVolume ?? 0.5) * 100)}%${uiSettings.musicMuted ? " | Mutado" : ""}</span>
     </div>
-    <div style="margin-top:14px;">
+    ${DEV_MODE ? `<div style="margin-top:14px;">
       <span class="lock-note">Dev</span>
       <div class="settings-options">
         <button class="${uiSettings.devUnlockBestiary ? "active" : ""}" onclick="setDevUnlockBestiary(true)">Bestiario livre</button>
         <button class="${!uiSettings.devUnlockBestiary ? "active" : ""}" onclick="setDevUnlockBestiary(false)">Normal</button>
       </div>
       <span class="settings-note">Libera todas as regioes apenas no bestiario para analise, sem liberar chefes na campanha.</span>
-    </div>`;
+    </div>` : ""}
+    <div class="settings-options"><button onclick="exportCharacterSave()">Exportar personagem</button><button onclick="importCharacterSave()">Importar personagem</button><button onclick="restoreSaveBackup()">Restaurar backup</button></div>`;
 }
 
 
@@ -1026,7 +1054,7 @@ function selectClass(name){
   isProcessingTurn = false;
   isLogHidden = false;
   displayState = { playerHp: player.hp, playerMp: player.mp, playerXp: player.xp, enemyHp: null };
-  localStorage.setItem(ACTIVE_CHARACTER_KEY, characterId);
+  GameStorage.setItem(ACTIVE_CHARACTER_KEY, characterId);
   document.getElementById("classSelect").style.display = "none";
   document.getElementById("game").style.display = "block";
   if(IS_DUNGEON_PAGE){
@@ -1455,7 +1483,7 @@ function getEnemyTemplateByName(enemyName){
 }
 
 function getRegionSetLabel(regionName){
-  return `Set ${regionArticleMap[regionName] || `de ${regionName}`}`;
+  return EquipmentData.sets[regionName]?.name || regionName;
 }
 
 function formatStatBonusList(source){
@@ -1474,6 +1502,9 @@ function formatStatBonusList(source){
   if(source?.bonusMpPercent){ parts.push(`+${Math.floor(source.bonusMpPercent * 100)}% mana maxima`); }
   if(source?.totalDamagePercent){ parts.push(`+${Math.floor(source.totalDamagePercent * 100)}% dano total`); }
   if(source?.fatalSaveHealPercent){ parts.push(`1 salvamento fatal por combate e cura de ${Math.floor(source.fatalSaveHealPercent * 100)}% da vida`); }
+  if(source?.equipmentRating){ parts.push(`+${source.equipmentRating} resistencia de equipamento`); }
+  if(source?.healPowerPercent){ parts.push(`+${Math.round(source.healPowerPercent*100)}% potencia de cura`); }
+  if(source?.shieldPowerPercent){ parts.push(`+${Math.round(source.shieldPowerPercent*100)}% potencia de escudo`); }
   if(source?.critChanceBonus){ parts.push(`+${Math.floor(source.critChanceBonus * 100)}% chance de critico`); }
   return parts.join(", ");
 }
@@ -1482,34 +1513,6 @@ function getRegionFromEnemy(enemyName){
   return getEnemyTemplateByName(enemyName)?.region || null;
 }
 
-function getSetBonusValues(regionName){
-  return { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
-}
-
-function getRegionEquipmentBaseStats(regionName, slot){
-  const profile = regionEquipmentBaseProfiles[regionName] || regionEquipmentBaseProfiles.Floresta;
-  if(slot === "accessory"){
-    return { ...(getBossAccessoryTemplate(regionName)?.baseStats || {}) };
-  }
-  return slot === "weapon" ? { ...(profile.weapon || {}) } : { ...(profile.armor || {}) };
-}
-
-function getRegionSetTemplate(regionName, slot, className = player?.class || "Guerreiro"){
-  if(!regionName || !slot){ return null; }
-  const itemName = slot === "weapon"
-    ? `${regionWeaponPieceNames[className] || "Arma"} ${regionArticleMap[regionName] || `de ${regionName}`}`
-    : `${regionArmorPieceNames[slot] || slotLabels[slot] || "Peca"} ${regionArticleMap[regionName] || `de ${regionName}`}`;
-  return {
-    id: `${slugify(regionName)}_${slot}${slot === "weapon" ? `_${slugify(className)}` : ""}`,
-    name: itemName,
-    slot,
-    classRestriction: slot === "weapon" ? className : null,
-    regionName,
-    setId: `${slugify(regionName)}_set`,
-    setName: getRegionSetLabel(regionName),
-    baseStats: getRegionEquipmentBaseStats(regionName, slot)
-  };
-}
 
 function getBossAccessoryTemplate(regionName){
   const accessory = bossAccessoryProfiles[regionName];
@@ -1522,92 +1525,18 @@ function getBossAccessoryTemplate(regionName){
     regionName,
     setId: null,
     setName: null,
-    baseStats: accessory.baseStats
+    baseStats: EquipmentSystem.createBossAccessory(regionName, "comum")?.stats || {}
   };
 }
 
-function getEnemyMaterialTemplate(enemyName, regionName){
-  const material = enemyMaterialDrops?.[enemyName];
-  return {
-    id: material?.id || `parte_${slugify(enemyName)}`,
-    name: material?.name || `Parte de ${enemyName}`,
-    type: "material",
-    enemyName,
-    regionName,
-    description: material?.description || `Material obtido de ${enemyName}. O artesao do vilarejo usa essas partes para montar pecas do ${getRegionSetLabel(regionName)}.`
-  };
-}
+function getEnemyMaterialTemplate(enemyName, regionName){ return EquipmentSystem.getMaterials(enemyName, regionName)[0] || null; }
 
 function getInventoryCountById(itemId){
   return (player.inventory || []).reduce((total, item) => total + (item.id === itemId ? (item.qty || 1) : 0), 0);
 }
 
-function canCraftRecipe(recipe){
-  if(!recipe){ return false; }
-  if((player.coins || 0) < (recipe.cost || 0)){ return false; }
-  return Object.entries(recipe.requirements || {}).every(([itemId, qty]) => getInventoryCountById(itemId) >= qty);
-}
 
-function consumeInventoryById(itemId, quantity){
-  let remaining = quantity;
-  while(remaining > 0){
-    const itemIndex = player.inventory.findIndex(entry => entry.id === itemId);
-    if(itemIndex < 0){
-      break;
-    }
-    const item = player.inventory[itemIndex];
-    const available = item.qty || 1;
-    if(available > remaining){
-      item.qty = available - remaining;
-      remaining = 0;
-    }else{
-      remaining -= available;
-      player.inventory.splice(itemIndex, 1);
-    }
-  }
-  return remaining <= 0;
-}
-
-function getEquippedSetCount(setId){
-  if(!player?.equipment || !setId){ return 0; }
-  return equipmentSlots.reduce((total, slot) => total + (player.equipment?.[slot]?.setId === setId ? 1 : 0), 0);
-}
-
-function getActiveSetBonuses(){
-  const total = { bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0 };
-  const activeSets = [];
-  if(!player?.equipment){ return { bonuses: total, activeSets }; }
-
-  const requiredSetSlots = ["head", "chest", "weapon", "legs", "feet"];
-  const sets = {};
-  for(const slot of requiredSetSlots){
-    const item = normalizeEquipmentMetadata(player.equipment?.[slot]);
-    if(!item?.setId){ continue; }
-    if(!sets[item.setId]){
-      sets[item.setId] = { slots: new Set(), item };
-    }
-    sets[item.setId].slots.add(slot);
-  }
-
-  for(const entry of Object.values(sets)){
-    if(entry.slots.size !== requiredSetSlots.length){ continue; }
-    const item = entry.item;
-    const setBonus = getSetBonusValues(item.regionName);
-    total.bonusHp += setBonus.bonusHp || 0;
-    total.bonusMp += setBonus.bonusMp || 0;
-    total.bonusAttack += setBonus.bonusAttack || 0;
-    total.skillPower += setBonus.skillPower || 0;
-    total.bonusHpPercent += setBonus.bonusHpPercent || 0;
-    total.bonusMpPercent += setBonus.bonusMpPercent || 0;
-    total.totalDamagePercent += setBonus.totalDamagePercent || 0;
-    activeSets.push({
-      setName: item.setName || getRegionSetLabel(item.regionName || "desconhecida"),
-      text: formatStatBonusList(setBonus)
-    });
-  }
-
-  return { bonuses: total, activeSets };
-}
+function getActiveSetBonuses(){ return EquipmentSystem.getSetBonuses(player); }
 
 function getRegionAverageLevel(region){
   const regionData = regions[region];
@@ -1661,7 +1590,9 @@ function normalizePlayerState(){
   function normalizeInventoryItem(item, index){
     const normalized = {
       ...item,
-      uid: item.uid || `${item.id || "item"}_${Date.now()}_${index}`
+      uid: String(item.uid || `${item.id || "item"}_${Date.now()}_${index}`),
+      name: String(item.name || "Item"),
+      qty: Number.isFinite(Number(item.qty)) ? Math.max(1, Math.floor(Number(item.qty))) : 1
     };
     if(item.type === "consumable" && consumableCatalog[item.id]){
       normalized.name = consumableCatalog[item.id].name;
@@ -1669,16 +1600,14 @@ function normalizePlayerState(){
     }
     return normalizeEquipmentMetadata(normalized);
   }
-  player.inventory = (Array.isArray(player.inventory) ? player.inventory : []).map((item, index) => ({
-    ...normalizeInventoryItem(item, index)
-  })).filter(item => item.type !== "equipment" || item.slot === "accessory");
+  player.inventory = (Array.isArray(player.inventory) ? player.inventory : []).filter(item => item && typeof item === "object" && typeof item.type === "string").map(normalizeInventoryItem).filter(item => item && typeof item === "object" && typeof item.type === "string");
   const oldEquipment = player.equipment || {};
   player.equipment = {
-    head: null,
-    chest: null,
-    weapon: null,
-    legs: null,
-    feet: null,
+    head: normalizeEquipmentMetadata(oldEquipment.head || null),
+    chest: normalizeEquipmentMetadata(oldEquipment.chest || null),
+    weapon: normalizeEquipmentMetadata(oldEquipment.weapon || null),
+    legs: normalizeEquipmentMetadata(oldEquipment.legs || null),
+    feet: normalizeEquipmentMetadata(oldEquipment.feet || null),
     accessory: normalizeEquipmentMetadata(oldEquipment.accessory || null)
   };
   player.stats = player.stats || {
@@ -1704,32 +1633,17 @@ function normalizePlayerState(){
   player.stats.itemsSold = player.stats.itemsSold || 0;
   player.stats.arenaDuels = player.stats.arenaDuels || 0;
   player.stats.arenaWins = player.stats.arenaWins || 0;
+  for(const key of ["enemiesDefeated","bossesDefeated","coinsEarned","deaths","dungeonClears","dungeonBestStep","craftedEquipment","itemsSold","arenaDuels","arenaWins"]){ player.stats[key] = Math.max(0, Number(player.stats[key]) || 0); }
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
-  if(!player.stats.migrations.baseHpRebalance_v1){
-    const oldBaseHpByClass = { Guerreiro: 140, Arqueiro: 120, Mago: 100 };
-    const oldBaseHp = oldBaseHpByClass[player.class];
-    if(oldBaseHp && player.baseStats.hp === oldBaseHp){
-      const hpDelta = oldBaseHp - classDefaults.hp;
-      player.baseStats.hp = classDefaults.hp;
-      player.maxHp = Math.max(classDefaults.hp, (player.maxHp || classDefaults.hp) - hpDelta);
-      player.hp = Math.min(player.maxHp, Math.max(1, (player.hp || player.maxHp) - hpDelta));
-    }
-    player.stats.migrations.baseHpRebalance_v1 = true;
-  }
   player.stats.invested = createDefaultInvestedStats(player.stats.invested);
-  const legacySubclass = player.subclass?.id || player.subclass || null;
-  player.subclass = null;
-  const subclassState = getPlayerSubclassState(player);
-  if(legacySubclass && !subclassState.tier30){
-    if(getTier30ChoiceDef(player.class, legacySubclass)){
-      subclassState.tier30 = legacySubclass;
-    }
-  }
+  delete player.subclass;
+  getPlayerSubclassState(player);
   syncInvestedStatsFromCurrentTotals();
-  player.activeSkills = getClassTrees().activeSkills;
-  player.passiveSkills = getClassTrees().passiveSkills;
+  delete player.activeSkills;
+  delete player.passiveSkills;
   playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.normalizePlayer(player); }
 }
 
 function getAttributePointGain(attribute, targetLevel = player?.level || 1){
@@ -1836,6 +1750,7 @@ function getPassiveModifiers(){
     fatalSaveHealPercent: 0,
     critChanceBonus: 0,
     preciousMana: false,
+    equipmentRating: 0,
     manaToLifePercent: 0
   };
   const pendingGains = getPendingAllocationGains();
@@ -1938,6 +1853,7 @@ function getPassiveModifiers(){
     base.turnHealPercent += item.turnHealPercent || 0;
     base.burnDamageReductionPercent += item.burnDamageReductionPercent || 0;
     base.flatReduction += item.flatReduction || 0;
+    base.equipmentRating += item.equipmentRating || 0;
     base.bonusMpPercentAccessory += item.bonusMpPercent || 0;
     base.bonusHpPercentAccessory += item.bonusHpPercent || 0;
     base.totalDamagePercent += item.totalDamagePercent || 0;
@@ -1950,6 +1866,8 @@ function getPassiveModifiers(){
   base.bonusAttack += activeSetBonuses.bonusAttack || 0;
   base.skillPower += activeSetBonuses.skillPower || 0;
   base.totalDamagePercent += activeSetBonuses.totalDamagePercent || 0;
+  base.critChanceBonus += activeSetBonuses.critChanceBonus || 0;
+  base.equipmentRating = Math.floor(base.equipmentRating * (1 + (activeSetBonuses.equipmentRatingPercent || 0)));
   if(activeSetBonuses.bonusMpPercent > 0){
     base.bonusMp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * activeSetBonuses.bonusMpPercent);
   }
@@ -1990,6 +1908,8 @@ function getPassiveModifiers(){
   if(base.bonusHpPercentAccessory > 0){
     base.bonusHp += Math.floor((player.maxHp + base.bonusHp + pendingGains.hpGain) * base.bonusHpPercentAccessory);
   }
+  base.bonusAttack += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * (activeSetBonuses.bonusAttackPercent || 0));
+  base.skillPower += Math.floor((base.skillPower + getAttackSkillBonus()) * (activeSetBonuses.skillPowerPercent || 0));
   return base;
 }
 
@@ -2060,7 +1980,7 @@ function renderCampContent(campEntries, previewStats, investedSummary, classBase
 }
 
 function grantNextLevelForTest(){
-  if(!player){
+  if(!DEV_MODE || !player){
     return;
   }
   if(player.level >= MAX_LEVEL){
@@ -2137,9 +2057,6 @@ function getArcherCritChanceBonus(){
   if(subclassState.tier30 === "atirador" && player.level >= 30){
     chance += 0.05;
   }
-  if(subclassState.tier60 === "sniper" && player.level >= 60 && player.level >= 40){
-    chance += 0.15;
-  }
   if(subclassState.tier60 === "sniper" && player.level >= 60){
     chance += 0.15;
   }
@@ -2152,7 +2069,7 @@ function getArcherCritChanceBonus(){
 function getArcherCriticalProfile(baseChance = 0){
   const totalChance = Math.max(0, baseChance + (player.class === "Arqueiro" ? getArcherCritChanceBonus() : 0));
   const critChance = Math.min(1, totalChance);
-  const critDamageBonus = 1 + Math.max(0, totalChance - 1);
+  const critDamageBonus = 1 + Math.max(0, totalChance - 1) + (getActiveSetBonuses().bonuses.critDamageBonus || 0);
   return {
     totalChance,
     critChance,
@@ -2164,6 +2081,7 @@ function getArcherCriticalProfile(baseChance = 0){
 function rollArcherCriticalOutcome(baseChance = 0){
   const profile = getArcherCriticalProfile(baseChance);
   const didCrit = Math.random() < profile.critChance;
+  if(didCrit && typeof EquipmentSystem !== "undefined"){ EquipmentSystem.markCritical(player, playerEffects); }
   return {
     ...profile,
     didCrit,
@@ -2179,11 +2097,14 @@ function getEnemyMissChance(){
 
 function decayPlayerBuffs(){
   const previousInvulnerableTurns = playerEffects.invulnerableTurns;
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "burnTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "burnTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns"]){
     if(playerEffects[buffName] > 0){
-      playerEffects[buffName]--;
+      const newlyApplied = playerEffects.actionBuffSnapshot && playerEffects[buffName] > (playerEffects.actionBuffSnapshot[buffName] || 0);
+      if(!newlyApplied && !playerEffects.freshBuffs?.includes(buffName)){ playerEffects[buffName]--; }
     }
   }
+  playerEffects.actionBuffSnapshot = null;
+  playerEffects.freshBuffs = [];
   if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffAmount = 0; }
   if(playerEffects.attackBuffTurns <= 0){ playerEffects.attackBuffPercent = 0; }
   if(playerEffects.skillBuffTurns <= 0){ playerEffects.skillBuffAmount = 0; }
@@ -2224,7 +2145,7 @@ function getPlayerHealReductionPercent(){
   return playerEffects.healReductionTurns > 0 ? (playerEffects.healReductionPercent || 0) : 0;
 }
 
-function healPlayer(amount){
+function healPlayer(amount, {skipEquipment = false, skipEquipmentTracking = false} = {}){
   let healBonus = 0;
   if(player.class === "Adepto da Natureza" && getUnlockedPassiveSkills().some(passive => passive.type === "nature_fairy_aura") && (playerEffects.natureCadence || 0) >= 3){
     healBonus += getPlayerSubclassState().tier60 === "fada_monarca" && player.level >= 60 ? 0.1 : 0.05;
@@ -2232,6 +2153,7 @@ function healPlayer(amount){
   if(player.class === "Adepto da Natureza" && playerEffects.natureCrownedTurns > 0){
     healBonus += 0.2;
   }
+  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyHealing(player, playerEffects, amount); }
   const adjustedAmount = Math.max(0, Math.floor(amount * (1 + healBonus) * (1 - getPlayerHealReductionPercent())));
   const hpBefore = player.hp;
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp + adjustedAmount);
@@ -2239,6 +2161,7 @@ function healPlayer(amount){
   const healed = player.hp - hpBefore;
   if(healed > 0){
     grantNatureCadence();
+    if(!skipEquipmentTracking && typeof EquipmentSystem !== "undefined"){ EquipmentSystem.noteHealing(player, playerEffects, healed); }
   }
   return healed;
 }
@@ -2249,7 +2172,9 @@ function grantNatureCadence(){
   playerEffects.natureCadence = Math.min(3, (playerEffects.natureCadence || 0) + 1);
 }
 
-function grantPlayerShield(amount, turns = 0){
+function grantPlayerShield(amount, turns = 0, {skipEquipment = false} = {}){
+  if((player?.noShieldTurns || 0) > 0){ log("O efeito de corrupcao impede novos escudos."); return 0; }
+  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyShield(player, playerEffects, amount); }
   let shield = Math.max(0, Math.floor(amount));
   if(shield <= 0){ return 0; }
   let shieldBonus = 0;
@@ -2279,10 +2204,15 @@ function getNatureDotMultiplier(){
   return player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_dot_mastery") ? 1.3 : 1;
 }
 
+function noteEnemyDotApplication(...turnKeys){
+  if(enemy && typeof EquipmentSystem !== "undefined" && EquipmentSystem.noteDotApplication){ EquipmentSystem.noteDotApplication(player, playerEffects, enemy, turnKeys); }
+}
+
 function applyNatureMark(turns, damage = 0, enemyDamageDown = 0){
   if(!enemy){ return; }
   enemy.natureMarkTurns = Math.max(enemy.natureMarkTurns || 0, Math.max(0, Math.floor(turns)));
   enemy.natureMarkDamage = Math.max(enemy.natureMarkDamage || 0, Math.max(0, Math.floor(damage)));
+  noteEnemyDotApplication("natureMarkTurns");
   if(enemyDamageDown > 0){
     enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, enemyDamageDown);
     enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, enemy.natureMarkTurns || turns);
@@ -2302,12 +2232,14 @@ function applyNaturePoison(damage, turns){
   if(!enemy){ return; }
   enemy.naturePoisonDamage = Math.max(enemy.naturePoisonDamage || 0, Math.max(0, Math.floor(damage)));
   enemy.naturePoisonTurns = Math.max(enemy.naturePoisonTurns || 0, Math.max(0, Math.floor(turns)));
+  noteEnemyDotApplication("naturePoisonTurns");
 }
 
 function applyNatureDecay(damage, turns){
   if(!enemy){ return; }
   enemy.natureDecayDamage = Math.max(enemy.natureDecayDamage || 0, Math.max(0, Math.floor(damage)));
   enemy.natureDecayTurns = Math.max(enemy.natureDecayTurns || 0, Math.max(0, Math.floor(turns)));
+  noteEnemyDotApplication("natureDecayTurns");
 }
 
 function enemyHasNatureDot(){
@@ -2341,8 +2273,9 @@ function consumeNatureDotsForDamage(includeAllDots = false){
 
 function applyNatureDotTick(label, damageKey, turnsKey, canTriggerSap = true){
   if(!enemy || !(enemy[turnsKey] > 0) || !(enemy[damageKey] > 0)){ return 0; }
-  const tickDamage = Math.floor(enemy[damageKey] * getNatureDotMultiplier());
+  const tickDamage = Math.floor(enemy[damageKey] * getNatureDotMultiplier() * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0)));
   enemy.hp -= tickDamage;
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:tickDamage, rawDamage:tickDamage, source:"dot"}); }
   enemy[turnsKey]--;
   log(`${enemy.baseName} sofreu ${tickDamage} de dano por ${label}.`);
   if(canTriggerSap && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_sap")){
@@ -2387,6 +2320,7 @@ function applyEndOfTurnRecovery(){
   if(manaRecovered > 0){
     log(`Voce recuperou ${manaRecovered} de mana.`);
   }
+  endEquipmentAction();
 }
 
 async function handlePlayerTurnStartEffects(){
@@ -2411,6 +2345,10 @@ async function handlePlayerTurnStartEffects(){
       handleDeath("A queimadura consumiu seu heroi.");
       return true;
     }
+  }
+  if(playerEffects.skipNextTurn && playerEffects.controlImmuneTurns > 0){
+    playerEffects.skipNextTurn = false;
+    log("Sua postura imparavel impediu a perda de turno.");
   }
   if(playerEffects.skipNextTurn){
     playerEffects.skipNextTurn = false;
@@ -3184,10 +3122,11 @@ function getBasicAttackTooltip(){
     const manaCost = missiles * 3;
     const subclassState = getPlayerSubclassState();
     const elementalistaBonus = subclassState.tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
-    const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus + getUniversalDamageFlatBonus();
-    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus + getUniversalDamageFlatBonus();
+    const flatPerAction = getUniversalDamageFlatBonus();
+    const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus;
+    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus;
     if(subclassState.tier30 === "arcanista" && player.level >= 30){
-      return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.`;
+      return `Missel Magico: bonus fixo de ${flatPerAction} por acao, dividido entre os projeteis.  consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.`;
     }
     return `Missel Magico: consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano.`;
   }
@@ -3207,6 +3146,7 @@ function resetCombatEffects(){
   playerEffects.firstAttackDoubleAvailable = player.class === "Mago" && subclassState.tier60 === "corrompido" && player.level >= 70;
   playerEffects.incomingDamageBonusTurns = playerEffects.firstAttackDoubleAvailable ? 2 : 0;
   playerEffects.incomingDamageBonusPercent = playerEffects.firstAttackDoubleAvailable ? 0.5 : 0;
+  playerEffects.freshBuffs = playerEffects.firstAttackDoubleAvailable ? ["incomingDamageBonusTurns"] : [];
   playerEffects.berserkerLastStandAvailable = player.class === "Guerreiro" && subclassState.tier60 === "berserker" && player.level >= 70;
   playerEffects.berserkerLastStandPending = false;
   playerEffects.samuraiEchoAvailable = player.class === "Guerreiro" && subclassState.tier60 === "samurai" && player.level >= 70;
@@ -3216,7 +3156,8 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
   let damage = Math.max(0, Math.floor(rawDamage));
   if(!enemy || ignoreArmor){ return damage; }
   const armorReduction = enemy.armorDownTurns > 0 ? (enemy.armorDownPercent || 0) : 0;
-  const armor = Math.max(0, Math.floor((enemy.armor || 0) * (1 - armorReduction)));
+  const gearPenetration = typeof EquipmentSystem !== "undefined" ? EquipmentSystem.getArmorPenetration(player, playerEffects) : 0;
+  const armor = Math.max(0, Math.floor((enemy.armor || 0) * (1 - armorReduction) * (1 - gearPenetration)));
   if(armor > 0 && damage > 0){
     const absorbed = Math.min(armor, damage);
     damage = Math.max(0, damage - absorbed);
@@ -3227,7 +3168,9 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
 
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
-  let damage = applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  const arenaTarget = currentMode === "arena_run" && enemy.arenaCombatant && typeof window.resolveArenaIncomingDamage === "function";
+  let damage = arenaTarget ? Math.max(0, Math.floor(rawDamage)) : applyEnemyArmor(rawDamage, !!options.ignoreArmor);
+  if(!options.equipmentProc){
   if(damage > 0 && player.class === "Adepto da Natureza" && enemy.natureMarkTurns > 0){
     const markBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 0.16 : 0.1;
     const bonusDamage = Math.floor(damage * markBonus);
@@ -3278,6 +3221,14 @@ function applyDamageToEnemy(rawDamage, options = {}){
     const reducedAmount = Math.floor(damage * playerEffects.damageDownPercent);
     damage = Math.max(0, damage - reducedAmount);
   }
+  }
+  if(arenaTarget){
+    const resolved = window.resolveArenaIncomingDamage(enemy, damage, options);
+    if(resolved){
+      if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:resolved.damage || 0,rawDamage,kind:playerEffects.equipmentAction?.kind || "reaction",source:"direct",equipmentProc:!!options.equipmentProc}); }
+      return resolved.damage || 0;
+    }
+  }
   if(damage > 0 && enemy.shieldValue > 0 && !options.ignoreShield){
     const absorbedByShield = Math.min(enemy.shieldValue, damage);
     enemy.shieldValue -= absorbedByShield;
@@ -3290,6 +3241,7 @@ function applyDamageToEnemy(rawDamage, options = {}){
     }
   }
   enemy.hp -= damage;
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage, rawDamage, kind:playerEffects.equipmentAction?.kind || "reaction", source:"direct", equipmentProc:!!options.equipmentProc}); }
   return damage;
 }
 
@@ -3342,6 +3294,11 @@ function applyIncomingDamage(baseDamage, options = {}){
     }
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
+  const rating = getPassiveModifiers().equipmentRating || 0;
+  if(rating > 0 && !options.ignoreEquipmentResistance){
+    const reduction = Math.min(0.45, rating / (rating + 100 + 10 * player.level));
+    damage = Math.max(0, damage - Math.floor(damage * reduction));
+  }
   const flatReduction = getPassiveModifiers().flatReduction;
   if(flatReduction > 0 && !options.ignoreFlatReduction){
     damage = Math.max(0, damage - flatReduction);
@@ -3374,6 +3331,7 @@ function applyIncomingDamage(baseDamage, options = {}){
       enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
       enemy.dotTurns = Math.max(enemy.dotTurns || 0, 3);
       enemy.dotSourceName = "Ultimo Recurso";
+      noteEnemyDotApplication("dotTurns");
       enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
       enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, 3);
     }
@@ -3389,7 +3347,7 @@ function applyIncomingDamage(baseDamage, options = {}){
   }
   if(damage > 0){
     player.hp -= damage;
-    if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
+    if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && !(player.noShieldTurns > 0) && getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
       playerEffects.shieldValue += damage;
       playerEffects.shieldTurns = 0;
       log(`Transbordando converteu ${damage} de dano recebido em escudo.`);
@@ -3417,7 +3375,34 @@ function applyIncomingDamage(baseDamage, options = {}){
     log("Voce Nao e Digno impediu sua queda fatal.");
   }
   player.hp = Math.max(0, player.hp);
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterIncoming(player, playerEffects, enemy, {damage, absorbed}); }
   return { damage, missed: false, absorbed, manaAbsorbed };
+}
+
+function beginEquipmentAction(kind, skill = null){
+  playerEffects.actionBuffSnapshot = Object.fromEntries(Object.entries(playerEffects).filter(([key,value]) => key.endsWith("Turns") && typeof value === "number"));
+  playerEffects.freshBuffs = [];
+  if(typeof EquipmentSystem === "undefined"){ return; }
+  // Combat contexts supply the relevant actor/effects, including online turns.
+  const context = {
+    actionId: `${player.characterId || "hero"}-${Date.now()}-${(playerEffects.lastActionTurn || 0) + 1}`,
+    kind, skill, enemy,
+    power: getActiveAttack() + getSkillPowerBonus(),
+    maxHp: getCurrentCaps().maxHp, maxMp: getCurrentCaps().maxMp,
+    callbacks: {
+      damage: (amount, options = {}) => applyDamageToEnemy(amount, {...options, equipmentProc:true}),
+      shield: amount => grantPlayerShield(amount),
+      heal: amount => healPlayer(amount)
+    }
+  };
+  playerEffects.equipmentAction = {actionId:context.actionId,kind,resolving:true};
+  EquipmentSystem.beginAction(player, playerEffects, context);
+}
+
+function endEquipmentAction(){
+  if(typeof EquipmentSystem === "undefined" || !playerEffects.equipmentAction){ return; }
+  EquipmentSystem.endAction(player, playerEffects, {enemy});
+  playerEffects.equipmentAction = null;
 }
 
 function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
@@ -3427,10 +3412,12 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     if(player.mp < manaCost){
       return { blocked: true, message: "Mana insuficiente para usar Missel Magico." };
     }
+    beginEquipmentAction("basic");
     player.mp -= manaCost;
     const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
-    const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus + getUniversalDamageFlatBonus();
-    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus + getUniversalDamageFlatBonus();
+    const flatPerAction = getUniversalDamageFlatBonus();
+    const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus;
+    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus;
     const hitDamages = [];
     let chargeGains = 0;
     const openingDouble = playerEffects.firstAttackDoubleAvailable;
@@ -3439,17 +3426,16 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     }
     if(applyToTarget){
       for(let missile = 0; missile < missiles; missile++){
-        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
+        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1))) + Math.floor(flatPerAction / missiles) + (missile < flatPerAction % missiles ? 1 : 0);
         if(openingDouble){ rolledDamage *= 2; }
-        const finalRolledDamage = Math.floor(rolledDamage * (1 + getUniversalDamagePercentBonus()));
-        hitDamages.push(applyDamageToEnemy(finalRolledDamage));
+        hitDamages.push(applyDamageToEnemy(rolledDamage));
         if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
           chargeGains += addArcaneCharges(1);
         }
       }
     }else{
       for(let missile = 0; missile < missiles; missile++){
-        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1)));
+        let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1))) + Math.floor(flatPerAction / missiles) + (missile < flatPerAction % missiles ? 1 : 0);
         if(openingDouble){ rolledDamage *= 2; }
         hitDamages.push(Math.floor(rolledDamage * (1 + getUniversalDamagePercentBonus())));
         if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
@@ -3460,6 +3446,7 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     const finalDamage = hitDamages.reduce((sum, damage) => sum + damage, 0);
     return { damage: finalDamage, missiles, hitDamages, message: `${namePrefix} lançou ${missiles} misseis magicos e causou ${finalDamage} de dano.${chargeGains > 0 ? ` Voce ganhou ${chargeGains} carga(s) arcana(s).` : ""}` };
   }
+  beginEquipmentAction("basic");
   if(player.class === "Arqueiro" && !rollHit("basic")){
     return { damage: 0, message: `${namePrefix} errou o ataque.` };
   }
@@ -3496,10 +3483,13 @@ function applyFirstDamageSkillBonus(damage, isDamageSkill){
 }
 
 function useSkillCost(skillInfo){
-  return playerEffects.firstSkillFreeAvailable ? 0 : skillInfo.cost;
+  if(playerEffects.firstSkillFreeAvailable){ return 0; }
+  const cost = Math.max(0, Number(skillInfo.cost) || 0);
+  return typeof EquipmentSystem !== "undefined" ? EquipmentSystem.modifySkillCost(player, playerEffects, skillInfo, cost) : cost;
 }
 
 function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
+  if((player?.noShieldTurns || 0) > 0 && ["mage_mana_shield", "nature_vine_cocoon"].includes(skillInfo.type)){ return {blocked:true,message:"A corrupcao impede ganhar escudo agora."}; }
   const cost = useSkillCost(skillInfo);
   if(player.mp < cost){
     return { blocked: true, message: "Mana insuficiente!" };
@@ -3510,12 +3500,15 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       return { blocked: true, message: "Vida insuficiente para usar essa habilidade!" };
     }
   }
+  beginEquipmentAction("skill", skillInfo);
   if(playerEffects.firstSkillFreeAvailable){
     playerEffects.firstSkillFreeAvailable = false;
   }
   player.mp -= cost;
   if(skillInfo.hpCostPercent){
-    player.hp -= Math.floor(getCurrentCaps().maxHp * skillInfo.hpCostPercent);
+    const paidHp = Math.floor(getCurrentCaps().maxHp * skillInfo.hpCostPercent);
+    player.hp -= paidHp;
+    if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.noteHpCost(player, playerEffects, paidHp); }
   }
   let damage = 0;
   let message = `${actorName} usou ${skillInfo.name}.`;
@@ -3537,6 +3530,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
         enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
         enemy.dotSourceName = skillInfo.name;
+        noteEnemyDotApplication("dotTurns");
         enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O inimigo ficou queimando.";
@@ -3549,6 +3543,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
           enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
           enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
           enemy.dotSourceName = "Gelo Queima";
+          noteEnemyDotApplication("dotTurns");
         }
       }
     }
@@ -3563,6 +3558,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
         enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
         enemy.dotSourceName = skillInfo.name;
+        noteEnemyDotApplication("dotTurns");
         enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O alvo ficou incendiado.";
@@ -3581,6 +3577,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
           enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
           enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
           enemy.dotSourceName = "Gelo Queima";
+          noteEnemyDotApplication("dotTurns");
         }
       }
     }
@@ -3588,6 +3585,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
       enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
       enemy.dotSourceName = skillInfo.name;
+      noteEnemyDotApplication("dotTurns");
       enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
       enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
     }
@@ -3598,6 +3596,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
         enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
         enemy.dotSourceName = "Gelo Queima";
+        noteEnemyDotApplication("dotTurns");
       }
     }
     if(["warrior_shove", "warrior_stagger"].includes(skillInfo.type) && applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
@@ -3614,6 +3613,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       enemy.dotDamagePerTurn = bleedPerTurn;
       enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.bleedTurns);
       enemy.dotSourceName = skillInfo.name;
+      noteEnemyDotApplication("dotTurns");
     }
   }
   if(skillInfo.type === "warrior_second_wind"){
@@ -3636,6 +3636,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       enemy.dotDamagePerTurn = bleedPerTurn;
       enemy.dotTurns = Math.max(enemy.dotTurns || 0, 3);
       enemy.dotSourceName = skillInfo.name;
+      noteEnemyDotApplication("dotTurns");
     }
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano em ${skillInfo.hits} golpes.`;
   }
@@ -3672,6 +3673,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     message = `${actorName} usou ${skillInfo.name} e ficou intocavel por ${skillInfo.turns} turnos.`;
   }
   if(skillInfo.type === "warrior_unstoppable"){
+    playerEffects.controlImmuneTurns = Math.max(playerEffects.controlImmuneTurns, skillInfo.turns);
+    playerEffects.skipNextTurn = false;
     playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, skillInfo.turns);
     playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, skillInfo.attackBuffAmount);
     message = `${actorName} usou ${skillInfo.name} e ficou imparavel por ${skillInfo.turns} turnos.`;
@@ -3830,14 +3833,16 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.dotDamage);
       enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.dotTurns);
       enemy.dotSourceName = skillInfo.name;
+      noteEnemyDotApplication("dotTurns");
     }
     message = `${actorName} usou ${skillInfo.name} e deixou o alvo sangrando por ${skillInfo.dotTurns} rodadas.`;
   }
   if(skillInfo.type === "mage_mana_shield"){
-    playerEffects.shieldValue = skillInfo.shield;
-    playerEffects.shieldTurns = skillInfo.turns || 0;
+    playerEffects.shieldValue = 0;
+    playerEffects.shieldTurns = 0;
+    const appliedShield = grantPlayerShield(skillInfo.shield, skillInfo.turns || 0);
     playerEffects.shieldReactiveWeakening = player.class === "Mago" && getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60;
-    message = `${actorName} usou ${skillInfo.name} e ganhou ${skillInfo.shield} de escudo.`;
+    message = `${actorName} usou ${skillInfo.name} e ganhou ${appliedShield} de escudo.`;
   }
   if(skillInfo.type === "mage_concentration"){
     playerEffects.skillBuffTurns = skillInfo.turns;
@@ -4003,95 +4008,34 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: true, ignoreShield: true, skillCost: cost }) : damage;
     message = `${actorName} consumiu ${consumedShield} de escudo com ${skillInfo.name} e causou ${damage} de dano.`;
   }
+  const refreshed = {
+    warrior_second_wind:["finalDamageBuffTurns"], warrior_warcry:["attackBuffTurns","finalDamageBuffTurns","percentReductionTurns"],
+    warrior_valhalla:["incomingDamageBonusTurns","enemyMaxHpBonusTurns"],warrior_faith_shield:["invulnerableTurns"],
+    warrior_unstoppable:["attackBuffTurns","controlImmuneTurns"],warrior_ultrasonic_cuts:["forcedBasicTurns","basicOnlyUntouchableTurns"],
+    mage_concentration:["skillBuffTurns","finalDamageBuffTurns","manaRegenBuffTurns"],mage_demon_form:["finalDamageBuffTurns","incomingDamageBonusTurns"],
+    archer_focus:["attackBuffTurns","guaranteedHitTurns"],archer_camouflage:["enemyMissBonusTurns"],
+    nature_true_form:["natureTrueFormTurns","attackBuffTurns","percentReductionTurns"],nature_crown:["natureCrownedTurns"]
+  };
+  playerEffects.freshBuffs = (refreshed[skillInfo.type] || []).filter(key => playerEffects[key] > 0);
+  if(playerEffects.equipmentAction){ playerEffects.equipmentAction.resolving = false; }
   playerEffects.lastActionType = skillInfo.type;
   return { blocked: false, message, damage, freeTurn, freezeApplied };
 }
 
-function getRarityStat(statKey, rarity){
-  return rarityStats[statKey]?.[rarity] || 0;
-}
-
-function applyEquipmentRarityStats(item, baseStats){
-  for(const bonusKey of ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "reflectPercent", "coinBonus", "xpBonus", "turnHealPercent", "burnDamageReductionPercent", "flatReduction", "bonusMpPercent", "bonusHpPercent", "totalDamagePercent", "fatalSaveHealPercent", "critChanceBonus"]){
-    delete item[bonusKey];
-  }
-  const rarityMultiplier = rarityMultipliers[item.rarity] || 1;
-  for(const [bonusKey, baseValue] of Object.entries(baseStats || {})){
-    const isDecimalStat = ["reflectPercent", "coinBonus", "xpBonus", "turnHealPercent", "burnDamageReductionPercent", "bonusMpPercent", "bonusHpPercent", "totalDamagePercent", "fatalSaveHealPercent", "critChanceBonus"].includes(bonusKey);
-    const rawValue = baseValue * rarityMultiplier;
-    const value = isDecimalStat ? Math.round(rawValue * 10000) / 10000 : Math.ceil(rawValue);
-    if(value > 0){
-      item[bonusKey] = value;
-    }
-  }
-}
 
 function normalizeEquipmentMetadata(item){
-  if(!item || item.type !== "equipment"){ return item; }
-  if(!item.baseItemId){
-    const raritySuffix = item.rarity ? `_${item.rarity}` : "";
-    item.baseItemId = item.id?.endsWith(raritySuffix) ? item.id.slice(0, -raritySuffix.length) : item.id;
-  }
-  const legacyDrop = legacyDropByBaseId[item.baseItemId];
-  if(legacyDrop){
-    item.enemyName = item.enemyName || legacyDrop.enemyName;
-    item.regionName = item.regionName || getRegionFromEnemy(legacyDrop.enemyName);
-    item.slot = item.slot || legacyDrop.slot;
-    item.classRestriction = item.slot === "weapon" ? (item.classRestriction || legacyDrop.classRestriction) : null;
-  }
-  if(item.enemyName && !item.regionName){
-    item.regionName = getRegionFromEnemy(item.enemyName);
-  }
-  if(!["weapon"].includes(item.slot)){
-    item.classRestriction = null;
-  }
-  if(item.regionName && item.slot !== "accessory"){
-    item.setId = `${slugify(item.regionName)}_set`;
-    item.setName = getRegionSetLabel(item.regionName);
-    const refreshedTemplate = getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
-    if(refreshedTemplate){
-      item.baseItemId = refreshedTemplate.id;
-      item.id = `${refreshedTemplate.id}_${item.rarity}`;
-      applyEquipmentRarityStats(item, refreshedTemplate.baseStats);
-      item.name = `${refreshedTemplate.name} ${getRarityInfo(item.rarity).label}`;
-    }
-  }else if(item.regionName && item.slot === "accessory"){
-    item.setId = null;
-    item.setName = null;
-    const accessoryTemplate = getBossAccessoryTemplate(item.regionName);
-    if(accessoryTemplate){
-      item.baseItemId = accessoryTemplate.id;
-      item.id = `${accessoryTemplate.id}_${item.rarity}`;
-      applyEquipmentRarityStats(item, accessoryTemplate.baseStats);
-      item.name = `${accessoryTemplate.name} ${getRarityInfo(item.rarity).label}`;
-    }
-  }
-  return item;
+  return item?.type === "equipment" ? EquipmentSystem.normalizeItem(item) : item;
 }
 
 function buildEquipmentDescription(item){
-  item = normalizeEquipmentMetadata(item);
-  const lines = [];
-  const statText = formatStatBonusList(item);
-  if(statText){ lines.push(statText); }
-  if(item.slot === "accessory" && item.regionName){
-    lines.push(`Acessorio raro do chefao de ${item.regionName}`);
-  }
-  if(item.setId && item.setName){
-    const setPieces = getEquippedSetCount(item.setId);
-    const setBonus = getSetBonusValues(item.regionName);
-    lines.push(`${item.setName} (${setPieces}/5)`);
-    lines.push(`Bonus do set completo: ${formatStatBonusList(setBonus)}`);
-  }
-  lines.push(item.classRestriction ? `Equipavel apenas por ${item.classRestriction}.` : "Equipavel por qualquer classe.");
-  return lines.join(". ");
+  return item ? EquipmentSystem.describe(item, player) : "Espaco vazio.";
 }
 
 function getEquipmentTooltip(item){
   if(!item){
     return "Espaco vazio.";
   }
-  return `${buildEquipmentDescription(item)} Clique com o botao direito para desequipar.`;
+  return `${buildEquipmentDescription(item)} Toque para desequipar no acampamento.`;
 }
 
 function getItemToneClass(item){
@@ -4115,7 +4059,14 @@ function getItemAssetId(item){
 }
 
 function getItemSpritePath(item){
-  return `assets/visual/items/${getItemAssetId(item)}.png?v=${ITEM_ASSET_VERSION}`;
+  if(item?.type === "equipment" && ["head","chest","legs","feet","weapon"].includes(item.slot)){
+    const weaponClass = Object.prototype.hasOwnProperty.call(classes, item.classRestriction || player?.class) ? (item.classRestriction || player.class) : "Guerreiro";
+    const icon = item.slot === "weapon" ? `weapon_${toCssToken(weaponClass)}` : item.slot;
+    return `assets/visual/items/equipment/${icon}.svg?v=20261028`;
+  }
+  if(item?.schemaVersion === 2 && item.slot === "accessory"){ return `assets/visual/items/${bossAccessoryProfiles[item.regionName]?.id || "o_fim"}.png?v=20261028`; }
+  if(item?.id?.startsWith("componente_")){ const primary = EquipmentSystem.getMaterials(item.enemyName, item.regionName || item.region)[0]; if(primary){ return `assets/visual/items/${primary.id}.png?v=20261028`; } }
+  return `assets/visual/items/${String(getItemAssetId(item)).replace(/[^a-z0-9_-]/gi, "")}.png?v=${ITEM_ASSET_VERSION}`;
 }
 
 function getInventoryItemSymbol(item){
@@ -4130,9 +4081,9 @@ function getItemSpriteMarkup(item){
 function getInventoryItemCardMarkup(item, description, actionButton = "", compact = false){
   const rarityInfo = item?.rarity ? getRarityInfo(item.rarity) : null;
   const rarityLine = rarityInfo ? `<span class="inventory-tag ${rarityInfo.cssClass}">${rarityInfo.label}</span>` : "";
-  const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${item.qty}</span>` : "";
-  const regionLine = item?.regionName ? `<span class="inventory-tag">${item.regionName}</span>` : item?.region ? `<span class="inventory-tag">${item.region}</span>` : "";
-  const tooltipText = description || "";
+  const quantityLine = item?.qty ? `<span class="inventory-qty-badge">x${escapeHtml(item.qty)}</span>` : "";
+  const regionLine = item?.regionName ? `<span class="inventory-tag">${escapeHtml(item.regionName)}</span>` : item?.region ? `<span class="inventory-tag">${escapeHtml(item.region)}</span>` : "";
+  const tooltipText = escapeHtml(description || "");
   const flashClass = inventoryFlash.result && ((item?.uid && item.uid === inventoryFlash.uid) || (item?.id && item.id === inventoryFlash.id)) ? ` inventory-flash-${inventoryFlash.result}` : "";
   const tooltipAttrs = tooltipText ? ` class="inventory-item has-tooltip${flashClass}" data-tooltip="${tooltipText}"` : ` class="inventory-item${flashClass}"`;
   const shouldShowInlineDescription = !["equipment", "material"].includes(item?.type);
@@ -4143,11 +4094,11 @@ function getInventoryItemCardMarkup(item, description, actionButton = "", compac
       </div>
       <div class="simple-item-copy">
         <div class="inventory-title-row">
-          <strong>${item?.name || "Item"}</strong>
+          <strong>${escapeHtml(item?.name || "Item")}</strong>
           ${quantityLine}
         </div>
         <div class="inventory-meta">${rarityLine}${regionLine}</div>
-        ${shouldShowInlineDescription ? `<span class="lock-note inventory-subtext">${description || ""}</span>` : ""}
+        ${shouldShowInlineDescription ? `<span class="lock-note inventory-subtext">${escapeHtml(description || "")}</span>` : ""}
         ${actionButton}
       </div>
     </div>
@@ -4234,45 +4185,14 @@ function renderInventoryFilterTabs(){
   `).join("")}</div>`;
 }
 
-function createEquipmentItem(dropTemplate, rarity){
-  const rarityInfo = getRarityInfo(rarity);
-  const baseStats = dropTemplate.baseStats || dropTemplate.stats || {};
-  const item = {
-    id: `${dropTemplate.id}_${rarity}`,
-    baseItemId: dropTemplate.id,
-    name: `${dropTemplate.name} ${rarityInfo.label}`,
-    type: "equipment",
-    slot: dropTemplate.slot,
-    classRestriction: dropTemplate.classRestriction,
-    rarity,
-    rarityLabel: rarityInfo.label,
-    regionName: dropTemplate.regionName || null,
-    setId: dropTemplate.setId || null,
-    setName: dropTemplate.setName || null
-  };
-  applyEquipmentRarityStats(item, baseStats);
-  item.description = buildEquipmentDescription(item);
-  return item;
+function createEquipmentItem(template, rarity){
+  return EquipmentSystem.createItem(template.regionName, template.slot, template.classRestriction || player?.class, rarity);
 }
 
-function getDropTemplateFromItem(item){
-  item = normalizeEquipmentMetadata(item);
-  if(item?.slot === "accessory" && item?.regionName){
-    return getBossAccessoryTemplate(item.regionName);
-  }
-  if(item?.regionName){
-    return getRegionSetTemplate(item.regionName, item.slot, item.classRestriction || player?.class || "Guerreiro");
-  }
-  const legacyDrop = legacyDropByBaseId[item?.baseItemId];
-  if(legacyDrop){
-    return getRegionSetTemplate(getRegionFromEnemy(legacyDrop.enemyName), item.slot || legacyDrop.slot, item.classRestriction || legacyDrop.classRestriction || player?.class || "Guerreiro");
-  }
-  return null;
-}
 
 function canEquipItem(item){
   item = normalizeEquipmentMetadata(item);
-  return item?.type === "equipment" && item.slot === "accessory" && (!item.classRestriction || item.classRestriction === player.class);
+  return item?.type === "equipment" && equipmentSlots.includes(item.slot) && (!item.classRestriction || item.classRestriction === player.class);
 }
 
 function getSellPrice(item){
@@ -4312,17 +4232,9 @@ function getSellPrice(item){
   return 8;
 }
 
-function getForgeUpgradeCost(item){
-  const rarityRank = getRarityRank(item.rarity);
-  const baseCost = 70 + rarityRank * 95;
-  return item.slot === "accessory" ? Math.floor(baseCost * 12) : baseCost;
-}
+function getForgeUpgradeCost(item){ return EquipmentSystem.getUpgradeCost(item); }
 
-function getForgeUpgradeChance(item){
-  const rarityRank = getRarityRank(item.rarity);
-  const chances = [0.8, 0.58, 0.36, 0.18];
-  return chances[rarityRank] || 0;
-}
+function getForgeUpgradeChance(item){ return getRarityRank(item.rarity)<rarityOrder.length-1 ? 1 : 0; }
 
 function createConsumableItem(id, qty = 1){
   const data = consumableCatalog[id];
@@ -4351,7 +4263,7 @@ function getEquipmentDisplayName(item){
     return `<span class="slot-empty">Espaco vazio</span>`;
   }
   const rarityInfo = getRarityInfo(item.rarity);
-  return `<span class="simple-item-symbol" style="width:30px;height:30px;font-size:16px;margin:0 auto 6px;">${getInventoryItemSymbol(item)}</span><span class="${rarityInfo.cssClass}">${item.name}</span>`;
+  return `<span class="simple-item-symbol" style="width:30px;height:30px;font-size:16px;margin:0 auto 6px;">${getInventoryItemSymbol(item)}</span><span class="${rarityInfo.cssClass}">${escapeHtml(item.name)}</span>`;
 }
 
 function getEquipmentSlotClass(item){
@@ -4359,22 +4271,11 @@ function getEquipmentSlotClass(item){
 }
 
 function renderEquipmentShowcase(){
-  return `
-    <div class="equipment-layout">
-      <div class="equipment-stack">
-        <div class="equip-slot action-btn equip-weapon ${getEquipmentSlotClass(player.equipment.weapon)}" data-tooltip="${getEquipmentTooltip(player.equipment.weapon)}" oncontextmenu="return unequipItem('weapon', event)"><strong>${slotLabels.weapon}</strong>${getEquipmentDisplayName(player.equipment.weapon)}</div>
-        <div class="equip-slot action-btn equip-accessory ${getEquipmentSlotClass(player.equipment.accessory)}" data-tooltip="${getEquipmentTooltip(player.equipment.accessory)}" oncontextmenu="return unequipItem('accessory', event)"><strong>${slotLabels.accessory}</strong>${getEquipmentDisplayName(player.equipment.accessory)}</div>
-      </div>
-      <div class="equipment-body">
-        <div class="hero-silhouette">${classIcons[player.class] || "&#x2726;"}</div>
-        <div class="equipment-stack">
-          <div class="equip-slot action-btn equip-head ${getEquipmentSlotClass(player.equipment.head)}" data-tooltip="${getEquipmentTooltip(player.equipment.head)}" oncontextmenu="return unequipItem('head', event)"><strong>${slotLabels.head}</strong>${getEquipmentDisplayName(player.equipment.head)}</div>
-          <div class="equip-slot action-btn equip-chest ${getEquipmentSlotClass(player.equipment.chest)}" data-tooltip="${getEquipmentTooltip(player.equipment.chest)}" oncontextmenu="return unequipItem('chest', event)"><strong>${slotLabels.chest}</strong>${getEquipmentDisplayName(player.equipment.chest)}</div>
-          <div class="equip-slot action-btn equip-legs ${getEquipmentSlotClass(player.equipment.legs)}" data-tooltip="${getEquipmentTooltip(player.equipment.legs)}" oncontextmenu="return unequipItem('legs', event)"><strong>${slotLabels.legs}</strong>${getEquipmentDisplayName(player.equipment.legs)}</div>
-          <div class="equip-slot action-btn equip-feet ${getEquipmentSlotClass(player.equipment.feet)}" data-tooltip="${getEquipmentTooltip(player.equipment.feet)}" oncontextmenu="return unequipItem('feet', event)"><strong>${slotLabels.feet}</strong>${getEquipmentDisplayName(player.equipment.feet)}</div>
-        </div>
-      </div>
-    </div>`;
+  const setProgress = typeof EquipmentSystem !== "undefined" ? EquipmentSystem.getSetBonuses(player).sets.map(set => `<p class="lock-note">${escapeHtml(set.text)}</p>`).join("") : "";
+  return `${setProgress}<p class="lock-note">Toque em uma peca equipada para remove-la.</p><div class="equipment-simple-grid">${equipmentSlots.map(slot => {
+    const item = player.equipment?.[slot];
+    return `<button type="button" class="equip-slot has-tooltip ${getEquipmentSlotClass(item)}" aria-label="${escapeHtml(item ? `Remover ${item.name}` : `${slotLabels[slot]} vazio`)}" data-tooltip="${escapeHtml(getEquipmentTooltip(item))}" onclick="unequipItem('${slot}', event)" ${item ? "" : "disabled"}><strong>${slotLabels[slot]}</strong>${getEquipmentDisplayName(item)}${item ? `<span class="lock-note">${escapeHtml(formatStatBonusList(item))}</span>` : ""}</button>`;
+  }).join("")}</div>`;
 }
 
 function renderForgePanel(){
@@ -4384,12 +4285,14 @@ function renderForgePanel(){
   if(!equippedItems.length){
     return `<div class="inventory-item"><div class="panel-header"><strong>Ferreiro</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Equipe um item no acampamento para tentar aprimora-lo aqui.</span></div>`;
   }
-  return `<div class="inventory-item"><div class="panel-header"><strong>Ferreiro</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Tente elevar a raridade dos seus equipamentos equipados. Cada novo grau fica mais caro e mais dificil.</span><div class="inventory-list">${equippedItems.map(entry => {
+  return `<div class="inventory-item"><div class="panel-header"><strong>Ferreiro</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Aprimore seus equipamentos equipados. Confira os componentes, o custo e a chance indicados em cada peca.</span><div class="inventory-list">${equippedItems.map(entry => {
     const chance = Math.floor(getForgeUpgradeChance(entry.item) * 100);
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
+    const upgrade = entry.item.schemaVersion === 2 ? EquipmentSystem.getUpgradeRequirements(entry.item, player) : null;
+    const materialInfo = upgrade ? `<ul class="recipe-materials">${Object.entries(upgrade.requirements).map(([id,qty]) => `<li><span>${escapeHtml(EquipmentSystem.materialById(id)?.name || id)}</span><strong>${getInventoryCountById(id)}/${qty}</strong></li>`).join("")}</ul>` : "";
     const feedbackClass = forgeFeedback.slot === entry.slot ? (forgeFeedback.result === "success" ? "forge-feedback-success" : forgeFeedback.result === "fail" ? "forge-feedback-fail" : "") : "";
-    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
+    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : upgrade ? `Melhoria garantida: ${cost} moedas e componentes adicionais.` : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `${materialInfo}<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
   }).join("")}</div></div>`;
 }
 
@@ -4439,28 +4342,7 @@ function renderAlchemistPanel(){
   return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div>`, true)).join("")}</div></div>`;
 }
 
-function renderArtisanPanel(){
-  const selectedRegion = artisanRegionFilter && regions[artisanRegionFilter] ? artisanRegionFilter : currentRegion;
-  const regionData = regions[selectedRegion];
-  if(!regionData){
-    return `<div class="inventory-item"><div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Selecione uma regiao valida para montar pecas.</span></div>`;
-  }
-  const materials = [...regionData.enemies, regionData.boss].filter(Boolean).map(enemyData => getEnemyMaterialTemplate(enemyData.name, selectedRegion));
-  return `<div class="inventory-item">
-    <div class="panel-header"><strong>Artesao</strong><span class="coin-badge">${player.coins} moedas</span></div>
-    <span class="lock-note">A repaginacao de equipamentos esta em preparo. Por enquanto, este painel cataloga os materiais de craft de cada regiao para voce conferir o que ja esta coletando.</span>
-    <div class="tabs" style="margin:12px 0 16px;">${Object.keys(regions).map(regionName => `<button class="tab-btn ${selectedRegion === regionName ? "active" : ""}" onclick="setArtisanRegion('${regionName}')">${regionName}</button>`).join("")}</div>
-    <div class="inventory-list" style="margin-top:12px;">${materials.map(material => {
-      const owned = getInventoryCountById(material.id);
-      return getInventoryItemCardMarkup(
-        material,
-        `${material.description} Possui: ${owned}.`,
-        `<div class="bestiary-drop-line"><span class="bestiary-stat stat-drop"><small>Possui</small><strong>${owned}</strong></span></div>`,
-        true
-      );
-    }).join("")}</div>
-  </div>`;
-}
+function renderArtisanPanel(){ return EquipmentSystem.renderArtisan(); }
 
 function renderVillagePanel(){
   const tabs = `
@@ -4469,6 +4351,7 @@ function renderVillagePanel(){
       <button class="tab-btn ${villageTab === "alchemist" ? "active" : ""}" onclick="setVillageTab('alchemist')">Alquimista</button>
       <button class="tab-btn ${villageTab === "forge" ? "active" : ""}" onclick="setVillageTab('forge')">Ferreiro</button>
       <button class="tab-btn ${villageTab === "artisan" ? "active" : ""}" onclick="setVillageTab('artisan')">Artesao</button>
+      <button class="tab-btn ${villageTab === "mercenary" ? "active" : ""}" onclick="setVillageTab('mercenary')">Mercenario</button>
     </div>`;
   const feedback = renderActionFeedback("village");
   if(villageTab === "alchemist"){
@@ -4479,6 +4362,9 @@ function renderVillagePanel(){
   }
   if(villageTab === "artisan"){
     return `${feedback}${tabs}${renderArtisanPanel()}`;
+  }
+  if(villageTab === "mercenary"){
+    return `${feedback}${tabs}${EquipmentSystem.renderMercenary()}`;
   }
   return `${feedback}${tabs}
     <div class="inventory-list">
@@ -4514,6 +4400,9 @@ function shouldIgnoreShortcutTarget(target){
 }
 
 function handleCombatActionShortcut(event){
+  if(typeof CampaignHUD !== "undefined" && CampaignHUD.enabled()){
+    return CampaignHUD.handleShortcut(event);
+  }
   if(!player || shouldIgnoreShortcutTarget(event.target) || event.ctrlKey || event.altKey || event.metaKey){
     return false;
   }
@@ -4563,7 +4452,7 @@ window.addEventListener("beforeunload", () => {
 });
 
 function getBaseEnemyName(enemyName){
-  return enemyName.replace(/ Lv\.\d+$/, "");
+  return String(enemyName || "").replace(/ Lv\.\d+$/, "");
 }
 
 function getRarityInfo(rarity){
@@ -4591,6 +4480,7 @@ function getEnemyRarity(region, enemyName, isBoss = false){
 }
 
 function getEnemyPossibleDrop(enemyName, region, isBoss = false){
+  if(typeof EquipmentSystem !== "undefined"){ const drops=EquipmentSystem.getMaterials(enemyName,region); if(drops.length){ return drops.map((item,index)=>`${item.name} (${isBoss ? (index ? "55%" : "100%") : (index ? "24%" : "40%")})`).join("; "); } }
   if(region === "Dungeon"){
     return "Tesouros da expedicao ainda nao catalogados";
   }
@@ -4891,17 +4781,6 @@ function renderBestiary(){
     </div>`;
 }
 
-function rollWeightedRarity(){
-  const total = rarityOrder.reduce((sum, rarity) => sum + getRarityInfo(rarity).weight, 0);
-  let roll = Math.random() * total;
-  for(const rarity of rarityOrder){
-    roll -= getRarityInfo(rarity).weight;
-    if(roll <= 0){
-      return rarity;
-    }
-  }
-  return "comum";
-}
 
 function addInventoryItem(item){
   const normalizedItem = normalizeEquipmentMetadata({ ...item, uid: item.uid || `${item.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}` });
@@ -4941,40 +4820,22 @@ function renderBestiaryRegionMapCard(selectedRegion, devBestiary = false){
         onclick="setBestiaryRegion('${regionName}')"
         aria-label="Ver criaturas de ${regionName}"
         ${unlocked ? "" : "disabled"}
-      >${index + 1}</button>`;
+      >${index + 1}<span class="map-marker-label">${escapeHtml(regionName)}</span></button>`;
   }).join("");
   return `
     <div class="region-map-card bestiary-region-map-card">
       <div class="region-map-frame">
-        <img class="region-map-image" src="assets/visual/maps/region-map.png?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
+        <img class="region-map-image" src="assets/visual/maps/region-map.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
         ${markers}
       </div>
     </div>`;
 }
 
 function tryEnemyMaterialDrop(defeatedEnemy){
-  if(!defeatedEnemy?.name || !defeatedEnemy?.region){ return; }
-  const enemyBaseName = getBaseEnemyName(defeatedEnemy.name);
-  if(defeatedEnemy?.isBoss){
-    if(Math.random() >= 0.35){ return; }
-  }else if(Math.random() >= 0.30){
-    return;
+  for(const material of EquipmentSystem.rollDrops(defeatedEnemy)){
+    addInventoryItem(material);
+    log(`Voce coletou ${material.name} x${material.qty}.`);
   }
-  const material = getEnemyMaterialTemplate(enemyBaseName, defeatedEnemy.region);
-  if(defeatedEnemy?.isBoss){
-    material.qty = 1;
-  }else{
-    const quantityRoll = Math.random();
-    if(quantityRoll < 0.05){
-      material.qty = 3;
-    }else if(quantityRoll < 0.15){
-      material.qty = 2;
-    }else{
-      material.qty = 1;
-    }
-  }
-  addInventoryItem(material);
-  log(`Voce coletou ${material.name}${material.qty > 1 ? ` x${material.qty}` : ""}.`);
 }
 
 function getBossChestItem(region){
@@ -4987,11 +4848,7 @@ function getBossChestItem(region){
   return material;
 }
 
-function getBossAccessoryItem(region){
-  const template = getBossAccessoryTemplate(region);
-  if(!template){ return null; }
-  return createEquipmentItem(template, rollWeightedRarity());
-}
+function getBossAccessoryItem(region){ return EquipmentSystem.createBossAccessory(region, "comum"); }
 
 function createRegionChest(region){
   return {
@@ -5485,52 +5342,10 @@ function buyConsumable(itemId){
   updateUI();
 }
 
-function tryUpgradeEquippedItem(slot){
-  if(currentMode !== "village"){ return; }
-  const item = normalizeEquipmentMetadata(player.equipment?.[slot]);
-  if(!item){
-    log("Nao ha item equipado nesse espaco.");
-    return;
-  }
-  const currentRank = getRarityRank(item.rarity);
-  if(currentRank >= rarityOrder.length - 1){
-    log("Esse item ja esta na raridade maxima.");
-    return;
-  }
-  const cost = getForgeUpgradeCost(item);
-  if(player.coins < cost){
-    log(`Moedas insuficientes. O ferreiro cobra ${cost} moedas nessa tentativa.`);
-    return;
-  }
-  player.coins -= cost;
-  const chance = getForgeUpgradeChance(item);
-  if(Math.random() > chance){
-    triggerForgeFeedback(slot, "fail");
-    log(`O ferreiro falhou em aprimorar ${item.name}. Chance da tentativa: ${Math.floor(chance * 100)}%.`);
-    updateUI();
-    return;
-  }
-  const nextRarity = rarityOrder[currentRank + 1];
-  const baseDrop = getDropTemplateFromItem(item);
-  if(!baseDrop){
-    log("O ferreiro nao conseguiu identificar a origem do equipamento.");
-    updateUI();
-    return;
-  }
-  const upgradedItem = createEquipmentItem(baseDrop, nextRarity);
-  upgradedItem.uid = item.uid;
-  player.equipment[slot] = upgradedItem;
-  player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
-  player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
-  displayState.playerHp = player.hp;
-  displayState.playerMp = player.mp;
-  triggerForgeFeedback(slot, "success");
-  log(`O ferreiro aprimorou ${item.name} para ${upgradedItem.name}!`);
-  updateUI();
-}
+function tryUpgradeEquippedItem(slot){ return EquipmentSystem.tryUpgrade(slot); }
 
 function getRespawnSeconds(){
-  if(uiSettings?.disableRespawnTimer){
+  if(DEV_MODE && uiSettings?.disableRespawnTimer){
     return 0;
   }
   return 6 + player.level * 2;
@@ -5575,14 +5390,14 @@ function respawnPlayer(){
 }
 
 function resetAdventure(){
-  const characterId = player?.characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
+  const characterId = player?.characterId || GameStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
   if(!confirm("Tem certeza que deseja apagar este personagem? Todo o progresso dele sera removido.")){
     return;
   }
   if(characterId){
     deleteCharacterSave(characterId, false);
   }
-  localStorage.removeItem(ACTIVE_CHARACTER_KEY);
+  GameStorage.removeItem(ACTIVE_CHARACTER_KEY);
   location.reload();
 }
 
@@ -5611,9 +5426,11 @@ function saveCampaign({ renderStart = false } = {}){
     renderSavedCampaign();
     return;
   }
-  player.characterId = player.characterId || localStorage.getItem(ACTIVE_CHARACTER_KEY) || createCharacterId();
+  if(isProcessingTurn && currentMode === "battle" && enemy){ return false; }
+  player.characterId = player.characterId || GameStorage.getItem(ACTIVE_CHARACTER_KEY) || createCharacterId();
   player.characterName = player.characterName || getNextCharacterName(player.class);
   const state = {
+    schemaVersion: SAVE_SCHEMA_VERSION,
     characterId: player.characterId,
     characterName: player.characterName,
     updatedAt: Date.now(),
@@ -5634,9 +5451,9 @@ function saveCampaign({ renderStart = false } = {}){
     playerEffects
   };
   player.createdAt = state.createdAt;
-  const activeCharacterId = localStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
+  const activeCharacterId = GameStorage.getItem(ACTIVE_CHARACTER_KEY) || "";
   upsertCharacterSave(state, { setActive: activeCharacterId === state.characterId });
-  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  GameStorage.setItem(SAVE_KEY, JSON.stringify(state));
   if(renderStart || isStartScreenVisible()){
     renderSavedCampaign();
   }
@@ -5644,11 +5461,16 @@ function saveCampaign({ renderStart = false } = {}){
 
 function continueCampaign(characterId = ""){
   const selectedState = getSavedCharacterState(characterId);
-  const raw = selectedState ? JSON.stringify(selectedState) : localStorage.getItem(SAVE_KEY);
+  const raw = selectedState ? JSON.stringify(selectedState) : GameStorage.getItem(SAVE_KEY);
   if(!raw){ return; }
-  const state = normalizeSavedCharacterState(JSON.parse(raw));
+  let state;
+  try{ state = normalizeSavedCharacterState(JSON.parse(raw)); }catch{
+    log("Este save nao pode ser lido. Importe uma copia ou restaure o backup nas configuracoes.");
+    return;
+  }
+  if(state && state.schemaVersion !== SAVE_SCHEMA_VERSION){ GameStorage.backup(CHARACTER_SAVES_KEY); GameStorage.backup(SAVE_KEY); }
   if(!state){ return; }
-  localStorage.setItem(ACTIVE_CHARACTER_KEY, state.characterId);
+  GameStorage.setItem(ACTIVE_CHARACTER_KEY, state.characterId);
   player = state.player;
   player.characterId = state.characterId;
   player.characterName = state.characterName || player.characterName || player.class;
@@ -5688,8 +5510,8 @@ function continueCampaign(characterId = ""){
     const enemyTemplate = getEnemyTemplateByName(enemy.baseName || getBaseEnemyName(enemy.name));
     if(enemyTemplate){
       const rebuiltEnemy = createEnemyFromTemplate(enemyTemplate, !!enemyTemplate.isBoss);
-      rebuiltEnemy.hp = Math.min(rebuiltEnemy.maxHp, enemy.hp);
-      rebuiltEnemy.mp = rebuiltEnemy.maxMp ? Math.min(rebuiltEnemy.maxMp, enemy.mp ?? rebuiltEnemy.maxMp) : 0;
+      rebuiltEnemy.hp = Number.isFinite(enemy.hp) ? Math.min(rebuiltEnemy.maxHp, Math.max(0, enemy.hp)) : rebuiltEnemy.maxHp;
+      rebuiltEnemy.mp = rebuiltEnemy.maxMp ? Number.isFinite(enemy.mp) ? Math.min(rebuiltEnemy.maxMp, Math.max(0, enemy.mp)) : rebuiltEnemy.maxMp : 0;
       rebuiltEnemy.skipNextAttack = !!enemy.skipNextAttack;
       rebuiltEnemy.shieldValue = enemy.shieldValue || 0;
       rebuiltEnemy.shieldTurns = enemy.shieldTurns || 0;
@@ -5707,10 +5529,15 @@ function continueCampaign(characterId = ""){
       rebuiltEnemy.naturePoisonDamage = enemy.naturePoisonDamage || 0;
       rebuiltEnemy.natureDecayTurns = enemy.natureDecayTurns || 0;
       rebuiltEnemy.natureDecayDamage = enemy.natureDecayDamage || 0;
+      rebuiltEnemy.equipmentDotOwners = cloneSavedValue(enemy.equipmentDotOwners, {});
+      rebuiltEnemy.equipmentDotExtensions = cloneSavedValue(enemy.equipmentDotExtensions, {});
       rebuiltEnemy.frozenDamageBonusPercent = enemy.frozenDamageBonusPercent || 0;
       rebuiltEnemy.healReductionPercent = enemy.healReductionPercent || 0;
       rebuiltEnemy.healReductionTurns = enemy.healReductionTurns || 0;
       rebuiltEnemy.noShieldTurns = enemy.noShieldTurns || 0;
+      rebuiltEnemy.blizzardTurns = enemy.blizzardTurns || 0;
+      rebuiltEnemy.blizzardSkipChance = enemy.blizzardSkipChance || 0;
+      rebuiltEnemy.nextDamageTakenPercent = enemy.nextDamageTakenPercent || 0;
       rebuiltEnemy.bossBuffTurns = enemy.bossBuffTurns || 0;
       rebuiltEnemy.bossAttackBuffPercent = enemy.bossAttackBuffPercent || 0;
       rebuiltEnemy.bossFlatDamageBonus = enemy.bossFlatDamageBonus || 0;
@@ -5741,15 +5568,15 @@ function deleteCharacterSave(characterId, shouldRender = true){
   const saves = readCharacterSavesRaw().filter(save => save.characterId !== characterId);
   writeCharacterSaves(saves);
   try{
-    const legacyState = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+    const legacyState = JSON.parse(GameStorage.getItem(SAVE_KEY) || "null");
     if(legacyState?.characterId === characterId || legacyState?.player?.characterId === characterId){
-      localStorage.removeItem(SAVE_KEY);
+      GameStorage.removeItem(SAVE_KEY);
     }
   }catch{
-    localStorage.removeItem(SAVE_KEY);
+    GameStorage.removeItem(SAVE_KEY);
   }
-  if(localStorage.getItem(ACTIVE_CHARACTER_KEY) === characterId){
-    localStorage.removeItem(ACTIVE_CHARACTER_KEY);
+  if(GameStorage.getItem(ACTIVE_CHARACTER_KEY) === characterId){
+    GameStorage.removeItem(ACTIVE_CHARACTER_KEY);
   }
   if(player?.characterId === characterId){
     player = null;
@@ -5805,9 +5632,9 @@ function prepareSavedPlayerForPreview(savedPlayer){
   const baseStats = prepared.baseStats || classes[prepared.class] || { hp: prepared.maxHp || 0, mp: prepared.maxMp || 0, attack: prepared.attack || 0 };
   const invested = createDefaultInvestedStats(prepared.stats?.invested || {});
   const level = Math.max(1, Number(prepared.level) || 1);
-  const estimatedHpGain = Math.max(Number(invested.hpGain) || 0, (Number(invested.vitality) || 0) * getAttributePointGain("vitality", level));
-  const estimatedMpGain = Math.max(Number(invested.mpGain) || 0, (Number(invested.wisdom) || 0) * getAttributePointGain("wisdom", level));
-  const estimatedAttackGain = Math.max(Number(invested.attackGain) || 0, (Number(invested.strength) || 0) * getAttributePointGain("strength", level));
+  const estimatedHpGain = Math.max(0, Number(invested.hpGain) || 0);
+  const estimatedMpGain = Math.max(0, Number(invested.mpGain) || 0);
+  const estimatedAttackGain = Math.max(0, Number(invested.attackGain) || 0);
   prepared.baseStats = baseStats;
   prepared.maxHp = Math.max(Number(prepared.maxHp) || 0, (Number(baseStats.hp) || 0) + estimatedHpGain);
   prepared.maxMp = Math.max(Number(prepared.maxMp) || 0, (Number(baseStats.mp) || 0) + estimatedMpGain);
@@ -6014,12 +5841,13 @@ function renderRegionMapCard(){
         onclick="changeRegion('${region}')"
         aria-label="Viajar para ${region}"
         ${controlsDisabled || locked ? "disabled" : ""}
-      >${index + 1}</button>`;
+      >${index + 1}<span class="map-marker-label">${escapeHtml(region)}</span></button>`;
   }).join("");
   return `
     <div class="region-map-card">
+      <p class="map-current-label">${escapeHtml(currentRegion)} · ${escapeHtml(getBossUnlockText(currentRegion))}</p>
       <div class="region-map-frame">
-        <img class="region-map-image" src="assets/visual/maps/region-map.png?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
+        <img class="region-map-image" src="assets/visual/maps/region-map.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
         ${markers}
         <div class="region-map-boss-hud">
           <span class="region-map-boss-progress">${bossUnlockProgress.defeated}/${bossUnlockProgress.total}</span>
@@ -6050,22 +5878,27 @@ function renderLocationMapNavigation(){
       <button
         class="location-map-marker action-btn ${option.id === activeMode ? "active" : ""}"
         style="--x:${option.x}%;--y:${option.y}%"
+        title="${option.label} | Atalho ${option.shortcut}"
         data-tooltip="${option.label} | Atalho ${option.shortcut}"
         onclick="setMode('${option.id}')"
         aria-label="Ir para ${option.label}"
         ${disabled ? "disabled" : ""}
-      >${option.marker}</button>`;
+      >${option.marker}<span class="map-marker-label">${escapeHtml(option.label)}</span></button>`;
   }).join("");
   return `
     <div class="location-map-card">
       <div class="location-map-frame">
-        <img class="location-map-image" src="assets/visual/maps/locations-map.png?v=${LOCATION_MAP_ASSET_VERSION}" alt="Mapa de locais do jogo" />
+        <img class="location-map-image" src="assets/visual/maps/locations-map.webp?v=${LOCATION_MAP_ASSET_VERSION}" alt="Mapa de locais do jogo" />
         ${markers}
       </div>
     </div>`;
 }
 
 function updateUI(){
+  if(typeof CampaignHUD !== "undefined" && CampaignHUD.render()){
+    queueCampaignSave();
+    return;
+  }
   const pointsLabel = levelUpPoints > 0
     ? `<p><strong>Pontos para distribuir:</strong> ${levelUpPoints}</p>`
     : "";
@@ -6184,7 +6017,7 @@ function updateUI(){
   regionInfoPanel.innerHTML = `
     <h3>${regionPanelTitle}</h3>
     <p>${regionPanelDescription}</p>
-    ${currentMode === "battle" ? `${renderRegionMapCard()}` : currentMode === "bestiary" ? renderBestiaryRegionMapCard(getSelectedBestiaryRegion(), isBestiaryDevUnlocked()) : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar acessorios e artesao para catalogar partes de craft.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div><div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : ["arena", "arena_run"].includes(currentMode) ? (IS_ARENA_PAGE ? `${typeof renderArenaRoomControls === "function" ? renderArenaRoomControls() : `<div class="lock-note">Carregando sistemas da arena...</div>`}` : `<div class="lock-note">A arena abre em uma pagina separada. Clique em adentrar para criar uma sala ou entrar em um duelo.</div>`) : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
+    ${currentMode === "battle" ? `${renderRegionMapCard()}` : currentMode === "bestiary" ? renderBestiaryRegionMapCard(getSelectedBestiaryRegion(), isBestiaryDevUnlocked()) : currentMode === "village" ? `<div class="lock-note">Escolha um servico do vilarejo pelas abas: pousada para descanso, alquimista para consumiveis, ferreiro para aprimorar equipamentos e artesao para criar equipamentos e mercenario para contratos de materiais.</div>` : currentMode === "camp" ? `<div class="lock-note">As habilidades ativas exigem mana. As passivas permanecem funcionando o tempo todo. A rota de subclasse mostra o que voce ja ganhou e o que ainda vai liberar.</div><div class="inventory-item" style="margin-top:12px;"><strong>Resumo dos atributos</strong><br><span class="lock-note">Base da classe: ${classBaseData.hp} HP | ${classBaseData.mp} MP | ${classBaseData.attack} ATQ</span><br><span class="lock-note">Subclasses: +${subclassBonuses.bonusHp} HP | +${subclassBonuses.bonusMp} MP | +${subclassBonuses.bonusAttack} ATQ | +${subclassBonuses.skillPower} poder de habilidade</span><br><span class="lock-note">Pontos ganhados por nivel ate agora: ${investedSummary.totalLevelPoints}</span></div><div class="inventory-item" style="margin-top:12px;"><strong>Pontos investidos atualmente</strong><br><span class="lock-note">Vitalidade: ${investedSummary.vitalityPoints} ponto(s) = +${investedSummary.hpGain} de vida maxima</span><br><span class="lock-note">Sabedoria: ${investedSummary.wisdomPoints} ponto(s) = +${investedSummary.mpGain} de mana maxima</span><br><span class="lock-note">Forca: ${investedSummary.strengthPoints} ponto(s) = +${investedSummary.attackGain} de dano basico e +${investedSummary.skillGain} de dano de habilidade</span>${investedSummary.untrackedPoints > 0 ? `<br><span class="status-off">Existem ${investedSummary.untrackedPoints} ponto(s) antigos sem rastreamento confiavel. Use o treinador para reconstruir a distribuicao.</span>` : ""}</div><div class="inventory-item" style="margin-top:12px;"><div class="panel-header"><strong>Treinador</strong><span class="coin-badge">${getTrainerRespecCost()} moedas</span></div><span class="lock-note">Agora ele refaz sua distribuicao completa com base no seu nivel atual. O custo e 30 x seu nivel.</span><div class="button-row" style="margin-top:10px;"><button id="trainerRespecBtn" type="button" onclick="resetInvestedStatsAtCamp()" ${player.level <= 1 || levelUpPoints > 0 || needsSubclassChoice() ? "disabled" : ""}>Pagar e redistribuir atributos</button></div></div>${DEV_MODE ? `<div class="button-row" style="margin-top:10px;"><button onclick="grantNextLevelForTest()">Teste: Proximo nivel</button></div>` : ""}` : currentMode === "dungeon" ? (IS_DUNGEON_PAGE ? `<div class="lock-note">${dungeonMultiplayer.battleActive && enemy ? `Rodada ${dungeonMultiplayer.round} | Turno atual: ${(dungeonMultiplayer.party[getDungeonCurrentTurnId()] || {}).name || "..."}` : "Esta pagina e exclusiva da dungeon. Reuna o grupo, compartilhe o codigo da sala e so adentre quando todos estiverem prontos."}</div>${typeof renderDungeonRoomControls === "function" ? renderDungeonRoomControls() : `<div class="lock-note">Carregando sistemas da dungeon...</div>`}` : `<div class="lock-note">Escolha quando atravessar o portal. A pagina da dungeon so abre ao clicar em adentrar, com um layout proprio para a incursao cooperativa.</div>`) : ["arena", "arena_run"].includes(currentMode) ? (IS_ARENA_PAGE ? `${typeof renderArenaRoomControls === "function" ? renderArenaRoomControls() : `<div class="lock-note">Carregando sistemas da arena...</div>`}` : `<div class="lock-note">A arena abre em uma pagina separada. Clique em adentrar para criar uma sala ou entrar em um duelo.</div>`) : `<div class="lock-note">Cada conquista marca um passo importante da sua jornada.</div>`}`;
 
   const visibleInventory = getVisibleInventoryItems();
   const inventoryOpen = uiSettings.inventoryOpen !== false;
@@ -6260,6 +6093,7 @@ function updateUI(){
 
 function animateBars(){
   requestAnimationFrame(() => {
+    if(!player) return;
     const playerHpFill = document.getElementById("playerHpFill");
     const playerShieldFill = document.getElementById("playerShieldFill");
     const playerMpFill = document.getElementById("playerMpFill");
@@ -6314,6 +6148,7 @@ function animateBars(){
 }
 
 function renderActions(){
+  if(typeof CampaignHUD !== "undefined" && CampaignHUD.renderActions()) return;
   const actions = document.getElementById("actions");
   const skillInfo = getSkillInfo();
   if(isDead){
@@ -6425,12 +6260,16 @@ function toggleLog(){
 }
 
 function getSkillActionState(skill, actor = player){
-  const manaCost = Math.max(0, skill?.cost || 0);
-  const canUse = (actor?.mp || 0) >= manaCost;
+  const effects = actor === player ? playerEffects : actor?.effects;
+  const manaCost = actor === player ? Math.max(0, useSkillCost(skill || {})) : Math.max(0, skill?.cost || 0);
+  const hpCost = Math.floor((actor === player ? getCurrentCaps().maxHp : actor?.maxHp || 0) * (skill?.hpCostPercent || 0));
+  const shieldBlocked = (actor?.noShieldTurns || 0) > 0 && ["mage_mana_shield","nature_vine_cocoon"].includes(skill?.type);
+  const canUse = (actor?.mp || 0) >= manaCost && (actor?.hp || 0) > hpCost && !(effects?.forcedBasicTurns > 0) && !shieldBlocked;
   const themeClass = getSkillThemeClass(skill);
   return {
     canUse,
     manaCost,
+    reason: shieldBlocked ? "Corrupcao impede escudos" : (actor?.hp || 0) <= hpCost ? "Vida insuficiente" : (actor?.mp || 0) < manaCost ? "Mana insuficiente" : "",
     classes: `action-btn skill-action ${themeClass} ${canUse ? "skill-ready" : "skill-disabled"}`
   };
 }
@@ -6465,7 +6304,7 @@ function renderSkillActionButton(skill, index, onClick, actor = player){
   const state = getSkillActionState(skill, actor);
   const forcedBasicLock = actor === player && playerEffects.forcedBasicTurns > 0;
   const canUse = state.canUse && !forcedBasicLock;
-  const tooltip = forcedBasicLock ? `${skill.description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : skill.description;
+  const tooltip = forcedBasicLock ? `${skill.description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : `${skill.description}${state.reason ? ` | ${state.reason}` : ""}`;
   return `<button class="${state.classes}${forcedBasicLock ? " skill-locked" : ""}" data-tooltip="${tooltip}" onclick="${onClick}" ${canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
 }
 
@@ -6499,7 +6338,7 @@ function renderLevelUpPanel(){
       </div>`;
     return;
   }
-  if(levelUpPoints <= 0){
+  if(levelUpPoints <= 0 && !Object.values(allocation).some(value => Number(value) > 0)){
     panel.style.display = "none";
     panel.innerHTML = "";
     return;
@@ -6631,6 +6470,7 @@ async function animateEnemyHitSequence(hitDamages){
 
 async function attack(){
   if(levelUpPoints > 0 || isProcessingTurn || !enemy){ return; }
+  if(player.class === "Mago" && player.mp < Math.floor(3 + 0.1 * player.level) * 3){ log("Mana insuficiente!"); return; }
   blurActiveControl();
   isProcessingTurn = true;
   updateUI();
@@ -6684,6 +6524,8 @@ async function useSkill(index){
     log("Voce ainda nao desbloqueou uma habilidade.");
     return;
   }
+  const availability = getSkillActionState(skillInfo);
+  if(!availability.canUse){ log(availability.reason || "Habilidade indisponivel."); return; }
   isProcessingTurn = true;
   updateUI();
   if(await handlePlayerTurnStartEffects()){
@@ -6730,6 +6572,7 @@ async function passTurn(){
     return;
   }
   applyTurnStartPassives();
+  beginEquipmentAction("pass");
   log("Voce passou o turno.");
   playerEffects.lastActionType = "pass_turn";
   decayPlayerBuffs();
@@ -6743,6 +6586,7 @@ function handleEnemyDefeat(){
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
   log("Inimigo derrotado!");
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.recordKill(enemy, player); }
   tryEnemyMaterialDrop(enemy);
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
   const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
@@ -7069,7 +6913,7 @@ function resolveBossAction(ability){
     playerEffects.damageDownTurns = Math.max(playerEffects.damageDownTurns, ability.targetDamageDownTurns);
     log(`${enemy.baseName} reduziu seu dano em ${Math.floor(ability.targetDamageDownPercent * 100)}% por ${ability.targetDamageDownTurns} turnos.`);
   }
-  if(ability.targetSkipChance && Math.random() < ability.targetSkipChance){
+  if(ability.targetSkipChance && playerEffects.controlImmuneTurns <= 0 && Math.random() < ability.targetSkipChance){
     playerEffects.skipNextTurn = true;
     log(`${enemy.baseName} desestabilizou voce. Seu proximo turno sera perdido.`);
   }
@@ -7080,7 +6924,9 @@ function resolveBossAction(ability){
 async function enemyTurn(){
   handleBossBuffUpkeep();
   if(enemy.dotTurns > 0 && enemy.dotDamagePerTurn > 0){
-    enemy.hp -= enemy.dotDamagePerTurn;
+    const dotTick = Math.floor(enemy.dotDamagePerTurn * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0)));
+    enemy.hp -= dotTick;
+    if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:dotTick,rawDamage:dotTick,source:"dot"}); }
     log(`${enemy.baseName} sofreu ${enemy.dotDamagePerTurn} de dano continuo${enemy.dotSourceName ? ` por ${enemy.dotSourceName}` : ""}.`);
     enemy.dotTurns--;
     if(enemy.dotTurns <= 0){
@@ -7480,8 +7326,8 @@ function chooseSubclass(subclassId){
   }else{
     subclassState.tier60 = subclass.id;
   }
-  player.activeSkills = getClassTrees().activeSkills;
-  player.passiveSkills = getClassTrees().passiveSkills;
+  delete player.activeSkills;
+  delete player.passiveSkills;
   player.hp = Math.min(getPreviewStats().maxHp, player.hp + (subclass.bonusHp || 0));
   player.mp = Math.min(getPreviewStats().maxMp, player.mp + (subclass.bonusMp || 0));
   displayState.playerHp = player.hp;
@@ -7501,6 +7347,7 @@ function log(msg){
     logBox.removeChild(logBox.firstElementChild);
   }
   logBox.scrollTop = logBox.scrollHeight;
+  if(typeof CampaignHUD !== "undefined") CampaignHUD.syncChronicle();
 }
 
 let shouldShowCharacterSelectOnly = false;
@@ -7528,7 +7375,12 @@ if(shouldShowCharacterSelectOnly){
   }
 }
 renderSettingsPanel();
+let lastMercenaryUiMinute = Math.floor(Date.now() / 60000);
 setInterval(() => {
+  const mercenaryMinute = Math.floor(Date.now() / 60000);
+  if(player && currentMode === "village" && villageTab === "mercenary" && mercenaryMinute !== lastMercenaryUiMinute){
+    lastMercenaryUiMinute = mercenaryMinute; EquipmentSystem.refreshContracts(player); updateUI();
+  }
   if(isDead){
     updateUI();
   }

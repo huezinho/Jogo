@@ -1,0 +1,118 @@
+{
+  "tests": [
+    {
+      "name": "all48enemies-have-two-materials-and-primary-ids-preserved",
+      "pass": true
+    },
+    {
+      "name": "4800canonical-items-fit-budget-and-network-rebuilds-stats",
+      "pass": true
+    },
+    {
+      "name": "legacy-normalization-is-nondestructive",
+      "pass": true
+    },
+    {
+      "name": "recipe-visibility-and-atomic-craft-enforce-region-and-all-ingredients",
+      "pass": true
+    },
+    {
+      "name": "all-unlocked-recipes-foreign-materials-within-next-two-regions",
+      "pass": true
+    },
+    {
+      "name": "all96-drops-used-by-crafting-and-strong-rarities-require-both-boss-components",
+      "pass": true
+    },
+    {
+      "name": "mercenary-rotates-keeps-active-and-claims-once-with-foreign-reward",
+      "pass": true
+    },
+    {
+      "name": "mercenary-state-survives-json-and-respects-unlocked-targets",
+      "pass": true
+    },
+    {
+      "name": "imported-contracts-rebuild-offers-reject-injection-and-canonicalize-rewards",
+      "pass": true
+    },
+    {
+      "name": "all60-new-boss-accessories-canonical-bounded-and-outside-crafting-sets",
+      "pass": true
+    },
+    {
+      "name": "v2-forge-requires-next-rarity-foreign-material-delta",
+      "pass": true
+    },
+    {
+      "name": "partial2-4-5-bonuses-and-accessory-exclusion",
+      "pass": true
+    },
+    {
+      "name": "Floresta5-after-three-dot-actions-boosts-once",
+      "pass": true
+    },
+    {
+      "name": "freeze-without-dot-application-cannot-steal-ownership-or-progress-forest",
+      "pass": true
+    },
+    {
+      "name": "actual-dot-application-only-claims-declared-channel-and-counts-once-per-action",
+      "pass": true
+    },
+    {
+      "name": "no-shield-status-blocks-set-fallback-before-first-action",
+      "pass": true
+    },
+    {
+      "name": "Caverna5-shield-on-third-hit-with-cooldown",
+      "pass": true
+    },
+    {
+      "name": "Ruinas4-5-action-wide-bonus-and-bounded-echo",
+      "pass": true
+    },
+    {
+      "name": "Pantano5-applies-existing-poison-channel-once",
+      "pass": true
+    },
+    {
+      "name": "Vulcao4-5-periodic-target-bonus-and-third-offensive-burn",
+      "pass": true
+    },
+    {
+      "name": "Abismo4-5-penetration-and-next-action-bonus",
+      "pass": true
+    },
+    {
+      "name": "Fortaleza4-5-absorption-stores-bounded-retaliation",
+      "pass": true
+    },
+    {
+      "name": "Necropole2-4-5-heals-dot-and-extends-only-owned-dots",
+      "pass": true
+    },
+    {
+      "name": "Citadela2-4-5-critical-prepares-next-skill-penetration",
+      "pass": true
+    },
+    {
+      "name": "Panteao4-5-effective-primary-support-only",
+      "pass": true
+    },
+    {
+      "name": "ally-shield-records-only-actual-source-support-and-heal-target-can-consume-forest",
+      "pass": true
+    },
+    {
+      "name": "Cataclismo4-5-hp-payment-generates-capped-shield",
+      "pass": true
+    },
+    {
+      "name": "Paradoxo4-5-three-distinct-skills-discount-once",
+      "pass": true
+    }
+  ],
+  "passed": 28,
+  "failed": 0
+}

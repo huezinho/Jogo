@@ -1,0 +1,37 @@
+/* User-selected type only. Geometry, colours and artwork remain in campaign-hud.css. */
+@font-face {
+  font-family: 'RPG Cinzel';
+  src: url('../visual/fonts/cinzel-variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+body.rpg-campaign {
+  --rpg-font-family: 'RPG Cinzel', Georgia, serif;
+  font-family: var(--rpg-font-family);
+  font-weight: 650;
+  font-synthesis: none;
+  font-kerning: normal;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Shared legacy widgets have explicit font shorthands. Keep one face throughout. */
+.rpg-campaign * {
+  font-family: var(--rpg-font-family) !important;
+  font-weight: 650 !important;
+}
+
+.rpg-campaign :is(.rpg-ability strong, .rpg-mainnav button > span, .rpg-target-name, .rpg-rack-slot > span) {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.rpg-campaign #campaignHud h1 { line-height: 1.35; }
+.rpg-campaign .rpg-ability :is(strong, small) { line-height: 1.4; }
+
+/* The wider small-cap glyphs need room inside the existing mobile nameplates. */
+@media (max-width: 760px) {
+  .rpg-campaign .rpg-mainnav button[data-value=camp] { flex: 1.3; }
+  .rpg-campaign .rpg-mainnav button[data-value=bag] { flex: .8; }
+}

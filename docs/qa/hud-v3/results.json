@@ -1,0 +1,17 @@
+{
+  "fonts": [
+    {
+      "family": "Vollkorn",
+      "status": "loaded"
+    },
+    {
+      "family": "Cinzel",
+      "status": "loaded"
+    },
+    {
+      "family": "Grenze",
+      "status": "loaded"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,245 @@
+{
+  "records": [
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "costSize": "15px"
+    }
+  ],
+  "errors": []
+}

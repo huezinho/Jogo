@@ -1,0 +1,1818 @@
+{
+  "files": 304,
+  "totalBytes": 240123943,
+  "byFolder": {
+    ".gitattributes": 66,
+    "arena.html": 2260,
+    "dungeon.html": 2298,
+    "index.html": 1976,
+    "docs": 38769,
+    "assets": 240078574
+  },
+  "missingReferences": [],
+  "images": [
+    {
+      "path": "assets/visual/backgrounds/regions/paradoxo.png",
+      "bytes": 6285655,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/floresta.png",
+      "bytes": 6198221,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/panteao.png",
+      "bytes": 5960582,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/scenes/village.png",
+      "bytes": 5884131,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/ruinas.png",
+      "bytes": 5579273,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/scenes/camp.png",
+      "bytes": 5428575,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/pantano.png",
+      "bytes": 5374887,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/citadela.png",
+      "bytes": 5158816,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/fortaleza.png",
+      "bytes": 5115345,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/cataclismo.png",
+      "bytes": 5084553,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/abismo.png",
+      "bytes": 4863191,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/necropole.png",
+      "bytes": 4857781,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/maps/region-map.png",
+      "bytes": 4825813,
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/caverna.png",
+      "bytes": 4802932,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/vulcao.png",
+      "bytes": 4719091,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "assets/visual/maps/locations-map.png",
+      "bytes": 3741831,
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "path": "assets/visual/atlases/region-background-atlas.png",
+      "bytes": 3062983,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/visual/maps/trophy-categories.png",
+      "bytes": 2772331,
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-04.png",
+      "bytes": 2613440,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/camp-village-background-atlas.png",
+      "bytes": 2505898,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-07.png",
+      "bytes": 2433539,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-07.png",
+      "bytes": 2425116,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/hd-enemy-sprite-atlas.png",
+      "bytes": 2403083,
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-11.png",
+      "bytes": 2384655,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-10.png",
+      "bytes": 2354196,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-12.png",
+      "bytes": 2340926,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-08.png",
+      "bytes": 2336939,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-03.png",
+      "bytes": 2326410,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-06.png",
+      "bytes": 2322784,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-02.png",
+      "bytes": 2312447,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-09.png",
+      "bytes": 2308850,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-01.png",
+      "bytes": 2300735,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-03.png",
+      "bytes": 2276437,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-05.png",
+      "bytes": 2258712,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-01.png",
+      "bytes": 2225977,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-06.png",
+      "bytes": 2219565,
+      "width": 1672,
+      "height": 941
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-05.png",
+      "bytes": 2152175,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-04.png",
+      "bytes": 2139502,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/hd-hero-sprite-atlas.png",
+      "bytes": 1942745,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/heroes-02.png",
+      "bytes": 1925660,
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "path": "assets/visual/sprites/village/merchants-source.png",
+      "bytes": 1847386,
+      "width": 2172,
+      "height": 724
+    },
+    {
+      "path": "assets/visual/atlases/hd-projectile-atlas.png",
+      "bytes": 1804415,
+      "width": 1402,
+      "height": 1122
+    },
+    {
+      "path": "assets/visual/items/_preview_items.png",
+      "bytes": 1263377,
+      "width": 1200,
+      "height": 1520
+    },
+    {
+      "path": "assets/combat-art/normalized/mago.png",
+      "bytes": 869006,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/guerreiro.png",
+      "bytes": 847788,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/arqueiro.png",
+      "bytes": 830895,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/paladino.png",
+      "bytes": 761323,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/berserker.png",
+      "bytes": 757683,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/ent-ancestral.png",
+      "bytes": 753460,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/mago-frigido.png",
+      "bytes": 750819,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/guarda-florestal.png",
+      "bytes": 748848,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/drake-celeste.png",
+      "bytes": 746321,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/rei-espectral.png",
+      "bytes": 746283,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/slime-toxico.png",
+      "bytes": 744639,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/devorador-de-eras.png",
+      "bytes": 744480,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/draco-magmatico.png",
+      "bytes": 743339,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/samurai.png",
+      "bytes": 742391,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/serpente-do-lodo.png",
+      "bytes": 742339,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/serafim-do-fim.png",
+      "bytes": 739592,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/arquimago.png",
+      "bytes": 739439,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/espadachim.png",
+      "bytes": 738643,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/oraculo-do-zero.png",
+      "bytes": 738623,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/golem-de-brasa.png",
+      "bytes": 736584,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/cacador.png",
+      "bytes": 736364,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/cavaleiro.png",
+      "bytes": 735674,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/bruxa-do-brejo.png",
+      "bytes": 735407,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/troll-das-profundezas.png",
+      "bytes": 733522,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/guardiao-aureo.png",
+      "bytes": 732254,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/titan-rachado.png",
+      "bytes": 730020,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/executor-astral.png",
+      "bytes": 728523,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/fenix-sombria.png",
+      "bytes": 726512,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/deus-da-ruina.png",
+      "bytes": 720995,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/avatar-do-zenith.png",
+      "bytes": 719489,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/salamandra-rubra.png",
+      "bytes": 718939,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/mago-incendiario.png",
+      "bytes": 718399,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/guardiao-temporal.png",
+      "bytes": 714914,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/sentinela-quebrada.png",
+      "bytes": 714819,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/atirador-arcano.png",
+      "bytes": 714387,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/esqueleto-mineiro.png",
+      "bytes": 713878,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/hidra-do-lodo.png",
+      "bytes": 713861,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/cavaleiro-abissal.png",
+      "bytes": 712966,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/soberano-do-paradoxo.png",
+      "bytes": 712777,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/fantasma-antigo.png",
+      "bytes": 711192,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/colosso-do-vazio.png",
+      "bytes": 711031,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/arauto-do-cataclismo.png",
+      "bytes": 709904,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/ceifador-de-ossos.png",
+      "bytes": 709817,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/quimera-solar.png",
+      "bytes": 708805,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/escudeiro-de-ferro.png",
+      "bytes": 708619,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/elementalista.png",
+      "bytes": 708182,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/maga-da-muralha.png",
+      "bytes": 706081,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/anjo-caido.png",
+      "bytes": 704886,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/sapo-colossal.png",
+      "bytes": 700818,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/feiticeira-morta.png",
+      "bytes": 698207,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/carrasco-de-guerra.png",
+      "bytes": 696188,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/oraculo-radiante.png",
+      "bytes": 694082,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/aranha-gigante.png",
+      "bytes": 692193,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/espreitador.png",
+      "bytes": 691017,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/ninja.png",
+      "bytes": 689042,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/goblin.png",
+      "bytes": 687215,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/atirador.png",
+      "bytes": 685903,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/arauto-do-vazio.png",
+      "bytes": 684321,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/corrompido.png",
+      "bytes": 683814,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/morcego-de-pedra.png",
+      "bytes": 682249,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/arcanista.png",
+      "bytes": 682096,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/sniper.png",
+      "bytes": 682010,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/guardiao-funebre.png",
+      "bytes": 677636,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/imperador-do-eclipse.png",
+      "bytes": 675543,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/cultista-perdido.png",
+      "bytes": 674754,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/general-de-aco.png",
+      "bytes": 667337,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/lorde-da-cripta.png",
+      "bytes": 664661,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/lamia-do-eclipse.png",
+      "bytes": 646109,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/combat-art/normalized/lobo-sombrio.png",
+      "bytes": 627142,
+      "width": 512,
+      "height": 896
+    },
+    {
+      "path": "assets/visual/sprites/heroes/paladino.png",
+      "bytes": 549082,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/golem-de-brasa.png",
+      "bytes": 543653,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/guardiao-temporal.png",
+      "bytes": 528545,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/berserker.png",
+      "bytes": 528056,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/devorador-de-eras.png",
+      "bytes": 519805,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/avatar-do-zenith.png",
+      "bytes": 516682,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/ent-ancestral.png",
+      "bytes": 512221,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/cavaleiro.png",
+      "bytes": 500277,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/guardiao-funebre.png",
+      "bytes": 495167,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/guerreiro.png",
+      "bytes": 491096,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/druida.png",
+      "bytes": 486693,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/protetor-da-floresta.png",
+      "bytes": 485310,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/arauto-do-cataclismo.png",
+      "bytes": 476603,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/draco-magmatico.png",
+      "bytes": 475982,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/lorde-da-cripta.png",
+      "bytes": 466579,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/druida-sombrio.png",
+      "bytes": 464404,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/colosso-do-vazio.png",
+      "bytes": 461277,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/drake-celeste.png",
+      "bytes": 460390,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/titan-rachado.png",
+      "bytes": 459293,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/general-de-aco.png",
+      "bytes": 456589,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/oraculo-radiante.png",
+      "bytes": 456048,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/oraculo-do-zero.png",
+      "bytes": 454341,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/guardiao-aureo.png",
+      "bytes": 452087,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/anjo-caido.png",
+      "bytes": 447149,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/hidra-do-lodo.png",
+      "bytes": 443220,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/adepto-da-natureza.png",
+      "bytes": 432165,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/arquimago.png",
+      "bytes": 431975,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/feiticeira-morta.png",
+      "bytes": 431207,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/arauto-do-vazio.png",
+      "bytes": 428511,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/lamia-do-eclipse.png",
+      "bytes": 425989,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/cavaleiro-abissal.png",
+      "bytes": 425047,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/elementalista.png",
+      "bytes": 424609,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/avatar-da-natureza.png",
+      "bytes": 419480,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/goblin.png",
+      "bytes": 419289,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/executor-astral.png",
+      "bytes": 418886,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/bruxa-do-brejo.png",
+      "bytes": 416624,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/guarda-florestal.png",
+      "bytes": 414580,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/mago-frigido.png",
+      "bytes": 413782,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/soberano-do-paradoxo.png",
+      "bytes": 413485,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/atirador-arcano.png",
+      "bytes": 413170,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/sapo-colossal.png",
+      "bytes": 411229,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/carrasco-de-guerra.png",
+      "bytes": 410922,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/sentinela-quebrada.png",
+      "bytes": 407413,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/fenix-sombria.png",
+      "bytes": 407367,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/maga-da-muralha.png",
+      "bytes": 403107,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/serafim-do-fim.png",
+      "bytes": 400171,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/samurai.png",
+      "bytes": 399956,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/fada-monarca.png",
+      "bytes": 399871,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/quimera-solar.png",
+      "bytes": 399128,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/mago.png",
+      "bytes": 398419,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/cacador.png",
+      "bytes": 394907,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/ninja.png",
+      "bytes": 394264,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/deus-da-ruina.png",
+      "bytes": 393395,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/village/innkeeper.png",
+      "bytes": 391184,
+      "width": 395,
+      "height": 662
+    },
+    {
+      "path": "assets/visual/sprites/heroes/espirito-da-floresta.png",
+      "bytes": 391148,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/ceifador-de-ossos.png",
+      "bytes": 389588,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/village/alchemist.png",
+      "bytes": 387952,
+      "width": 362,
+      "height": 660
+    },
+    {
+      "path": "assets/visual/sprites/heroes/mago-incendiario.png",
+      "bytes": 386601,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/rei-espectral.png",
+      "bytes": 383447,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/troll-das-profundezas.png",
+      "bytes": 383423,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/escudeiro-de-ferro.png",
+      "bytes": 380311,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/imperador-do-eclipse.png",
+      "bytes": 374759,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/village/blacksmith.png",
+      "bytes": 373234,
+      "width": 384,
+      "height": 661
+    },
+    {
+      "path": "assets/visual/sprites/heroes/corrompido.png",
+      "bytes": 372938,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/espadachim.png",
+      "bytes": 371760,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/fantasma-antigo.png",
+      "bytes": 368332,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/cultista-perdido.png",
+      "bytes": 364706,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/arqueiro.png",
+      "bytes": 361977,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/espreitador.png",
+      "bytes": 359770,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/serpente-do-lodo.png",
+      "bytes": 356682,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/lobo-sombrio.png",
+      "bytes": 356606,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/atirador.png",
+      "bytes": 350967,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/sniper.png",
+      "bytes": 349418,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/heroes/arcanista.png",
+      "bytes": 347457,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/morcego-de-pedra.png",
+      "bytes": 346626,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/slime-toxico.png",
+      "bytes": 327270,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/village/artisan.png",
+      "bytes": 322174,
+      "width": 341,
+      "height": 653
+    },
+    {
+      "path": "assets/visual/sprites/enemies/salamandra-rubra.png",
+      "bytes": 318385,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/esqueleto-mineiro.png",
+      "bytes": 297827,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/enemies/aranha-gigante.png",
+      "bytes": 286429,
+      "width": 9216,
+      "height": 256
+    },
+    {
+      "path": "assets/visual/sprites/_preview_fixed_sprites.png",
+      "bytes": 210432,
+      "width": 768,
+      "height": 384
+    },
+    {
+      "path": "assets/visual/projectiles/enemy-bolt.png",
+      "bytes": 40238,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/shadow-bolt.png",
+      "bytes": 35980,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/slash.png",
+      "bytes": 33397,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/enemy-claw.png",
+      "bytes": 31725,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/arcane-orb.png",
+      "bytes": 31567,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/holy-bolt.png",
+      "bytes": 29603,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/fireball.png",
+      "bytes": 29480,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/projectiles/arrow.png",
+      "bytes": 29323,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/items/parte_arauto_do_cataclismo.png",
+      "bytes": 27988,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_guardiao_temporal.png",
+      "bytes": 27648,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_abismo.png",
+      "bytes": 27531,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/projectiles/nature-vine.png",
+      "bytes": 27227,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/items/parte_lorde_da_cripta.png",
+      "bytes": 27079,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_slime_toxico.png",
+      "bytes": 27038,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_necropole.png",
+      "bytes": 26909,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_titan_rachado.png",
+      "bytes": 26858,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_soberano_do_paradoxo.png",
+      "bytes": 26795,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_panteao.png",
+      "bytes": 26653,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_paradoxo.png",
+      "bytes": 26540,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_executor_astral.png",
+      "bytes": 26401,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_citadela.png",
+      "bytes": 26397,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_vulcao.png",
+      "bytes": 26172,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_esqueleto_mineiro.png",
+      "bytes": 26046,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_draco_magmatico.png",
+      "bytes": 25872,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_golem_de_brasa.png",
+      "bytes": 25833,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_fortaleza.png",
+      "bytes": 25759,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/caverna_accessory_geodo.png",
+      "bytes": 24608,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/projectiles/frost-bolt.png",
+      "bytes": 24521,
+      "width": 768,
+      "height": 64
+    },
+    {
+      "path": "assets/visual/items/parte_sentinela_quebrada.png",
+      "bytes": 24472,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_ruinas.png",
+      "bytes": 24140,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_cataclismo.png",
+      "bytes": 24029,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_floresta.png",
+      "bytes": 22877,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_salamandra_rubra.png",
+      "bytes": 22694,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_pantano.png",
+      "bytes": 22598,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_lobo_sombrio.png",
+      "bytes": 22543,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_colosso_do_vazio.png",
+      "bytes": 22416,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_hidra_do_lodo.png",
+      "bytes": 22157,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_cultista_perdido.png",
+      "bytes": 22148,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_rei_espectral.png",
+      "bytes": 22145,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/paradoxo_accessory_o_fim.png",
+      "bytes": 21773,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/bau_caverna.png",
+      "bytes": 21679,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_escudeiro_de_ferro.png",
+      "bytes": 21509,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_serpente_do_lodo.png",
+      "bytes": 21183,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/ui/rarity-gem-boss.png",
+      "bytes": 21140,
+      "width": 160,
+      "height": 160
+    },
+    {
+      "path": "assets/visual/ui/rarity-gem-incomum.png",
+      "bytes": 20995,
+      "width": 160,
+      "height": 160
+    },
+    {
+      "path": "assets/visual/items/parte_feiticeira_morta.png",
+      "bytes": 20855,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/ui/rarity-gem-comum.png",
+      "bytes": 20803,
+      "width": 160,
+      "height": 160
+    },
+    {
+      "path": "assets/visual/items/parte_general_de_aco.png",
+      "bytes": 20678,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/ui/rarity-gem-lendaria.png",
+      "bytes": 20469,
+      "width": 160,
+      "height": 160
+    },
+    {
+      "path": "assets/visual/items/abismo_accessory_anel_abismal.png",
+      "bytes": 20440,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_ent_ancestral.png",
+      "bytes": 20431,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/ui/rarity-gem-rara.png",
+      "bytes": 20295,
+      "width": 160,
+      "height": 160
+    },
+    {
+      "path": "assets/visual/items/parte_sapo_colossal.png",
+      "bytes": 20262,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_maga_da_muralha.png",
+      "bytes": 19934,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_arauto_do_vazio.png",
+      "bytes": 19848,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_guardiao_funebre.png",
+      "bytes": 19428,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_morcego_de_pedra.png",
+      "bytes": 19338,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_imperador_do_eclipse.png",
+      "bytes": 19299,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_carrasco_de_guerra.png",
+      "bytes": 19207,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/attack_tonic.png",
+      "bytes": 19162,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/pantano_accessory_escama_da_hidra.png",
+      "bytes": 19078,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_cavaleiro_abissal.png",
+      "bytes": 19008,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/ruinas_accessory_tabula_antiga.png",
+      "bytes": 19006,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_drake_celeste.png",
+      "bytes": 18692,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_troll_das_profundezas.png",
+      "bytes": 18012,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_oraculo_radiante.png",
+      "bytes": 17259,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_avatar_do_zenith.png",
+      "bytes": 17233,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/mana_potion.png",
+      "bytes": 17232,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_anjo_caido.png",
+      "bytes": 16949,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/floresta_accessory_colar_de_raizes.png",
+      "bytes": 16765,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_fantasma_antigo.png",
+      "bytes": 16686,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_serafim_do_fim.png",
+      "bytes": 16631,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/health_potion.png",
+      "bytes": 16574,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/fortaleza_accessory_alma_do_general.png",
+      "bytes": 16372,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_deus_da_ruina.png",
+      "bytes": 16359,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_oraculo_do_zero.png",
+      "bytes": 16273,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/necropole_accessory_pacto_do_lorde.png",
+      "bytes": 16265,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_bruxa_do_brejo.png",
+      "bytes": 16141,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_lamia_do_eclipse.png",
+      "bytes": 15938,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/cataclismo_accessory_tesseract.png",
+      "bytes": 15764,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/panteao_accessory_colar_da_fe.png",
+      "bytes": 15563,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/citadela_accessory_encanto_do_eclipse.png",
+      "bytes": 14199,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_ceifador_de_ossos.png",
+      "bytes": 13504,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_goblin.png",
+      "bytes": 13202,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_fenix_sombria.png",
+      "bytes": 13124,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_devorador_de_eras.png",
+      "bytes": 12652,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/vulcao_accessory_pedra_de_magma.png",
+      "bytes": 12480,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_quimera_solar.png",
+      "bytes": 12192,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/skill_tonic.png",
+      "bytes": 12062,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_guardiao_aureo.png",
+      "bytes": 11964,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "assets/visual/items/parte_aranha_gigante.png",
+      "bytes": 10707,
+      "width": 128,
+      "height": 128
+    }
+  ],
+  "sourceLines": {
+    "arena.html": 61,
+    "dungeon.html": 61,
+    "index.html": 54,
+    "assets/js/game.js": 7536,
+    "assets/styles/arena.css": 23,
+    "assets/styles/dungeon.css": 92,
+    "assets/styles/game.css": 1269,
+    "assets/js/data/class-trees.js": 294,
+    "assets/js/data/system-data.js": 180,
+    "assets/js/data/world-data.js": 327,
+    "assets/js/systems/achievement-system.js": 240,
+    "assets/js/systems/arena-system.js": 713,
+    "assets/js/systems/dungeon-shared.js": 65,
+    "assets/js/systems/dungeon-system.js": 2619,
+    "assets/js/systems/page-navigation.js": 49
+  },
+  "largestFiles": [
+    {
+      "path": "assets/audio/music/gossamer-cache.mp3",
+      "bytes": 9049766
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/paradoxo.png",
+      "bytes": 6285655
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/floresta.png",
+      "bytes": 6198221
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/panteao.png",
+      "bytes": 5960582
+    },
+    {
+      "path": "assets/visual/backgrounds/scenes/village.png",
+      "bytes": 5884131
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/ruinas.png",
+      "bytes": 5579273
+    },
+    {
+      "path": "assets/visual/backgrounds/scenes/camp.png",
+      "bytes": 5428575
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/pantano.png",
+      "bytes": 5374887
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/citadela.png",
+      "bytes": 5158816
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/fortaleza.png",
+      "bytes": 5115345
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/cataclismo.png",
+      "bytes": 5084553
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/abismo.png",
+      "bytes": 4863191
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/necropole.png",
+      "bytes": 4857781
+    },
+    {
+      "path": "assets/visual/maps/region-map.png",
+      "bytes": 4825813
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/caverna.png",
+      "bytes": 4802932
+    },
+    {
+      "path": "assets/visual/backgrounds/regions/vulcao.png",
+      "bytes": 4719091
+    },
+    {
+      "path": "assets/visual/maps/locations-map.png",
+      "bytes": 3741831
+    },
+    {
+      "path": "assets/visual/atlases/region-background-atlas.png",
+      "bytes": 3062983
+    },
+    {
+      "path": "assets/visual/maps/trophy-categories.png",
+      "bytes": 2772331
+    },
+    {
+      "path": "assets/visual/atlases/generated-v5/enemies-04.png",
+      "bytes": 2613440
+    }
+  ]
+}

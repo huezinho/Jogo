@@ -1,7 +1,6 @@
 (function(){
   const DUNGEON_RUN_MODE = "dungeon_run";
   const baseSaveCampaign = window.saveCampaign;
-  const baseGetTrophies = window.getTrophies;
   const baseRenderActions = window.renderActions;
   const baseUpdateUI = window.updateUI;
   const baseSetMode = window.setMode;
@@ -9,9 +8,74 @@
   const baseFinishLevelUp = window.finishLevelUp;
   const baseChooseSubclass = window.chooseSubclass;
   const baseRenderLevelUpPanel = window.renderLevelUpPanel;
+  const DUNGEON_TIMEOUT_MS = 12000;
+  let dungeonHeartbeatTimer = null;
+  let closingDungeon = false;
 
   function cloneData(value){
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function isDungeonMessage(data){
+    if(typeof NetworkValidation !== "undefined"){ return NetworkValidation.isMessage(data); }
+    return !!data && typeof data === "object" && !Array.isArray(data) && typeof data.type === "string";
+  }
+
+  function sanitizeDungeonLobbyHero(input){
+    if(typeof NetworkValidation !== "undefined"){ return NetworkValidation.sanitizeHero(input); }
+    return null;
+  }
+
+  function emptyDungeonRunStats(){
+    return { dungeonBestStep: 0, dungeonClears: 0, dungeonRegionsCleared: 0, dungeonMultiEncounterWins: 0, dungeonShopPurchases: 0, dungeonFountainUses: 0 };
+  }
+
+  function incrementDungeonStat(hero, key, amount = 1){
+    if(!hero){ return; }
+    hero.runStats = { ...emptyDungeonRunStats(), ...(hero.runStats || {}) };
+    hero.runStats[key] = key === "dungeonBestStep" ? Math.max(hero.runStats[key], amount) : hero.runStats[key] + amount;
+  }
+
+  function currentDungeonIntent(payload){
+    const run = getDungeonRun();
+    dungeonMultiplayer.intentSequence = (dungeonMultiplayer.intentSequence || 0) + 1;
+    return { ...payload, runId: run.runId, revision: run.revision || 0, actionId: `${dungeonMultiplayer.peer?.id || "local"}:${dungeonMultiplayer.intentSequence}` };
+  }
+
+  function acceptDungeonIntent(peerId, data){
+    const run = getDungeonRun();
+    if(peerId === dungeonMultiplayer.peer?.id && !data.actionId){ return true; }
+    if(data.runId !== run.runId || data.revision !== (run.revision || 0) || typeof data.actionId !== "string" || data.actionId.length > 160){ return false; }
+    const seen = dungeonMultiplayer.processedIntents[peerId] || [];
+    if(seen.includes(data.actionId)){ return false; }
+    seen.push(data.actionId);
+    dungeonMultiplayer.processedIntents[peerId] = seen.slice(-64);
+    return true;
+  }
+
+  function bumpDungeonRevision(){
+    getDungeonRun().revision = (getDungeonRun().revision || 0) + 1;
+  }
+
+  function startDungeonHeartbeat(){
+    clearInterval(dungeonHeartbeatTimer);
+    dungeonMultiplayer.lastHostSeen = Date.now();
+    dungeonHeartbeatTimer = setInterval(() => {
+      if(!dungeonMultiplayer.peer){ return; }
+      const now = Date.now();
+      if(isDungeonHost()){
+        Object.values(dungeonMultiplayer.connections || {}).forEach(connection => {
+          if(now - (dungeonMultiplayer.lastSeen[connection.peer] || now) > DUNGEON_TIMEOUT_MS){
+            handleDungeonPeerDisconnect(connection.peer);
+            try { connection.close(); } catch {}
+          }else if(connection.open){
+            connection.send({ type: "heartbeat" });
+          }
+        });
+      }else if(now - dungeonMultiplayer.lastHostSeen > DUNGEON_TIMEOUT_MS){
+        finishDungeonRun("O host deixou de responder. A expedicao foi encerrada com o ultimo progresso confirmado.", "a dungeon");
+      }
+    }, 2500);
   }
 
   function ensureDungeonRunContainers(){
@@ -42,6 +106,8 @@
     if(!dungeonMultiplayer.heroStates || typeof dungeonMultiplayer.heroStates !== "object"){
       dungeonMultiplayer.heroStates = {};
     }
+    dungeonMultiplayer.processedIntents = dungeonMultiplayer.processedIntents || {};
+    dungeonMultiplayer.lastSeen = dungeonMultiplayer.lastSeen || {};
   }
 
   function createEmptyDungeonRunState(){
@@ -49,6 +115,7 @@
       active: false,
       phase: "lobby",
       runId: "",
+      revision: 0,
       regionIndex: 0,
       encounterIndex: 0,
       round: 1,
@@ -87,29 +154,6 @@
   function getDungeonTotalEncounterCount(){
     return getDungeonRegionOrder().length * 7;
   }
-
-  getDungeonSequence = window.getDungeonSequence = function(){
-    return getDungeonRegionOrder().flatMap(regionName => {
-      const regionData = regions[regionName];
-      const commonTemplate = regionData?.enemies?.[0] || regionData?.boss || { name: regionName, level: 1 };
-      const encounters = [];
-      for(let encounter = 0; encounter < 6; encounter++){
-        encounters.push({
-          regionName,
-          encounterIndex: encounter,
-          isBoss: false,
-          template: cloneData(commonTemplate)
-        });
-      }
-      encounters.push({
-        regionName,
-        encounterIndex: 6,
-        isBoss: true,
-        template: cloneData(regionData?.boss || commonTemplate)
-      });
-      return encounters;
-    });
-  };
 
   function getDungeonRegionName(regionIndex = getDungeonRun().regionIndex || 0){
     return getDungeonRegionOrder()[Math.min(Math.max(0, regionIndex), Math.max(0, getDungeonRegionOrder().length - 1))] || getDungeonRegionOrder()[0];
@@ -220,6 +264,8 @@
 
   function getDungeonLocalInventory(){
     ensureDungeonRunContainers();
+    const hero = getDungeonLocalHero();
+    if(hero){ hero.runInventory = hero.runInventory || []; return hero.runInventory; }
     return dungeonMultiplayer.localInventory;
   }
 
@@ -324,6 +370,10 @@
     hero.allocation = { strength: 0, wisdom: 0, vitality: 0 };
     hero.dungeonCoins = 0;
     hero.syncVersion = 0;
+    hero.runInventory = [];
+    hero.runStats = emptyDungeonRunStats();
+    hero.runKills = [];
+    hero.runMaterialDrops = {};
     hero.hp = player.hp;
     hero.mp = player.mp;
     const fullStats = getDungeonPreviewStats(hero);
@@ -475,15 +525,14 @@
       dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = profile;
       broadcastDungeonState();
     }else if(dungeonMultiplayer.hostConnection?.open){
-      dungeonMultiplayer.hostConnection.send({ type: "profile_update", player: profile });
-      if(hasActiveDungeonRun()){
-        dungeonMultiplayer.hostConnection.send({ type: "hero_state", heroState: cloneData(getDungeonLocalHero()) });
+      if(!hasActiveDungeonRun()){
+        dungeonMultiplayer.hostConnection.send({ type: "profile_update", heroState: cloneData(player) });
       }
     }
   };
 
   function updateDungeonBestStep(step){
-    player.stats.dungeonBestStep = Math.max(player.stats.dungeonBestStep || 0, step);
+    incrementDungeonStat(getDungeonLocalHero(), "dungeonBestStep", step);
   }
 
   function getDungeonStepNumber(run = getDungeonRun()){
@@ -509,7 +558,8 @@
     player.activeSkills = cloneData(dungeonHero.activeSkills || player.activeSkills || []);
     player.passiveSkills = cloneData(dungeonHero.passiveSkills || player.passiveSkills || []);
     player.baseStats = cloneData(dungeonHero.baseStats || player.baseStats);
-    player.stats = { ...preservedStats, ...(cloneData(dungeonHero.stats || {})) };
+    player.stats = preservedStats;
+    player.stats.invested = cloneData(dungeonHero.stats?.invested || preservedStats.invested || {});
     player.inventory = preservedInventory;
     player.equipment = preservedEquipment;
     player.coins = preservedCoins;
@@ -526,8 +576,31 @@
   }
 
   function applyDungeonRewardsToMain(reasonLabel = "a incursao"){
-    const gainedCoins = dungeonMultiplayer.dungeonCoins || 0;
+    const run = getDungeonRun();
+    const hero = getDungeonLocalHero();
+    if(!hero || !run.runId || !player){ return; }
+    const applied = player.stats.appliedDungeonRuns || [];
+    if(applied.includes(run.runId)){ return; }
+    const gainedCoins = Number(hero.dungeonCoins) || 0;
     syncMainHeroFromDungeonHero();
+    const delta = { ...emptyDungeonRunStats(), ...(hero.runStats || {}) };
+    Object.keys(emptyDungeonRunStats()).forEach(key => {
+      player.stats[key] = key === "dungeonBestStep"
+        ? Math.max(Number(player.stats[key]) || 0, Number(delta[key]) || 0)
+        : (Number(player.stats[key]) || 0) + (Number(delta[key]) || 0);
+    });
+    player.stats.appliedDungeonRuns = [...applied, run.runId].slice(-100);
+    if(typeof EquipmentSystem !== "undefined"){
+      for(const entry of hero.runKills || []){
+        for(let count = 0; count < entry.count; count++){
+          EquipmentSystem.recordKill({ baseName: entry.name, region: entry.region }, player);
+        }
+      }
+      for(const [id, qty] of Object.entries(hero.runMaterialDrops || {})){
+        const material = EquipmentSystem.materialById(id);
+        if(material && Number.isInteger(qty) && qty > 0){ addInventoryItem({ ...material, qty }); }
+      }
+    }
     if(gainedCoins > 0){
       player.coins += gainedCoins;
       player.stats.coinsEarned = (player.stats.coinsEarned || 0) + gainedCoins;
@@ -543,6 +616,8 @@
   }
 
   function closeDungeonConnections(){
+    clearInterval(dungeonHeartbeatTimer);
+    dungeonHeartbeatTimer = null;
     Object.values(dungeonMultiplayer.connections || {}).forEach(connection => {
       try { connection.close(); } catch {}
     });
@@ -555,16 +630,28 @@
   }
 
   function finishDungeonRun(message, reasonLabel){
+    if(closingDungeon){ return; }
+    closingDungeon = true;
     applyDungeonRewardsToMain(reasonLabel);
     resetDungeonRuntimeState();
     closeDungeonConnections();
     dungeonMultiplayer = createDungeonMultiplayerState();
     ensureDungeonRunContainers();
     currentMode = window.IS_DUNGEON_PAGE ? "dungeon" : "battle";
+    if(player?.hp <= 0){
+      isDead = true;
+      deadUntil = Date.now() + getRespawnSeconds() * 1000;
+      currentMode = "battle";
+    }
     if(message){
       log(message);
     }
     updateUI();
+    closingDungeon = false;
+  }
+
+  function broadcastDungeonRunEnd(message, outcome){
+    broadcastToDungeonPeers({ type: "run_end", runId: getDungeonRun().runId, outcome, message, heroStates: cloneData(dungeonMultiplayer.heroStates) });
   }
 
   function getDungeonSkillTargetMode(skillInfo){
@@ -604,26 +691,25 @@
   }
 
   function tickDungeonAggro(){
-    Object.values(dungeonMultiplayer.party || {}).forEach(member => {
-      if(member.aggroTurns > 0){
-        member.aggroTurns--;
-        if(member.aggroTurns <= 0){
-          member.aggroPower = 0;
+    Object.keys(dungeonMultiplayer.heroStates || {}).forEach(peerId => {
+      const hero = getDungeonHeroStateForPeer(peerId);
+      if(hero?.aggroTurns > 0){
+        hero.aggroTurns--;
+        if(hero.aggroTurns <= 0){
+          hero.aggroPower = 0;
         }
+        setDungeonHeroStateForPeer(peerId, hero);
       }
     });
-    const localHero = getDungeonLocalHero();
-    if(localHero?.aggroTurns > 0){
-      localHero.aggroTurns--;
-      if(localHero.aggroTurns <= 0){
-        localHero.aggroPower = 0;
-      }
-    }
   }
 
   function processDungeonHeroStartEffects(hero, targetEnemy){
     return withDungeonHeroContext(hero, targetEnemy, () => {
       const messages = [];
+      if(playerEffects.shieldTurns > 0){
+        playerEffects.shieldTurns--;
+        if(playerEffects.shieldTurns <= 0){ playerEffects.shieldValue = 0; playerEffects.shieldReactiveWeakening = false; }
+      }
       if(playerEffects.burnTurns > 0 && playerEffects.burnDamagePerTurn > 0){
         const burnReduction = getPassiveModifiers().burnDamageReductionPercent || 0;
         const burnDamage = Math.max(0, Math.floor(playerEffects.burnDamagePerTurn * (1 - burnReduction)));
@@ -644,6 +730,7 @@
           return { messages, defeated: true, skipped: false };
         }
       }
+      if(playerEffects.controlImmuneTurns > 0){ playerEffects.skipNextTurn = false; }
       if(playerEffects.skipNextTurn){
         playerEffects.skipNextTurn = false;
         applyTurnStartPassives();
@@ -765,7 +852,7 @@
       bumpDungeonHeroStateVersion(hero);
     }
     addDungeonInventoryItem(cloneData(offer.item));
-    player.stats.dungeonShopPurchases = (player.stats.dungeonShopPurchases || 0) + 1;
+    incrementDungeonStat(hero, "dungeonShopPurchases");
     log(`Voce comprou ${offer.item.name} por ${offer.cost} moedas da dungeon.`);
     syncDungeonProfile();
     updateUI();
@@ -852,7 +939,7 @@
     return `<div class="party-list">${members.map(member => `
       <div class="party-entry ${member.id === dungeonMultiplayer.peer?.id ? "local" : ""} ${member.id === currentHeroId ? "active-turn" : ""} ${member.dead ? "down" : ""}">
         <div class="party-entry-head">
-          <strong>${member.icon} ${member.name}</strong>
+          <strong>${classIcons[member.class] || ""} ${escapeHtml(member.name)}</strong>
           <span class="party-turn-tag">${member.id === currentHeroId ? "Turno atual" : member.dead ? "Caido" : "Aguardando"}</span>
         </div>
         <span class="lock-note">Vida ${member.hp ?? 0}/${member.maxHp ?? 0}</span>
@@ -1117,10 +1204,7 @@
   }
 
   function buildDungeonActionPayload(payload){
-    return {
-      ...payload,
-      player: buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer?.id || "local")
-    };
+    return currentDungeonIntent(payload);
   }
 
   sendDungeonActionPayload = window.sendDungeonActionPayload = function(payload){
@@ -1179,6 +1263,7 @@
         return;
       }
       setDungeonLocalHero(cloneData(stateHero));
+      dungeonMultiplayer.dungeonCoins = Number(stateHero.dungeonCoins) || 0;
     }
   }
 
@@ -1234,7 +1319,7 @@
     }).result;
   }
 
-  function resolveDungeonPartySkill(hero, skillIndex, targetEnemy){
+  function resolveDungeonPartySkill(hero, skillIndex, targetEnemy, actorId){
     return withDungeonHeroContext(hero, targetEnemy, () => {
       const skillInfo = getSkillInfo()[skillIndex];
       const result = applySkillLocally(skillInfo, getDungeonActorName(hero), true);
@@ -1242,9 +1327,6 @@
         return { blocked: true, message: result.message };
       }
       applyDungeonAggroToHero(hero, skillInfo);
-      applyTurnStartPassives();
-      decayPlayerBuffs();
-      applyEndOfTurnRecovery();
       return {
         blocked: false,
         result,
@@ -1252,7 +1334,7 @@
         updatedEnemy: cloneData(enemy),
         partyEffect: {
           type: "team_support",
-          sourceId: dungeonMultiplayer.peer?.id || "local",
+          sourceId: actorId,
           sourceName: getDungeonActorName(hero),
           heal: skillInfo.heal || 0,
           shield: skillInfo.shield || 0,
@@ -1271,15 +1353,22 @@
       }
       const updatedEnemies = targets.map(target => {
         enemy = cloneData(target);
+        const targetSkill = getSkillInfo().find(skill => skill.id === skillInfo.id) || skillInfo;
         let dealtDamage = 0;
         if(skillInfo.type === "mage_blizzard"){
           enemy.blizzardSkipChance = Math.max(enemy.blizzardSkipChance || 0, skillInfo.enemySkipChance || 0);
           enemy.blizzardTurns = Math.max(enemy.blizzardTurns || 0, skillInfo.turns || 0);
         }
         if(skillInfo.type === "mage_avalanche"){
-          dealtDamage = applyDamageToEnemy(skillInfo.damage);
+          dealtDamage = applyDamageToEnemy(targetSkill.damage);
           enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
           enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+          if(hasUnlockedPassiveType("mage_frostburn")){
+            enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.floor(enemy.maxHp * 0.03));
+            enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
+            enemy.dotSourceName = "Gelo Queima";
+            if(typeof noteEnemyDotApplication === "function"){ noteEnemyDotApplication("dotTurns"); }
+          }
         }
         if(skillInfo.type === "nature_queen_decree"){
           dealtDamage = applyDamageToEnemy(skillInfo.damage, { skillCost: skillInfo.cost });
@@ -1289,6 +1378,12 @@
       applyTurnStartPassives();
       decayPlayerBuffs();
       applyEndOfTurnRecovery();
+      const lastEntry = updatedEnemies[updatedEnemies.length - 1];
+      if(lastEntry && enemy?.instanceId === lastEntry.enemy.instanceId){
+        const original = targets.find(target => target.instanceId === enemy.instanceId);
+        lastEntry.dealtDamage = original ? Math.max(0, original.hp - enemy.hp) : lastEntry.dealtDamage;
+        lastEntry.enemy = cloneData(enemy);
+      }
       const totalDamage = updatedEnemies.reduce((sum, entry) => sum + (entry.dealtDamage || 0), 0);
       const message = skillInfo.type === "mage_blizzard"
         ? `${getDungeonActorName(hero)} usou ${skillInfo.name} e envolveu todos os inimigos em uma tempestade arcana.`
@@ -1309,24 +1404,37 @@
     ensureDungeonSelectedEnemy();
   }
 
-  function applyDungeonPartyEffectOnHost(effect){
+  function applyDungeonPartyEffectOnHost(effect, sourceHero){
     if(!effect){ return; }
+    const sourceEffects = sourceHero?.effects;
+    if(sourceEffects?.equipmentAction){ sourceEffects.equipmentAction.resolving = true; }
     Object.keys(dungeonMultiplayer.heroStates || {}).forEach(peerId => {
       const heroState = getDungeonHeroStateForPeer(peerId);
       if(!heroState){ return; }
       const shouldApply = effect.applyToSource || peerId !== effect.sourceId;
       if(!shouldApply){ return; }
+      const caps = getDungeonPreviewStats(heroState);
+      const canHeal = heroState.hp < caps.maxHp && !(heroState.effects?.healReductionTurns > 0 && heroState.effects.healReductionPercent >= 1);
+      const scaled = sourceHero && typeof EquipmentSystem !== "undefined"
+        ? withDungeonHeroContext(sourceHero, getDungeonSelectedEnemyOrFallback(), () => ({
+          heal: EquipmentSystem.modifyHealing(sourceHero, sourceEffects, effect.heal || 0, { canHeal }),
+          shield: heroState.noShieldTurns > 0 ? 0 : EquipmentSystem.modifyShield(sourceHero, sourceEffects, effect.shield || 0, { track: false })
+        })).result
+        : effect;
       withDungeonHeroContext(heroState, getDungeonSelectedEnemyOrFallback(), () => {
-        if(effect.heal > 0){
-          healPlayer(effect.heal);
+        if(scaled.heal > 0){
+          const healed = healPlayer(scaled.heal, { skipEquipment: true, skipEquipmentTracking: true });
+          if(sourceHero && typeof EquipmentSystem !== "undefined"){ EquipmentSystem.noteHealing(sourceHero, sourceEffects, healed); }
         }
-        if(effect.shield > 0){
-          grantPlayerShield(effect.shield);
+        if(scaled.shield > 0){
+          const granted = grantPlayerShield(scaled.shield, 0, { skipEquipment: true });
+          if(sourceHero && typeof EquipmentSystem !== "undefined" && EquipmentSystem.noteShield){ EquipmentSystem.noteShield(sourceHero, sourceEffects, granted); }
         }
       });
       bumpDungeonHeroStateVersion(heroState);
       setDungeonHeroStateForPeer(peerId, heroState);
     });
+    if(sourceEffects?.equipmentAction){ sourceEffects.equipmentAction.resolving = false; }
   }
 
   function resolveDungeonActionForPeer(peerId, data){
@@ -1337,6 +1445,26 @@
     const targetEnemy = data.targetEnemyId
       ? cloneData(getDungeonRun().enemies.find(target => target.instanceId === data.targetEnemyId && target.hp > 0) || null)
       : cloneData(getDungeonSelectedEnemyOrFallback());
+    if(data.actionKind === "basic_attack" && !targetEnemy){ return { blocked: true, message: "Selecione um inimigo valido." }; }
+    if(!["basic_attack", "skill", "pass_turn"].includes(data.actionKind)){
+      return { blocked: true, message: "Acao invalida na dungeon." };
+    }
+    if((hero.levelUpPoints || 0) > 0 || withDungeonHeroContext(hero, targetEnemy, () => needsSubclassChoice()).result){
+      return { blocked: true, message: "Finalize sua evolucao antes de agir." };
+    }
+    if(data.actionKind === "basic_attack" && hero.class === "Mago" && hero.mp < Math.floor(3 + hero.level * 0.1) * 3){
+      return { blocked: true, message: "Mana insuficiente para o ataque basico." };
+    }
+    if(data.actionKind === "skill"){
+      if(!Number.isInteger(data.skillIndex) || data.skillIndex < 0){ return { blocked: true, message: "Habilidade invalida." }; }
+      const valid = withDungeonHeroContext(hero, targetEnemy, () => {
+        const skill = getSkillInfo()[data.skillIndex];
+        return !!skill && !(playerEffects.forcedBasicTurns > 0) && player.mp >= useSkillCost(skill)
+          && (getDungeonSkillTargetMode(skill) !== "single" || !!targetEnemy)
+          && (!skill.hpCostPercent || player.hp > Math.floor(getCurrentCaps().maxHp * skill.hpCostPercent));
+      }).result;
+      if(!valid){ return { blocked: true, message: "Habilidade indisponivel: confira vida, mana e restricoes." }; }
+    }
     const startState = processDungeonHeroStartEffects(hero, targetEnemy);
     if(startState.defeated){
       setDungeonHeroStateForPeer(peerId, hero);
@@ -1359,6 +1487,7 @@
     let action;
     if(data.actionKind === "pass_turn"){
       action = withDungeonHeroContext(hero, targetEnemy, () => {
+        beginEquipmentAction("pass");
         applyTurnStartPassives();
         playerEffects.lastActionType = "pass_turn";
         decayPlayerBuffs();
@@ -1389,7 +1518,7 @@
       if(targetMode === "self"){
         action = resolveDungeonSelfSkill(hero, data.skillIndex);
       }else if(targetMode === "party"){
-        action = resolveDungeonPartySkill(hero, data.skillIndex, targetEnemy);
+        action = resolveDungeonPartySkill(hero, data.skillIndex, targetEnemy, peerId);
       }else if(targetMode === "all_enemies"){
         action = resolveDungeonAreaSkill(hero, data.skillIndex, getLivingDungeonEnemies().map(cloneData));
       }else{
@@ -1412,7 +1541,19 @@
       applyLocalDungeonEnemyUpdates(action.updatedEnemies);
     }
     if(action.partyEffect){
-      applyDungeonPartyEffectOnHost(action.partyEffect);
+      applyDungeonPartyEffectOnHost(action.partyEffect, hero);
+      const liveTarget = getDungeonRun().enemies.find(target => target.instanceId === targetEnemy?.instanceId) || targetEnemy;
+      withDungeonHeroContext(hero, liveTarget, () => {
+        applyTurnStartPassives();
+        decayPlayerBuffs();
+        applyEndOfTurnRecovery();
+      });
+    }
+    if(hero.effects?.berserkerLastStandPending && getLivingDungeonEnemies().length > 0){
+      hero.effects.berserkerLastStandPending = false;
+      hero.hp = 0;
+      setDungeonHeroStateForPeer(peerId, hero);
+      return { blocked: false, turnConsumed: true, defeatedHero: true, defeatMessage: `${getDungeonActorName(hero)} usou sua ultima chance e caiu.`, messages: [...startState.messages, action.result.message] };
     }
     bumpDungeonHeroStateVersion(hero);
     setDungeonHeroStateForPeer(peerId, hero);
@@ -1452,8 +1593,9 @@
     }
   }
 
-  function applyDungeonIncomingPacketToLocalHero(packet){
-    const hero = getDungeonLocalHero();
+  function applyDungeonIncomingPacketToHero(packet, peerId){
+    if(!isDungeonHost()){ return; }
+    const hero = getDungeonHeroStateForPeer(peerId);
     if(!hero){ return; }
     const sourceEnemy = cloneData(getDungeonRun().enemies.find(target => target.instanceId === packet.sourceEnemyId) || null);
     let updatedEnemy = null;
@@ -1474,26 +1616,23 @@
           playerEffects.burnDamagePerTurn = Math.max(playerEffects.burnDamagePerTurn || 0, burnDamage);
           playerEffects.burnTurns = Math.max(playerEffects.burnTurns || 0, packet.effects.burnTurns || 0);
         }
-        if(packet.effects?.skipChance && Math.random() < packet.effects.skipChance){
+        if(!(playerEffects.controlImmuneTurns > 0) && packet.effects?.skipChance && Math.random() < packet.effects.skipChance){
           playerEffects.skipNextTurn = true;
         }
       }
       updatedEnemy = enemy ? cloneData(enemy) : null;
       return result;
     }).result;
+    bumpDungeonHeroStateVersion(hero);
+    setDungeonHeroStateForPeer(peerId, hero);
+    if(updatedEnemy && updatedEnemy.instanceId === packet.sourceEnemyId){
+      replaceDungeonEnemy(updatedEnemy);
+    }
     if(hero.hp <= 0){
-      if(isDungeonHost()){
-        handleDungeonRaidDefeat(`${buildDungeonHeroProfile(hero, dungeonMultiplayer.peer?.id || "local").name} caiu na dungeon. A expedicao terminou em derrota.`);
-      }else if(dungeonMultiplayer.hostConnection?.open){
-        dungeonMultiplayer.hostConnection.send({ type: "player_defeated", player: buildDungeonHeroProfile(hero, dungeonMultiplayer.peer?.id || "local") });
-      }
+      handleDungeonRaidDefeat(`${buildDungeonHeroProfile(hero, peerId).name} caiu na dungeon. A expedicao terminou em derrota.`);
       return;
     }
-    bumpDungeonHeroStateVersion(hero);
-    syncDungeonProfile();
-    if(updatedEnemy && updatedEnemy.instanceId === packet.sourceEnemyId){
-      sendDungeonReactionIfNeeded(updatedEnemy, "");
-    }
+    maybeFinishDungeonEncounterAfterEnemyUpdate();
     updateUI();
   }
 
@@ -1731,22 +1870,34 @@
     if(actorEnemy.rootedTurns > 0){
       actorEnemy.rootedTurns--;
     }
-    if(actorEnemy.dotTurns > 0 && actorEnemy.dotDamagePerTurn > 0){
-      actorEnemy.hp = Math.max(0, actorEnemy.hp - actorEnemy.dotDamagePerTurn);
-      actorEnemy.dotTurns--;
-      if(actorEnemy.dotTurns <= 0){
-        actorEnemy.dotDamagePerTurn = 0;
-        actorEnemy.dotSourceName = "";
-      }
-    }
-    ["natureMarkTurns", "naturePoisonTurns", "natureDecayTurns"].forEach(turnKey => {
-      const damageKey = turnKey.replace("Turns", "Damage");
-      if(actorEnemy[turnKey] > 0 && actorEnemy[damageKey] > 0){
+    [["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].forEach(([turnKey, damageKey]) => {
+      if(!(actorEnemy[turnKey] > 0 && actorEnemy[damageKey] > 0)){ return; }
+      const ownerId = actorEnemy.equipmentDotOwners?.[turnKey];
+      const ownerEntry = Object.entries(dungeonMultiplayer.heroStates).find(([, hero]) => String(hero.characterId || hero.id || hero.class) === ownerId);
+      const peerId = ownerEntry?.[0] || (!ownerId ? dungeonMultiplayer.peer.id : "");
+      const hero = peerId ? getDungeonHeroStateForPeer(peerId) : null;
+      if(hero){
+        withDungeonHeroContext(hero, actorEnemy, () => {
+          if(turnKey !== "dotTurns"){
+            const canTriggerSap = turnKey !== "natureDecayTurns" || getPlayerSubclassState().tier60 === "druida_sombrio";
+            applyNatureDotTick(turnKey === "natureMarkTurns" ? "Marca Natural" : turnKey === "naturePoisonTurns" ? "Veneno" : "Apodrecimento", damageKey, turnKey, canTriggerSap);
+          }else{
+            const multiplier = typeof EquipmentSystem !== "undefined" ? EquipmentSystem.getDotDamageMultiplier(hero) : 1;
+            const damage = Math.max(0, Math.floor(actorEnemy[damageKey] * multiplier));
+            actorEnemy.hp = Math.max(0, actorEnemy.hp - damage);
+            actorEnemy[turnKey]--;
+            if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(hero, playerEffects, actorEnemy, { damage, source: "dot" }); }
+          }
+        });
+        bumpDungeonHeroStateVersion(hero);
+        setDungeonHeroStateForPeer(peerId, hero);
+      }else{
         actorEnemy.hp = Math.max(0, actorEnemy.hp - actorEnemy[damageKey]);
         actorEnemy[turnKey]--;
-        if(actorEnemy[turnKey] <= 0){
-          actorEnemy[damageKey] = 0;
-        }
+      }
+      if(actorEnemy[turnKey] <= 0){
+        actorEnemy[damageKey] = 0;
+        if(turnKey === "dotTurns"){ actorEnemy.dotSourceName = ""; }
       }
     });
     if(actorEnemy.natureMarkTurns > 0 && !(actorEnemy.natureMarkDamage > 0)){
@@ -1787,11 +1938,8 @@
         const packet = buildDungeonEnemyAttackPacket(actorEnemy, targetProfile);
         broadcastDungeonLog(packet.message, "");
         if(packet.type === "attack"){
-          if(targetProfile.id === dungeonMultiplayer.peer?.id){
-            applyDungeonIncomingPacketToLocalHero(packet);
-            dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
-          }
-          broadcastToDungeonPeers({ type: "enemy_attack", packet }, targetProfile.id === dungeonMultiplayer.peer?.id ? "" : "");
+          applyDungeonIncomingPacketToHero(packet, targetProfile.id);
+          if(getDungeonRun().phase !== "battle"){ return; }
         }
       }
       syncDungeonTurnOrder();
@@ -1852,6 +2000,20 @@
     if(peerId === dungeonMultiplayer.peer?.id){
       dungeonMultiplayer.dungeonCoins = hero.dungeonCoins;
     }
+    if(typeof EquipmentSystem !== "undefined"){
+      hero.runKills = hero.runKills || [];
+      hero.runMaterialDrops = hero.runMaterialDrops || {};
+      for(const defeated of getDungeonRun().enemies){
+        const name = defeated.baseName || String(defeated.name || "").replace(/ Lv\.\d+$/, "");
+        const region = defeated.region;
+        if(!EquipmentSystem.getMaterials(name, region).length){ continue; }
+        const previous = hero.runKills.find(entry => entry.name === name && entry.region === region);
+        if(previous){ previous.count++; }else{ hero.runKills.push({ name, region, count: 1 }); }
+        for(const drop of EquipmentSystem.rollDrops(defeated)){
+          hero.runMaterialDrops[drop.id] = (hero.runMaterialDrops[drop.id] || 0) + drop.qty;
+        }
+      }
+    }
     withDungeonHeroContext(hero, null, () => {
       gainXP(rewards.xp);
       displayState.playerXp = player.xp;
@@ -1874,21 +2036,25 @@
     const defeatedWasBoss = isDungeonBossEncounter(run.encounterIndex);
     const defeatedEnemyCount = Math.max(1, run.enemies.length);
     const rewards = getDungeonEncounterRewards();
+    const stepNumber = getDungeonStepNumber(run);
+    const completedRun = defeatedWasBoss && run.regionIndex >= getDungeonRegionOrder().length - 1;
+    Object.keys(dungeonMultiplayer.heroStates).forEach(peerId => {
+      const hero = getDungeonHeroStateForPeer(peerId);
+      incrementDungeonStat(hero, "dungeonBestStep", stepNumber);
+      if(defeatedEnemyCount > 1){ incrementDungeonStat(hero, "dungeonMultiEncounterWins"); }
+      if(defeatedWasBoss){ incrementDungeonStat(hero, "dungeonRegionsCleared"); }
+      if(completedRun){ incrementDungeonStat(hero, "dungeonClears"); }
+      setDungeonHeroStateForPeer(peerId, hero);
+    });
     grantDungeonEncounterRewards(rewards);
-    player.stats.dungeonMultiEncounterWins = (player.stats.dungeonMultiEncounterWins || 0) + (defeatedEnemyCount > 1 ? 1 : 0);
-    updateDungeonBestStep(getDungeonStepNumber(run));
-    if(defeatedWasBoss){
-      player.stats.dungeonRegionsCleared = (player.stats.dungeonRegionsCleared || 0) + 1;
-    }
     const clearedRegion = getDungeonRegionName(run.regionIndex);
     const message = defeatedWasBoss
       ? `O chefao de ${clearedRegion} caiu. Cada aventureiro ganhou ${rewards.xp} XP e ${rewards.coins} moedas da dungeon.`
       : `A patrulha foi derrotada. Cada aventureiro ganhou ${rewards.xp} XP e ${rewards.coins} moedas da dungeon.`;
-    const stepNumber = getDungeonStepNumber(run);
-    const completedRun = defeatedWasBoss && run.regionIndex >= getDungeonRegionOrder().length - 1;
     log(message);
     broadcastToDungeonPeers({
       type: "encounter_reward",
+      runId: run.runId,
       rewards,
       message,
       wasBoss: defeatedWasBoss,
@@ -1905,8 +2071,7 @@
     run.turnIndex = 0;
     if(defeatedWasBoss){
       if(completedRun){
-        player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
-        broadcastToDungeonPeers({ type: "run_end", outcome: "complete", message: "A dungeon inteira foi concluida. Retornando para a campanha principal." });
+        broadcastDungeonRunEnd("A dungeon inteira foi concluida. Retornando para a campanha principal.", "complete");
         finishDungeonRun("A dungeon inteira foi concluida. Retornando para a campanha principal.", "a dungeon");
         return;
       }
@@ -1929,6 +2094,7 @@
     run.phase = "battle";
     run.turnOrder = buildDungeonTurnOrder();
     run.turnIndex = 0;
+    bumpDungeonRevision();
     ensureDungeonSelectedEnemy();
     broadcastDungeonLog(`A equipe entrou em ${regionName} para ${getDungeonEncounterLabel().toLowerCase()}.`, "");
     broadcastDungeonState();
@@ -1937,12 +2103,35 @@
 
   startDungeonRaid = window.startDungeonRaid = function(){
     if(!isDungeonHost() || getDungeonRoomMembers().length < 2 || isDead || player.hp <= 0){ return; }
+    if(hasActiveDungeonRun()){ return; }
+    const unfinished = Object.values(dungeonMultiplayer.heroStates).some(hero =>
+      (hero.levelUpPoints || 0) > 0 || withDungeonHeroContext(hero, null, () => needsSubclassChoice()).result);
+    if(unfinished){ log("Todos devem finalizar atributos e subclasses antes da expedicao."); return; }
     initializeDungeonLocalHero();
+    Object.keys(dungeonMultiplayer.heroStates).forEach(peerId => {
+      if(peerId === dungeonMultiplayer.peer.id){ return; }
+      const hero = cloneData(dungeonMultiplayer.heroStates[peerId]);
+      hero.effects = createDefaultPlayerEffects();
+      hero.runInventory = [];
+      hero.runStats = emptyDungeonRunStats();
+      hero.runKills = [];
+      hero.runMaterialDrops = {};
+      hero.dungeonCoins = 0;
+      hero.pendingLevelUps = 0;
+      hero.levelUpPoints = 0;
+      hero.allocation = { strength: 0, wisdom: 0, vitality: 0 };
+      const caps = getDungeonPreviewStats(hero);
+      hero.hp = caps.maxHp;
+      hero.mp = caps.maxMp;
+      setDungeonHeroStateForPeer(peerId, hero);
+    });
     dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
     const run = getDungeonRun();
     run.active = true;
     run.phase = "battle";
     run.runId = `run_${Date.now()}_${Math.floor(Math.random() * 999)}`;
+    run.revision = 0;
+    dungeonMultiplayer.processedIntents = {};
     run.regionIndex = 0;
     run.encounterIndex = 0;
     run.round = 1;
@@ -1959,55 +2148,52 @@
     startDungeonEncounter();
   };
 
+  function performDungeonFountain(){
+    if(!isDungeonHost() || getDungeonRun().phase !== "intermission"){ return false; }
+    const fountain = getDungeonIntermissionCost();
+    const livingMembers = getDungeonRoomMembers().filter(member => !member.dead);
+    if(fountain.total <= 0){ log("A equipe ja esta em plena forma."); return false; }
+    if(livingMembers.some(member => (getDungeonHeroStateForPeer(member.id)?.dungeonCoins || 0) < fountain.share)){
+      log("Nem todos os herois possuem moedas suficientes para pagar a fonte.");
+      return false;
+    }
+    livingMembers.forEach(member => {
+      const hero = getDungeonHeroStateForPeer(member.id);
+      const caps = getDungeonPreviewStats(hero);
+      hero.dungeonCoins -= fountain.share;
+      hero.hp = caps.maxHp;
+      hero.mp = caps.maxMp;
+      incrementDungeonStat(hero, "dungeonFountainUses");
+      bumpDungeonHeroStateVersion(hero);
+      setDungeonHeroStateForPeer(member.id, hero);
+    });
+    bumpDungeonRevision();
+    broadcastDungeonLog(`A fonte restaurou toda a equipe por ${fountain.share} moedas para cada aventureiro.`);
+    broadcastDungeonState();
+    updateUI();
+    return true;
+  }
+
   window.useDungeonFountain = function(){
     if(!isDungeonRunMode() || getDungeonRun().phase !== "intermission"){ return; }
-    if(isDungeonHost()){
-      const fountain = getDungeonIntermissionCost();
-      const livingMembers = getDungeonRoomMembers().filter(member => !member.dead);
-      if(fountain.total <= 0){
-        log("A equipe ja esta em plena forma.");
-        return;
-      }
-      if(livingMembers.some(member => (member.coins || 0) < fountain.share)){
-        log("Nem todos os herois possuem moedas suficientes para pagar a fonte.");
-        return;
-      }
-      dungeonMultiplayer.dungeonCoins = Math.max(0, dungeonMultiplayer.dungeonCoins - fountain.share);
-      const hero = getDungeonLocalHero();
-      if(hero){
-        hero.dungeonCoins = dungeonMultiplayer.dungeonCoins;
-        const caps = getDungeonPreviewStats(hero);
-        hero.hp = caps.maxHp;
-        hero.mp = caps.maxMp;
-        bumpDungeonHeroStateVersion(hero);
-      }
-      dungeonMultiplayer.party[dungeonMultiplayer.peer.id] = buildDungeonHeroProfile(getDungeonLocalHero(), dungeonMultiplayer.peer.id);
-      player.stats.dungeonFountainUses = (player.stats.dungeonFountainUses || 0) + 1;
-      broadcastToDungeonPeers({ type: "fountain_used", share: fountain.share, sourceId: dungeonMultiplayer.peer.id });
-      log(`A fonte restaurou toda a equipe por ${fountain.share} moedas para cada aventureiro.`);
-      syncDungeonProfile();
-      updateUI();
-      return;
-    }
-    if(dungeonMultiplayer.hostConnection?.open){
-      dungeonMultiplayer.hostConnection.send({ type: "request_fountain" });
-    }
+    sendDungeonOperation({ kind: "fountain" });
   };
 
   window.abandonDungeonRun = function(){
     if(!isDungeonRunMode() || !hasActiveDungeonRun()){ return; }
     if(isDungeonHost()){
-      broadcastToDungeonPeers({ type: "run_end", outcome: "abandon", message: "A equipe abandonou a dungeon e voltou para a campanha principal." });
+      broadcastDungeonRunEnd("A equipe abandonou a dungeon e voltou para a campanha principal.", "abandon");
       finishDungeonRun("A equipe abandonou a dungeon e voltou para a campanha principal.", "a dungeon");
       return;
     }
     if(dungeonMultiplayer.hostConnection?.open){
-      dungeonMultiplayer.hostConnection.send({ type: "abandon_run" });
+      dungeonMultiplayer.hostConnection.send(currentDungeonIntent({ type: "abandon_run" }));
     }
   };
 
   leaveDungeonRoom = window.leaveDungeonRoom = function(silent = false){
     if(hasActiveDungeonRun()){
+      if(isDungeonHost()){ broadcastDungeonRunEnd("O host encerrou a expedicao.", "abandon"); }
       finishDungeonRun(silent ? "" : "Voce deixou a sala da dungeon e voltou para a campanha principal.", "a dungeon");
       return;
     }
@@ -2025,7 +2211,11 @@
   };
 
   function handleDungeonPeerDisconnect(peerId){
+    if(closingDungeon){ return; }
     delete dungeonMultiplayer.connections[peerId];
+    delete dungeonMultiplayer.heroStates[peerId];
+    delete dungeonMultiplayer.processedIntents[peerId];
+    delete dungeonMultiplayer.lastSeen[peerId];
     if(dungeonMultiplayer.party[peerId]){
       log(`${dungeonMultiplayer.party[peerId].name} saiu da sala da dungeon.`);
       delete dungeonMultiplayer.party[peerId];
@@ -2055,6 +2245,7 @@
     dungeonMultiplayer.peer.on("open", id => {
       dungeonMultiplayer.roomCode = id;
       dungeonMultiplayer.party[id] = buildDungeonHeroProfile(null, id);
+      startDungeonHeartbeat();
       if(typeof triggerActionFeedback === "function"){
         triggerActionFeedback("dungeon", `Sala da dungeon criada: ${id}.`, "success");
       }
@@ -2070,6 +2261,7 @@
         return;
       }
       dungeonMultiplayer.connections[connection.peer] = connection;
+      dungeonMultiplayer.lastSeen[connection.peer] = Date.now();
       connection.on("data", data => handleDungeonHostMessage(connection, data));
       connection.on("close", () => handleDungeonPeerDisconnect(connection.peer));
     });
@@ -2098,6 +2290,7 @@
     dungeonMultiplayer.roomCode = roomCode;
     dungeonMultiplayer.peer = new Peer();
     dungeonMultiplayer.peer.on("open", () => {
+      startDungeonHeartbeat();
       const connection = dungeonMultiplayer.peer.connect(roomCode, { reliable: true });
       dungeonMultiplayer.hostConnection = connection;
       connection.on("open", () => {
@@ -2110,12 +2303,9 @@
       });
       connection.on("data", data => handleDungeonGuestMessage(data));
       connection.on("close", () => {
+        if(closingDungeon){ return; }
         log("A conexao com a dungeon foi encerrada.");
-        closeDungeonConnections();
-        dungeonMultiplayer = createDungeonMultiplayerState();
-        ensureDungeonRunContainers();
-        currentMode = window.IS_DUNGEON_PAGE ? "dungeon" : "battle";
-        updateUI();
+        finishDungeonRun("A sala foi encerrada. Seu ultimo progresso confirmado foi preservado.", "a dungeon");
       });
     });
     dungeonMultiplayer.peer.on("error", error => {
@@ -2125,58 +2315,50 @@
   };
 
   handleDungeonHostMessage = window.handleDungeonHostMessage = function(connection, data){
-    if(!data || !isDungeonHost()){ return; }
+    if(!isDungeonMessage(data) || !isDungeonHost() || !connection?.peer){ return; }
+    if(typeof NetworkValidation !== "undefined" && !NetworkValidation.validPeerId(connection.peer)){ return; }
+    ensureDungeonRunContainers();
+    dungeonMultiplayer.lastSeen[connection.peer] = Date.now();
+    if(data.type === "heartbeat_ack"){ return; }
     if(data.type === "join"){
-      dungeonMultiplayer.party[connection.peer] = data.player;
-      if(data.heroState){
-        setDungeonHeroStateForPeer(connection.peer, data.heroState);
+      if(hasActiveDungeonRun() || getDungeonRoomMembers().length >= 3 || dungeonMultiplayer.party[connection.peer]){
+        connection.send?.({ type: "reject", reason: "A sala esta cheia ou ja iniciou a expedicao." });
+        connection.close?.();
+        return;
       }
-      connection.send({ type: "joined", roomCode: dungeonMultiplayer.roomCode });
-      log(`${data.player.name} entrou na sala da dungeon.`);
+      const hero = sanitizeDungeonLobbyHero(data.heroState);
+      if(!hero){ connection.send?.({ type: "reject", reason: "Personagem invalido. Confira seu save antes de entrar." }); connection.close?.(); return; }
+      dungeonMultiplayer.connections[connection.peer] = connection;
+      setDungeonHeroStateForPeer(connection.peer, hero);
+      connection.send?.({ type: "joined", roomCode: dungeonMultiplayer.roomCode });
+      log(`${dungeonMultiplayer.party[connection.peer].name} entrou na sala da dungeon.`);
       broadcastDungeonState();
       updateUI();
       return;
     }
+    if(connection.peer !== dungeonMultiplayer.peer.id && !dungeonMultiplayer.party[connection.peer]){ return; }
     if(data.type === "profile_update"){
-      dungeonMultiplayer.party[connection.peer] = data.player;
+      if(hasActiveDungeonRun()){ return; }
+      const hero = sanitizeDungeonLobbyHero(data.heroState);
+      if(!hero){ return; }
+      setDungeonHeroStateForPeer(connection.peer, hero);
       broadcastDungeonState();
       updateUI();
       return;
     }
-    if(data.type === "hero_state"){
-      if(data.heroState){
-        setDungeonHeroStateForPeer(connection.peer, data.heroState);
-        broadcastDungeonState();
-        updateUI();
-      }
+    if(["hero_state", "enemy_reaction", "player_defeated", "request_fountain"].includes(data.type)){
+      // Runtime state is resolved by the host; clients send only validated intentions.
       return;
     }
-    if(data.type === "request_fountain"){
-      if(getDungeonRun().phase === "intermission"){
-        window.useDungeonFountain();
-      }
+    if(data.type === "run_operation"){
+      if(!acceptDungeonIntent(connection.peer, data)){ connection.send?.(createDungeonBroadcastPayload()); return; }
+      performDungeonOperation(connection.peer, data);
       return;
     }
     if(data.type === "abandon_run"){
-      broadcastToDungeonPeers({ type: "run_end", outcome: "abandon", message: "A equipe abandonou a dungeon e voltou para a campanha principal." });
+      if(!hasActiveDungeonRun() || !acceptDungeonIntent(connection.peer, data)){ return; }
+      broadcastDungeonRunEnd("A equipe abandonou a dungeon e voltou para a campanha principal.", "abandon");
       finishDungeonRun("A equipe abandonou a dungeon e voltou para a campanha principal.", "a dungeon");
-      return;
-    }
-    if(data.type === "player_defeated"){
-      handleDungeonRaidDefeat(`${data.player?.name || dungeonMultiplayer.party[connection.peer]?.name || "Um aventureiro"} caiu na dungeon. A expedicao terminou em derrota.`);
-      return;
-    }
-    if(data.type === "enemy_reaction"){
-      dungeonMultiplayer.party[connection.peer] = data.player;
-      if(data.updatedEnemy){
-        replaceDungeonEnemy(data.updatedEnemy);
-        maybeFinishDungeonEncounterAfterEnemyUpdate();
-      }
-      if(data.reactionMessage){
-        broadcastDungeonLog(data.reactionMessage, connection.peer);
-      }
-      broadcastDungeonState();
-      updateUI();
       return;
     }
     if(data.type === "action"){
@@ -2185,6 +2367,7 @@
       if(!turnEntry || turnEntry.kind !== "hero" || turnEntry.id !== connection.peer){
         return;
       }
+      if(!acceptDungeonIntent(connection.peer, data)){ connection.send?.(createDungeonBroadcastPayload()); return; }
       const resolution = resolveDungeonActionForPeer(connection.peer, data);
       if(resolution.blocked){
         if(resolution.message){
@@ -2199,13 +2382,14 @@
         updateUI();
         return;
       }
+      bumpDungeonRevision();
       (resolution.messages || []).forEach(message => broadcastDungeonLog(message, connection.peer));
       maybeFinishDungeonEncounterAfterEnemyUpdate();
       if(resolution.defeatedHero){
         handleDungeonRaidDefeat(resolution.defeatMessage);
         return;
       }
-      if(getDungeonRun().phase === "battle" && (data.turnConsumed ?? true)){
+      if(getDungeonRun().phase === "battle" && resolution.turnConsumed){
         advanceDungeonTurn();
         return;
       }
@@ -2215,7 +2399,12 @@
   };
 
   handleDungeonGuestMessage = window.handleDungeonGuestMessage = function(data){
-    if(!data){ return; }
+    if(!isDungeonMessage(data) || isDungeonHost()){ return; }
+    dungeonMultiplayer.lastHostSeen = Date.now();
+    if(data.type === "heartbeat"){
+      dungeonMultiplayer.hostConnection?.send({ type: "heartbeat_ack" });
+      return;
+    }
     if(data.type === "reject"){
       log(data.reason);
       closeDungeonConnections();
@@ -2231,21 +2420,23 @@
     }
     if(data.type === "state"){
       ensureDungeonRunContainers();
+      if(!data.run || !["lobby", "battle", "intermission"].includes(data.run.phase) || !Array.isArray(data.run.enemies)
+        || !Array.isArray(data.run.turnOrder) || !data.heroStates || !data.party || Object.keys(data.party).length > 3){ return; }
+      if(data.run.runId && data.run.runId === getDungeonRun().runId && (data.run.revision || 0) < (getDungeonRun().revision || 0)){ return; }
       dungeonMultiplayer.roomCode = data.roomCode || dungeonMultiplayer.roomCode;
       dungeonMultiplayer.party = data.party || {};
       dungeonMultiplayer.run = data.run || createEmptyDungeonRunState();
       dungeonMultiplayer.heroStates = data.heroStates || {};
       ensureDungeonRunContainers();
       if(dungeonMultiplayer.run.active){
-        ensureDungeonRunHeroInitialized(dungeonMultiplayer.run.runId);
+        if(!dungeonMultiplayer.heroStates[dungeonMultiplayer.peer?.id]){ return; }
+        if(dungeonMultiplayer.localRunId !== dungeonMultiplayer.run.runId){ setDungeonLocalHero(null); }
         syncDungeonHeroFromState(dungeonMultiplayer.peer?.id);
         if(getDungeonLocalHero()){
           dungeonMultiplayer.localRunId = dungeonMultiplayer.run.runId;
         }
         currentMode = DUNGEON_RUN_MODE;
-        if(!dungeonMultiplayer.heroStates?.[dungeonMultiplayer.peer?.id] && getDungeonLocalHero()){
-          syncDungeonProfile();
-        }
+        syncLevelGlobalsFromDungeonHero();
       }else if(currentMode === DUNGEON_RUN_MODE){
         currentMode = "dungeon";
       }
@@ -2260,14 +2451,8 @@
       log(data.message);
       return;
     }
-    if(data.type === "party_effect"){
-      if(data.effect?.sourceId !== dungeonMultiplayer.peer?.id || data.effect?.applyToSource){
-        applyDungeonPartyEffectToLocalHero(data.effect);
-      }
-      updateUI();
-      return;
-    }
     if(data.type === "encounter_reward"){
+      if(data.runId !== getDungeonRun().runId){ return; }
       if(data.heroStates){
         dungeonMultiplayer.heroStates = { ...(dungeonMultiplayer.heroStates || {}), ...data.heroStates };
         syncDungeonHeroFromState(dungeonMultiplayer.peer?.id);
@@ -2277,40 +2462,16 @@
         syncLevelGlobalsFromDungeonHero(localHero);
       }
       log(data.message);
-      updateDungeonBestStep(data.step || Math.max(1, getDungeonStepNumber() - 1));
-      if(data.wasBoss){
-        player.stats.dungeonRegionsCleared = (player.stats.dungeonRegionsCleared || 0) + 1;
-      }
-      if(data.completed){
-        player.stats.dungeonClears = (player.stats.dungeonClears || 0) + 1;
-      }
-      syncDungeonProfile();
       updateUI();
       return;
     }
-    if(data.type === "enemy_attack"){
-      if(data.packet?.targetId === dungeonMultiplayer.peer?.id){
-        applyDungeonIncomingPacketToLocalHero(data.packet);
-      }
-      return;
-    }
-    if(data.type === "fountain_used"){
-      dungeonMultiplayer.dungeonCoins = Math.max(0, dungeonMultiplayer.dungeonCoins - data.share);
-      const hero = getDungeonLocalHero();
-      if(hero){
-        hero.dungeonCoins = dungeonMultiplayer.dungeonCoins;
-        const caps = getDungeonPreviewStats(hero);
-        hero.hp = caps.maxHp;
-        hero.mp = caps.maxMp;
-        bumpDungeonHeroStateVersion(hero);
-      }
-      player.stats.dungeonFountainUses = (player.stats.dungeonFountainUses || 0) + 1;
-      log(`A fonte restaurou toda a equipe por ${data.share} moedas da dungeon.`);
-      syncDungeonProfile();
-      updateUI();
-      return;
-    }
+    if(["party_effect", "enemy_attack", "fountain_used"].includes(data.type)){ return; }
     if(data.type === "run_end"){
+      if(!hasActiveDungeonRun() || data.runId !== getDungeonRun().runId){ return; }
+      if(data.heroStates){
+        dungeonMultiplayer.heroStates = data.heroStates;
+        syncDungeonHeroFromState(dungeonMultiplayer.peer?.id);
+      }
       finishDungeonRun(data.message, "a dungeon");
       return;
     }
@@ -2321,7 +2482,7 @@
 
   handleDungeonRaidDefeat = window.handleDungeonRaidDefeat = function(message){
     if(isDungeonHost()){
-      broadcastToDungeonPeers({ type: "run_end", outcome: "defeat", message });
+      broadcastDungeonRunEnd(message, "defeat");
     }
     finishDungeonRun(message, "a dungeon");
   };
@@ -2342,17 +2503,6 @@
       enemy = savedEnemy;
       needsNewEnemy = savedNeedsNewEnemy;
     }
-  };
-
-  getTrophies = window.getTrophies = function(){
-    const trophies = baseGetTrophies ? baseGetTrophies() : [];
-    return [
-      ...trophies,
-      { category: "Dungeon", name: "Loja da Expediccao", done: (player.stats.dungeonShopPurchases || 0) >= 3, description: "Compre 3 itens na loja da dungeon." },
-      { category: "Dungeon", name: "Agua Milagrosa", done: (player.stats.dungeonFountainUses || 0) >= 2, description: "Use a fonte da dungeon 2 vezes." },
-      { category: "Dungeon", name: "Patrulhas Variadas", done: (player.stats.dungeonMultiEncounterWins || 0) >= 3, description: "Venca 3 batalhas da dungeon contra grupos com mais de um inimigo." },
-      { category: "Dungeon", name: "Regioes Vencidas", done: (player.stats.dungeonRegionsCleared || 0) >= 3, description: "Derrote o chefao de 3 regioes diferentes dentro da dungeon." }
-    ];
   };
 
   setMode = window.setMode = function(mode){
@@ -2536,72 +2686,96 @@
     return baseRenderLevelUpPanel();
   };
 
+  const dungeonItemOperations = {
+    buy: window.buyDungeonOffer,
+    equip: window.equipDungeonItem,
+    use: window.useDungeonConsumable
+  };
+
+  function sendDungeonOperation(operation){
+    if(!hasActiveDungeonRun() || !isDungeonConnected()){ return; }
+    const data = currentDungeonIntent({ type: "run_operation", ...operation });
+    if(isDungeonHost()){
+      handleDungeonHostMessage({ peer: dungeonMultiplayer.peer.id }, data);
+    }else if(dungeonMultiplayer.hostConnection?.open){
+      dungeonMultiplayer.hostConnection.send(data);
+    }
+  }
+
+  function performDungeonOperation(peerId, data){
+    const hero = getDungeonHeroStateForPeer(peerId);
+    const run = getDungeonRun();
+    if(!hero || !run.active){ return false; }
+    if(data.kind === "fountain"){ return performDungeonFountain(); }
+    if(!["buy", "equip", "use", "allocate", "finish_level", "subclass"].includes(data.kind)){ return false; }
+    if(data.kind === "buy" && run.phase !== "intermission"){ return false; }
+    if(["equip", "use"].includes(data.kind) && run.phase !== "intermission" && getDungeonCurrentTurnId() !== peerId){ return false; }
+    if(data.kind === "allocate" && (!["strength", "vitality", "wisdom"].includes(data.attribute) || !Number.isInteger(data.amount) || Math.abs(data.amount) > MAX_LEVEL)){ return false; }
+    if(["buy", "equip", "use"].includes(data.kind) && (typeof data.itemId !== "string" || data.itemId.length > 160)){ return false; }
+    if(data.kind === "use" && !hero.runInventory?.some(item => item.uid === data.itemId && item.type === "consumable" && consumableCatalog[item.id])){ return false; }
+    const before = JSON.stringify(hero);
+    const savedLocalHero = getDungeonLocalHero();
+    const savedCoins = dungeonMultiplayer.dungeonCoins;
+    const savedUpdate = updateUI;
+    const savedSync = syncDungeonProfile;
+    const local = peerId === dungeonMultiplayer.peer.id;
+    let consumedTurn = false;
+    let defeatMessage = "";
+    setDungeonLocalHero(hero);
+    dungeonMultiplayer.dungeonCoins = hero.dungeonCoins || 0;
+    updateUI = function(){};
+    syncDungeonProfile = function(){};
+    try{
+      if(data.kind === "use" && run.phase === "battle"){
+        const start = processDungeonHeroStartEffects(hero, getDungeonSelectedEnemyOrFallback());
+        if(start.defeated){ defeatMessage = `${getDungeonActorName(hero)} caiu na dungeon.`; }
+        if(start.skipped){ consumedTurn = true; }
+      }
+      if(!consumedTurn && !defeatMessage){
+        if(dungeonItemOperations[data.kind]){
+          dungeonItemOperations[data.kind](data.itemId);
+        }else{
+          withDungeonHeroContext(hero, getDungeonSelectedEnemyOrFallback(), () => {
+            if(data.kind === "allocate"){ baseAdjustAttribute(data.attribute, data.amount); }
+            if(data.kind === "finish_level" && levelUpPoints === 0 && Object.values(allocation).some(value => value > 0)){ baseFinishLevelUp(); }
+            if(data.kind === "subclass" && typeof data.subclassId === "string"){ baseChooseSubclass(data.subclassId); }
+          });
+        }
+        if(data.kind === "use" && run.phase === "battle" && before !== JSON.stringify(hero)){
+          withDungeonHeroContext(hero, getDungeonSelectedEnemyOrFallback(), () => { applyTurnStartPassives(); decayPlayerBuffs(); applyEndOfTurnRecovery(); });
+          consumedTurn = true;
+        }
+      }
+      hero.dungeonCoins = dungeonMultiplayer.dungeonCoins;
+    }finally{
+      updateUI = savedUpdate;
+      syncDungeonProfile = savedSync;
+      if(!local){ setDungeonLocalHero(savedLocalHero); dungeonMultiplayer.dungeonCoins = savedCoins; }
+    }
+    if(defeatMessage){ setDungeonHeroStateForPeer(peerId, hero); handleDungeonRaidDefeat(defeatMessage); return true; }
+    if(!hasActiveDungeonRun()){ return true; }
+    if(before === JSON.stringify(hero) && !consumedTurn){ return false; }
+    bumpDungeonHeroStateVersion(hero);
+    setDungeonHeroStateForPeer(peerId, hero);
+    bumpDungeonRevision();
+    if(consumedTurn){ advanceDungeonTurn(); }else{ broadcastDungeonState(); updateUI(); }
+    return true;
+  }
+
+  window.buyDungeonOffer = offerId => sendDungeonOperation({ kind: "buy", itemId: offerId });
+  window.equipDungeonItem = itemUid => sendDungeonOperation({ kind: "equip", itemId: itemUid });
+  window.useDungeonConsumable = itemUid => sendDungeonOperation({ kind: "use", itemId: itemUid });
   adjustAttribute = window.adjustAttribute = function(attribute, amount){
-    if(!isDungeonRunMode()){
-      return baseAdjustAttribute(attribute, amount);
-    }
-    syncLevelGlobalsFromDungeonHero();
-    baseAdjustAttribute(attribute, amount);
-    syncLevelGlobalsToDungeonHero();
-    syncDungeonProfile();
+    if(!isDungeonRunMode()){ return baseAdjustAttribute(attribute, amount); }
+    sendDungeonOperation({ kind: "allocate", attribute, amount });
   };
-
   finishLevelUp = window.finishLevelUp = function(){
-    if(!isDungeonRunMode()){
-      return baseFinishLevelUp();
-    }
-    const hero = getDungeonLocalHero();
-    if(!hero){ return; }
-    syncLevelGlobalsFromDungeonHero(hero);
-    const savedMode = currentMode;
-    const savedEnemy = enemy;
-    const savedNeedsNewEnemy = needsNewEnemy;
-    const savedUpdateUI = updateUI;
-    currentMode = DUNGEON_RUN_MODE;
-    enemy = getDungeonSelectedEnemyOrFallback();
-    needsNewEnemy = false;
-    try{
-      updateUI = function(){};
-      withDungeonHeroContext(hero, enemy, () => {
-        baseFinishLevelUp();
-      });
-    }finally{
-      updateUI = savedUpdateUI;
-    }
-    currentMode = savedMode;
-    enemy = savedEnemy;
-    needsNewEnemy = savedNeedsNewEnemy;
-    syncLevelGlobalsFromDungeonHero(hero);
-    setDungeonHeroStateForPeer(dungeonMultiplayer.peer?.id, hero);
-    syncDungeonProfile();
-    updateUI();
+    if(!isDungeonRunMode()){ return baseFinishLevelUp(); }
+    sendDungeonOperation({ kind: "finish_level" });
   };
-
   chooseSubclass = window.chooseSubclass = function(subclassId){
-    if(!isDungeonRunMode()){
-      return baseChooseSubclass(subclassId);
-    }
-    const hero = getDungeonLocalHero();
-    if(!hero){ return; }
-    const savedMode = currentMode;
-    const savedEnemy = enemy;
-    const savedUpdateUI = updateUI;
-    currentMode = DUNGEON_RUN_MODE;
-    enemy = getDungeonSelectedEnemyOrFallback();
-    try{
-      updateUI = function(){};
-      withDungeonHeroContext(hero, enemy, () => {
-        baseChooseSubclass(subclassId);
-      });
-    }finally{
-      updateUI = savedUpdateUI;
-    }
-    currentMode = savedMode;
-    enemy = savedEnemy;
-    syncLevelGlobalsFromDungeonHero(hero);
-    setDungeonHeroStateForPeer(dungeonMultiplayer.peer?.id, hero);
-    syncDungeonProfile();
-    updateUI();
+    if(!isDungeonRunMode()){ return baseChooseSubclass(subclassId); }
+    sendDungeonOperation({ kind: "subclass", subclassId });
   };
 
   if(window.IS_DUNGEON_PAGE){

@@ -1,0 +1,165 @@
+<!-- EXTRA_STYLE -->
+<style>
+#hud-propostas .hud{min-height:800px;border-radius:10px}
+#hud-propostas .hud button{cursor:auto}
+#hud-propostas .hud button:disabled{background:var(--hud-raised);color:var(--hud-muted);border-color:var(--hud-line);cursor:default}
+#hud-propostas .topline{padding:14px 24px}
+#hud-propostas .brand{letter-spacing:.18em}
+#hud-propostas .context{padding:22px 24px 18px}
+#hud-propostas .context h1{font-size:1.8em}
+#hud-propostas .play-layout{grid-template-columns:minmax(0,1fr) 260px}
+#hud-propostas .stage{height:295px}
+#hud-propostas .actor{height:250px}#hud-propostas .enemy{height:235px}
+#hud-propostas .character-layout{display:grid;grid-template-columns:240px minmax(250px,1fr) 290px;gap:20px;padding:0 24px 24px}
+#hud-propostas .portraitbox{position:relative;min-height:390px;border-radius:8px;background:linear-gradient(0deg,#0d171a 0%,#0d171a45 80%),var(--forest-art) center/cover;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
+#hud-propostas .portraitbox>img{height:330px;max-width:100%;object-fit:contain;filter:drop-shadow(0 8px 9px #0008)}
+#hud-propostas .portrait-caption{position:absolute;bottom:15px;left:14px;right:14px;background:#0d171ae8;border-radius:6px;padding:9px 12px;text-align:center}
+#hud-propostas .loadout{min-width:0}
+#hud-propostas .sectionheading{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}
+#hud-propostas .equipmentrow{display:flex;align-items:center;gap:12px;border:1px solid var(--hud-line);background:var(--hud-surface);border-radius:7px;padding:11px 13px;width:100%;margin-bottom:9px;text-align:left}
+#hud-propostas .equipmentrow img{width:38px;height:38px;object-fit:contain}
+#hud-propostas .equipmentrow>span{display:flex;flex:1;flex-direction:column;min-width:0}
+#hud-propostas .equipmentrow.active{border-color:var(--hud-gold);background:var(--hud-raised)}
+#hud-propostas .equipmentrow em{font-style:normal;font-size:.77em;color:var(--hud-gold)}
+#hud-propostas .setsummary{background:var(--hud-raised);border-radius:7px;padding:14px;margin-top:15px}
+#hud-propostas .setsummary p{color:var(--hud-muted);font-size:.87em;margin-top:8px}
+#hud-propostas .setdots{display:flex;gap:6px;margin:12px 0}
+#hud-propostas .setdots i{width:24px;height:5px;background:var(--hud-line);border-radius:3px}
+#hud-propostas .setdots i.on{background:var(--hud-gold)}
+#hud-propostas .statpanel{padding:18px;background:var(--hud-surface);border-radius:8px;align-self:start}
+#hud-propostas .statpanel hr{border:0;border-top:1px solid var(--hud-line);margin:16px 0}
+#hud-propostas .statpanel .data-pair{margin:12px 0}
+#hud-propostas .statpanel p{font-size:.87em;color:var(--hud-muted);margin:10px 0}
+#hud-propostas .subnavigation{display:flex;gap:20px;margin-top:12px}
+#hud-propostas .subnavigation button{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--hud-muted);padding:8px 0}
+#hud-propostas .subnavigation button[aria-pressed=true]{border-color:var(--hud-gold);color:var(--hud-gold)}
+#hud-propostas .character-extra{padding:24px;background:var(--hud-surface);margin:0 24px 24px;border-radius:8px}
+#hud-propostas .character-extra p{margin-top:10px;color:var(--hud-muted)}
+#hud-propostas .merc-layout{display:grid;grid-template-columns:235px minmax(0,1fr) 290px;gap:20px;padding:0 24px 24px}
+#hud-propostas .contract-intro{padding:22px;background:var(--hud-surface);border-radius:8px;align-self:start}
+#hud-propostas .contract-intro p{margin:13px 0;color:var(--hud-muted);font-size:.9em}
+#hud-propostas .contract-intro .eyebrow{margin-top:18px}
+#hud-propostas .contractlist{display:flex;flex-direction:column;gap:10px}
+#hud-propostas .contract{display:block;background:var(--hud-surface);border:1px solid var(--hud-line);border-radius:8px;padding:18px;width:100%;text-align:left}
+#hud-propostas .contract[aria-pressed=true]{border-color:var(--hud-gold);background:var(--hud-raised)}
+#hud-propostas .contract strong{display:block;font-weight:500;font-size:1.1em;margin:8px 0}
+#hud-propostas .contract .contractline{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.85em;color:var(--hud-muted)}
+#hud-propostas .contract .meter{margin:12px 0 9px}
+#hud-propostas .reward{margin:14px 0;padding:14px;background:var(--hud-raised);border-radius:6px}
+#hud-propostas .reward .gold{display:block;margin:7px 0}
+#hud-propostas .contractdetail .cta{width:100%;margin-top:12px}
+#hud-propostas .contractdetail .requirement{border-bottom:0}
+#hud-propostas .contractdetail .quiet{width:100%;margin-top:8px}
+#hud-propostas .recipe .recipe-material-label{color:var(--hud-muted)}
+#hud-propostas .compact{display:grid;grid-template-columns:155px minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start}
+#hud-propostas .compact>.topline{grid-column:1/-1}
+#hud-propostas .compact>.mainnav{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:8px;padding:24px 12px;background:#101e22;border-right:1px solid var(--hud-line);border-bottom:0;align-items:stretch}
+#hud-propostas .compact>.mainnav button{text-align:left;padding:13px 12px}
+#hud-propostas .compact>.page{grid-column:2;grid-row:2;min-width:0}
+#hud-propostas .compact .context{padding:22px 20px 18px}
+#hud-propostas .compact .play-layout{padding:0 20px 20px;grid-template-columns:minmax(0,1fr) 280px;gap:16px}
+#hud-propostas .compact .stage{height:285px}
+#hud-propostas .compact .hero{left:3%}#hud-propostas .compact .enemy{right:0}
+#hud-propostas .compact .abilities{gap:8px}#hud-propostas .compact .ability{min-height:84px}
+#hud-propostas .compact .character-layout{grid-template-columns:minmax(270px,1fr) 280px;gap:20px;padding:0 20px 24px}
+#hud-propostas .compact .portraitbox{grid-column:2;grid-row:1;min-height:255px;align-self:start}
+#hud-propostas .compact .portraitbox>img{height:240px}
+#hud-propostas .compact .portrait-caption{display:none}
+#hud-propostas .compact .loadout{grid-column:1;grid-row:1/3}
+#hud-propostas .compact .character-layout>.statpanel{grid-column:2;grid-row:1;margin-top:273px}
+#hud-propostas .compact .character-layout>.statpanel .data-pair{margin:7px 0}
+#hud-propostas .compact .character-layout>.statpanel hr{margin:10px 0}
+#hud-propostas .compact .character-layout>.statpanel .person-detail{display:none}
+#hud-propostas .compact .service-nav{padding-left:20px}
+#hud-propostas .compact .work-layout{grid-template-columns:210px minmax(0,1fr);gap:16px;padding:0 20px 24px}
+#hud-propostas .compact .region-picker{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:var(--hud-surface);padding:14px 18px;border-radius:7px}
+#hud-propostas .compact .region-art{width:180px;height:84px;object-position:center 65%;margin:0}
+#hud-propostas .compact .region-picker>div{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+#hud-propostas .compact .region-picker .eyebrow{width:100%;margin:0}
+#hud-propostas .compact .merc-layout{grid-template-columns:minmax(260px,1fr) 280px;padding:0 20px 24px;gap:16px}
+#hud-propostas .compact .contract-intro{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 18px}
+#hud-propostas .compact .contract-intro .introcopy,#hud-propostas .compact .contract-intro .refresh-help{display:none}
+#hud-propostas .compact .contract-intro .eyebrow{margin:0}
+#hud-propostas .compact .contract-intro p{margin:3px 0}
+#hud-propostas .compact .contractdetail{padding:16px}
+@media(max-width:1100px) and (min-width:761px){
+ #hud-propostas .compact{display:block}#hud-propostas .compact>.mainnav{flex-direction:row;padding:6px 24px;border-right:0;border-bottom:1px solid var(--hud-line)}
+ #hud-propostas .character-layout{grid-template-columns:190px minmax(230px,1fr) 240px;gap:14px}
+ #hud-propostas .merc-layout{grid-template-columns:190px minmax(220px,1fr) 240px;gap:14px}
+ #hud-propostas .portraitbox>img{height:280px}
+}
+@media(max-width:760px){
+ #hud-propostas .hud,#hud-propostas .compact{display:flex;flex-direction:column;min-height:820px}
+ #hud-propostas .topline{padding:10px 14px}#hud-propostas .context,#hud-propostas .compact .context{padding:18px 14px 14px}
+ #hud-propostas .context h1{font-size:1.5em}
+ #hud-propostas .compact>.mainnav{flex-direction:row;order:2;grid-column:auto;padding:7px;gap:2px;border:0;border-top:1px solid var(--hud-line)}
+ #hud-propostas .compact>.mainnav button{padding:10px 5px;text-align:center}
+ #hud-propostas .play-layout,#hud-propostas .compact .play-layout{display:flex;padding:0 14px 14px}
+ #hud-propostas .stage,#hud-propostas .compact .stage{height:190px}
+ #hud-propostas .actor{height:165px}#hud-propostas .enemy{height:150px}
+ #hud-propostas .character-layout,#hud-propostas .compact .character-layout{display:flex;flex-direction:column;padding:0 14px 18px;gap:14px}
+ #hud-propostas .portraitbox,#hud-propostas .compact .portraitbox{min-height:180px;width:100%;order:0;align-self:stretch}
+ #hud-propostas .portraitbox>img,#hud-propostas .compact .portraitbox>img{height:180px}
+ #hud-propostas .portrait-caption{bottom:10px;left:10px;right:auto;padding:6px 9px}
+ #hud-propostas .loadout{order:1}#hud-propostas .statpanel,#hud-propostas .compact .character-layout>.statpanel{order:2;margin:0;width:100%}
+ #hud-propostas .compact .character-layout>.statpanel .person-detail{display:block}
+ #hud-propostas .work-layout,#hud-propostas .compact .work-layout{display:flex;padding:0 14px 18px;gap:14px}
+ #hud-propostas .compact .region-picker>div{display:block}#hud-propostas .region-art,#hud-propostas .compact .region-art{display:none}
+ #hud-propostas .compact .region-picker{display:block;padding:12px 14px}
+ #hud-propostas .compact .itemchoice{min-width:0}
+ #hud-propostas .merc-layout,#hud-propostas .compact .merc-layout{display:flex;flex-direction:column;padding:0 14px 18px;gap:14px}
+ #hud-propostas .contract-intro,#hud-propostas .compact .contract-intro{width:100%;display:block;padding:16px}
+ #hud-propostas .contract-intro .introcopy,#hud-propostas .contract-intro .refresh-help{display:none}
+ #hud-propostas .contractlist,#hud-propostas .contractdetail{width:100%}
+ #hud-propostas .subnavigation{gap:15px;flex-wrap:wrap}
+}
+</style>
+<!-- HERO -->
+<div class="page" data-screen="hero" hidden>
+ <div class="context"><div><div class="eyebrow">Personagem / preparação</div><h1>Guerreiro <small>· nível 40</small></h1><div class="subnavigation"><button data-character-tab="equipment" aria-pressed="true">Equipamentos</button><button data-character-tab="attributes" aria-pressed="false">Atributos</button><button data-character-tab="skills" aria-pressed="false">Habilidades</button></div></div><span class="badge">Cavaleiro</span></div>
+ <div class="character-layout">
+  <section class="portraitbox"><img src="__HERO__" alt="Guerreiro equipado"><div class="portrait-caption"><div class="gold">Cavaleiro</div><small>Floresta Sombria</small></div></section>
+  <section class="loadout"><div class="sectionheading"><h2>Equipado</h2><button class="tertiary" data-page="bag">Abrir bolsa →</button></div>
+   <button class="equipmentrow active" data-inspect-equipment="Espada da Floresta"><img src="__WEAPON__" alt=""><span>Espada da Floresta<small>Arma · comum</small></span><em>Raízes Vivas</em></button>
+   <button class="equipmentrow" data-inspect-equipment="Capuz da Floresta"><img src="__HEAD__" alt=""><span>Capuz da Floresta<small>Cabeça · comum</small></span><em>Raízes Vivas</em></button>
+   <button class="equipmentrow" data-inspect-equipment="Armadura da Floresta"><img src="__CHEST__" alt=""><span>Armadura da Floresta<small>Peitoral · comum</small></span><em>Raízes Vivas</em></button>
+   <button class="equipmentrow" data-inspect-equipment="Perneiras do Viajante"><img src="__LEGS__" alt=""><span>Perneiras do Viajante<small>Pernas · comum</small></span></button>
+   <button class="equipmentrow" data-inspect-equipment="Botas do Viajante"><img src="__FEET__" alt=""><span>Botas do Viajante<small>Pés · comum</small></span></button>
+   <section class="setsummary"><div class="sectionheading"><h3>Raízes Vivas</h3><span class="gold">3 / 5 peças</span></div><div class="setdots" aria-label="Três de cinco peças"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><p>Ativo · +6% de mana máxima</p><p>Próximo · 4 peças: +8% de dano periódico</p><button class="tertiary" data-dialog="set">Todos os bônus →</button></section>
+  </section>
+  <aside class="statpanel"><div class="eyebrow">Resultado da sua build</div><h2>Atributos finais</h2><div class="data-pair"><span>Vida máxima</span><span>600</span></div><div class="data-pair"><span>Mana máxima</span><span>180</span></div><div class="data-pair"><span>Ataque</span><span>42</span></div><div class="data-pair"><span>Defesa</span><span>26</span></div><div class="data-pair"><span>Poder de habilidade</span><span>18</span></div><hr><div class="eyebrow">Peça selecionada</div><h3 class="selected-equipment">Espada da Floresta</h3><p>Vida +22 · Mana +23<br>Poder de habilidade +2</p><div class="person-detail"><p>Os bônus do conjunto já estão incluídos nos atributos finais.</p><button class="tertiary" data-page="village">Aprimorar na oficina →</button></div></aside>
+ </div>
+ <section class="character-extra" hidden><h2 class="extra-title">Atributos</h2><p class="extra-copy"></p></section>
+</div>
+<!-- MERCENARY -->
+<div class="page" data-screen="mercenary" hidden>
+ <div class="context"><div><div class="eyebrow">Aldeia / contratos</div><h1>Mercenário</h1></div><button class="quiet" data-page="adventure">Voltar à aventura →</button></div>
+ <div class="service-nav" aria-label="Serviços da aldeia"><button data-page="village">Oficina</button><button data-service="inn">Pousada</button><button aria-pressed="true" data-page="mercenary">Mercenário</button><button data-service="alchemist">Alquimista</button></div>
+ <div class="merc-layout">
+  <aside class="contract-intro"><div><div class="eyebrow">Quadro de contratos</div><h2>Trabalho na fronteira</h2><p class="introcopy">Cace nas regiões que você já conhece e receba materiais de outras terras.</p></div><div><div class="eyebrow">Próxima renovação</div><p class="gold">01 h 42 min</p><small class="refresh-help">A renovação troca as ofertas disponíveis. Seu contrato aceito continua ativo.</small></div></aside>
+  <section><div class="subtabs"><button data-contract-filter="active" aria-pressed="true">Em andamento</button><button data-contract-filter="available" aria-pressed="false">Disponíveis</button></div><div class="contractlist">
+   <button class="contract" data-contract="wolves" aria-pressed="true"><span class="contractline"><span>Floresta Sombria</span><span>Moderado</span></span><strong>Rastros na floresta</strong><span class="contractline"><span>Derrote Lobos Sombrios</span><span>3 / 7</span></span><div class="meter"><span style="width:43%"></span></div><small>Recompensa fixa · Essência de Caverna × 1</small></button>
+   <button class="contract" data-contract="spiders" aria-pressed="false" hidden><span class="contractline"><span>Floresta Sombria</span><span>Difícil</span></span><strong>Teias na trilha</strong><span class="contractline"><span>Derrote Aranhas Gigantes</span><span>0 / 8</span></span><div class="meter"><span style="width:0%"></span></div><small>Recompensa fixa · Fragmento Gélido × 2</small></button>
+   <button class="contract" data-contract="bats" aria-pressed="false" hidden><span class="contractline"><span>Caverna</span><span>Moderado</span></span><strong>Asas na escuridão</strong><span class="contractline"><span>Derrote Morcegos</span><span>0 / 6</span></span><div class="meter"><span style="width:0%"></span></div><small>Recompensa fixa · Presa Sombria × 2</small></button>
+  </div></section>
+  <aside class="statpanel contractdetail"><div class="eyebrow">Contrato selecionado</div><h2 class="contract-title">Rastros na floresta</h2><p class="contract-objective">Derrote 7 Lobos Sombrios na Floresta Sombria.</p><div class="requirement"><span>Progresso</span><span class="contract-progress">3 / 7</span></div><div class="reward"><div class="eyebrow">Recompensa fixa</div><strong class="gold contract-reward">Essência de Caverna × 1</strong><small class="contract-origin">Material de outra região · Caverna</small></div><p class="contract-hint">Complete o objetivo para receber a recompensa.</p><button class="cta contract-cta" disabled>Concluir contrato · 3 / 7</button><button class="quiet track-contract">Acompanhando na aventura ✓</button></aside>
+ </div>
+</div>
+<!-- EXTRA_SCRIPT -->
+<script>
+(()=>{
+ const root=document.getElementById('hud-propostas');
+ const contracts={wolves:['Rastros na floresta','Derrote 7 Lobos Sombrios na Floresta Sombria.','3 / 7','Essência de Caverna × 1','Caverna'],spiders:['Teias na trilha','Derrote 8 Aranhas Gigantes na Floresta Sombria.','0 / 8','Fragmento Gélido × 2','Montanhas'],bats:['Asas na escuridão','Derrote 6 Morcegos na Caverna.','0 / 6','Presa Sombria × 2','Floresta']};
+ root.querySelectorAll('.hud').forEach(app=>{
+  const navigate=name=>{app.querySelectorAll('[data-screen]').forEach(el=>el.hidden=el.dataset.screen!==name);app.querySelectorAll('.mainnav [data-page]').forEach(el=>{const selected=el.dataset.page===name||(name==='mercenary'&&el.dataset.page==='village');if(selected)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});};
+  app.querySelectorAll('[data-inspect-equipment]').forEach(button=>button.addEventListener('click',()=>{app.querySelectorAll('[data-inspect-equipment]').forEach(b=>b.classList.toggle('active',b===button));app.querySelector('.selected-equipment').textContent=button.dataset.inspectEquipment;}));
+  app.querySelectorAll('[data-character-tab]').forEach(button=>button.addEventListener('click',()=>{app.querySelectorAll('[data-character-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));const tab=button.dataset.characterTab;app.querySelector('.character-layout').hidden=tab!=='equipment';app.querySelector('.character-extra').hidden=tab==='equipment';app.querySelector('.extra-title').textContent=tab==='attributes'?'Distribuição de pontos':'Habilidades equipadas';app.querySelector('.extra-copy').textContent=tab==='attributes'?'Força 32 · Vitalidade 24 · Inteligência 8 · Destreza 12. Prévia de distribuição, sem alterar o personagem.':'Atacar · Recuperar Fôlego · Esbarrão · Contundir. Custos, efeitos e posições organizados antes da batalha.';}));
+  app.querySelectorAll('[data-contract-filter]').forEach(button=>button.addEventListener('click',()=>{app.querySelectorAll('[data-contract-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));const active=button.dataset.contractFilter==='active';app.querySelectorAll('[data-contract]').forEach(b=>b.hidden=active?b.dataset.contract!=='wolves':b.dataset.contract==='wolves');app.querySelector('[data-contract="'+(active?'wolves':'spiders')+'"]').click();}));
+  app.querySelectorAll('[data-contract]').forEach(button=>button.addEventListener('click',()=>{app.querySelectorAll('[data-contract]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));const data=contracts[button.dataset.contract];app.querySelector('.contract-title').textContent=data[0];app.querySelector('.contract-objective').textContent=data[1];app.querySelector('.contract-progress').textContent=data[2];app.querySelector('.contract-reward').textContent=data[3];app.querySelector('.contract-origin').textContent='Material de outra região · '+data[4];const active=button.dataset.contract==='wolves';app.querySelector('.contract-cta').disabled=active;app.querySelector('.contract-cta').textContent=active?'Concluir contrato · 3 / 7':'Aceitar contrato · prévia';app.querySelector('.track-contract').hidden=!active;app.querySelector('.contract-hint').textContent=active?'Complete o objetivo para receber a recompensa.':'A recompensa é definida pelo contrato e não pode ser escolhida.';}));
+  app.querySelector('.contract-cta').addEventListener('click',event=>{if(!event.target.disabled)event.target.textContent='Contrato aceito · prévia';});
+  app.querySelector('.track-contract').addEventListener('click',event=>{const on=event.target.textContent.startsWith('Acompanhando');event.target.textContent=on?'Acompanhar na aventura':'Acompanhando na aventura ✓';});
+  app.querySelectorAll('[data-page="mercenary"]').forEach(button=>button.addEventListener('click',()=>navigate('mercenary')));
+  app.querySelectorAll('.mainnav [data-page]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.page==='hero'){app.querySelector('[data-character-tab="equipment"]').click();}}));
+ });
+})();
+</script>

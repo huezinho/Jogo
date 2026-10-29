@@ -1,0 +1,229 @@
+{
+  "results": [
+    {
+      "width": 1334,
+      "variant": "palco",
+      "screen": "adventure",
+      "scroll": 1334,
+      "height": 892
+    },
+    {
+      "width": 1334,
+      "variant": "palco",
+      "screen": "hero",
+      "scroll": 1334,
+      "height": 853
+    },
+    {
+      "width": 1334,
+      "variant": "palco",
+      "screen": "village",
+      "scroll": 1334,
+      "height": 839
+    },
+    {
+      "width": 1334,
+      "variant": "palco",
+      "screen": "mercenary",
+      "scroll": 1334,
+      "height": 800
+    },
+    {
+      "width": 1334,
+      "variant": "painel",
+      "screen": "adventure",
+      "scroll": 1334,
+      "height": 800
+    },
+    {
+      "width": 1334,
+      "variant": "painel",
+      "screen": "hero",
+      "scroll": 1334,
+      "height": 862
+    },
+    {
+      "width": 1334,
+      "variant": "painel",
+      "screen": "village",
+      "scroll": 1334,
+      "height": 915
+    },
+    {
+      "width": 1334,
+      "variant": "painel",
+      "screen": "mercenary",
+      "scroll": 1334,
+      "height": 800
+    },
+    {
+      "width": 992,
+      "variant": "palco",
+      "screen": "adventure",
+      "scroll": 992,
+      "height": 892
+    },
+    {
+      "width": 992,
+      "variant": "palco",
+      "screen": "hero",
+      "scroll": 992,
+      "height": 853
+    },
+    {
+      "width": 992,
+      "variant": "palco",
+      "screen": "village",
+      "scroll": 992,
+      "height": 859
+    },
+    {
+      "width": 992,
+      "variant": "palco",
+      "screen": "mercenary",
+      "scroll": 992,
+      "height": 800
+    },
+    {
+      "width": 992,
+      "variant": "painel",
+      "screen": "adventure",
+      "scroll": 992,
+      "height": 800
+    },
+    {
+      "width": 992,
+      "variant": "painel",
+      "screen": "hero",
+      "scroll": 992,
+      "height": 920
+    },
+    {
+      "width": 992,
+      "variant": "painel",
+      "screen": "village",
+      "scroll": 992,
+      "height": 973
+    },
+    {
+      "width": 992,
+      "variant": "painel",
+      "screen": "mercenary",
+      "scroll": 992,
+      "height": 834
+    },
+    {
+      "width": 358,
+      "variant": "palco",
+      "screen": "adventure",
+      "scroll": 358,
+      "height": 834
+    },
+    {
+      "width": 358,
+      "variant": "palco",
+      "screen": "hero",
+      "scroll": 358,
+      "height": 1618
+    },
+    {
+      "width": 358,
+      "variant": "palco",
+      "screen": "village",
+      "scroll": 358,
+      "height": 1185
+    },
+    {
+      "width": 358,
+      "variant": "palco",
+      "screen": "mercenary",
+      "scroll": 358,
+      "height": 1191
+    },
+    {
+      "width": 358,
+      "variant": "painel",
+      "screen": "adventure",
+      "scroll": 358,
+      "height": 882
+    },
+    {
+      "width": 358,
+      "variant": "painel",
+      "screen": "hero",
+      "scroll": 358,
+      "height": 1581
+    },
+    {
+      "width": 358,
+      "variant": "painel",
+      "screen": "village",
+      "scroll": 358,
+      "height": 1205
+    },
+    {
+      "width": 358,
+      "variant": "painel",
+      "screen": "mercenary",
+      "scroll": 358,
+      "height": 1127
+    },
+    {
+      "width": 288,
+      "variant": "palco",
+      "screen": "adventure",
+      "scroll": 288,
+      "height": 899
+    },
+    {
+      "width": 288,
+      "variant": "palco",
+      "screen": "hero",
+      "scroll": 288,
+      "height": 1714
+    },
+    {
+      "width": 288,
+      "variant": "palco",
+      "screen": "village",
+      "scroll": 288,
+      "height": 1246
+    },
+    {
+      "width": 288,
+      "variant": "palco",
+      "screen": "mercenary",
+      "scroll": 288,
+      "height": 1268
+    },
+    {
+      "width": 288,
+      "variant": "painel",
+      "screen": "adventure",
+      "scroll": 288,
+      "height": 927
+    },
+    {
+      "width": 288,
+      "variant": "painel",
+      "screen": "hero",
+      "scroll": 288,
+      "height": 1677
+    },
+    {
+      "width": 288,
+      "variant": "painel",
+      "screen": "village",
+      "scroll": 288,
+      "height": 1266
+    },
+    {
+      "width": 288,
+      "variant": "painel",
+      "screen": "mercenary",
+      "scroll": 288,
+      "height": 1204
+    }
+  ],
+  "errors": []
+}

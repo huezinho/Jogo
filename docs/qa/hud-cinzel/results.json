@@ -1,0 +1,1853 @@
+{
+  "records": [
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Guerreiro",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Guerreiro",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Arqueiro",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 3,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Mago",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 6,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 40,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 4,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 1366,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 390,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    },
+    {
+      "className": "Adepto da Natureza",
+      "level": 100,
+      "width": 320,
+      "overflow": false,
+      "clipped": [],
+      "abilityCount": 7,
+      "loaded": true,
+      "labels": [
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        },
+        {
+          "family": "\"RPG Cinzel\", Georgia, serif",
+          "weight": "650"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
