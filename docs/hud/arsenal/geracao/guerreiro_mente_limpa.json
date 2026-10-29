@@ -1,0 +1,16 @@
+{
+  "kind": "skill",
+  "skillKind": "passive",
+  "id": "guerreiro_mente_limpa",
+  "name": "Mente Limpa",
+  "className": "Guerreiro",
+  "mechanics": {
+    "level": 70,
+    "id": "mente_limpa",
+    "name": "Mente Limpa",
+    "type": "warrior_first_strike_echo"
+  },
+  "path": "assets/visual/skills/guerreiro_mente_limpa.webp",
+  "prompt": "Unique fantasy RPG ABILITY ICON, not an equipment catalog object. Skill named in Portuguese \"Mente Limpa\" for class \"Guerreiro\", passive ability. Mechanics reference: {\"level\":70,\"id\":\"mente_limpa\",\"name\":\"Mente Limpa\",\"type\":\"warrior_first_strike_echo\"}. Show the specific ACTION, magical phenomenon or symbolic effect implied by this particular ability. Strong simple visual metaphor, motion and clear central focal point, distinct from other abilities. Martial force for warriors, accurate arrows and traps for archers, spell energy for mages, living natural magic for nature adepts.  No letters, labels, numbers or UI frame. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-7100da2d-aeb0-4c61-9656-4e0ac85ca755.png"
+}

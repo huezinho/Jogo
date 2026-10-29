@@ -1,0 +1,16 @@
+{
+  "kind": "skill",
+  "skillKind": "active",
+  "id": "adepto_da_natureza_casulo_de_vinhas",
+  "name": "Casulo de Vinhas",
+  "className": "Adepto da Natureza",
+  "mechanics": {
+    "level": 60,
+    "id": "casulo_de_vinhas",
+    "name": "Casulo de Vinhas",
+    "type": "nature_vine_cocoon"
+  },
+  "path": "assets/visual/skills/adepto_da_natureza_casulo_de_vinhas.webp",
+  "prompt": "Unique fantasy RPG ABILITY ICON, not an equipment catalog object. Skill named in Portuguese \"Casulo de Vinhas\" for class \"Adepto da Natureza\", active ability. Mechanics reference: {\"level\":60,\"id\":\"casulo_de_vinhas\",\"name\":\"Casulo de Vinhas\",\"type\":\"nature_vine_cocoon\"}. Show the specific ACTION, magical phenomenon or symbolic effect implied by this particular ability. Strong simple visual metaphor, motion and clear central focal point, distinct from other abilities. Martial force for warriors, accurate arrows and traps for archers, spell energy for mages, living natural magic for nature adepts.  No letters, labels, numbers or UI frame. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-ad581029-c6ff-40c3-b626-543e0b8bb0ac.png"
+}

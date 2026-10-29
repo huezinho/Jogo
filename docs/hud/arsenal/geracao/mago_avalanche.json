@@ -1,0 +1,16 @@
+{
+  "kind": "skill",
+  "skillKind": "active",
+  "id": "mago_avalanche",
+  "name": "Avalanche",
+  "className": "Mago",
+  "mechanics": {
+    "level": 80,
+    "id": "avalanche",
+    "name": "Avalanche",
+    "type": "mage_avalanche"
+  },
+  "path": "assets/visual/skills/mago_avalanche.webp",
+  "prompt": "Unique fantasy RPG ABILITY ICON, not an equipment catalog object. Skill named in Portuguese \"Avalanche\" for class \"Mago\", active ability. Mechanics reference: {\"level\":80,\"id\":\"avalanche\",\"name\":\"Avalanche\",\"type\":\"mage_avalanche\"}. Show the specific ACTION, magical phenomenon or symbolic effect implied by this particular ability. Strong simple visual metaphor, motion and clear central focal point, distinct from other abilities. Martial force for warriors, accurate arrows and traps for archers, spell energy for mages, living natural magic for nature adepts.  No letters, labels, numbers or UI frame. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-ad7bc557-4815-4ad5-80d6-f881f4103c4d.png"
+}

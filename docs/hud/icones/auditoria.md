@@ -1,5 +1,7 @@
 # Auditoria de imagens — 29/10/2026
 
+Atualização concluída: o usuário autorizou artes próprias para habilidades e equipamentos e pediu preservar bolsa e marcador de acessório vazio. Foram instaladas 92 artes de habilidades e 96 de equipamentos. O catálogo e a verificação dessa implementação ficam em ../arsenal. O restante deste relatório registra o diagnóstico que motivou o trabalho.
+
 ## Conferência automatizada
 
 Foram resolvidos os caminhos reais de 96 materiais, 12 acessórios de chefe e 48 sprites de inimigos/chefes da campanha. Após a correção descrita abaixo, nenhum desses 156 caminhos está ausente. Os arquivos desse conjunto também não apresentam conteúdo binário idêntico entre entradas distintas. Isso é uma comparação de arquivos, não uma promessa de que toda imagem do repositório seja visualmente exclusiva.

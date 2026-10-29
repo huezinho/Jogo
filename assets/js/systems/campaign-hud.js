@@ -18,10 +18,9 @@ const CampaignHUD = (() => {
   const itemArt = item => {
     if(item?.type !== 'equipment') return getInventoryItemSymbol(item);
     if(item.slot==='accessory')return getInventoryItemSymbol(item);
-    const weapon = { Guerreiro: 'sword', Arqueiro:'bow', Mago:'staff', 'Adepto da Natureza':'nature-staff' };
-    return image('item-' + (item.slot === 'weapon' ? weapon[item.classRestriction || player.class] || 'sword' : ['head','chest','legs','feet'].includes(item.slot) ? item.slot : 'staff'), 'rpg-item-art');
+    return `<img class="rpg-item-art" src="${esc(getItemSpritePath(item))}" alt="${esc(item.name||'Equipamento')}" draggable="false">`;
   };
-  const slotArt = slot => slot==='accessory'?image('icon-holy','rpg-item-art'):itemArt({type:'equipment', slot, classRestriction:player.class});
+  const slotArt = slot => slot==='accessory'?image('icon-holy','rpg-item-art'):itemArt({type:'equipment',slot,classRestriction:player.class,regionName:state.region||currentRegion});
   function mount(){
     if(mounted) return;
     const game = document.getElementById('game');
@@ -89,23 +88,7 @@ const CampaignHUD = (() => {
       if(dock)for(const label of dock.querySelectorAll('.scene-vital-text'))label.textContent=label.textContent.replace(/\//g,' / ');
     }
   }
-  function skillIcon(skill){
-    const type=skill?.type||'';
-    if(/shove/.test(type)) return 'bash'; if(/stagger/.test(type)) return 'stun';
-    if(/heal|breath|second_wind|song/.test(type)) return 'heal';
-    if(/faith|holy|sacred|phoenix|valhalla/.test(type)) return 'holy';
-    if(/shield|cocoon|invul/.test(type)) return 'shield';
-    if(/fire|burn|incend/.test(type)) return 'fire';
-    if(/ice|freeze|blizzard|avalanche|frost/.test(type)) return 'ice';
-    if(/poison|rot|decay|corrupt/.test(type)) return 'poison';
-    if(/demon|berserk|sacrifice/.test(type)) return 'demon';
-    if(/arrow|shot|barrage|trap|snipe/.test(type)) return 'arrow';
-    if(/smoke|swift|cut|ultrasonic/.test(type)) return 'daggers';
-    if(/warcry|focus|unstoppable/.test(type)) return 'warcry';
-    if(/nature|vine|seed|root|swamp|forest|queen/.test(type)) return 'vines';
-    if(/arcane|magic|mana|discharge|overcharge/.test(type)) return 'arcane';
-    return player.class==='Arqueiro'?'arrow':player.class==='Mago'?'arcane':player.class==='Adepto da Natureza'?'tree':'strike';
-  }
+  const skillArt = skill => `<img src="${esc(getSkillSpritePath(skill))}" alt="" draggable="false">`;
   function renderActions(){
     if(!enabled()||!mounted) return false;
     const area=document.getElementById('actions');
@@ -115,9 +98,8 @@ const CampaignHUD = (() => {
     if(!enemy){area.innerHTML=`<div class="rpg-recovery">${button(`${image('icon-strike')}<span>Procurar inimigo</span>`,'find','','class="rpg-find" '+(locked()||progressionPending()?'disabled':''))}${getBossUnlockProgress(currentRegion).unlocked?button('Desafiar chefe','boss','',locked()||progressionPending()?'disabled':''):''}</div>`;return true;}
     const skills=getSkillInfo(),busy=locked()||progressionPending();
     const basicCost=player.class==='Mago'?Math.floor(3+.1*player.level)*3:0;
-    const basicIcon=player.class==='Arqueiro'?'arrow':player.class==='Mago'?'arcane':player.class==='Adepto da Natureza'?'vines':'strike';
-    const skillButtons=skills.map((skill,index)=>{const available=getSkillActionState(skill),blocked=busy||!available.canUse||playerEffects.forcedBasicTurns>0;return button(`${image('icon-'+skillIcon(skill))}<strong>${text(skill.name)}</strong><small>${available.manaCost} mana${skill.hpCostPercent?' · vida':''}</small><span class="rpg-hotkey">${index+2<=9?index+2:''}</span>`,'skill',index,`class="rpg-ability" data-hud-hotkey="${index+2}" data-hud-description="${esc(skill.description+(available.reason?' · '+available.reason:''))}" ${blocked?'disabled':''} aria-label="${text(skill.name)}, ${available.manaCost} de mana${blocked?', indisponível':''}"`);}).join('');
-    area.innerHTML=`<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',busy?'disabled':'')}</div><div class="rpg-ability-list">${button(`${image('icon-'+basicIcon)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',busy?'disabled':'')}${button('Habilidades','skills')}</div></div><div id="rpgSkillHint" class="rpg-skill-hint">${busy?'Aguarde a resolução do turno.':'Selecione uma habilidade para ver seu efeito.'}</div>`;
+    const skillButtons=skills.map((skill,index)=>{const available=getSkillActionState(skill),blocked=busy||!available.canUse||playerEffects.forcedBasicTurns>0;return button(`${skillArt(skill)}<strong>${text(skill.name)}</strong><small>${available.manaCost} mana${skill.hpCostPercent?' · vida':''}</small><span class="rpg-hotkey">${index+2<=9?index+2:''}</span>`,'skill',index,`class="rpg-ability" data-hud-hotkey="${index+2}" data-hud-description="${esc(skill.description+(available.reason?' · '+available.reason:''))}" ${blocked?'disabled':''} aria-label="${text(skill.name)}, ${available.manaCost} de mana${blocked?', indisponível':''}"`);}).join('');
+    area.innerHTML=`<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',busy?'disabled':'')}</div><div class="rpg-ability-list">${button(`${skillArt(null)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',busy?'disabled':'')}${button('Habilidades','skills')}</div></div><div id="rpgSkillHint" class="rpg-skill-hint">${busy?'Aguarde a resolução do turno.':'Selecione uma habilidade para ver seu efeito.'}</div>`;
     return true;
   }
   function inspectAction(event){const b=event.target.closest('[data-hud-description]');if(b&&document.getElementById('rpgSkillHint'))document.getElementById('rpgSkillHint').textContent=b.dataset.hudDescription;}
@@ -216,7 +198,7 @@ const CampaignHUD = (() => {
     if(action==='history'){openDialog('history','Histórico de batalha','');document.getElementById('logPanel').hidden=false;document.getElementById('log').style.display='block';return;}
     if(action==='target')return openDialog('target',enemy?.name||'Inimigo',enemy?`<p>Vida: ${Math.ceil(enemy.hp)} / ${enemy.maxHp}</p><p>Armadura: ${getEnemyDisplayedArmor(enemy)}</p><h3>Efeitos</h3><p>${esc(getEnemyStatusEffects(enemy).map(effect=>effect.text).join(' · ')||'Sem efeitos ativos.')}</p><h3>Possíveis drops</h3><p>${esc(enemy.possibleDrop||'Consulte o bestiário.')}</p>`:'');
     if(action==='objective'){const p=getBossUnlockProgress(currentRegion),contracts=EquipmentSystem.refreshContracts(player).active;return openDialog('objective','Objetivo da expedição',`<h3>Encontre o chefe de ${esc(currentRegion)}</h3><p>Criaturas diferentes: ${p.defeated} / ${p.total}</p><p>${esc((p.missing||[]).join(', ')||'Você já pode desafiar o chefe.')}</p>${p.unlocked?button('Desafiar chefe','boss','',enemy?'disabled':''):''}${contracts.map(q=>`<h3>${esc(q.targetName)}</h3><p>${q.progress} / ${q.count} · ${esc(EquipmentSystem.materialById(q.rewardId)?.name)} × ${q.rewardQty}</p>`).join('')}`);}
-    if(action==='skills')return openDialog('skills','Habilidades',getSkillInfo().map(skill=>`<section class="rpg-skill-entry">${image('icon-'+skillIcon(skill))}<div><h3>${text(skill.name)} · ${getSkillActionState(skill).manaCost} mana</h3><p>${esc(skill.description)}</p></div></section>`).join(''));
+    if(action==='skills')return openDialog('skills','Habilidades',getSkillInfo().map(skill=>`<section class="rpg-skill-entry">${skillArt(skill)}<div><h3>${text(skill.name)} · ${getSkillActionState(skill).manaCost} mana</h3><p>${esc(skill.description)}</p></div></section>`).join(''));
     if(action==='consumables')return openDialog('consumables','Consumíveis',player.inventory.filter(item=>item.type==='consumable').map(item=>`<section class="rpg-consumable"><h3>${esc(item.name)} × ${item.qty||1}</h3><p>${esc(item.description)}</p>${button('Usar','use-item',item.uid,locked()?'disabled':'')}</section>`).join('')||'<p>Você não carrega consumíveis. Visite o alquimista na aldeia.</p>');
     if(action==='flee')return openDialog('flee','Fugir da batalha',`<p>A fuga custa ${getFleeCost()} moedas e encerra a batalha sem recompensas.</p>${button('Confirmar fuga','confirm-flee','',player.coins<getFleeCost()?'disabled':'')}`);
     if(action==='service'){if(locked())return;state.bag=false;if(value==='mercenary')state.contractTab=EquipmentSystem.refreshContracts(player).active.length?'active':'offers';setVillageTab(value);return;}

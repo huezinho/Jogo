@@ -1,0 +1,12 @@
+{
+  "kind": "equipment",
+  "id": "caverna_chest",
+  "region": "Caverna",
+  "slot": "chest",
+  "className": null,
+  "name": "Armadura - Pedra Guardia Comum",
+  "setName": "Pedra Guardia",
+  "path": "assets/visual/items/sets/caverna_chest.webp",
+  "prompt": "Equipment inventory icon. Item \"Armadura - Pedra Guardia Comum\" from set \"Pedra Guardia\", region Caverna. Depict ONE torso cuirass or tunic, no head, no limbs. Regional design language: rough dark stone, iron seams, mineral blue crystals. A cohesive unique regional piece, visually distinct from other sets, not a generic recoloring. Entire object fully visible, centered, diagonal composition where useful. No hands, no wearer, no scene, no text, no border. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-587ef023-c4b7-4c0e-94fc-0cfbe8e491bd.png"
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "equipment",
+  "id": "fortaleza_weapon_arqueiro",
+  "region": "Fortaleza",
+  "slot": "weapon",
+  "className": "Arqueiro",
+  "name": "Arco - Bastiao Comum",
+  "setName": "Bastiao",
+  "path": "assets/visual/items/sets/fortaleza_weapon_arqueiro.webp",
+  "prompt": "Equipment inventory icon. Item \"Arco - Bastiao Comum\" from set \"Bastiao\", region Fortaleza. Depict ONE ARCHER BOW with visible string, NOT a staff. Regional design language: heavy tempered steel, angular military rivets and deep red fabric. A cohesive unique regional piece, visually distinct from other sets, not a generic recoloring. Entire object fully visible, centered, diagonal composition where useful. No hands, no wearer, no scene, no text, no border. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-b179d18a-c1d5-416e-810d-6ae771342fa0.png"
+}

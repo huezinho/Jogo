@@ -1,0 +1,16 @@
+{
+  "kind": "skill",
+  "skillKind": "active",
+  "id": "guerreiro_golpes_velozes",
+  "name": "Golpes Velozes",
+  "className": "Guerreiro",
+  "mechanics": {
+    "level": 30,
+    "id": "golpes_velozes",
+    "name": "Golpes Velozes",
+    "type": "warrior_swift_strikes"
+  },
+  "path": "assets/visual/skills/guerreiro_golpes_velozes.webp",
+  "prompt": "Unique fantasy RPG ABILITY ICON, not an equipment catalog object. Skill named in Portuguese \"Golpes Velozes\" for class \"Guerreiro\", active ability. Mechanics reference: {\"level\":30,\"id\":\"golpes_velozes\",\"name\":\"Golpes Velozes\",\"type\":\"warrior_swift_strikes\"}. Show the specific ACTION, magical phenomenon or symbolic effect implied by this particular ability. Strong simple visual metaphor, motion and clear central focal point, distinct from other abilities. Martial force for warriors, accurate arrows and traps for archers, spell energy for mages, living natural magic for nature adepts.  No letters, labels, numbers or UI frame. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-0777dc99-efb0-4eee-8f71-8b222c2ce024.png"
+}

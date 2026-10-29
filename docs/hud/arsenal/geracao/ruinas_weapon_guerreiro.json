@@ -1,0 +1,12 @@
+{
+  "kind": "equipment",
+  "id": "ruinas_weapon_guerreiro",
+  "region": "Ruinas",
+  "slot": "weapon",
+  "className": "Guerreiro",
+  "name": "Espada - Eco Antigo Comum",
+  "setName": "Eco Antigo",
+  "path": "assets/visual/items/sets/ruinas_weapon_guerreiro.webp",
+  "prompt": "Equipment inventory icon. Item \"Espada - Eco Antigo Comum\" from set \"Eco Antigo\", region Ruinas. Depict ONE swordsman's SWORD, distinct blade and hilt. Regional design language: weathered bronze, turquoise ghost runes and ancient engraved relics. A cohesive unique regional piece, visually distinct from other sets, not a generic recoloring. Entire object fully visible, centered, diagonal composition where useful. No hands, no wearer, no scene, no text, no border. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-bdbd3252-564a-46b0-804d-1a32af10c6c0.png"
+}

@@ -2,7 +2,17 @@
 
 28/10/2026.
 
-## Selo progressivo e artes próprias — 29/10/2026
+## Habilidades e conjuntos com artes próprias — 29/10/2026
+
+Aplicado o catálogo de 188 artes geradas individualmente com image_gen: 59 habilidades ativas, 29 passivas, 4 ataques básicos e 96 equipamentos regionais. O conjunto de cada região possui quatro peças de armadura e quatro armas específicas de classe. A mesma peça mantém sua arte quando melhora a raridade; a classificação continua indicada na interface.
+
+Os ícones de habilidade usam classe e ID estável, em vez de agrupar por efeito. São exibidos no combate, nas descrições e no livro do personagem, incluindo passivas e desbloqueios futuros. Os equipamentos resolvem sua arte pelo conjunto regional, peça e classe da arma; oficina, bolsa, inspeção e personagem usam o mesmo caminho. A resolução também atende os saves existentes. Não houve alteração de fórmulas ou receitas.
+
+Bolsa e marcador de acessório vazio continuam com os ícones anteriores, conforme solicitado. Catálogo e galeria: arsenal/index.html e arsenal/catalogo.json. Prompts e origem: arsenal/geracao/*.json. A instalação das cópias WebP preserva a composição completa, sem recorte ou repintura.
+
+A conferência cobre 2.222 referências de habilidades/equipamentos em todas as classes, rotas e raridades, arquivos distintos e carga das imagens, mais o livro de habilidades em três larguras. O comando normal de regressão executa oito suítes.
+
+## Histórico: selo progressivo e artes próprias — 29/10/2026
 
 Aplicado o selo escolhido. O retrato circular é próprio do chefe da região, e a borda completa 0/120/240/360 graus conforme as criaturas diferentes vencidas (na região com três criaturas). A mesma regra funciona nas 12 regiões e mantém o círculo completo ao liberar ou enfrentar o chefe. Repetir uma criatura não aumenta esse progresso.
 

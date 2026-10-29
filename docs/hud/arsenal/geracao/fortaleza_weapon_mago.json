@@ -1,0 +1,12 @@
+{
+  "kind": "equipment",
+  "id": "fortaleza_weapon_mago",
+  "region": "Fortaleza",
+  "slot": "weapon",
+  "className": "Mago",
+  "name": "Cajado - Bastiao Comum",
+  "setName": "Bastiao",
+  "path": "assets/visual/items/sets/fortaleza_weapon_mago.webp",
+  "prompt": "Equipment inventory icon. Item \"Cajado - Bastiao Comum\" from set \"Bastiao\", region Fortaleza. Depict ONE ornate MAGE STAFF, long rod with magical focal point. Regional design language: heavy tempered steel, angular military rivets and deep red fabric. A cohesive unique regional piece, visually distinct from other sets, not a generic recoloring. Entire object fully visible, centered, diagonal composition where useful. No hands, no wearer, no scene, no text, no border. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-b6cd9e5d-a71b-4b14-9d62-d71a51334094.png"
+}

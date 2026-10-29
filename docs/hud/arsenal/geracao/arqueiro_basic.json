@@ -1,0 +1,10 @@
+{
+  "kind": "skill",
+  "skillKind": "basic",
+  "id": "arqueiro_basic",
+  "name": "Ataque bÃ¡sico",
+  "className": "Arqueiro",
+  "path": "assets/visual/skills/arqueiro_basic.webp",
+  "prompt": "Unique fantasy RPG ABILITY ICON, not an equipment catalog object. Skill named in Portuguese \"Ataque bÃ¡sico\" for class \"Arqueiro\", basic ability. Mechanics reference: {}. Show the specific ACTION, magical phenomenon or symbolic effect implied by this particular ability. Strong simple visual metaphor, motion and clear central focal point, distinct from other abilities. Martial force for warriors, accurate arrows and traps for archers, spell energy for mages, living natural magic for nature adepts. One precise arrow flying from a bow. No letters, labels, numbers or UI frame. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-645543e1-de8b-4d4c-a413-3a4200864634.png"
+}

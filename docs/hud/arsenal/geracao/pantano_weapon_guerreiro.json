@@ -1,0 +1,12 @@
+{
+  "kind": "equipment",
+  "id": "pantano_weapon_guerreiro",
+  "region": "Pantano",
+  "slot": "weapon",
+  "className": "Guerreiro",
+  "name": "Espada - Seiva Toxica Comum",
+  "setName": "Seiva Toxica",
+  "path": "assets/visual/items/sets/pantano_weapon_guerreiro.webp",
+  "prompt": "Equipment inventory icon. Item \"Espada - Seiva Toxica Comum\" from set \"Seiva Toxica\", region Pantano. Depict ONE swordsman's SWORD, distinct blade and hilt. Regional design language: mossy green hide, swamp vines and tarnished brass. A cohesive unique regional piece, visually distinct from other sets, not a generic recoloring. Entire object fully visible, centered, diagonal composition where useful. No hands, no wearer, no scene, no text, no border. Hand-painted detailed dark fantasy game art matching bronze-and-parchment RPG UI. Square image, dark near-black background, central subject within 80% safe area, crisp silhouette and local highlights readable at 48px. Rich painterly texture, controlled color palette, professional inventory/skill art, no watermarks, no multiple panels, one icon only.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-f4d6b27e-3c09-48a0-843f-489eefc132b5.png"
+}

@@ -1950,16 +1950,16 @@ function renderCampContent(campEntries, previewStats, investedSummary, classBase
         <div class="inventory-item">
           <strong>Habilidades ativas</strong>
           <div class="inventory-list">
-            ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+            ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><img class="rpg-book-skill-art" src="${getSkillSpritePath(skill)}" alt="" loading="lazy"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
           </div>
         </div>
         <div class="inventory-item">
           <strong>Habilidades passivas</strong>
           <div class="inventory-list">
-            ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+            ${campEntries.passiveEntries.map(skill => `<div class="inventory-item"><img class="rpg-book-skill-art" src="${getSkillSpritePath(skill)}" alt="" loading="lazy"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
           </div>
         </div>
-        <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio mais proximo" : "Desbloqueio futuro"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
+        <div class="inventory-item"><strong>Proximos desbloqueios</strong><div class="progression-list">${[...campEntries.activeEntries, ...campEntries.passiveEntries].filter(entry => !entry.unlocked).sort((a, b) => a.level - b.level).slice(0, 6).map(entry => `<div class="progression-item ${entry.isNext ? "next" : ""}"><img class="rpg-book-skill-art" src="${getSkillSpritePath(entry)}" alt="" loading="lazy"><strong>${entry.name}</strong><br><span class="lock-note">${entry.description}</span><br><span class="${entry.statusClass}">${entry.isNext ? "Proximo desbloqueio mais proximo" : "Desbloqueio futuro"} - Nivel ${entry.level}</span></div>`).join("") || `<div class="progression-item"><strong>Tudo desbloqueado</strong><br><span class="lock-note">Sua rota atual ja liberou todas as habilidades dessa classe/subclasse.</span></div>`}</div></div>
       </div>`;
   }
   return `
@@ -2761,6 +2761,8 @@ function getCampEntries(){
     const activeDetail = activeDetails.get(skill.name);
     const unlocked = unlockedActiveNames.has(skill.name);
     return {
+      id: skill.id,
+      type: skill.type,
       name: skill.name,
       level: skill.level,
       unlocked,
@@ -2773,6 +2775,8 @@ function getCampEntries(){
   const passiveEntries = (classTrees.passiveSkills || []).map(skill => {
     const unlocked = player.level >= skill.level;
     return {
+      id: skill.id,
+      type: skill.type,
       name: skill.name,
       level: skill.level,
       unlocked,
@@ -4058,8 +4062,17 @@ function getItemAssetId(item){
   return item.baseItemId || item.id || slugify(item.name || "item");
 }
 
+function getSkillSpritePath(skill, className = player?.class){
+  const key = skill ? skill.id || skill.type || slugify(skill.name) : "basic";
+  return `assets/visual/skills/${slugify(className)}_${slugify(key)}.webp?v=20261029-arsenal`;
+}
+
 function getItemSpritePath(item){
   if(item?.type === "equipment" && ["head","chest","legs","feet","weapon"].includes(item.slot)){
+    if(item.regionName && EquipmentData.sets[item.regionName]){
+      const weaponClass = item.classRestriction || player?.class || "Guerreiro";
+      return `assets/visual/items/sets/${slugify(item.regionName)}_${item.slot}${item.slot === "weapon" ? "_" + slugify(weaponClass) : ""}.webp?v=20261029-arsenal`;
+    }
     const weaponClass = Object.prototype.hasOwnProperty.call(classes, item.classRestriction || player?.class) ? (item.classRestriction || player.class) : "Guerreiro";
     const icon = item.slot === "weapon" ? `weapon_${toCssToken(weaponClass)}` : item.slot;
     return `assets/visual/items/equipment/${icon}.svg?v=20261028`;

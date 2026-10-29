@@ -1,0 +1,2226 @@
+[
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_recuperar_folego",
+    "name": "Recuperar Folego",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 1,
+      "id": "recuperar_folego",
+      "name": "Recuperar Folego",
+      "type": "warrior_second_wind"
+    },
+    "path": "assets/visual/skills/guerreiro_recuperar_folego.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_esbarrao",
+    "name": "Esbarrao",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 20,
+      "id": "esbarrao",
+      "name": "Esbarrao",
+      "type": "warrior_shove"
+    },
+    "path": "assets/visual/skills/guerreiro_esbarrao.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_vontade_de_ferro",
+    "name": "Vontade de Ferro",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 10,
+      "id": "vontade_de_ferro",
+      "name": "Vontade de Ferro",
+      "type": "warrior_flat_reduction"
+    },
+    "path": "assets/visual/skills/guerreiro_vontade_de_ferro.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_investida",
+    "name": "Investida",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 20,
+      "id": "investida",
+      "name": "Investida",
+      "type": "warrior_shove"
+    },
+    "path": "assets/visual/skills/guerreiro_investida.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_veloz",
+    "name": "Veloz",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 10,
+      "id": "veloz",
+      "name": "Veloz",
+      "type": "warrior_enemy_miss"
+    },
+    "path": "assets/visual/skills/guerreiro_veloz.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_contundir",
+    "name": "Contundir",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 30,
+      "id": "contundir",
+      "name": "Contundir",
+      "type": "warrior_stagger"
+    },
+    "path": "assets/visual/skills/guerreiro_contundir.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_refletir",
+    "name": "Refletir",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 40,
+      "id": "refletir",
+      "name": "Refletir",
+      "type": "warrior_reflect"
+    },
+    "path": "assets/visual/skills/guerreiro_refletir.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_golpes_velozes",
+    "name": "Golpes Velozes",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 30,
+      "id": "golpes_velozes",
+      "name": "Golpes Velozes",
+      "type": "warrior_swift_strikes"
+    },
+    "path": "assets/visual/skills/guerreiro_golpes_velozes.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_contra_ataque",
+    "name": "Contra-Ataque",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 40,
+      "id": "contra_ataque",
+      "name": "Contra-Ataque",
+      "type": "warrior_counter_on_dodge"
+    },
+    "path": "assets/visual/skills/guerreiro_contra_ataque.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_brado",
+    "name": "Brado",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "brado",
+      "name": "Brado",
+      "type": "warrior_warcry"
+    },
+    "path": "assets/visual/skills/guerreiro_brado.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_corte_profundo",
+    "name": "Corte Profundo",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "corte_profundo",
+      "name": "Corte Profundo",
+      "type": "warrior_deep_cut"
+    },
+    "path": "assets/visual/skills/guerreiro_corte_profundo.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_julgamento",
+    "name": "Julgamento",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "julgamento",
+      "name": "Julgamento",
+      "type": "warrior_judgment"
+    },
+    "path": "assets/visual/skills/guerreiro_julgamento.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_escudo_de_fe",
+    "name": "Escudo de Fe",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "escudo_de_fe",
+      "name": "Escudo de Fe",
+      "type": "warrior_faith_shield"
+    },
+    "path": "assets/visual/skills/guerreiro_escudo_de_fe.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_aura_divina",
+    "name": "Aura Divina",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 70,
+      "id": "aura_divina",
+      "name": "Aura Divina",
+      "type": "warrior_aura_shield"
+    },
+    "path": "assets/visual/skills/guerreiro_aura_divina.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_ira",
+    "name": "Ira",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "ira",
+      "name": "Ira",
+      "type": "warrior_warcry"
+    },
+    "path": "assets/visual/skills/guerreiro_ira.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_valhala",
+    "name": "Vallhala",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "valhala",
+      "name": "Vallhala",
+      "type": "warrior_valhalla"
+    },
+    "path": "assets/visual/skills/guerreiro_valhala.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_voce_ira_me_parar",
+    "name": "Voce Ira Me Parar?",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "voce_ira_me_parar",
+      "name": "Voce Ira Me Parar?",
+      "type": "warrior_unstoppable"
+    },
+    "path": "assets/visual/skills/guerreiro_voce_ira_me_parar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_voce_nao_e_digno",
+    "name": "Voce Nao e Digno",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 70,
+      "id": "voce_nao_e_digno",
+      "name": "Voce Nao e Digno",
+      "type": "warrior_last_stand"
+    },
+    "path": "assets/visual/skills/guerreiro_voce_nao_e_digno.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_furar_blindagem",
+    "name": "Furar Blindagem",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "furar_blindagem",
+      "name": "Furar Blindagem",
+      "type": "warrior_armor_piercer"
+    },
+    "path": "assets/visual/skills/guerreiro_furar_blindagem.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_cortes_ultrasonicos",
+    "name": "Cortes Ultrasonicos",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "cortes_ultrasonicos",
+      "name": "Cortes Ultrasonicos",
+      "type": "warrior_ultrasonic_cuts"
+    },
+    "path": "assets/visual/skills/guerreiro_cortes_ultrasonicos.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_mente_limpa",
+    "name": "Mente Limpa",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 70,
+      "id": "mente_limpa",
+      "name": "Mente Limpa",
+      "type": "warrior_first_strike_echo"
+    },
+    "path": "assets/visual/skills/guerreiro_mente_limpa.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_bomba_de_fumaca",
+    "name": "Bomba de Fumaca",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "bomba_de_fumaca",
+      "name": "Bomba de Fumaca",
+      "type": "warrior_smoke_bomb"
+    },
+    "path": "assets/visual/skills/guerreiro_bomba_de_fumaca.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "guerreiro_mata_gigantes",
+    "name": "Mata-Gigantes",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "mata_gigantes",
+      "name": "Mata-Gigantes",
+      "type": "warrior_giant_slayer"
+    },
+    "path": "assets/visual/skills/guerreiro_mata_gigantes.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "guerreiro_eliminar",
+    "name": "Eliminar",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 70,
+      "id": "eliminar",
+      "name": "Eliminar",
+      "type": "warrior_execute_bonus"
+    },
+    "path": "assets/visual/skills/guerreiro_eliminar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "basic",
+    "id": "guerreiro_basic",
+    "name": "Ataque básico",
+    "className": "Guerreiro",
+    "path": "assets/visual/skills/guerreiro_basic.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_mirar",
+    "name": "Mirar",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 1,
+      "id": "mirar",
+      "name": "Mirar",
+      "type": "archer_focus"
+    },
+    "path": "assets/visual/skills/arqueiro_mirar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_camuflagem",
+    "name": "Camuflagem",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 20,
+      "id": "camuflagem",
+      "name": "Camuflagem",
+      "type": "archer_camouflage"
+    },
+    "path": "assets/visual/skills/arqueiro_camuflagem.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_passos_leves",
+    "name": "Passos Leves",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 10,
+      "id": "passos_leves",
+      "name": "Passos Leves",
+      "type": "archer_dodge_level_scaling"
+    },
+    "path": "assets/visual/skills/arqueiro_passos_leves.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_headshot",
+    "name": "Headshot",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 30,
+      "id": "headshot",
+      "name": "Headshot",
+      "type": "archer_headshot"
+    },
+    "path": "assets/visual/skills/arqueiro_headshot.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_pulso_firme",
+    "name": "Pulso Firme",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 40,
+      "id": "pulso_firme",
+      "name": "Pulso Firme",
+      "type": "archer_attack_level_bonus"
+    },
+    "path": "assets/visual/skills/arqueiro_pulso_firme.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_rajada_de_flechas",
+    "name": "Rajada de Flechas",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 30,
+      "id": "rajada_de_flechas",
+      "name": "Rajada de Flechas",
+      "type": "archer_barrage"
+    },
+    "path": "assets/visual/skills/arqueiro_rajada_de_flechas.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_errou",
+    "name": "Errou",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 40,
+      "id": "errou",
+      "name": "Errou",
+      "type": "archer_dodge_damage_buff"
+    },
+    "path": "assets/visual/skills/arqueiro_errou.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_tiro_perfurante",
+    "name": "Tiro Perfurante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 50,
+      "id": "tiro_perfurante",
+      "name": "Tiro Perfurante",
+      "type": "archer_piercing_shot"
+    },
+    "path": "assets/visual/skills/arqueiro_tiro_perfurante.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_armadilha",
+    "name": "Armadilha",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 50,
+      "id": "armadilha",
+      "name": "Armadilha",
+      "type": "archer_trap"
+    },
+    "path": "assets/visual/skills/arqueiro_armadilha.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_emergencia_arcana",
+    "name": "Emergencia Arcana",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "emergencia_arcana",
+      "name": "Emergencia Arcana",
+      "type": "archer_arcane_shot"
+    },
+    "path": "assets/visual/skills/arqueiro_emergencia_arcana.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_sobreaquecer",
+    "name": "Sobreaquecer",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "sobreaquecer",
+      "name": "Sobreaquecer",
+      "type": "archer_overcharge"
+    },
+    "path": "assets/visual/skills/arqueiro_sobreaquecer.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_cristalizar_mana",
+    "name": "Cristalizar Mana",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 70,
+      "id": "cristalizar_mana",
+      "name": "Cristalizar Mana",
+      "type": "archer_mana_to_skill_bonus"
+    },
+    "path": "assets/visual/skills/arqueiro_cristalizar_mana.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_executar",
+    "name": "Executar",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "executar",
+      "name": "Executar",
+      "type": "archer_execute"
+    },
+    "path": "assets/visual/skills/arqueiro_executar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_ponto_fraco",
+    "name": "Ponto Fraco",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "ponto_fraco",
+      "name": "Ponto Fraco",
+      "type": "archer_weak_spot"
+    },
+    "path": "assets/visual/skills/arqueiro_ponto_fraco.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_olhos_de_falcao",
+    "name": "Olhos de Falcao",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 70,
+      "id": "olhos_de_falcao",
+      "name": "Olhos de Falcao",
+      "type": "archer_sniper_bonus_crit"
+    },
+    "path": "assets/visual/skills/arqueiro_olhos_de_falcao.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_surpresa",
+    "name": "Surpresa",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "surpresa",
+      "name": "Surpresa",
+      "type": "archer_surprise"
+    },
+    "path": "assets/visual/skills/arqueiro_surpresa.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_mirar_no_pe",
+    "name": "Mirar no Pe",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "mirar_no_pe",
+      "name": "Mirar no Pe",
+      "type": "archer_aim_leg"
+    },
+    "path": "assets/visual/skills/arqueiro_mirar_no_pe.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_passos_silenciosos",
+    "name": "Passos Silenciosos",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 70,
+      "id": "passos_silenciosos",
+      "name": "Passos Silenciosos",
+      "type": "archer_enemy_skip_chance"
+    },
+    "path": "assets/visual/skills/arqueiro_passos_silenciosos.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_tranquilizante",
+    "name": "Tranquilizante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "tranquilizante",
+      "name": "Tranquilizante",
+      "type": "archer_tranquilizer"
+    },
+    "path": "assets/visual/skills/arqueiro_tranquilizante.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "arqueiro_tiro_cortante",
+    "name": "Tiro Cortante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "tiro_cortante",
+      "name": "Tiro Cortante",
+      "type": "archer_cutting_shot"
+    },
+    "path": "assets/visual/skills/arqueiro_tiro_cortante.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "arqueiro_resistencia_florestal",
+    "name": "Resistencia Florestal",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 70,
+      "id": "resistencia_florestal",
+      "name": "Resistencia Florestal",
+      "type": "archer_flat_reduction_level"
+    },
+    "path": "assets/visual/skills/arqueiro_resistencia_florestal.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "basic",
+    "id": "arqueiro_basic",
+    "name": "Ataque básico",
+    "className": "Arqueiro",
+    "path": "assets/visual/skills/arqueiro_basic.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_explosao_de_mana",
+    "name": "Explosao de Mana",
+    "className": "Mago",
+    "mechanics": {
+      "level": 20,
+      "id": "explosao_de_mana",
+      "name": "Explosao de Mana",
+      "type": "mage_mana_burst"
+    },
+    "path": "assets/visual/skills/mago_explosao_de_mana.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_ultimo_recurso",
+    "name": "Ultimo Recurso",
+    "className": "Mago",
+    "mechanics": {
+      "level": 10,
+      "id": "ultimo_recurso",
+      "name": "Ultimo Recurso",
+      "type": "mage_last_resort"
+    },
+    "path": "assets/visual/skills/mago_ultimo_recurso.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_bola_de_fogo",
+    "name": "Bola de Fogo",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "bola_de_fogo",
+      "name": "Bola de Fogo",
+      "type": "mage_fireball"
+    },
+    "path": "assets/visual/skills/mago_bola_de_fogo.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_mana_e_vida",
+    "name": "Mana e Vida",
+    "className": "Mago",
+    "mechanics": {
+      "level": 40,
+      "id": "mana_e_vida",
+      "name": "Mana e Vida",
+      "type": "mage_mana_to_life"
+    },
+    "path": "assets/visual/skills/mago_mana_e_vida.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_descarregar",
+    "name": "Descarregar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "descarregar",
+      "name": "Descarregar",
+      "type": "mage_discharge"
+    },
+    "path": "assets/visual/skills/mago_descarregar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_transbordando",
+    "name": "Transbordando",
+    "className": "Mago",
+    "mechanics": {
+      "level": 40,
+      "id": "transbordando",
+      "name": "Transbordando",
+      "type": "mage_overflowing"
+    },
+    "path": "assets/visual/skills/mago_transbordando.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_congelar",
+    "name": "Congelar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "congelar",
+      "name": "Congelar",
+      "type": "mage_freeze"
+    },
+    "path": "assets/visual/skills/mago_congelar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_escudo_de_mana",
+    "name": "Escudo de Mana",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "escudo_de_mana",
+      "name": "Escudo de Mana",
+      "type": "mage_mana_shield"
+    },
+    "path": "assets/visual/skills/mago_escudo_de_mana.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_bafo_de_fogo",
+    "name": "Bafo de Fogo",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "bafo_de_fogo",
+      "name": "Bafo de Fogo",
+      "type": "mage_freeze"
+    },
+    "path": "assets/visual/skills/mago_bafo_de_fogo.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_fenix_sagrada",
+    "name": "Fenix Sagrada",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "fenix_sagrada",
+      "name": "Fenix Sagrada",
+      "type": "mage_sacred_phoenix"
+    },
+    "path": "assets/visual/skills/mago_fenix_sagrada.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_explodir",
+    "name": "Explodir",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "explodir",
+      "name": "Explodir",
+      "type": "mage_explode"
+    },
+    "path": "assets/visual/skills/mago_explodir.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_fogo_do_inferno",
+    "name": "Fogo do Inferno",
+    "className": "Mago",
+    "mechanics": {
+      "level": 70,
+      "id": "fogo_do_inferno",
+      "name": "Fogo do Inferno",
+      "type": "mage_hellfire"
+    },
+    "path": "assets/visual/skills/mago_fogo_do_inferno.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_bola_de_neve",
+    "name": "Bola de Neve",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "bola_de_neve",
+      "name": "Bola de Neve",
+      "type": "mage_fireball"
+    },
+    "path": "assets/visual/skills/mago_bola_de_neve.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_nevasca",
+    "name": "Nevasca",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "nevasca",
+      "name": "Nevasca",
+      "type": "mage_blizzard"
+    },
+    "path": "assets/visual/skills/mago_nevasca.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_avalanche",
+    "name": "Avalanche",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "avalanche",
+      "name": "Avalanche",
+      "type": "mage_avalanche"
+    },
+    "path": "assets/visual/skills/mago_avalanche.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_gelo_queima",
+    "name": "Gelo Queima",
+    "className": "Mago",
+    "mechanics": {
+      "level": 70,
+      "id": "gelo_queima",
+      "name": "Gelo Queima",
+      "type": "mage_frostburn"
+    },
+    "path": "assets/visual/skills/mago_gelo_queima.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_concentracao",
+    "name": "Concentracao",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "concentracao",
+      "name": "Concentracao",
+      "type": "mage_concentration"
+    },
+    "path": "assets/visual/skills/mago_concentracao.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_sobrecarregar",
+    "name": "Sobrecarregar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "sobrecarregar",
+      "name": "Sobrecarregar",
+      "type": "mage_overcharge"
+    },
+    "path": "assets/visual/skills/mago_sobrecarregar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_carregar",
+    "name": "Carregar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 70,
+      "id": "carregar",
+      "name": "Carregar",
+      "type": "mage_charge_damage"
+    },
+    "path": "assets/visual/skills/mago_carregar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_corrupcao",
+    "name": "Corrupcao",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "corrupcao",
+      "name": "Corrupcao",
+      "type": "mage_corruption"
+    },
+    "path": "assets/visual/skills/mago_corrupcao.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "mago_incorporar_demonio",
+    "name": "Incorporar Demonio",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "incorporar_demonio",
+      "name": "Incorporar Demonio",
+      "type": "mage_demon_form"
+    },
+    "path": "assets/visual/skills/mago_incorporar_demonio.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "mago_canhao_de_vidro",
+    "name": "Canhao de Vidro",
+    "className": "Mago",
+    "mechanics": {
+      "level": 70,
+      "id": "canhao_de_vidro",
+      "name": "Canhao de Vidro",
+      "type": "mage_glass_cannon"
+    },
+    "path": "assets/visual/skills/mago_canhao_de_vidro.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "basic",
+    "id": "mago_basic",
+    "name": "Mísseis Mágicos",
+    "className": "Mago",
+    "path": "assets/visual/skills/mago_basic.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_semente_viva",
+    "name": "Semente Viva",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 1,
+      "id": "semente_viva",
+      "name": "Semente Viva",
+      "type": "nature_living_seed"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_semente_viva.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_raizes",
+    "name": "Raizes",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 20,
+      "id": "raizes",
+      "name": "Raizes",
+      "type": "nature_roots"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_raizes.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_ciclo_natural",
+    "name": "Ciclo Natural",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 10,
+      "id": "ciclo_natural",
+      "name": "Ciclo Natural",
+      "type": "nature_cycle"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_ciclo_natural.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_flor_do_pantano",
+    "name": "Flor do Pantano",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 30,
+      "id": "flor_do_pantano",
+      "name": "Flor do Pantano",
+      "type": "nature_swamp_flower"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_flor_do_pantano.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_seiva",
+    "name": "Seiva",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 40,
+      "id": "seiva",
+      "name": "Seiva",
+      "type": "nature_sap"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_seiva.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_encanto_da_brisa",
+    "name": "Encanto da Brisa",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 30,
+      "id": "encanto_da_brisa",
+      "name": "Encanto da Brisa",
+      "type": "nature_breeze_charm"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_encanto_da_brisa.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_aura_feerica",
+    "name": "Aura Feerica",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 40,
+      "id": "aura_feerica",
+      "name": "Aura Feerica",
+      "type": "nature_fairy_aura"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_aura_feerica.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_colheita",
+    "name": "Colheita",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 50,
+      "id": "colheita",
+      "name": "Colheita",
+      "type": "nature_harvest"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_colheita.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_cancao_ancestral",
+    "name": "Cancao Ancestral",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 50,
+      "id": "cancao_ancestral",
+      "name": "Cancao Ancestral",
+      "type": "nature_ancestral_song"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_cancao_ancestral.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_apodrecer",
+    "name": "Apodrecer",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "apodrecer",
+      "name": "Apodrecer",
+      "type": "nature_decay"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_apodrecer.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_colapso_do_brejo",
+    "name": "Colapso do Brejo",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "colapso_do_brejo",
+      "name": "Colapso do Brejo",
+      "type": "nature_swamp_collapse"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_colapso_do_brejo.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_podridao",
+    "name": "Podridao",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 70,
+      "id": "podridao",
+      "name": "Podridao",
+      "type": "nature_dot_mastery"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_podridao.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_forma_verdadeira",
+    "name": "Forma Verdadeira",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "forma_verdadeira",
+      "name": "Forma Verdadeira",
+      "type": "nature_true_form"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_forma_verdadeira.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_esmagar_invasor",
+    "name": "Esmagar Invasor",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "esmagar_invasor",
+      "name": "Esmagar Invasor",
+      "type": "nature_crush_invader"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_esmagar_invasor.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_casca_ancestral",
+    "name": "Casca Ancestral",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 70,
+      "id": "casca_ancestral",
+      "name": "Casca Ancestral",
+      "type": "nature_ancestral_bark"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_casca_ancestral.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_decreto_da_rainha",
+    "name": "Decreto da Rainha",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "decreto_da_rainha",
+      "name": "Decreto da Rainha",
+      "type": "nature_queen_decree"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_decreto_da_rainha.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_coroar",
+    "name": "Coroar",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "coroar",
+      "name": "Coroar",
+      "type": "nature_crown"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_coroar.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_asas_da_realeza",
+    "name": "Asas da Realeza",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 70,
+      "id": "asas_da_realeza",
+      "name": "Asas da Realeza",
+      "type": "nature_royal_wings"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_asas_da_realeza.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_casulo_de_vinhas",
+    "name": "Casulo de Vinhas",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "casulo_de_vinhas",
+      "name": "Casulo de Vinhas",
+      "type": "nature_vine_cocoon"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_casulo_de_vinhas.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_jogar_espinhos",
+    "name": "Jogar Espinhos",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "jogar_espinhos",
+      "name": "Jogar Espinhos",
+      "type": "nature_throw_thorns"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_jogar_espinhos.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "passive",
+    "id": "adepto_da_natureza_juramento_do_bosque",
+    "name": "Juramento do Bosque",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 70,
+      "id": "juramento_do_bosque",
+      "name": "Juramento do Bosque",
+      "type": "nature_forest_oath"
+    },
+    "path": "assets/visual/skills/adepto_da_natureza_juramento_do_bosque.webp"
+  },
+  {
+    "kind": "skill",
+    "skillKind": "basic",
+    "id": "adepto_da_natureza_basic",
+    "name": "Ataque básico",
+    "className": "Adepto da Natureza",
+    "path": "assets/visual/skills/adepto_da_natureza_basic.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_head",
+    "region": "Floresta",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_chest",
+    "region": "Floresta",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_weapon_guerreiro",
+    "region": "Floresta",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_weapon_arqueiro",
+    "region": "Floresta",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_weapon_mago",
+    "region": "Floresta",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_weapon_adepto_da_natureza",
+    "region": "Floresta",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_legs",
+    "region": "Floresta",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "floresta_feet",
+    "region": "Floresta",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Raizes Vivas Comum",
+    "setName": "Raizes Vivas",
+    "path": "assets/visual/items/sets/floresta_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_head",
+    "region": "Caverna",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_chest",
+    "region": "Caverna",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_weapon_guerreiro",
+    "region": "Caverna",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_weapon_arqueiro",
+    "region": "Caverna",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_weapon_mago",
+    "region": "Caverna",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_weapon_adepto_da_natureza",
+    "region": "Caverna",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_legs",
+    "region": "Caverna",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "caverna_feet",
+    "region": "Caverna",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Pedra Guardia Comum",
+    "setName": "Pedra Guardia",
+    "path": "assets/visual/items/sets/caverna_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_head",
+    "region": "Ruinas",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_chest",
+    "region": "Ruinas",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_weapon_guerreiro",
+    "region": "Ruinas",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_weapon_arqueiro",
+    "region": "Ruinas",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_weapon_mago",
+    "region": "Ruinas",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_weapon_adepto_da_natureza",
+    "region": "Ruinas",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_legs",
+    "region": "Ruinas",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "ruinas_feet",
+    "region": "Ruinas",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Eco Antigo Comum",
+    "setName": "Eco Antigo",
+    "path": "assets/visual/items/sets/ruinas_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_head",
+    "region": "Pantano",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_chest",
+    "region": "Pantano",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_weapon_guerreiro",
+    "region": "Pantano",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_weapon_arqueiro",
+    "region": "Pantano",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_weapon_mago",
+    "region": "Pantano",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_weapon_adepto_da_natureza",
+    "region": "Pantano",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_legs",
+    "region": "Pantano",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "pantano_feet",
+    "region": "Pantano",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Seiva Toxica Comum",
+    "setName": "Seiva Toxica",
+    "path": "assets/visual/items/sets/pantano_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_head",
+    "region": "Vulcao",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_chest",
+    "region": "Vulcao",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_weapon_guerreiro",
+    "region": "Vulcao",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_weapon_arqueiro",
+    "region": "Vulcao",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_weapon_mago",
+    "region": "Vulcao",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_weapon_adepto_da_natureza",
+    "region": "Vulcao",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_legs",
+    "region": "Vulcao",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "vulcao_feet",
+    "region": "Vulcao",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Brasas Vivas Comum",
+    "setName": "Brasas Vivas",
+    "path": "assets/visual/items/sets/vulcao_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_head",
+    "region": "Abismo",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_chest",
+    "region": "Abismo",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_weapon_guerreiro",
+    "region": "Abismo",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_weapon_arqueiro",
+    "region": "Abismo",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_weapon_mago",
+    "region": "Abismo",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_weapon_adepto_da_natureza",
+    "region": "Abismo",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_legs",
+    "region": "Abismo",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "abismo_feet",
+    "region": "Abismo",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Corte do Vazio Comum",
+    "setName": "Corte do Vazio",
+    "path": "assets/visual/items/sets/abismo_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_head",
+    "region": "Fortaleza",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_chest",
+    "region": "Fortaleza",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_weapon_guerreiro",
+    "region": "Fortaleza",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_weapon_arqueiro",
+    "region": "Fortaleza",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_weapon_mago",
+    "region": "Fortaleza",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_weapon_adepto_da_natureza",
+    "region": "Fortaleza",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_legs",
+    "region": "Fortaleza",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "fortaleza_feet",
+    "region": "Fortaleza",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Bastiao Comum",
+    "setName": "Bastiao",
+    "path": "assets/visual/items/sets/fortaleza_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_head",
+    "region": "Necropole",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_chest",
+    "region": "Necropole",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_weapon_guerreiro",
+    "region": "Necropole",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_weapon_arqueiro",
+    "region": "Necropole",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_weapon_mago",
+    "region": "Necropole",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_weapon_adepto_da_natureza",
+    "region": "Necropole",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_legs",
+    "region": "Necropole",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "necropole_feet",
+    "region": "Necropole",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Ceifa Lenta Comum",
+    "setName": "Ceifa Lenta",
+    "path": "assets/visual/items/sets/necropole_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_head",
+    "region": "Citadela",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_chest",
+    "region": "Citadela",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_weapon_guerreiro",
+    "region": "Citadela",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_weapon_arqueiro",
+    "region": "Citadela",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_weapon_mago",
+    "region": "Citadela",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_weapon_adepto_da_natureza",
+    "region": "Citadela",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_legs",
+    "region": "Citadela",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "citadela_feet",
+    "region": "Citadela",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Eclipse Preciso Comum",
+    "setName": "Eclipse Preciso",
+    "path": "assets/visual/items/sets/citadela_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_head",
+    "region": "Panteao",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_chest",
+    "region": "Panteao",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_weapon_guerreiro",
+    "region": "Panteao",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_weapon_arqueiro",
+    "region": "Panteao",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_weapon_mago",
+    "region": "Panteao",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_weapon_adepto_da_natureza",
+    "region": "Panteao",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_legs",
+    "region": "Panteao",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "panteao_feet",
+    "region": "Panteao",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Farol do Grupo Comum",
+    "setName": "Farol do Grupo",
+    "path": "assets/visual/items/sets/panteao_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_head",
+    "region": "Cataclismo",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_chest",
+    "region": "Cataclismo",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_weapon_guerreiro",
+    "region": "Cataclismo",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_weapon_arqueiro",
+    "region": "Cataclismo",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_weapon_mago",
+    "region": "Cataclismo",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_weapon_adepto_da_natureza",
+    "region": "Cataclismo",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_legs",
+    "region": "Cataclismo",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "cataclismo_feet",
+    "region": "Cataclismo",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Furia Contida Comum",
+    "setName": "Furia Contida",
+    "path": "assets/visual/items/sets/cataclismo_feet.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_head",
+    "region": "Paradoxo",
+    "slot": "head",
+    "className": null,
+    "name": "Capuz - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_head.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_chest",
+    "region": "Paradoxo",
+    "slot": "chest",
+    "className": null,
+    "name": "Armadura - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_chest.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_weapon_guerreiro",
+    "region": "Paradoxo",
+    "slot": "weapon",
+    "className": "Guerreiro",
+    "name": "Espada - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_weapon_guerreiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_weapon_arqueiro",
+    "region": "Paradoxo",
+    "slot": "weapon",
+    "className": "Arqueiro",
+    "name": "Arco - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_weapon_arqueiro.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_weapon_mago",
+    "region": "Paradoxo",
+    "slot": "weapon",
+    "className": "Mago",
+    "name": "Cajado - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_weapon_mago.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_weapon_adepto_da_natureza",
+    "region": "Paradoxo",
+    "slot": "weapon",
+    "className": "Adepto da Natureza",
+    "name": "Ramo Vivo - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_weapon_adepto_da_natureza.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_legs",
+    "region": "Paradoxo",
+    "slot": "legs",
+    "className": null,
+    "name": "Perneiras - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_legs.webp"
+  },
+  {
+    "kind": "equipment",
+    "id": "paradoxo_feet",
+    "region": "Paradoxo",
+    "slot": "feet",
+    "className": null,
+    "name": "Botas - Ruptura do Ciclo Comum",
+    "setName": "Ruptura do Ciclo",
+    "path": "assets/visual/items/sets/paradoxo_feet.webp"
+  }
+]
