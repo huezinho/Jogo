@@ -23,8 +23,18 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
  await p.getByRole('button',{name:'Terminar distribuicao e continuar',exact:true}).click();
  assert.equal(await p.evaluate(()=>currentMode),'battle');assert.equal(await p.evaluate(()=>player.stats.invested.strength),29);
  await p.evaluate(()=>{spawnEnemy();player.coins=1000;updateUI();});
+ await p.waitForTimeout(1100);
+ assert.equal(await p.locator('#heroSprite').evaluate(e=>getComputedStyle(e).animationName),'none');
+ assert.equal(await p.locator('#enemySprite').evaluate(e=>getComputedStyle(e).animationName),'none');
+ for(const width of [1366,390,320]){
+  await p.setViewportSize({width,height:900});
+  const flee=p.locator('[data-hud="flee"]');await flee.hover();
+  assert((await flee.evaluate(e=>getComputedStyle(e,'::after').content)).includes('92 moedas'));
+  assert(await flee.evaluate(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e,'::after');return r.right-parseFloat(s.width)>=0;}));
+ }
+ await p.setViewportSize({width:1366,height:900});
  const before=await p.evaluate(()=>player.coins);await p.locator('[data-hud="flee"]').click();
- assert(await p.locator('#rpgDialog').evaluate(d=>d.open));await p.locator('[data-hud="confirm-flee"]').click();
+ assert.equal(await p.locator('#rpgDialog').evaluate(d=>d.open),false);
  assert.equal(await p.evaluate(()=>enemy),null);assert.equal(await p.evaluate(()=>player.coins),before-(2+3*30));
  await p.locator('[data-hud="settings"]').click();assert(await p.locator('#settingsPanel').isVisible());
  await p.evaluate(()=>toggleSettingsPanel());
@@ -32,6 +42,6 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
  p.once('dialog',d=>d.accept());await Promise.all([p.waitForEvent('load'),p.evaluate(()=>resetAdventure())]);
  assert(await p.locator('#classSelect').isVisible());assert(await p.locator('#settingsFab').isVisible(),'settings remain accessible after returning to character selection');
  assert.equal(errors.length,0,errors.join('\n'));
- fs.writeFileSync(path.join(__dirname,'progression-results.json'),JSON.stringify({flows:['last point confirmation','subclass choice','trainer redistribution in camp','confirmed flee and actual cost','settings panel','death and respawn','return to character selection and settings access'],errors},null,2));
+ fs.writeFileSync(path.join(__dirname,'progression-results.json'),JSON.stringify({flows:['last point confirmation','subclass choice','trainer redistribution in camp','direct flee and actual cost','settings panel','death and respawn','return to character selection and settings access'],errors},null,2));
  console.log('PASS HUD progression, trainer, flee, settings and respawn');
 }finally{await browser.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1});

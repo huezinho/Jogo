@@ -59,7 +59,7 @@ linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px so
 .saved-character-card{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:center;padding:12px}
 .start-hero-stage{position:relative;height:230px;border-radius:12px;overflow:hidden;background:radial-gradient(circle at 50% 22%,rgba(255,255,255,.13),rgba(255,255,255,0) 42%),linear-gradient(180deg,rgba(7,9,12,.24),rgba(7,9,12,.64));border:1px solid rgba(255,255,255,.08)}
 .saved-character-card .start-hero-stage{height:186px}
-.start-hero-stage .sheet-sprite{position:absolute;left:50%;bottom:8px;transform:translateX(-50%) scale(.78);animation:spriteSheetIdle 2.4s steps(6,end) infinite}
+.start-hero-stage .sheet-sprite{position:absolute;left:50%;bottom:8px;transform:translateX(-50%) scale(.78);animation:none}
 .saved-character-card .start-hero-stage .sheet-sprite{transform:translateX(-50%) scale(.64)}
 .start-hero-stage .sprite-fallback{display:none}
 .start-card-kicker{font-size:11px;font-weight:800;color:#ffd36a;text-transform:uppercase;letter-spacing:.06em}
@@ -494,7 +494,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .bestiary-sprite-dialog{position:relative;width:min(620px,calc(100vw - 32px));padding:18px;border-radius:16px;background:#242424;border:1px solid rgba(255,255,255,.12);box-shadow:0 22px 52px rgba(0,0,0,.45);text-align:center}
 .bestiary-modal-close{position:absolute;right:12px;top:12px;margin:0;background:#7f2e2e;color:#fff}
 .bestiary-preview-stage{position:relative;height:min(64vh,520px);margin:28px 0 12px;border-radius:14px;background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.13),rgba(255,255,255,0) 46%),linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.38));overflow:hidden}
-.bestiary-preview-stage .sheet-sprite{position:absolute;left:50%;bottom:8px;transform:translateX(-50%) scale(2.1);animation:spriteSheetIdle 2.4s steps(6,end) infinite}
+.bestiary-preview-stage .sheet-sprite{position:absolute;left:50%;bottom:8px;transform:translateX(-50%) scale(2.1);animation:none}
 .bestiary-preview-stage .sprite-fallback{display:none}
 .scene-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
 .spawn-preview-pill{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
@@ -816,7 +816,7 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .village-npc-entity.entering{animation:villageNpcWalkIn .72s cubic-bezier(.16,.82,.22,1) both}
 .village-npc-entity .npc-shadow{position:absolute;left:50%;bottom:4px;width:82px;height:18px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(0,0,0,.34),rgba(0,0,0,0));opacity:.78}
 @keyframes villageNpcWalkIn{0%{opacity:0;transform:translateX(230px)}100%{opacity:1;transform:translateX(0)}}
-.sheet-sprite{width:192px;height:256px;background-image:var(--sprite-url);background-repeat:no-repeat;background-size:9216px 256px;background-position:0 0;animation:spriteSheetIdle 2.4s steps(6,end) infinite;image-rendering:auto;transform-origin:center bottom}
+.sheet-sprite{width:192px;height:256px;background-image:var(--sprite-url);background-repeat:no-repeat;background-size:9216px 256px;background-position:0 0;animation:none;image-rendering:auto;transform-origin:center bottom}
 .combat-entity .sprite-fallback{display:none}
 .combat-entity .sheet-sprite{z-index:3}
 .hero-entity{left:28%;right:auto;margin-left:-89px;transform:none}
@@ -831,7 +831,6 @@ linear-gradient(180deg,rgba(52,43,98,.28),rgba(20,18,34,.36))}
 .combat-entity.skilling .sheet-sprite{animation:spriteSheetSkill .95s steps(6,end) 1}
 .combat-entity.hit .sheet-sprite{animation:spriteSheetHit .5s steps(6,end) 1}
 .combat-entity.resting .sheet-sprite{animation:spriteSheetRest 2s steps(6,end) infinite}
-@keyframes spriteSheetIdle{from{background-position:0 0}to{background-position:-1152px 0}}
 @keyframes spriteSheetWalk{from{background-position:-1152px 0}to{background-position:-2304px 0}}
 @keyframes spriteSheetReady{from{background-position:-2304px 0}to{background-position:-3456px 0}}
 @keyframes spriteSheetAttack{from{background-position:-3456px 0}to{background-position:-4608px 0}}

@@ -1,5 +1,7 @@
 # Personagens pintados e animações
 
+O repouso no jogo é estático para evitar a sensação de travamento entre poses. Os quadros de ataque, conjuração e dano continuam ativos.
+
 Artes individuais geradas com a ferramenta integrada image_gen. São 28 folhas de personagem (quatro classes base e todas as subclasses), com 16 poses em quatro sequências de repouso, ataque básico, conjuração/suporte e dano. Há 63 folhas de efeito com oito quadros cada: 59 habilidades ativas e quatro ataques básicos.
 
 O catálogo de caminhos está em catalogo.json. Os prompts e as origens estão em geracao/*.json. Os arquivos originais PNG gerados preservam transparência. As cópias empacotadas do projeto ficam em assets/visual/heroes-v2 e assets/visual/skill-fx. scripts/install-character-art.py separa as células, reserva o mesmo tamanho e alinha a base dos personagens, sem pintar ou sintetizar poses. Os efeitos preservam a origem nas células uniformes.
