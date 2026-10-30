@@ -14,7 +14,7 @@ const CampaignHUD = (() => {
   const locked = () => isProcessingTurn || isDead || player.hp <= 0;
   const progressionPending = () => levelUpPoints>0||Object.values(allocation).some(value=>Number(value)>0)||needsSubclassChoice();
   const pageTitle = () => currentMode === 'battle' ? currentRegion : currentMode === 'camp' ? 'Personagem' : currentMode === 'village' ? ({artisan:'Oficina',forge:'Oficina',inn:'Pousada',alchemist:'Alquimista',mercenary:'Mercenário'}[villageTab]) : ({bestiary:'Bestiário',trophies:'Sala de troféus',arena:'Portal da arena',dungeon:'Portal da dungeon'}[currentMode] || 'Aventura');
-  const money = () => `<span class="rpg-coins">${player.coins.toLocaleString('pt-BR')} <small>moedas</small></span>`;
+  const money = () => `<span class="rpg-coins"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""> ${player.coins.toLocaleString('pt-BR')} <small>moedas</small></span>`;
   const itemArt = item => {
     if(item?.type !== 'equipment') return getInventoryItemSymbol(item);
     if(item.slot==='accessory')return getInventoryItemSymbol(item);
@@ -39,8 +39,8 @@ const CampaignHUD = (() => {
     document.getElementById('rpgLogMount').append(log);
     document.getElementById('rpgLevelMount').append(level);
     document.getElementById('campaignHud').addEventListener('click', onClick);
-    document.getElementById('actions').addEventListener('focusin', inspectAction);
-    document.getElementById('actions').addEventListener('mouseover', inspectAction);
+
+
     const dialog = document.getElementById('rpgDialog');
     dialog.addEventListener('click', event => { if(event.target === dialog){ const r=dialog.getBoundingClientRect(); if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom) closeDialog(); } });
     dialog.addEventListener('close', () => { if(dialog.open)return; state.bag=false;state.dialog=null; if(state.opener?.isConnected) state.opener.focus(); });
@@ -102,10 +102,9 @@ const CampaignHUD = (() => {
     const skills=getSkillInfo(),busy=locked()||progressionPending();
     const basicCost=player.class==='Mago'?Math.floor(3+.1*player.level)*3:0;
     const skillButtons=skills.map((skill,index)=>{const available=getSkillActionState(skill),blocked=busy||!available.canUse||playerEffects.forcedBasicTurns>0;return button(`${skillArt(skill)}<strong>${text(skill.name)}</strong><small>${available.manaCost} mana${skill.hpCostPercent?' · vida':''}</small><span class="rpg-hotkey">${index+2<=9?index+2:''}</span>`,'skill',index,`class="rpg-ability" data-hud-hotkey="${index+2}" data-hud-description="${esc(skill.description+(available.reason?' · '+available.reason:''))}" ${blocked?'disabled':''} aria-label="${text(skill.name)}, ${available.manaCost} de mana${blocked?', indisponível':''}"`);}).join('');
-    area.innerHTML=`<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',busy?'disabled':'')}</div><div class="rpg-ability-list">${button(`${skillArt(null)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',`data-tooltip="Custa ${getFleeCost()} moedas. Encerra a batalha sem recompensas.${player.coins<getFleeCost()?' Moedas insuficientes.':''}" aria-description="Fugir custa ${getFleeCost()} moedas e encerra a batalha sem recompensas." ${busy?'disabled':''}`)}</div></div><div id="rpgSkillHint" class="rpg-skill-hint">${busy?'Aguarde a resolução do turno.':'Selecione uma habilidade para ver seu efeito.'}</div>`;
+    area.innerHTML=`<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',busy?'disabled':'')}</div><div class="rpg-ability-list">${button(`${skillArt(null)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',`data-tooltip="Custa ${getFleeCost()} moedas. Encerra a batalha sem recompensas.${player.coins<getFleeCost()?' Moedas insuficientes.':''}" aria-description="Fugir custa ${getFleeCost()} moedas e encerra a batalha sem recompensas." ${busy?'disabled':''}`)}</div></div>`;
     return true;
   }
-  function inspectAction(event){const b=event.target.closest('[data-hud-description]');if(b&&document.getElementById('rpgSkillHint'))document.getElementById('rpgSkillHint').textContent=b.dataset.hudDescription;}
   function syncChronicle(){
     if(!mounted) return;
     const last=document.getElementById('log')?.lastElementChild?.textContent||'Uma nova jornada começa.';
@@ -117,11 +116,12 @@ const CampaignHUD = (() => {
   function serviceNav(){
     return `<nav class="rpg-service-nav" aria-label="Serviços da aldeia">${[['artisan','Ferreiro'],['inn','Pousada'],['mercenary','Mercenário'],['alchemist','Alquimista']].map(([id,label])=>button(label,'service',id,`aria-pressed="${villageTab===id||(id==='artisan'&&villageTab==='forge')}"`)).join('')}</nav>`;
   }
+  function innMeter(label,value,max,kind){return `<div class="rpg-inn-meter ${kind}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${value}"><i style="width:${Math.max(0,Math.min(100,100*value/max))}%"></i><span>${label} · ${Math.ceil(value)} / ${max}</span></div>`;}
   function renderVillage(){
     if(villageTab==='artisan'||villageTab==='forge') return serviceNav()+renderWorkshop();
     if(villageTab==='mercenary') return serviceNav()+renderMercenary();
     if(villageTab==='alchemist') return serviceNav()+`<section class="rpg-village-interior rpg-alchemy"><div class="rpg-service-copy"><h2>Poções e preparados</h2><p>Prepare seus consumíveis antes de voltar à trilha.</p></div><div class="rpg-shop">${renderActionFeedback('village')}${renderAlchemistPanel()}</div></section>`;
-    return serviceNav()+`<section class="rpg-village-interior"><div class="rpg-service-copy"><h2>Descanse, aventureiro</h2><p>Recupere suas forças antes da próxima expedição.</p></div><div class="rpg-inn rpg-paper">${renderActionFeedback('village')}<h2>Pousada</h2><p>Vida: ${player.hp} / ${getCurrentCaps().maxHp}</p>${button(`Recuperar vida · ${getHealCost()} moedas`,'heal','',player.coins<getHealCost()?'disabled':'')}<p>Mana: ${player.mp} / ${getCurrentCaps().maxMp}</p>${button(`Recuperar mana · ${getManaHealCost()} moedas`,'mana','',player.coins<getManaHealCost()?'disabled':'')}</div></section>`;
+    return serviceNav()+`<section class="rpg-village-interior"><div class="rpg-service-copy"><h2>Descanse, aventureiro</h2><p>Recupere suas forças antes da próxima expedição.</p></div><div class="rpg-inn rpg-paper">${renderActionFeedback('village')}<h2><img class="rpg-inn-title" src="assets/visual/hud/inn-title.webp" alt="Pousada"></h2>${innMeter("Vida",player.hp,getCurrentCaps().maxHp,"hp")}${button(`Recuperar vida · ${getHealCost()} moedas`,'heal','',player.coins<getHealCost()?'disabled':'')}${innMeter("Mana",player.mp,getCurrentCaps().maxMp,"mp")}${button(`Recuperar mana · ${getManaHealCost()} moedas`,'mana','',player.coins<getManaHealCost()?'disabled':'')}</div></section>`;
   }
   function currentCraft(){
     const unlocked=EquipmentSystem.unlockedRegions(player);
@@ -129,7 +129,7 @@ const CampaignHUD = (() => {
     return EquipmentSystem.getRecipes(player,{region:state.region}).find(recipe=>recipe.slot===state.slot);
   }
   function requirementList(requirements, cost){
-    return `<ul class="rpg-materials">${Object.entries(requirements||{}).map(([id,qty])=>{const material=EquipmentSystem.materialById(id),owned=getInventoryCountById(id);return `<li class="${owned>=qty?'material-ready':'material-missing'}"><span class="rpg-material-icon">${getInventoryItemSymbol(material)}</span><span>${esc(material?.name||id)}${material?.regionName?`<small>${esc(material.regionName)}</small>`:''}</span><strong>${owned} / ${qty}</strong></li>`;}).join('')}<li class="${player.coins>=cost?'material-ready':'material-missing'}"><span class="rpg-material-coin" aria-hidden="true">◈</span><span>Moedas</span><strong>${player.coins} / ${cost}</strong></li></ul>`;
+    return `<ul class="rpg-materials">${Object.entries(requirements||{}).map(([id,qty])=>{const material=EquipmentSystem.materialById(id),owned=getInventoryCountById(id);return `<li class="${owned>=qty?'material-ready':'material-missing'}"><span class="rpg-material-icon">${getInventoryItemSymbol(material)}</span><span>${esc(material?.name||id)}${material?.regionName?`<small>${esc(material.regionName)}</small>`:''}</span><strong>${owned} / ${qty}</strong></li>`;}).join('')}<li class="${player.coins>=cost?'material-ready':'material-missing'}"><span class="rpg-material-coin" aria-hidden="true"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""></span><span>Moedas</span><strong>${player.coins} / ${cost}</strong></li></ul>`;
   }
   function setSummary(region, count){
     const set=EquipmentData.sets[region];if(!set)return '';

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "coin",
+    "prompt": "Production game UI icon, a single medieval gold coin in slight three-quarter view, thick embossed rim with a simple heraldic rising sun at its center, warm antique gold, hand-painted premium fantasy RPG inventory art, rich engraved metal texture and highlights, highly readable silhouette at 20 pixels, centered with generous transparent margin, no lettering, no numbers, no frame, no other objects. Genuine transparent background.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-dfeacb1d-6db3-4490-889f-9f00c671fc38.png",
+    "path": "assets/visual/hud/icon-coin.webp"
+  },
+  {
+    "id": "inn-title",
+    "prompt": "Production fantasy RPG inn title lettering, EXACT text: \"Pousada\". One word, fully legible, ornate hand-painted medieval tavern sign calligraphy, thick warm ivory and antique gold letters, dark brown fine shadow outline, small carved wood flourishes and restrained ivy at the sides, welcoming warm amber lamplight, premium painterly fantasy RPG style, wide horizontal composition with large transparent margins. Lettering is the main subject, not a rectangular button or a hanging placard. No other words, no characters, no scenery. Transparent background.",
+    "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-23e82ed5-ede3-4187-a1f4-3b6ab1194d16.png",
+    "path": "assets/visual/hud/inn-title.webp"
+  }
+]

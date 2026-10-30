@@ -29,8 +29,8 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
  for(const width of [1366,390,320]){
   await p.setViewportSize({width,height:900});
   const flee=p.locator('[data-hud="flee"]');await flee.hover();
-  assert((await flee.evaluate(e=>getComputedStyle(e,'::after').content)).includes('92 moedas'));
-  assert(await flee.evaluate(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e,'::after');return r.right-parseFloat(s.width)>=0;}));
+  assert((await p.locator('#rpgActionTooltip').innerText()).includes('92 moedas'));
+  assert(await p.locator('#rpgActionTooltip').evaluate(e=>e.getBoundingClientRect().left>=0));
  }
  await p.setViewportSize({width:1366,height:900});
  const before=await p.evaluate(()=>player.coins);await p.locator('[data-hud="flee"]').click();

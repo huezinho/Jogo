@@ -5849,8 +5849,8 @@ function renderRegionMapCard(){
   const controlsDisabled = isProcessingTurn || isDead || levelUpPoints > 0 || !!enemy;
   const bossUnlockProgress = getBossUnlockProgress(currentRegion);
   const bossProgressTooltip = bossUnlockProgress.unlocked
-    ? `Chefao liberado. Progresso: ${bossUnlockProgress.defeated}/${bossUnlockProgress.total} inimigos da regiao derrotados pelo menos uma vez.`
-    : `Derrote uma vez cada um dos ${bossUnlockProgress.total} inimigos da regiao para liberar o chefao. Faltam: ${bossUnlockProgress.missing.join(", ")}.`;
+    ? `Chefe liberado. Enfrente o chefe da região.`
+    : `Complete o rastro do chefe para enfrentá-lo.`;
   const markers = Object.keys(regions).map((region, index) => {
     const marker = REGION_MAP_MARKERS[region] || { x: 50, y: 50 };
     const locked = !isRegionUnlockedForBattle(region);

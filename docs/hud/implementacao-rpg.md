@@ -115,3 +115,10 @@ Evidências em `docs/qa/hud/`, incluindo `results.json`, `progression-results.js
 ## Janelas e informações contextuais
 
 Os rastros das criaturas restantes aparecem junto ao selo do chefe ao passar o mouse ou focar o botão; tocar também revela a informação. O combate apresenta diretamente as habilidades disponíveis, sem o botão de lista duplicada. A bolsa é acessada pela lateral, inclusive no acampamento. A distribuição de pontos e a escolha de subclasse ficam em uma janela modal que abre automaticamente e fecha depois da conclusão. Os controles de atributos cabem em uma linha no celular. O ferreiro usa o cenário inteiro, sem recorte de fundo. Verificações em `docs/qa/hud/popups.cjs`, `progression.cjs`, `verify.cjs` e `docs/hud/chefe/capturar.cjs`.
+
+
+## Detalhes visuais e avisos das ações
+
+As habilidades exibem suas descrições em um aviso flutuante ao passar o mouse ou focar pelo teclado. A faixa inferior foi removida. O aviso do chefe no mapa apenas orienta completar o rastro. A moeda pintada é compartilhada pelos saldos, custos, ingredientes, pagamentos e registros da campanha. A pousada usa barras com vida/mana e números dentro, além de um letreiro desenhado. O acampamento tem menos escurecimento e a luz do personagem ocupa toda a área, sem borda abrupta. O cenário do ferreiro fica na área principal com escala presa à janela, e os itens têm a mesma altura de exibição ao fabricar e aprimorar.
+
+As duas novas artes foram geradas com a ferramenta integrada image_gen; saídas em `assets/visual/hud/icon-coin.webp` e `inn-title.webp`, e prompts/origens em `docs/hud/artes/prompts-detalhes.json`. A suíte `docs/qa/hud/details.cjs` verifica os avisos, ícones, recuperação da pousada, cenário do acampamento e 30 seleções de peças em três larguras.

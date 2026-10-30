@@ -17,7 +17,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
    await p.evaluate(()=>{enemy=null;setMode('camp');});
    assert.equal(await p.getByRole('button',{name:'Abrir bolsa',exact:true}).count(),1);
    await p.evaluate(()=>{setMode('village');setVillageTab('forge');});
-   assert.equal(await p.locator('.rpg-workshop').evaluate(e=>getComputedStyle(e).backgroundSize),'contain');
+   assert.equal(await p.locator('#rpgMain').evaluate(e=>getComputedStyle(e).backgroundAttachment),'fixed');
    await p.screenshot({path:path.join(__dirname,`forge-whole-${width}.png`),fullPage:true});
    await p.evaluate(()=>{setMode('battle');gainXP(getXpToNextLevel());updateUI();});
    assert(await p.locator('#rpgLevelDialog').evaluate(e=>e.open));
