@@ -1,0 +1,65 @@
+{
+  "checks": [
+    "combined inn recovery, exact cost, full resources, insufficient funds atomicity",
+    {
+      "tracking": {
+        "chance": 90,
+        "hits": 4533,
+        "intro": "Aranha Gigante",
+        "boss": true,
+        "otherUnchanged": true,
+        "expired": true,
+        "ended": 0
+      }
+    },
+    "paid hunt persists across reload and excludes other regions and bosses",
+    "craft uniqueness in inventory/equipment/across rarity, slot equip, unequip, sale unlocks recraft",
+    "accepted offers disappear, 20-minute refresh retains active contracts",
+    {
+      "potions": [
+        {
+          "id": "mana_potion",
+          "responses": 1,
+          "spent": 1,
+          "dodge": 2,
+          "attack": 2,
+          "skill": 2
+        },
+        {
+          "id": "health_potion",
+          "responses": 1,
+          "spent": 1,
+          "dodge": 2,
+          "attack": 2,
+          "skill": 2
+        },
+        {
+          "id": "skill_tonic",
+          "responses": 1,
+          "spent": 1,
+          "dodge": 2,
+          "attack": 2,
+          "skill": 3
+        },
+        {
+          "id": "attack_tonic",
+          "responses": 1,
+          "spent": 1,
+          "dodge": 2,
+          "attack": 3,
+          "skill": 2
+        },
+        {
+          "outsideBattle": 3
+        },
+        {
+          "unavailable": 0,
+          "dodge": 3
+        }
+      ]
+    },
+    "automatic mercenary reward exactly once, temporary top-layer contract notice over a modal",
+    "all map hotspots and slot dialogs fit1366/390/320, including locked markers and modal map popovers"
+  ],
+  "errors": []
+}

@@ -1,0 +1,77 @@
+﻿form;id;name;cost;greedyUses;greedyActions;baselineWins;n;banWins;openingWins;lostWhenBanned;gainedWhenOpening
+arquimago;explosao_de_mana;Explosao de Mana;534;1703;2473;90;90;88;90;2;0
+arquimago;descarregar;Descarregar;500;97;2473;90;90;90;90;0;0
+arquimago;escudo_de_mana;Escudo de Mana;800;0;2473;90;90;90;90;0;0
+arquimago;concentracao;Concentracao;700;0;2473;90;90;90;90;0;0
+atirador_arcano;mirar;Mirar;100;0;2742;76;90;76;72;0;-4
+atirador_arcano;camuflagem;Camuflagem;75;0;2742;76;90;76;72;0;-4
+atirador_arcano;headshot;Headshot;81;2288;2742;76;90;24;76;52;0
+atirador_arcano;tiro_perfurante;Tiro Perfurante;80;454;2742;76;90;80;54;-4;-22
+atirador_arcano;emergencia_arcana;Emergencia Arcana;100;0;2742;76;90;76;52;0;-24
+avatar_da_natureza;semente_viva;Semente Viva;55;0;4769;0;90;0;0;0;0
+avatar_da_natureza;raizes;Raizes;72;0;4769;0;90;0;0;0;0
+avatar_da_natureza;flor_do_pantano;Flor do Pantano;48;3224;4769;0;90;0;0;0;0
+avatar_da_natureza;colheita;Colheita;61;0;4769;0;90;18;0;-18;0
+avatar_da_natureza;forma_verdadeira;Forma Verdadeira;1601;0;4769;0;90;0;0;0;0
+berserker;recuperar_folego;Recuperar Folego;44;0;3536;60;90;60;60;0;0
+berserker;esbarrao;Esbarrao;58;18;3536;60;90;60;60;0;0
+berserker;contundir;Contundir;54;2597;3536;60;90;30;60;30;0
+berserker;ira;Ira;14;0;3536;60;90;60;0;0;-60
+berserker;valhala;Vallhala;114;0;3536;60;90;60;18;0;-42
+corrompido;explosao_de_mana;Explosao de Mana;234;175;2343;90;90;90;90;0;0
+corrompido;descarregar;Descarregar;200;39;2343;90;90;90;88;0;-2
+corrompido;escudo_de_mana;Escudo de Mana;500;0;2343;90;90;90;90;0;0
+corrompido;corrupcao;Corrupcao;600;1351;2343;90;90;90;90;0;0
+druida_sombrio;semente_viva;Semente Viva;55;0;3818;2;90;0;2;2;0
+druida_sombrio;raizes;Raizes;72;2275;3818;2;90;2;0;0;-2
+druida_sombrio;flor_do_pantano;Flor do Pantano;48;43;3818;2;90;2;0;0;-2
+druida_sombrio;colheita;Colheita;61;305;3818;2;90;0;0;2;-2
+druida_sombrio;apodrecer;Apodrecer;75;368;3818;2;90;2;0;0;-2
+espreitador;mirar;Mirar;100;0;6376;18;90;18;9;0;-9
+espreitador;camuflagem;Camuflagem;75;0;6376;18;90;9;18;9;0
+espreitador;rajada_de_flechas;Rajada de Flechas;60;300;6376;18;90;17;9;1;-9
+espreitador;armadilha;Armadilha;80;2536;6376;18;90;16;14;2;-4
+espreitador;surpresa;Surpresa;80;1700;6376;18;90;6;7;12;-11
+fada_monarca;semente_viva;Semente Viva;55;0;3698;35;90;56;35;-21;0
+fada_monarca;raizes;Raizes;72;0;3698;35;90;35;36;0;1
+fada_monarca;encanto_da_brisa;Encanto da Brisa;51;32;3698;35;90;35;38;0;3
+fada_monarca;cancao_ancestral;Cancao Ancestral;68;0;3698;35;90;7;33;28;-2
+fada_monarca;decreto_da_rainha;Decreto da Rainha;90;2969;3698;35;90;30;35;5;0
+guarda_florestal;mirar;Mirar;100;0;8469;32;90;32;26;0;-6
+guarda_florestal;camuflagem;Camuflagem;75;0;8469;32;90;32;32;0;0
+guarda_florestal;rajada_de_flechas;Rajada de Flechas;60;2957;8469;32;90;26;32;6;0
+guarda_florestal;armadilha;Armadilha;80;0;8469;32;90;32;33;0;1
+guarda_florestal;tranquilizante;Tranquilizante;80;1924;8469;32;90;25;28;7;-4
+mago_frigido;explosao_de_mana;Explosao de Mana;34;2878;4197;30;90;14;30;16;0
+mago_frigido;bola_de_neve;Bola de Neve;40;108;4197;30;90;28;30;2;0
+mago_frigido;congelar;Congelar;54;0;4197;30;90;30;30;0;0
+mago_frigido;nevasca;Nevasca;120;0;4197;30;90;30;30;0;0
+mago_incendiario;explosao_de_mana;Explosao de Mana;34;374;3496;90;90;88;90;2;0
+mago_incendiario;bola_de_fogo;Bola de Fogo;40;1009;3496;90;90;90;90;0;0
+mago_incendiario;bafo_de_fogo;Bafo de Fogo;54;0;3496;90;90;90;90;0;0
+mago_incendiario;fenix_sagrada;Fenix Sagrada;810;915;3496;90;90;90;90;0;0
+ninja;recuperar_folego;Recuperar Folego;44;0;3405;11;90;11;11;0;0
+ninja;investida;Investida;64;890;3405;11;90;6;11;5;0
+ninja;golpes_velozes;Golpes Velozes;58;1164;3405;11;90;11;13;0;2
+ninja;corte_profundo;Corte Profundo;66;70;3405;11;90;11;11;0;0
+ninja;bomba_de_fumaca;Bomba de Fumaca;54;0;3405;11;90;11;13;0;2
+paladino;recuperar_folego;Recuperar Folego;44;0;4298;85;90;85;73;0;-12
+paladino;esbarrao;Esbarrao;58;288;4298;85;90;85;84;0;-1
+paladino;contundir;Contundir;54;141;4298;85;90;85;82;0;-3
+paladino;brado;Brado;54;0;4298;85;90;85;84;0;-1
+paladino;julgamento;Julgamento;114;2046;4298;85;90;30;85;55;0
+protetor_da_floresta;semente_viva;Semente Viva;55;0;4426;30;90;29;30;1;0
+protetor_da_floresta;raizes;Raizes;72;2917;4426;30;90;30;30;0;0
+protetor_da_floresta;encanto_da_brisa;Encanto da Brisa;51;290;4426;30;90;30;30;0;0
+protetor_da_floresta;cancao_ancestral;Cancao Ancestral;68;0;4426;30;90;0;30;30;0
+protetor_da_floresta;casulo_de_vinhas;Casulo de Vinhas;102;0;4426;30;90;30;30;0;0
+samurai;recuperar_folego;Recuperar Folego;44;0;4223;21;90;21;8;0;-13
+samurai;investida;Investida;64;1437;4223;21;90;21;21;0;0
+samurai;golpes_velozes;Golpes Velozes;58;290;4223;21;90;21;22;0;1
+samurai;corte_profundo;Corte Profundo;66;896;4223;21;90;21;21;0;0
+samurai;furar_blindagem;Furar Blindagem;96;144;4223;21;90;18;21;3;0
+sniper;mirar;Mirar;100;0;3434;64;90;64;47;0;-17
+sniper;camuflagem;Camuflagem;75;0;3434;64;90;56;64;8;0
+sniper;headshot;Headshot;81;1936;3434;64;90;56;58;8;-6
+sniper;tiro_perfurante;Tiro Perfurante;80;460;3434;64;90;53;64;11;0
+sniper;executar;Executar;120;283;3434;64;90;50;58;14;-6

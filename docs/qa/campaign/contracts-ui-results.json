@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "native enemy defeat completes and rewards a contract once during a processing turn; reload cannot repeat it",
+    {
+      "chestRecipes": 12,
+      "greenCraftFlash": "temporary; owned-piece green background remains"
+    },
+    "camp has Equipment and Skills only; trainer follows equipment",
+    "spawn chance and quick consumable tooltips fit 1366/390/320; icons consume items, use one turn, decay buffs and close on Escape/outside",
+    "music slider supports live input and keyboard without replacing its node; saved volume survives reload; speed and +/- controls removed"
+  ],
+  "errors": []
+}

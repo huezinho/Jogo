@@ -1,0 +1,49 @@
+﻿nome;regiao;nivel;chefe;hp;ataque;armadura;mana;impacto_hp_maximo;vitorias_sem_itens;n_sem_itens;vitorias_conjunto;n_conjunto
+Lobo Sombrio;Floresta;1;False;88;10;1;0;0;480;480;480;480
+Goblin;Floresta;3;False;136;15;1;0;0;480;480;480;480
+Aranha Gigante;Floresta;8;False;240;27;1;0;0;480;480;480;480
+Ent Ancestral;Floresta;10;True;350;35;5;60;0;480;480;480;480
+Morcego de Pedra;Caverna;11;False;288;32;3;0;0;480;480;480;480
+Esqueleto Mineiro;Caverna;13;False;336;37;3;0;0;480;480;480;480
+Slime Toxico;Caverna;18;False;444;48;4;0;0;480;480;480;480
+Troll das Profundezas;Caverna;20;True;610;62;8;70;0;480;480;480;480
+Sentinela Quebrada;Ruinas;21;False;506;55;7;0;0;480;480;480;480
+Cultista Perdido;Ruinas;23;False;554;61;7;0;0;480;480;480;480
+Fantasma Antigo;Ruinas;28;False;669;72;8;0;0;480;480;480;480
+Rei Espectral;Ruinas;30;True;897;91;14;91;0;480;480;480;480
+Sapo Colossal;Pantano;31;False;734;81;12;0;0;480;480;480;480
+Bruxa do Brejo;Pantano;33;False;784;87;12;0;0;480;480;480;480
+Serpente do Lodo;Pantano;38;False;912;101;14;0;0;480;480;480;480
+Hidra do Lodo;Pantano;40;True;1249;121;20;124;0;480;480;480;480
+Salamandra Rubra;Vulcao;41;False;1577;159;34;0;0.025;480;480;480;480
+Golem de Brasa;Vulcao;43;False;1666;169;35;0;0.025;480;480;480;480
+Fenix Sombria;Vulcao;48;False;1885;189;38;0;0.025;480;480;480;480
+Draco Magmatico;Vulcao;50;True;2187;204;49;179;0.035;480;480;480;480
+Cavaleiro Abissal;Abismo;51;False;2361;230;51;0;0.04;480;480;480;480
+Lamia do Eclipse;Abismo;53;False;2465;241;52;0;0.04;480;480;480;480
+Colosso do Vazio;Abismo;58;False;2749;265;55;0;0.04;480;480;480;480
+Arauto do Vazio;Abismo;60;True;2994;273;70;223;0.05;477;480;480;480
+Escudeiro de Ferro;Fortaleza;61;False;3392;320;73;0;0.055;480;480;480;480
+Maga da Muralha;Fortaleza;63;False;3520;334;75;0;0.055;480;480;480;480
+Carrasco de Guerra;Fortaleza;68;False;3862;364;78;0;0.055;447;480;480;480
+General de Aco;Fortaleza;70;True;4035;360;98;270;0.065;379;480;475;480
+Guardiao Funebre;Necropole;71;False;4773;431;101;0;0.07;370;480;476;480
+Feiticeira Morta;Necropole;73;False;4951;446;102;0;0.07;331;480;476;480
+Ceifador de Ossos;Necropole;78;False;5383;481;107;0;0.07;314;480;473;480
+Lorde da Cripta;Necropole;80;True;5334;467;130;321;0.08;207;480;371;480
+Anjo Caido;Citadela;81;False;6566;568;136;0;0.085;271;480;402;480
+Drake Celeste;Citadela;83;False;6790;585;138;0;0.085;268;480;400;480
+Executor Astral;Citadela;88;False;7328;627;143;0;0.085;261;480;380;480
+Imperador do Eclipse;Citadela;90;True;6980;592;174;391;0.095;148;480;281;480
+Guardiao Aureo;Panteao;91;False;8872;739;181;0;0.105;167;480;281;480
+Oraculo Radiante;Panteao;93;False;9172;761;183;0;0.105;165;480;274;480
+Quimera Solar;Panteao;98;False;9856;808;189;0;0.105;100;480;230;480
+Avatar do Zenith;Panteao;100;True;9005;754;228;466;0.11499999999999999;65;480;102;480
+Arauto do Cataclismo;Cataclismo;101;False;11926;960;237;0;0.13;56;480;147;480
+Titan Rachado;Cataclismo;103;False;12299;989;240;0;0.13;48;480;126;480
+Serafim do Fim;Cataclismo;108;False;13167;1049;247;0;0.13;45;480;98;480
+Deus da Ruina;Cataclismo;110;True;11737;975;294;550;0.14;24;480;4;480
+Guardiao Temporal;Paradoxo;111;False;15402;1228;298;0;0.15;9;480;14;480
+Oraculo do Zero;Paradoxo;113;False;15877;1260;301;0;0.15;0;480;12;480
+Devorador de Eras;Paradoxo;118;False;16963;1331;310;0;0.15;0;480;8;480
+Soberano do Paradoxo;Paradoxo;120;True;14648;1197;368;656;0.16;0;480;0;480

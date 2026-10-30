@@ -1,0 +1,12 @@
+{
+  "pass": true,
+  "date": "2026-10-30",
+  "journeys": 256,
+  "forms70": 16,
+  "enemies": 48,
+  "activeProbes": 452,
+  "passiveProbes": 68,
+  "setProbes": 1356,
+  "sourceHashesVerified": 5,
+  "errors": []
+}

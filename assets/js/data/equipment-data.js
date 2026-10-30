@@ -1,7 +1,7 @@
 // Equipment schema v2: character skill coefficients deliberately remain outside this catalogue.
 const EquipmentData = Object.freeze({
   version: 2,
-  boardIntervalMs: 30 * 60 * 1000,
+  boardIntervalMs: 20 * 60 * 1000,
   maxActiveContracts: 3,
   slots: ["head", "chest", "weapon", "legs", "feet"],
   rarityFactors: { comum: 1, incomum: 1.1, rara: 1.2, ultra_rara: 1.3, lendaria: 1.4 },

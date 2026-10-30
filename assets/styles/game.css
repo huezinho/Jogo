@@ -1312,3 +1312,19 @@ img.village-npc-sprite{
   .location-map-marker .map-marker-label{position:static;transform:none;font-size:11px;padding:0;background:none;white-space:normal}
   .location-map-card{margin:0}
 }
+
+/* Temporary contract completion notices. */
+#gameNotice{position:fixed;inset:12px auto auto 50%;transform:translateX(-50%);z-index:25000;box-sizing:border-box;width:max-content;max-width:min(680px,calc(100vw - 24px));max-height:30dvh;overflow:auto;overflow-wrap:anywhere;border:2px solid #c9a258;border-radius:6px;background:#24190ff5;color:#ffebbe;padding:14px 22px;box-shadow:0 6px 24px #000a;pointer-events:none;text-align:center}
+#gameNotice[hidden]{display:none}
+#gameNotice[popover]{margin:0}
+#gameNotice strong,#gameNotice span{display:block}
+#gameNotice span{margin-top:5px;font-size:16px}
+.settings-volume{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:10px 0}
+.settings-volume input[type=range]{grid-column:1/-1;width:100%;min-width:0;margin:0;accent-color:#d4af64;cursor:pointer}
+.settings-volume output{font-variant-numeric:tabular-nums}
+.rpg-campaign .rpg-inn-meter{height:40px;padding:3px;border:3px ridge #947348;border-image:none;border-radius:7px;outline:1px solid #37271a;background:repeating-linear-gradient(5deg,#342217 0 3px,#493222 4px 6px,#2b1d13 7px 10px);box-shadow:0 0 0 1px #b29565,0 3px 5px #0008,inset 0 1px 3px #000;overflow:hidden}
+.rpg-campaign .rpg-inn-meter>i{border-radius:2px}
+.rpg-campaign .rpg-inn-meter>span{inset:0}
+.rpg-campaign .rpg-inn-meter::before,.rpg-campaign .rpg-inn-meter::after{content:'';position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;border:1px solid #b39a6a;background:radial-gradient(at 30% 25%,#b2a17b,#292219 75%);box-shadow:0 1px 2px #000;pointer-events:none}
+.rpg-campaign .rpg-inn-meter::before{left:0}.rpg-campaign .rpg-inn-meter::after{right:0}
+.rpg-campaign .rpg-inn>h2{width:100%}

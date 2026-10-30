@@ -1,0 +1,182 @@
+﻿forma;classe_base;nivel_fixture;categoria;nivel_desbloqueio;id;nome;tipo;custo_MP_exemplo;descricao_exemplo
+Guerreiro;Guerreiro;20;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;34;Recuperar Folego: consome 34 MP e recupera 29 de vida.
+Guerreiro;Guerreiro;20;ativa;20;esbarrao;Esbarrao;warrior_shove;42;Esbarrao: consome 42 MP e causa 103 de dano.
+Guerreiro;Guerreiro;20;passiva;10;vontade_de_ferro;Vontade de Ferro;warrior_flat_reduction;;Vontade de Ferro: reduz 12 de dano por ataque recebido.
+Cavaleiro;Guerreiro;50;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;40;Recuperar Folego: consome 40 MP e recupera 172 de vida.
+Cavaleiro;Guerreiro;50;ativa;20;esbarrao;Esbarrao;warrior_shove;54;Esbarrao: consome 54 MP e causa 316 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.
+Cavaleiro;Guerreiro;50;ativa;30;contundir;Contundir;warrior_stagger;50;Contundir: consome 50 MP e causa 271 de dano. Tem 30% de chance de fazer o inimigo perder o proximo turno.
+Cavaleiro;Guerreiro;50;ativa;50;brado;Brado;warrior_warcry;50;Brado: consome 50 MP e aumenta o ataque em 30% por 5 turnos.
+Cavaleiro;Guerreiro;50;passiva;10;vontade_de_ferro;Vontade de Ferro;warrior_flat_reduction;;Vontade de Ferro: reduz 30 de dano por ataque recebido. Alem disso, recupera 34 de vida por turno.
+Cavaleiro;Guerreiro;50;passiva;40;refletir;Refletir;warrior_reflect;;Refletir: reflete 18% do dano recebido para o inimigo.
+Paladino;Guerreiro;70;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;44;Recuperar Folego: consome 44 MP e recupera 445 de vida.
+Paladino;Guerreiro;70;ativa;20;esbarrao;Esbarrao;warrior_shove;58;Esbarrao: consome 58 MP e causa 587 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.
+Paladino;Guerreiro;70;ativa;30;contundir;Contundir;warrior_stagger;54;Contundir: consome 54 MP e causa 487 de dano. Tem 30% de chance de fazer o inimigo perder o proximo turno.
+Paladino;Guerreiro;70;ativa;50;brado;Brado;warrior_warcry;54;Brado: consome 54 MP e aumenta o ataque em 30% por 5 turnos. Tambem bloqueia 16% do dano sofrido nesse periodo.
+Paladino;Guerreiro;70;ativa;60;julgamento;Julgamento;warrior_judgment;114;Julgamento: consome 114 MP e causa 1590 de dano.
+Paladino;Guerreiro;70;passiva;10;vontade_de_ferro;Vontade de Ferro;warrior_flat_reduction;;Vontade de Ferro: reduz 42 de dano por ataque recebido. Alem disso, recupera 89 de vida por turno.
+Paladino;Guerreiro;70;passiva;40;refletir;Refletir;warrior_reflect;;Refletir: reflete 32% do dano recebido para o inimigo.
+Paladino;Guerreiro;70;passiva;70;aura_divina;Aura Divina;warrior_aura_shield;;Aura Divina: a cada turno, ganha um escudo persistente de 59.
+Berserker;Guerreiro;70;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;44;Recuperar Folego: consome 44 MP e recupera 295 de vida.
+Berserker;Guerreiro;70;ativa;20;esbarrao;Esbarrao;warrior_shove;58;Esbarrao: consome 58 MP e causa 528 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.
+Berserker;Guerreiro;70;ativa;30;contundir;Contundir;warrior_stagger;54;Contundir: consome 54 MP e causa 2694 de dano.
+Berserker;Guerreiro;70;ativa;50;ira;Ira;warrior_warcry;14;Ira: consome 14 MP e 80% da sua vida maxima, aumentando o dano total em 150% por 4 turnos.
+Berserker;Guerreiro;70;ativa;60;valhala;Vallhala;warrior_valhalla;114;Vallhala: consome 114 MP, faz voce receber 200% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.
+Berserker;Guerreiro;70;passiva;10;vontade_de_ferro;Vontade de Ferro;warrior_flat_reduction;;Vontade de Ferro: reduz 42 de dano por ataque recebido. Alem disso, recupera 59 de vida por turno.
+Berserker;Guerreiro;70;passiva;40;refletir;Refletir;warrior_reflect;;Refletir: ao sofrer dano, tem 50% de chance de responder com um ataque basico.
+Berserker;Guerreiro;70;passiva;70;voce_nao_e_digno;Voce Nao e Digno;warrior_last_stand;;Voce Nao e Digno: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer.
+Espadachim;Guerreiro;50;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;40;Recuperar Folego: consome 40 MP e recupera 100 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.
+Espadachim;Guerreiro;50;ativa;20;investida;Investida;warrior_shove;60;Investida: consome 60 MP e causa 448 de dano.
+Espadachim;Guerreiro;50;ativa;30;golpes_velozes;Golpes Velozes;warrior_swift_strikes;54;Golpes Velozes: consome 54 MP e executa 2 ataques basicos.
+Espadachim;Guerreiro;50;ativa;50;corte_profundo;Corte Profundo;warrior_deep_cut;62;Corte Profundo: consome 62 MP e causa 402 de dano. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.
+Espadachim;Guerreiro;50;passiva;10;veloz;Veloz;warrior_enemy_miss;;Veloz: concede 20% de chance do inimigo errar ao atacar voce.
+Espadachim;Guerreiro;50;passiva;40;contra_ataque;Contra-Ataque;warrior_counter_on_dodge;;Contra-Ataque: ao desviar de um ataque, executa um contra-ataque com seu ataque basico.
+Samurai;Guerreiro;70;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;44;Recuperar Folego: consome 44 MP e recupera 233 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.
+Samurai;Guerreiro;70;ativa;20;investida;Investida;warrior_shove;64;Investida: consome 64 MP e causa 761 de dano.
+Samurai;Guerreiro;70;ativa;30;golpes_velozes;Golpes Velozes;warrior_swift_strikes;58;Golpes Velozes: consome 58 MP e executa 2 ataques basicos. Tambem aplica sangramento por 3 turnos.
+Samurai;Guerreiro;70;ativa;50;corte_profundo;Corte Profundo;warrior_deep_cut;66;Corte Profundo: consome 66 MP e causa 607 de dano. Ignora armadura. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.
+Samurai;Guerreiro;70;ativa;60;furar_blindagem;Furar Blindagem;warrior_armor_piercer;96;Furar Blindagem: consome 96 MP e causa 693 de dano.
+Samurai;Guerreiro;70;passiva;10;veloz;Veloz;warrior_enemy_miss;;Veloz: concede 20% de chance do inimigo errar ao atacar voce.
+Samurai;Guerreiro;70;passiva;40;contra_ataque;Contra-Ataque;warrior_counter_on_dodge;;Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria.
+Samurai;Guerreiro;70;passiva;70;mente_limpa;Mente Limpa;warrior_first_strike_echo;;Mente Limpa: o primeiro ataque do combate acerta duas vezes, com o segundo golpe causando 50% do dano, mas repetindo os efeitos.
+Ninja;Guerreiro;70;ativa;1;recuperar_folego;Recuperar Folego;warrior_second_wind;44;Recuperar Folego: consome 44 MP e recupera 183 de vida. Tambem aumenta seu dano total em 20% por 3 turnos.
+Ninja;Guerreiro;70;ativa;20;investida;Investida;warrior_shove;64;Investida: consome 64 MP e causa 749 de dano.
+Ninja;Guerreiro;70;ativa;30;golpes_velozes;Golpes Velozes;warrior_swift_strikes;58;Golpes Velozes: consome 58 MP e executa 3 ataques basicos.
+Ninja;Guerreiro;70;ativa;50;corte_profundo;Corte Profundo;warrior_deep_cut;66;Corte Profundo: consome 66 MP e causa 624 de dano. Aplica sangramento equivalente a 30% do dano causado por 3 turnos.
+Ninja;Guerreiro;70;ativa;60;bomba_de_fumaca;Bomba de Fumaca;warrior_smoke_bomb;54;Bomba de Fumaca: consome 54 MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.
+Ninja;Guerreiro;70;passiva;10;veloz;Veloz;warrior_enemy_miss;;Veloz: concede 20% de chance do inimigo errar ao atacar voce.
+Ninja;Guerreiro;70;passiva;40;contra_ataque;Contra-Ataque;warrior_counter_on_dodge;;Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo.
+Ninja;Guerreiro;70;passiva;70;eliminar;Eliminar;warrior_execute_bonus;;Eliminar: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida.
+Mago;Mago;20;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;24;Explosao de Mana: consome 24 MP e causa 82 de dano.
+Mago;Mago;20;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Elementalista;Mago;50;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;30;Explosao de Mana: consome 30 MP e causa 297 de dano.
+Elementalista;Mago;50;ativa;30;bola_de_fogo;Bola de Fogo;mage_fireball;40;Bola de Fogo: consome 40 MP e causa 276 de dano de fogo. A queimadura causa 600 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.
+Elementalista;Mago;50;ativa;50;congelar;Congelar;mage_freeze;50;Congelar: consome 50 MP, causa 216 de dano e tem 30% de chance de impedir o proximo ataque do inimigo.
+Elementalista;Mago;50;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Elementalista;Mago;50;passiva;40;mana_e_vida;Mana e Vida;mage_mana_to_life;;Mana e Vida: converte 50% da mana maxima em vida maxima.
+Mago Incendiario;Mago;70;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;34;Explosao de Mana: consome 34 MP e causa 804 de dano.
+Mago Incendiario;Mago;70;ativa;30;bola_de_fogo;Bola de Fogo;mage_fireball;40;Bola de Fogo: consome 40 MP e causa 1843 de dano de fogo. A queimadura causa 1000 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.
+Mago Incendiario;Mago;70;ativa;50;bafo_de_fogo;Bafo de Fogo;mage_freeze;54;Bafo de Fogo: consome 54 MP, causa 609 de dano e aplica queimadura por 6 turnos.
+Mago Incendiario;Mago;70;ativa;60;fenix_sagrada;Fenix Sagrada;mage_sacred_phoenix;810;Fenix Sagrada: consome 810 MP e causa 1198 de dano, aplicando queimadura por 1 turno.
+Mago Incendiario;Mago;70;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Mago Incendiario;Mago;70;passiva;40;mana_e_vida;Mana e Vida;mage_mana_to_life;;Mana e Vida: converte 50% da mana maxima em vida maxima. Alem disso, concede 295 de dano de habilidade.
+Mago Incendiario;Mago;70;passiva;70;fogo_do_inferno;Fogo do Inferno;mage_hellfire;;Fogo do Inferno: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno.
+Mago Frigido;Mago;70;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;34;Explosao de Mana: consome 34 MP e causa 529 de dano.
+Mago Frigido;Mago;70;ativa;30;bola_de_neve;Bola de Neve;mage_fireball;40;Bola de Neve: consome 40 MP e causa 433 de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.
+Mago Frigido;Mago;70;ativa;50;congelar;Congelar;mage_freeze;54;Congelar: consome 54 MP, causa 325 de dano e tem 30% de chance de impedir o proximo ataque do inimigo. Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado.
+Mago Frigido;Mago;70;ativa;60;nevasca;Nevasca;mage_blizzard;120;Nevasca: consome 120 MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.
+Mago Frigido;Mago;70;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Mago Frigido;Mago;70;passiva;40;mana_e_vida;Mana e Vida;mage_mana_to_life;;Mana e Vida: converte 65% da mana maxima em vida maxima.
+Mago Frigido;Mago;70;passiva;70;gelo_queima;Gelo Queima;mage_frostburn;;Gelo Queima: sempre que aplicar resfriamento, tambem causa queimadura de 3% da vida maxima por 1 turno.
+Arcanista;Mago;50;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;129;Explosao de Mana: consome 129 MP e causa 560 de dano.
+Arcanista;Mago;50;ativa;30;descarregar;Descarregar;mage_discharge;99;Descarregar: consome 99 MP, gasta todas as cargas arcanas e causa 411 de dano.
+Arcanista;Mago;50;ativa;50;escudo_de_mana;Escudo de Mana;mage_mana_shield;247;Escudo de Mana: consome 247 MP e concede 337 de escudo por 2 turnos.
+Arcanista;Mago;50;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Arcanista;Mago;50;passiva;40;transbordando;Transbordando;mage_overflowing;;Transbordando: concede 297 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 99.
+Arquimago;Mago;70;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;534;Explosao de Mana: consome 534 MP e causa 1655 de dano.
+Arquimago;Mago;70;ativa;30;descarregar;Descarregar;mage_discharge;500;Descarregar: consome 500 MP, gasta todas as cargas arcanas e causa 1125 de dano.
+Arquimago;Mago;70;ativa;50;escudo_de_mana;Escudo de Mana;mage_mana_shield;800;Escudo de Mana: consome 800 MP e concede 1040 de escudo por 2 turnos.
+Arquimago;Mago;70;ativa;60;concentracao;Concentracao;mage_concentration;700;Concentracao: consome 700 MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.
+Arquimago;Mago;70;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Arquimago;Mago;70;passiva;40;transbordando;Transbordando;mage_overflowing;;Transbordando: concede 1125 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 500.
+Arquimago;Mago;70;passiva;70;carregar;Carregar;mage_charge_damage;;Carregar: cada carga arcana aumenta o dano total em 5%. Atualmente: 0%.
+Corrompido;Mago;70;ativa;20;explosao_de_mana;Explosao de Mana;mage_mana_burst;234;Explosao de Mana: consome 234 MP e causa 1069 de dano.
+Corrompido;Mago;70;ativa;30;descarregar;Descarregar;mage_discharge;200;Descarregar: consome 200 MP, gasta todas as cargas arcanas e causa 766 de dano.
+Corrompido;Mago;70;ativa;50;escudo_de_mana;Escudo de Mana;mage_mana_shield;500;Escudo de Mana: consome 500 MP e concede 640 de escudo por 2 turnos.
+Corrompido;Mago;70;ativa;60;corrupcao;Corrupcao;mage_corruption;600;Corrupcao: consome 600 MP, causa 1565 de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.
+Corrompido;Mago;70;passiva;10;ultimo_recurso;Ultimo Recurso;mage_last_resort;;Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.
+Corrompido;Mago;70;passiva;40;transbordando;Transbordando;mage_overflowing;;Transbordando: concede 600 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 200.
+Corrompido;Mago;70;passiva;70;canhao_de_vidro;Canhao de Vidro;mage_glass_cannon;;Canhao de Vidro: o primeiro ataque do combate causa o dobro de dano, mas voce sofre 50% de dano adicional nos 2 primeiros turnos do combate.
+Arqueiro;Arqueiro;20;ativa;1;mirar;Mirar;archer_focus;50;Mirar: consome 50 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 25.
+Arqueiro;Arqueiro;20;ativa;20;camuflagem;Camuflagem;archer_camouflage;50;Camuflagem: consome 50 MP e concede 20% de esquiva adicional por 4 turnos.
+Arqueiro;Arqueiro;20;passiva;10;passos_leves;Passos Leves;archer_dodge_level_scaling;;Passos Leves: concede 15% de chance do inimigo errar o ataque contra voce.
+Atirador;Arqueiro;50;ativa;1;mirar;Mirar;archer_focus;80;Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 55, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.
+Atirador;Arqueiro;50;ativa;20;camuflagem;Camuflagem;archer_camouflage;65;Camuflagem: consome 65 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.
+Atirador;Arqueiro;50;ativa;30;headshot;Headshot;archer_headshot;75;Headshot: consome 75 MP e causa 367 de dano, com 15% de chance total de critico.
+Atirador;Arqueiro;50;ativa;50;tiro_perfurante;Tiro Perfurante;archer_piercing_shot;80;Tiro Perfurante: consome 80 MP e causa 389 de dano, ignorando armadura e escudo do inimigo.
+Atirador;Arqueiro;50;passiva;10;passos_leves;Passos Leves;archer_dodge_double_bonus;;Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.
+Atirador;Arqueiro;50;passiva;40;pulso_firme;Pulso Firme;archer_attack_level_bonus;;Pulso Firme: concede 45 de dano de ataque basico e 45 de dano de habilidade no nivel atual.
+Atirador Arcano;Arqueiro;70;ativa;1;mirar;Mirar;archer_focus;100;Mirar: consome 100 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 75, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.
+Atirador Arcano;Arqueiro;70;ativa;20;camuflagem;Camuflagem;archer_camouflage;75;Camuflagem: consome 75 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.
+Atirador Arcano;Arqueiro;70;ativa;30;headshot;Headshot;archer_headshot;81;Headshot: consome 81 MP e causa 1808 de dano, com 15% de chance total de critico. Se nao critar, marca o alvo para receber 15% a mais no proximo golpe.
+Atirador Arcano;Arqueiro;70;ativa;50;tiro_perfurante;Tiro Perfurante;archer_piercing_shot;80;Tiro Perfurante: consome 80 MP e causa 883 de dano, ignorando armadura e escudo do inimigo.
+Atirador Arcano;Arqueiro;70;ativa;60;emergencia_arcana;Emergencia Arcana;archer_arcane_shot;100;Emergencia Arcana: consome 100 MP e causa 542 de dano arcano. O dano aumenta conforme sua mana atual estiver abaixo da mana maxima.
+Atirador Arcano;Arqueiro;70;passiva;10;passos_leves;Passos Leves;archer_dodge_double_bonus;;Passos Leves: concede 40% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.
+Atirador Arcano;Arqueiro;70;passiva;40;pulso_firme;Pulso Firme;archer_attack_level_bonus;;Pulso Firme: concede 63 de dano de ataque basico e 91 de dano de habilidade no nivel atual.
+Atirador Arcano;Arqueiro;70;passiva;70;cristalizar_mana;Cristalizar Mana;archer_mana_to_skill_bonus;;Cristalizar Mana: converte 101 de mana maxima em dano de habilidade.
+Sniper;Arqueiro;70;ativa;1;mirar;Mirar;archer_focus;100;Mirar: consome 100 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 75, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.
+Sniper;Arqueiro;70;ativa;20;camuflagem;Camuflagem;archer_camouflage;75;Camuflagem: consome 75 MP e concede 20% de esquiva adicional por 4 turnos, deixando o proximo dano causado 30% mais forte.
+Sniper;Arqueiro;70;ativa;30;headshot;Headshot;archer_headshot;81;Headshot: consome 81 MP e causa 574 de dano, com 104% de chance total de critico. O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em 104% de dano extra.
+Sniper;Arqueiro;70;ativa;50;tiro_perfurante;Tiro Perfurante;archer_piercing_shot;80;Tiro Perfurante: consome 80 MP e causa 758 de dano, ignorando armadura e escudo do inimigo. Alem disso, remove totalmente o escudo do alvo.
+Sniper;Arqueiro;70;ativa;60;executar;Executar;archer_execute;120;Executar: consome 120 MP e causa 759 de dano. Se o inimigo estiver abaixo de 40% da vida, o dano e triplicado.
+Sniper;Arqueiro;70;passiva;10;passos_leves;Passos Leves;archer_dodge_double_bonus;;Passos Leves: concede 40% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.
+Sniper;Arqueiro;70;passiva;40;pulso_firme;Pulso Firme;archer_attack_level_bonus;;Pulso Firme: concede 63 de dano de ataque basico e 63 de dano de habilidade no nivel atual. Alem disso, seus ataques e habilidades ganham 15% de chance adicional de critico.
+Sniper;Arqueiro;70;passiva;70;olhos_de_falcao;Olhos de Falcao;archer_sniper_bonus_crit;;Olhos de Falcao: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional.
+Cacador;Arqueiro;50;ativa;1;mirar;Mirar;archer_focus;80;Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 55, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.
+Cacador;Arqueiro;50;ativa;20;camuflagem;Camuflagem;archer_camouflage;65;Camuflagem: consome 65 MP e concede 25% de esquiva adicional por 4 turnos.
+Cacador;Arqueiro;50;ativa;30;rajada_de_flechas;Rajada de Flechas;archer_barrage;60;Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno.
+Cacador;Arqueiro;50;ativa;50;armadilha;Armadilha;archer_trap;80;Armadilha: consome 80 MP, causa 188 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.
+Cacador;Arqueiro;50;passiva;10;passos_leves;Passos Leves;archer_dodge_coin_bonus;;Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.
+Cacador;Arqueiro;50;passiva;40;errou;Errou;archer_dodge_damage_buff;;Errou: ao esquivar de um ataque, voce ganha 10% de dano total por 2 turnos.
+Espreitador;Arqueiro;70;ativa;1;mirar;Mirar;archer_focus;100;Mirar: consome 100 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 75, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.
+Espreitador;Arqueiro;70;ativa;20;camuflagem;Camuflagem;archer_camouflage;75;Camuflagem: consome 75 MP e concede 25% de esquiva adicional por 4 turnos.
+Espreitador;Arqueiro;70;ativa;30;rajada_de_flechas;Rajada de Flechas;archer_barrage;60;Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno.
+Espreitador;Arqueiro;70;ativa;50;armadilha;Armadilha;archer_trap;80;Armadilha: consome 80 MP, causa 1894 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. O dano inclui 8% da vida atual do inimigo.
+Espreitador;Arqueiro;70;ativa;60;surpresa;Surpresa;archer_surprise;80;Surpresa: consome 80 MP e causa 489 de dano.
+Espreitador;Arqueiro;70;passiva;10;passos_leves;Passos Leves;archer_dodge_coin_bonus;;Passos Leves: concede 40% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.
+Espreitador;Arqueiro;70;passiva;40;errou;Errou;archer_dodge_damage_buff;;Errou: ao esquivar de um ataque, seu proximo dano causado fica 50% mais forte.
+Espreitador;Arqueiro;70;passiva;70;passos_silenciosos;Passos Silenciosos;archer_enemy_skip_chance;;Passos Silenciosos: concede 7% de chance do inimigo perder o turno sem atacar.
+Guarda Florestal;Arqueiro;70;ativa;1;mirar;Mirar;archer_focus;100;Mirar: consome 100 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta o dano de ataque basico em 75, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.
+Guarda Florestal;Arqueiro;70;ativa;20;camuflagem;Camuflagem;archer_camouflage;75;Camuflagem: consome 75 MP e concede 25% de esquiva adicional por 4 turnos.
+Guarda Florestal;Arqueiro;70;ativa;30;rajada_de_flechas;Rajada de Flechas;archer_barrage;60;Rajada de Flechas: consome 60 MP e realiza 3 ataques basicos no mesmo turno.
+Guarda Florestal;Arqueiro;70;ativa;50;armadilha;Armadilha;archer_trap;80;Armadilha: consome 80 MP, causa 277 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. Se prender o alvo, sua proxima Rajada de Flechas causara 15% de dano adicional.
+Guarda Florestal;Arqueiro;70;ativa;60;tranquilizante;Tranquilizante;archer_tranquilizer;80;Tranquilizante: consome 80 MP, causa 423 de dano e reduz em 30% o dano do inimigo por 3 turnos.
+Guarda Florestal;Arqueiro;70;passiva;10;passos_leves;Passos Leves;archer_dodge_coin_bonus;;Passos Leves: concede 40% de chance do inimigo errar o ataque contra voce e aumenta em 10% as moedas recebidas dos inimigos.
+Guarda Florestal;Arqueiro;70;passiva;40;errou;Errou;archer_dodge_damage_buff;;Errou: ao esquivar de um ataque, voce recupera 313 de vida.
+Guarda Florestal;Arqueiro;70;passiva;70;resistencia_florestal;Resistencia Florestal;archer_flat_reduction_level;;Resistencia Florestal: reduz 14 de dano por ataque recebido.
+Adepto da Natureza;Adepto da Natureza;20;ativa;1;semente_viva;Semente Viva;nature_living_seed;30;Semente Viva: consome 30 MP, causa 62 de dano e marca o alvo por 3 turnos.
+Adepto da Natureza;Adepto da Natureza;20;ativa;20;raizes;Raizes;nature_roots;42;Raizes: consome 42 MP, causa 99 de dano e tem 45% de chance de enraizar.
+Adepto da Natureza;Adepto da Natureza;20;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.
+Druida;Adepto da Natureza;50;ativa;1;semente_viva;Semente Viva;nature_living_seed;45;Semente Viva: consome 45 MP, causa 170 de dano e marca o alvo por 4 turnos. A marca tambem causa 119 por turno.
+Druida;Adepto da Natureza;50;ativa;20;raizes;Raizes;nature_roots;60;Raizes: consome 60 MP, causa 271 de dano e tem 60% de chance de enraizar.
+Druida;Adepto da Natureza;50;ativa;30;flor_do_pantano;Flor do Pantano;nature_swamp_flower;40;Flor do Pantano: consome 40 MP e causa 261 de dano. Se o alvo estiver enraizado, aplica veneno de 59 por 4 turnos.
+Druida;Adepto da Natureza;50;ativa;50;colheita;Colheita;nature_harvest;55;Colheita: consome 55 MP, causa 229 de dano e consome efeitos naturais ativos para explodir o dano restante.
+Druida;Adepto da Natureza;50;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.
+Druida;Adepto da Natureza;50;passiva;40;seiva;Seiva;nature_sap;;Seiva: dano de marca e veneno cura 8% do dano causado.
+Druida Sombrio;Adepto da Natureza;70;ativa;1;semente_viva;Semente Viva;nature_living_seed;55;Semente Viva: consome 55 MP, causa 274 de dano e marca o alvo por 4 turnos. A marca tambem causa 208 por turno.
+Druida Sombrio;Adepto da Natureza;70;ativa;20;raizes;Raizes;nature_roots;72;Raizes: consome 72 MP, causa 441 de dano e tem 60% de chance de enraizar.
+Druida Sombrio;Adepto da Natureza;70;ativa;30;flor_do_pantano;Flor do Pantano;nature_swamp_flower;48;Flor do Pantano: consome 48 MP e causa 431 de dano. Se o alvo estiver enraizado, aplica veneno de 104 por 7 turnos.
+Druida Sombrio;Adepto da Natureza;70;ativa;50;colheita;Colheita;nature_harvest;61;Colheita: consome 61 MP, causa 350 de dano e consome efeitos naturais ativos para explodir o dano restante.
+Druida Sombrio;Adepto da Natureza;70;ativa;60;apodrecer;Apodrecer;nature_decay;75;Apodrecer: consome 75 MP, causa 370 de dano e aplica apodrecimento por 5 turnos.
+Druida Sombrio;Adepto da Natureza;70;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.
+Druida Sombrio;Adepto da Natureza;70;passiva;40;seiva;Seiva;nature_sap;;Seiva: dano de marca e veneno cura 8% do dano causado. Tambem considera apodrecimento.
+Druida Sombrio;Adepto da Natureza;70;passiva;70;podridao;Podridao;nature_dot_mastery;;Podridao: aumenta marca, veneno e apodrecimento em 30%.
+Avatar da Natureza;Adepto da Natureza;70;ativa;1;semente_viva;Semente Viva;nature_living_seed;55;Semente Viva: consome 55 MP, causa 269 de dano e marca o alvo por 4 turnos. A marca tambem causa 196 por turno.
+Avatar da Natureza;Adepto da Natureza;70;ativa;20;raizes;Raizes;nature_roots;72;Raizes: consome 72 MP, causa 429 de dano e tem 60% de chance de enraizar.
+Avatar da Natureza;Adepto da Natureza;70;ativa;30;flor_do_pantano;Flor do Pantano;nature_swamp_flower;48;Flor do Pantano: consome 48 MP e causa 553 de dano. Se o alvo estiver enraizado, aplica veneno de 98 por 3 turnos.
+Avatar da Natureza;Adepto da Natureza;70;ativa;50;colheita;Colheita;nature_harvest;61;Colheita: consome 61 MP, causa 350 de dano e consome efeitos naturais ativos para explodir o dano restante.
+Avatar da Natureza;Adepto da Natureza;70;ativa;60;forma_verdadeira;Forma Verdadeira;nature_true_form;1601;Forma Verdadeira: consome toda a mana maxima, aumenta ataque em 26%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.
+Avatar da Natureza;Adepto da Natureza;70;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.
+Avatar da Natureza;Adepto da Natureza;70;passiva;40;seiva;Seiva;nature_sap;;Seiva: dano de marca e veneno cura 8% do dano causado. Tambem aumenta sua vida maxima em 12%.
+Avatar da Natureza;Adepto da Natureza;70;passiva;70;casca_ancestral;Casca Ancestral;nature_ancestral_bark;;Casca Ancestral: reduz 39 de dano recebido por ataque.
+Espirito da Floresta;Adepto da Natureza;50;ativa;1;semente_viva;Semente Viva;nature_living_seed;45;Semente Viva: consome 45 MP, causa 184 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.
+Espirito da Floresta;Adepto da Natureza;50;ativa;20;raizes;Raizes;nature_roots;60;Raizes: consome 60 MP, causa 313 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.
+Espirito da Floresta;Adepto da Natureza;50;ativa;30;encanto_da_brisa;Encanto da Brisa;nature_breeze_charm;45;Encanto da Brisa: consome 45 MP, causa 247 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.
+Espirito da Floresta;Adepto da Natureza;50;ativa;50;cancao_ancestral;Cancao Ancestral;nature_ancestral_song;60;Cancao Ancestral: consome 60 MP e cura 289.
+Espirito da Floresta;Adepto da Natureza;50;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.
+Espirito da Floresta;Adepto da Natureza;50;passiva;40;aura_feerica;Aura Feerica;nature_fairy_aura;;Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%.
+Fada Monarca;Adepto da Natureza;70;ativa;1;semente_viva;Semente Viva;nature_living_seed;55;Semente Viva: consome 55 MP, causa 283 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.
+Fada Monarca;Adepto da Natureza;70;ativa;20;raizes;Raizes;nature_roots;72;Raizes: consome 72 MP, causa 490 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.
+Fada Monarca;Adepto da Natureza;70;ativa;30;encanto_da_brisa;Encanto da Brisa;nature_breeze_charm;51;Encanto da Brisa: consome 51 MP, causa 401 de dano e tem 30% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.
+Fada Monarca;Adepto da Natureza;70;ativa;50;cancao_ancestral;Cancao Ancestral;nature_ancestral_song;68;Cancao Ancestral: consome 68 MP e cura 485.
+Fada Monarca;Adepto da Natureza;70;ativa;60;decreto_da_rainha;Decreto da Rainha;nature_queen_decree;90;Decreto da Rainha: consome 90 MP e causa 694 de dano. Com 3 Cadencias, o fator sobe para 2.9.
+Fada Monarca;Adepto da Natureza;70;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.
+Fada Monarca;Adepto da Natureza;70;passiva;40;aura_feerica;Aura Feerica;nature_fairy_aura;;Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 6% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 10%.
+Fada Monarca;Adepto da Natureza;70;passiva;70;asas_da_realeza;Asas da Realeza;nature_royal_wings;;Asas da Realeza: concede 20% de chance de esquiva.
+Protetor da Floresta;Adepto da Natureza;70;ativa;1;semente_viva;Semente Viva;nature_living_seed;55;Semente Viva: consome 55 MP, causa 290 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.
+Protetor da Floresta;Adepto da Natureza;70;ativa;20;raizes;Raizes;nature_roots;72;Raizes: consome 72 MP, causa 494 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.
+Protetor da Floresta;Adepto da Natureza;70;ativa;30;encanto_da_brisa;Encanto da Brisa;nature_breeze_charm;51;Encanto da Brisa: consome 51 MP, causa 390 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.
+Protetor da Floresta;Adepto da Natureza;70;ativa;50;cancao_ancestral;Cancao Ancestral;nature_ancestral_song;68;Cancao Ancestral: consome 68 MP e cura 471. Tambem concede 539 de escudo.
+Protetor da Floresta;Adepto da Natureza;70;ativa;60;casulo_de_vinhas;Casulo de Vinhas;nature_vine_cocoon;102;Casulo de Vinhas: consome 102 MP e concede 831 de escudo.
+Protetor da Floresta;Adepto da Natureza;70;passiva;10;ciclo_natural;Ciclo Natural;nature_cycle;;Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.
+Protetor da Floresta;Adepto da Natureza;70;passiva;40;aura_feerica;Aura Feerica;nature_fairy_aura;;Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%.
+Protetor da Floresta;Adepto da Natureza;70;passiva;70;juramento_do_bosque;Juramento do Bosque;nature_forest_oath;;Juramento do Bosque: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo.

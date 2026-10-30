@@ -1,3 +1,4 @@
+const screenshot=require('../screenshot.cjs');
 const assert=require('node:assert/strict'),path=require('node:path');
 const {server,chromium}=require('../2026-10-27/smoke.cjs');
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const b=await chromium.launch({headless:true,channel:'msedge'});try{
@@ -7,17 +8,17 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
   await p.setViewportSize({width,height:900});await p.evaluate(()=>{currentMode='battle';if(!enemy)spawnEnemy();updateUI();});
   assert(await p.locator('.rpg-coins .rpg-coin-icon').isVisible());assert.equal(await p.locator('#rpgSkillHint').count(),0);await p.locator('[data-hud="attack"]').hover();
   assert(await p.locator('#rpgActionTooltip').isVisible());assert(await p.locator('#rpgActionTooltip').evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;}));
-  await p.screenshot({path:path.join(__dirname,`skill-popup-${width}.png`),fullPage:false});
+  await screenshot(p,{path:path.join(__dirname,`skill-popup-${width}.png`),fullPage:false});
   await p.mouse.move(0,0);assert(await p.locator('#rpgActionTooltip').isHidden());
   const clue=await p.locator('.region-map-boss-btn').getAttribute('data-tooltip');assert(clue.includes('Complete o rastro'));assert(clue.length<80);
   await p.evaluate(()=>{enemy=null;currentMode='village';villageTab='inn';player.hp=10;player.mp=5;updateUI();});
   assert.equal(await p.getByRole('meter',{name:'Vida',exact:true}).getAttribute('aria-valuenow'),'10');assert.equal(await p.getByRole('meter',{name:'Mana',exact:true}).getAttribute('aria-valuenow'),'5');
   await p.locator('.rpg-inn-title').evaluate(e=>e.decode());assert(await p.locator('[data-hud="heal"] .rpg-coin-icon').count());
-  await p.screenshot({path:path.join(__dirname,`inn-details-${width}.png`),fullPage:true});
+  await screenshot(p,{path:path.join(__dirname,`inn-details-${width}.png`),fullPage:true});
   await p.locator('[data-hud="heal"]').click();assert(await p.evaluate(()=>player.hp===getCurrentCaps().maxHp));
   await p.evaluate(()=>{currentMode='camp';campTab='equipamentos';updateUI();});
   assert.equal(await p.locator('.rpg-character-figure').evaluate(e=>getComputedStyle(e).backgroundImage),'none');
-  await p.screenshot({path:path.join(__dirname,`camp-details-${width}.png`),fullPage:true});
+  await screenshot(p,{path:path.join(__dirname,`camp-details-${width}.png`),fullPage:true});
   for(const service of ['artisan','forge']){
    await p.evaluate(service=>{currentMode='village';villageTab=service;updateUI();},service);
    const selector=service==='artisan'?'craft-slot':'upgrade-item',values=await p.locator(`[data-hud="${selector}"]`).evaluateAll(es=>es.map(e=>e.dataset.value));
@@ -25,7 +26,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
     const state=await p.evaluate(()=>{const s=getComputedStyle(document.querySelector('#rpgMain'));return {image:s.backgroundImage,size:s.backgroundSize,attachment:s.backgroundAttachment,height:document.querySelector('.rpg-anvil>img').getBoundingClientRect().height};});
     assert.equal(state.attachment,'fixed');assert.equal(state.height,280);if(base)assert.deepEqual(state,base);base=state;
    }
-   await p.screenshot({path:path.join(__dirname,`${service}-details-${width}.png`),fullPage:true});
+   await screenshot(p,{path:path.join(__dirname,`${service}-details-${width}.png`),fullPage:true});
   }
   assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  }

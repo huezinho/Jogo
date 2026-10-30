@@ -409,9 +409,47 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-inn-meter>span{color:#f3e2bf;font-size:17px;text-shadow:0 2px 3px #000}
 #rpgActionTooltip[data-kind=boss]{width:180px;font-size:16px}
 #rpgActionTooltip[data-kind=balance]{max-width:180px}
-.rpg-campaign .rpg-inn-meter{height:40px;padding:3px;border:3px ridge #947348;border-image:none;border-radius:7px;outline:1px solid #37271a;background:repeating-linear-gradient(5deg,#342217 0 3px,#493222 4px 6px,#2b1d13 7px 10px);box-shadow:0 0 0 1px #b29565,0 3px 5px #0008,inset 0 1px 3px #000;overflow:hidden}
-.rpg-campaign .rpg-inn-meter>i{border-radius:2px}
-.rpg-campaign .rpg-inn-meter>span{inset:0}
-.rpg-campaign .rpg-inn-meter::before,.rpg-campaign .rpg-inn-meter::after{content:'';position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;border:1px solid #b39a6a;background:radial-gradient(at 30% 25%,#b2a17b,#292219 75%);box-shadow:0 1px 2px #000;pointer-events:none}
-.rpg-campaign .rpg-inn-meter::before{left:0}.rpg-campaign .rpg-inn-meter::after{right:0}
-.rpg-campaign .rpg-inn>h2{width:100%}
+#rpgActionTooltip[popover]{margin:0;inset:auto;overflow-wrap:anywhere}
+#rpgActionTooltip[data-kind=map]{width:180px;font-size:16px}
+.rpg-campaign :is(.region-map-marker,.location-map-marker,[data-trophy-tooltip])[data-tooltip]:is(:hover,:focus-visible)::after,
+.rpg-campaign :is(.region-map-marker,.location-map-marker,[data-trophy-tooltip])[data-tooltip]:is(:hover,:focus-visible)::before,
+.rpg-campaign [data-trophy-tooltip]::after,.rpg-campaign [data-trophy-tooltip]::before{display:none!important;content:none!important}
+.rpg-campaign #rpgDialog .region-map-marker .map-marker-label{display:none}
+.rpg-campaign #rpgDialog{max-inline-size:calc(100vw - 24px);overflow-x:hidden;overflow-wrap:anywhere}
+.rpg-campaign #rpgDialogContent{min-width:0}
+.rpg-campaign #rpgDialog>header{display:grid;grid-template-columns:minmax(0,1fr) auto}
+.rpg-campaign #rpgDialog>header h2{min-width:0;overflow-wrap:normal;word-break:normal}
+.rpg-campaign #rpgDialog>header button{width:auto;min-width:0;max-width:100%;white-space:nowrap;justify-self:end}
+@media(max-width:480px){
+ .rpg-campaign #rpgDialog>header{grid-template-columns:minmax(0,1fr)}
+ .rpg-campaign #rpgDialog>header button{min-height:36px}
+}
+.rpg-campaign .rpg-slot-picker{border-top:1px solid #98723d;margin-top:18px;padding-top:12px}
+.rpg-campaign .rpg-slot-picker article{display:flex;gap:16px;align-items:center;border-bottom:1px solid #735331;padding:12px 0}
+.rpg-campaign .rpg-slot-picker article>img{width:72px;height:72px;object-fit:contain;flex-shrink:0}
+.rpg-campaign .rpg-slot-picker article>div{min-width:0}
+.rpg-campaign .rpg-slot-picker p{font-size:15px}
+.rpg-campaign .rpg-tracking-list{display:grid;gap:12px}
+.rpg-campaign .rpg-tracking-list article{border:1px solid #98723d;background:#21170f;padding:14px}
+.rpg-campaign .rpg-tracking-list h3{margin:0 0 6px}
+.rpg-campaign .rpg-tracking-list button{max-width:100%}
+#rpgQuickItems{position:fixed;inset:auto;margin:0;box-sizing:border-box;width:max-content;max-width:min(320px,calc(100vw - 16px));max-height:35dvh;overflow:auto;padding:10px;gap:8px;border:1px solid #b79451;border-radius:5px;background:#21170ff5;color:#f2dfb9;box-shadow:0 5px 20px #000a}
+#rpgQuickItems:popover-open{display:flex;flex-wrap:wrap}
+#rpgQuickItems .rpg-quick-item{position:relative;display:grid;place-items:center;width:58px;height:58px;min-width:0;min-height:0;padding:5px;margin:0;border:1px solid #987746;border-image:none;border-radius:3px;background:#140f0b}
+#rpgQuickItems .rpg-quick-item:hover,#rpgQuickItems .rpg-quick-item:focus-visible{background:#3b2d18;border-color:#e7c574}
+#rpgQuickItems .rpg-quick-item img{width:44px;height:44px;max-width:100%;object-fit:contain}
+#rpgQuickItems .rpg-quick-item>span{position:absolute;right:3px;bottom:0;font:700 13px/1.2 'RPG Leitura',Georgia,serif;color:#ffe4a6;text-shadow:0 1px 3px #000}
+#rpgQuickItems p{margin:0;max-width:260px;font-size:16px}
+#rpgActionTooltip:is([data-kind=spawn],[data-kind=item]){white-space:pre-line}
+.rpg-campaign #campaignHud .rpg-owned-piece{padding:12px!important;margin-top:12px;background:#21442b!important;border:1px solid #72af73;color:#d6f4cc!important;border-radius:4px}
+.rpg-campaign .rpg-character-sheet>.rpg-trainer{grid-column:1/-1;background:#21170fe8;color:#eeddb8;margin-top:8px}
+@keyframes rpg-crafted-pulse{0%,45%,85%{filter:drop-shadow(0 0 12px #5dff7a) brightness(1.3);background-color:#315b36}25%,65%,100%{filter:none;background-color:transparent}}
+.rpg-campaign .rpg-anvil.rpg-crafted>img,.rpg-campaign .rpg-rack-slot.rpg-crafted,.rpg-campaign .rpg-bag-slot.rpg-crafted{animation:rpg-crafted-pulse 1.3s ease-out}
+@media(prefers-reduced-motion:reduce){.rpg-campaign .rpg-anvil.rpg-crafted>img,.rpg-campaign .rpg-rack-slot.rpg-crafted,.rpg-campaign .rpg-bag-slot.rpg-crafted{animation:none;filter:drop-shadow(0 0 10px #69ec7c)}}
+.rpg-campaign .rpg-world-map .region-map-card{position:relative}
+@media(max-width:1100px){
+ .rpg-campaign .rpg-world-map .region-map-boss-hud{display:flex;position:static;flex-direction:row;justify-content:center;align-items:center;gap:4px;margin-top:4px}
+ .rpg-campaign .rpg-world-map .region-map-boss-progress{font-size:10px}
+ .rpg-campaign .rpg-world-map .region-map-boss-btn{min-height:26px;padding:3px;font-size:10px}
+ .rpg-campaign #campaignHud #rpgAccount .rpg-coins{padding:4px 6px}
+}

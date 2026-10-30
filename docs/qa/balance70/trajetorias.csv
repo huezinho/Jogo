@@ -1,0 +1,257 @@
+﻿forma;build;semente;nivel_final;motivo;combates;mortes;acoes;minutos_modelados;ultimo_chefe
+arquimago;arcana;101;70;level70;745;1;2444;511;Abismo
+arquimago;arcana;307;70;level70;745;0;2423;509;Abismo
+arquimago;equilibrada;101;70;level70;745;0;2586;520;Abismo
+arquimago;equilibrada;307;70;level70;744;0;2572;519;Abismo
+arquimago;forca_pura;101;70;level70;757;4;1583;457;Abismo
+arquimago;forca_pura;307;70;level70;763;5;1598;460;Abismo
+arquimago;hibrida;101;70;level70;744;0;2318;502;Abismo
+arquimago;hibrida;307;70;level70;744;0;2349;504;Abismo
+arquimago;mana_pura;101;70;level70;787;6;2608;541;Abismo
+arquimago;mana_pura;307;70;level70;791;6;2606;544;Abismo
+arquimago;ofensiva;101;70;level70;744;0;2099;487;Abismo
+arquimago;ofensiva;307;70;level70;744;0;2109;488;Abismo
+arquimago;resistente;101;70;level70;749;3;3351;576;Abismo
+arquimago;resistente;307;70;level70;748;2;3331;573;Abismo
+arquimago;vida_pura;101;59;30 derrotas;706;30;4836;677;Vulcao
+arquimago;vida_pura;307;57;30 derrotas;659;30;4789;652;Pantano
+atirador_arcano;arcana;101;70;level70;967;27;4523;745;Abismo
+atirador_arcano;arcana;307;70;level70;932;23;4439;717;Abismo
+atirador_arcano;equilibrada;101;70;level70;795;11;3601;591;Abismo
+atirador_arcano;equilibrada;307;70;level70;814;13;3629;605;Abismo
+atirador_arcano;forca_pura;101;70;level70;821;24;2020;557;Abismo
+atirador_arcano;forca_pura;307;70;level70;838;24;2159;560;Abismo
+atirador_arcano;hibrida;101;70;level70;808;14;3242;564;Abismo
+atirador_arcano;hibrida;307;70;level70;822;14;3260;575;Abismo
+atirador_arcano;mana_pura;101;24;30 derrotas;534;30;3421;478;
+atirador_arcano;mana_pura;307;28;30 derrotas;771;30;4980;696;
+atirador_arcano;ofensiva;101;70;level70;792;9;2831;535;Abismo
+atirador_arcano;ofensiva;307;70;level70;766;6;2787;522;Abismo
+atirador_arcano;resistente;101;70;level70;810;10;4541;671;Abismo
+atirador_arcano;resistente;307;70;level70;856;19;4736;707;Abismo
+atirador_arcano;vida_pura;101;26;30 derrotas;590;30;4268;554;
+atirador_arcano;vida_pura;307;23;30 derrotas;430;30;3199;397;
+avatar_da_natureza;arcana;101;68;30 derrotas;841;30;4491;717;Vulcao
+avatar_da_natureza;arcana;307;67;30 derrotas;826;30;4408;704;Vulcao
+avatar_da_natureza;equilibrada;101;70;level70;794;17;3622;622;Abismo
+avatar_da_natureza;equilibrada;307;70;level70;813;19;3668;634;Abismo
+avatar_da_natureza;forca_pura;101;70;level70;771;9;1819;486;Abismo
+avatar_da_natureza;forca_pura;307;70;level70;777;16;1775;500;Vulcao
+avatar_da_natureza;hibrida;101;70;level70;789;19;3255;600;Abismo
+avatar_da_natureza;hibrida;307;70;level70;807;19;3291;610;Abismo
+avatar_da_natureza;mana_pura;101;44;30 derrotas;1257;30;6057;1003;
+avatar_da_natureza;mana_pura;307;40;30 derrotas;1085;30;5190;859;
+avatar_da_natureza;ofensiva;101;70;level70;767;7;2610;529;Abismo
+avatar_da_natureza;ofensiva;307;70;level70;769;8;2604;528;Abismo
+avatar_da_natureza;resistente;101;65;30 derrotas;826;30;4290;683;Vulcao
+avatar_da_natureza;resistente;307;65;30 derrotas;824;30;4215;676;Vulcao
+avatar_da_natureza;vida_pura;101;17;30 derrotas;258;30;1381;175;
+avatar_da_natureza;vida_pura;307;17;30 derrotas;255;30;1346;171;
+berserker;arcana;101;70;level70;780;9;4489;665;Abismo
+berserker;arcana;307;70;level70;781;10;4459;665;Abismo
+berserker;equilibrada;101;70;level70;745;1;3432;577;Abismo
+berserker;equilibrada;307;70;level70;753;3;3375;577;Abismo
+berserker;forca_pura;101;70;level70;802;19;2160;553;Vulcao
+berserker;forca_pura;307;70;level70;797;18;2205;552;Abismo
+berserker;hibrida;101;70;level70;753;3;3344;575;Abismo
+berserker;hibrida;307;70;level70;750;2;3324;572;Abismo
+berserker;mana_pura;101;43;100 turnos sem resolucao;599;17;4082;559;Ruinas
+berserker;mana_pura;307;43;100 turnos sem resolucao;599;17;4078;558;Ruinas
+berserker;ofensiva;101;70;level70;745;1;2714;529;Abismo
+berserker;ofensiva;307;70;level70;744;0;2737;530;Abismo
+berserker;resistente;101;70;level70;753;3;3947;589;Abismo
+berserker;resistente;307;70;level70;753;3;3981;594;Abismo
+berserker;vida_pura;101;24;100 turnos sem resolucao;201;6;2976;292;Floresta
+berserker;vida_pura;307;24;100 turnos sem resolucao;207;6;2826;285;Floresta
+corrompido;arcana;101;70;level70;744;0;2468;512;Abismo
+corrompido;arcana;307;70;level70;744;0;2449;510;Abismo
+corrompido;equilibrada;101;70;level70;744;0;2559;518;Abismo
+corrompido;equilibrada;307;70;level70;745;0;2576;519;Abismo
+corrompido;forca_pura;101;70;level70;788;10;1633;483;Vulcao
+corrompido;forca_pura;307;70;level70;765;8;1604;467;Abismo
+corrompido;hibrida;101;70;level70;744;0;2351;504;Abismo
+corrompido;hibrida;307;70;level70;744;0;2352;504;Abismo
+corrompido;mana_pura;101;70;level70;788;6;2621;544;Abismo
+corrompido;mana_pura;307;70;level70;788;7;2608;542;Abismo
+corrompido;ofensiva;101;70;level70;744;0;2136;489;Abismo
+corrompido;ofensiva;307;70;level70;747;0;2144;492;Abismo
+corrompido;resistente;101;70;level70;745;0;3401;574;Abismo
+corrompido;resistente;307;70;level70;745;0;3378;573;Abismo
+corrompido;vida_pura;101;59;30 derrotas;696;30;4633;658;Vulcao
+corrompido;vida_pura;307;58;30 derrotas;682;30;4580;646;Vulcao
+druida_sombrio;arcana;101;70;level70;891;29;4325;729;Vulcao
+druida_sombrio;arcana;307;67;30 derrotas;835;30;3958;675;Vulcao
+druida_sombrio;equilibrada;101;70;level70;786;15;3451;600;Abismo
+druida_sombrio;equilibrada;307;70;level70;802;15;3470;607;Abismo
+druida_sombrio;forca_pura;101;70;level70;805;20;1747;516;Vulcao
+druida_sombrio;forca_pura;307;70;level70;811;24;1775;533;Vulcao
+druida_sombrio;hibrida;101;70;level70;789;17;3098;585;Abismo
+druida_sombrio;hibrida;307;70;level70;793;15;3169;588;Abismo
+druida_sombrio;mana_pura;101;44;30 derrotas;1257;30;6057;1003;
+druida_sombrio;mana_pura;307;40;30 derrotas;1085;30;5189;859;
+druida_sombrio;ofensiva;101;70;level70;791;10;2452;533;Abismo
+druida_sombrio;ofensiva;307;70;level70;774;9;2443;524;Abismo
+druida_sombrio;resistente;101;69;30 derrotas;873;30;4386;712;Abismo
+druida_sombrio;resistente;307;67;30 derrotas;862;30;4211;693;Abismo
+druida_sombrio;vida_pura;101;17;30 derrotas;255;30;1376;173;
+druida_sombrio;vida_pura;307;16;30 derrotas;223;30;1194;154;
+espreitador;arcana;101;53;30 derrotas;716;30;4274;639;Pantano
+espreitador;arcana;307;55;30 derrotas;725;30;4375;650;Pantano
+espreitador;equilibrada;101;70;level70;826;22;4569;707;Abismo
+espreitador;equilibrada;307;70;level70;824;23;4684;714;Abismo
+espreitador;forca_pura;101;69;30 derrotas;828;30;2265;579;Abismo
+espreitador;forca_pura;307;62;30 derrotas;712;30;1876;495;Vulcao
+espreitador;hibrida;101;68;30 derrotas;824;30;3960;680;Abismo
+espreitador;hibrida;307;66;30 derrotas;796;30;4032;664;Abismo
+espreitador;mana_pura;101;23;30 derrotas;485;30;3100;433;
+espreitador;mana_pura;307;23;30 derrotas;482;30;3077;431;
+espreitador;ofensiva;101;70;level70;798;13;3342;597;Abismo
+espreitador;ofensiva;307;70;level70;825;18;3356;612;Abismo
+espreitador;resistente;101;70;level70;859;28;6547;867;Abismo
+espreitador;resistente;307;70;level70;848;28;6995;886;Abismo
+espreitador;vida_pura;101;27;30 derrotas;643;30;4638;603;
+espreitador;vida_pura;307;26;30 derrotas;560;30;4225;526;
+fada_monarca;arcana;101;56;100 turnos sem resolucao;629;25;4346;598;Vulcao
+fada_monarca;arcana;307;70;level70;865;29;6473;856;Vulcao
+fada_monarca;equilibrada;101;70;level70;797;20;3844;640;Abismo
+fada_monarca;equilibrada;307;70;level70;807;17;3848;642;Abismo
+fada_monarca;forca_pura;101;70;level70;802;14;1832;511;Vulcao
+fada_monarca;forca_pura;307;70;level70;805;15;1838;514;Vulcao
+fada_monarca;hibrida;101;70;level70;813;27;3161;618;Abismo
+fada_monarca;hibrida;307;70;level70;835;28;3255;635;Abismo
+fada_monarca;mana_pura;101;44;30 derrotas;1257;30;6032;1001;
+fada_monarca;mana_pura;307;40;30 derrotas;1085;30;5172;858;
+fada_monarca;ofensiva;101;70;level70;767;7;2678;534;Abismo
+fada_monarca;ofensiva;307;70;level70;774;8;2690;537;Abismo
+fada_monarca;resistente;101;70;level70;879;27;6678;867;Abismo
+fada_monarca;resistente;307;70;level70;894;27;6725;876;Abismo
+fada_monarca;vida_pura;101;17;30 derrotas;258;30;1381;175;
+fada_monarca;vida_pura;307;16;30 derrotas;238;30;1274;161;
+guarda_florestal;arcana;101;54;30 derrotas;720;30;4315;643;Pantano
+guarda_florestal;arcana;307;57;30 derrotas;798;30;4598;703;Pantano
+guarda_florestal;equilibrada;101;70;level70;842;20;4748;719;Abismo
+guarda_florestal;equilibrada;307;70;level70;809;20;4844;711;Abismo
+guarda_florestal;forca_pura;101;70;level70;798;18;2243;544;Abismo
+guarda_florestal;forca_pura;307;70;level70;812;21;2271;551;Abismo
+guarda_florestal;hibrida;101;70;level70;837;18;4216;682;Abismo
+guarda_florestal;hibrida;307;70;level70;875;24;4148;699;Abismo
+guarda_florestal;mana_pura;101;24;30 derrotas;534;30;3421;478;
+guarda_florestal;mana_pura;307;23;30 derrotas;484;30;3073;430;
+guarda_florestal;ofensiva;101;70;level70;789;12;3228;583;Abismo
+guarda_florestal;ofensiva;307;70;level70;767;9;3244;572;Abismo
+guarda_florestal;resistente;101;70;level70;858;25;6915;875;Abismo
+guarda_florestal;resistente;307;70;level70;874;28;6778;871;Abismo
+guarda_florestal;vida_pura;101;27;30 derrotas;643;30;4630;603;
+guarda_florestal;vida_pura;307;24;30 derrotas;488;30;3620;456;
+mago_frigido;arcana;101;70;level70;767;9;3751;618;Abismo
+mago_frigido;arcana;307;70;level70;764;8;3764;617;Abismo
+mago_frigido;equilibrada;101;70;level70;746;2;3675;596;Abismo
+mago_frigido;equilibrada;307;70;level70;747;2;3683;597;Abismo
+mago_frigido;forca_pura;101;70;level70;749;2;1522;427;Abismo
+mago_frigido;forca_pura;307;70;level70;755;4;1532;438;Abismo
+mago_frigido;hibrida;101;70;level70;744;0;3391;573;Abismo
+mago_frigido;hibrida;307;70;level70;745;0;3409;575;Abismo
+mago_frigido;mana_pura;101;70;level70;801;11;4109;642;Abismo
+mago_frigido;mana_pura;307;70;level70;808;11;4158;652;Abismo
+mago_frigido;ofensiva;101;70;level70;745;0;2279;500;Abismo
+mago_frigido;ofensiva;307;70;level70;744;0;2315;502;Abismo
+mago_frigido;resistente;101;70;level70;791;16;4318;677;Abismo
+mago_frigido;resistente;307;70;level70;795;17;4414;687;Abismo
+mago_frigido;vida_pura;101;57;30 derrotas;651;30;4532;629;Pantano
+mago_frigido;vida_pura;307;57;30 derrotas;660;30;4674;645;Pantano
+mago_incendiario;arcana;101;70;level70;754;4;3236;559;Abismo
+mago_incendiario;arcana;307;70;level70;753;4;3195;557;Abismo
+mago_incendiario;equilibrada;101;70;level70;751;3;3040;551;Abismo
+mago_incendiario;equilibrada;307;70;level70;748;2;3072;548;Abismo
+mago_incendiario;forca_pura;101;70;level70;779;12;1458;459;Vulcao
+mago_incendiario;forca_pura;307;70;level70;779;12;1467;463;Vulcao
+mago_incendiario;hibrida;101;70;level70;744;0;2796;533;Abismo
+mago_incendiario;hibrida;307;70;level70;744;0;2818;533;Abismo
+mago_incendiario;mana_pura;101;70;level70;791;9;3608;603;Abismo
+mago_incendiario;mana_pura;307;70;level70;798;9;3630;604;Abismo
+mago_incendiario;ofensiva;101;70;level70;744;0;2263;498;Abismo
+mago_incendiario;ofensiva;307;70;level70;744;0;2262;498;Abismo
+mago_incendiario;resistente;101;70;level70;785;13;3780;631;Abismo
+mago_incendiario;resistente;307;70;level70;783;12;3767;627;Abismo
+mago_incendiario;vida_pura;101;58;30 derrotas;664;30;4631;644;Pantano
+mago_incendiario;vida_pura;307;58;30 derrotas;658;30;4417;629;Pantano
+ninja;arcana;101;70;level70;836;26;3886;681;Abismo
+ninja;arcana;307;70;level70;842;28;3650;666;Abismo
+ninja;equilibrada;101;70;level70;758;6;2942;553;Abismo
+ninja;equilibrada;307;70;level70;759;5;2920;543;Abismo
+ninja;forca_pura;101;70;level70;814;17;1667;519;Vulcao
+ninja;forca_pura;307;70;level70;812;17;1732;525;Vulcao
+ninja;hibrida;101;70;level70;765;7;2731;536;Abismo
+ninja;hibrida;307;70;level70;761;8;2708;533;Abismo
+ninja;mana_pura;101;40;30 derrotas;599;30;3623;543;Caverna
+ninja;mana_pura;307;43;30 derrotas;667;30;3750;582;Ruinas
+ninja;ofensiva;101;70;level70;745;1;2221;483;Abismo
+ninja;ofensiva;307;70;level70;745;1;2227;483;Abismo
+ninja;resistente;101;70;level70;752;3;3771;601;Abismo
+ninja;resistente;307;70;level70;755;3;3713;598;Abismo
+ninja;vida_pura;101;65;30 derrotas;773;30;8219;950;Pantano
+ninja;vida_pura;307;23;100 turnos sem resolucao;183;3;2948;280;Floresta
+paladino;arcana;101;70;level70;774;7;4364;651;Abismo
+paladino;arcana;307;70;level70;781;9;4329;655;Abismo
+paladino;equilibrada;101;70;level70;749;2;3288;568;Abismo
+paladino;equilibrada;307;70;level70;753;3;3248;569;Abismo
+paladino;forca_pura;101;70;level70;758;6;2503;530;Abismo
+paladino;forca_pura;307;70;level70;750;2;2327;508;Abismo
+paladino;hibrida;101;70;level70;752;3;3335;574;Abismo
+paladino;hibrida;307;70;level70;750;2;3300;570;Abismo
+paladino;mana_pura;101;43;100 turnos sem resolucao;583;15;4067;550;Ruinas
+paladino;mana_pura;307;43;100 turnos sem resolucao;605;17;4098;559;Ruinas
+paladino;ofensiva;101;70;level70;745;1;2690;527;Abismo
+paladino;ofensiva;307;70;level70;745;1;2698;528;Abismo
+paladino;resistente;101;70;level70;752;3;3733;574;Abismo
+paladino;resistente;307;70;level70;753;3;3693;571;Abismo
+paladino;vida_pura;101;23;100 turnos sem resolucao;194;5;2898;283;Floresta
+paladino;vida_pura;307;23;100 turnos sem resolucao;197;5;2758;275;Floresta
+protetor_da_floresta;arcana;101;70;level70;844;24;6725;843;Abismo
+protetor_da_floresta;arcana;307;70;level70;837;26;7545;899;Abismo
+protetor_da_floresta;equilibrada;101;70;level70;792;14;4399;662;Abismo
+protetor_da_floresta;equilibrada;307;70;level70;805;15;4476;670;Abismo
+protetor_da_floresta;forca_pura;101;70;level70;817;22;1866;533;Vulcao
+protetor_da_floresta;forca_pura;307;70;level70;816;20;1845;530;Vulcao
+protetor_da_floresta;hibrida;101;70;level70;795;19;3721;608;Abismo
+protetor_da_floresta;hibrida;307;70;level70;816;22;3791;617;Abismo
+protetor_da_floresta;mana_pura;101;43;30 derrotas;1211;30;5801;963;
+protetor_da_floresta;mana_pura;307;42;30 derrotas;1167;30;5581;926;
+protetor_da_floresta;ofensiva;101;70;level70;772;7;3018;507;Abismo
+protetor_da_floresta;ofensiva;307;70;level70;757;7;2983;498;Abismo
+protetor_da_floresta;resistente;101;70;level70;852;17;7680;894;Abismo
+protetor_da_floresta;resistente;307;70;level70;860;16;7777;911;Abismo
+protetor_da_floresta;vida_pura;101;17;30 derrotas;269;30;1444;184;
+protetor_da_floresta;vida_pura;307;17;30 derrotas;255;30;1353;173;
+samurai;arcana;101;70;level70;815;22;3876;664;Abismo
+samurai;arcana;307;70;level70;830;26;3729;663;Abismo
+samurai;equilibrada;101;70;level70;749;2;3022;544;Abismo
+samurai;equilibrada;307;70;level70;753;3;3016;544;Abismo
+samurai;forca_pura;101;70;level70;783;10;1868;506;Abismo
+samurai;forca_pura;307;70;level70;794;14;1890;521;Abismo
+samurai;hibrida;101;70;level70;753;4;2809;532;Abismo
+samurai;hibrida;307;70;level70;755;4;2813;534;Abismo
+samurai;mana_pura;101;40;30 derrotas;601;30;3380;527;Caverna
+samurai;mana_pura;307;42;30 derrotas;650;30;3658;568;Caverna
+samurai;ofensiva;101;70;level70;745;1;2301;490;Abismo
+samurai;ofensiva;307;70;level70;745;1;2304;488;Abismo
+samurai;resistente;101;70;level70;754;3;3743;600;Abismo
+samurai;resistente;307;70;level70;757;3;3728;601;Abismo
+samurai;vida_pura;101;64;30 derrotas;762;30;8229;947;Pantano
+samurai;vida_pura;307;23;100 turnos sem resolucao;187;4;2852;276;Floresta
+sniper;arcana;101;57;30 derrotas;759;30;3987;639;Vulcao
+sniper;arcana;307;66;30 derrotas;889;30;4490;734;Abismo
+sniper;equilibrada;101;70;level70;794;11;3810;617;Abismo
+sniper;equilibrada;307;70;level70;789;9;3748;610;Abismo
+sniper;forca_pura;101;70;level70;834;28;2076;569;Abismo
+sniper;forca_pura;307;70;level70;832;27;2070;565;Abismo
+sniper;hibrida;101;70;level70;821;17;3434;605;Abismo
+sniper;hibrida;307;70;level70;843;14;3439;614;Abismo
+sniper;mana_pura;101;27;30 derrotas;713;30;4586;642;
+sniper;mana_pura;307;23;30 derrotas;486;30;3064;431;
+sniper;ofensiva;101;70;level70;792;8;2873;553;Abismo
+sniper;ofensiva;307;70;level70;788;8;2866;551;Abismo
+sniper;resistente;101;70;level70;827;14;4799;707;Abismo
+sniper;resistente;307;70;level70;823;15;4903;713;Abismo
+sniper;vida_pura;101;24;30 derrotas;536;30;3820;494;
+sniper;vida_pura;307;23;30 derrotas;434;30;3219;404;

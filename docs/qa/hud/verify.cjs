@@ -29,8 +29,8 @@ async function screenshot(page,file){
   await page.locator('[data-hud="consumables"]').click();
   const hpBeforeModal=await page.evaluate(()=>enemy?.hp);
   await page.keyboard.press('1');assert.equal(await page.evaluate(()=>enemy?.hp),hpBeforeModal);
-  await page.keyboard.press('Escape');assert.equal(await page.locator('#rpgDialog').evaluate(d=>d.open),false);
-  results.flows.push('consumables dialog, keyboard isolation and Escape');
+  assert(await page.locator('#rpgQuickItems').isVisible());assert.equal(await page.locator('#rpgDialog').evaluate(d=>d.open),false);await page.keyboard.press('Escape');assert.equal(await page.locator('#rpgQuickItems').count(),0);
+  results.flows.push('quick consumable HUD, keyboard isolation and Escape');
   await page.evaluate(()=>{enemy=null;currentMode='village';villageTab='artisan';updateUI();});
   await page.locator('[data-hud="craft-map"]').click();
   assert(await page.locator('[data-hud="craft-region"][data-value="Caverna"]').isDisabled());
@@ -68,12 +68,12 @@ async function screenshot(page,file){
   const offer=await page.evaluate(()=>EquipmentSystem.refreshContracts(player).offers[0]);
   await page.locator('[data-hud="accept"]').click();
   await page.locator('[data-hud="contract-tab"][data-value="active"]').click();
-  assert(await page.locator('[data-hud="claim"]').isDisabled());
+  assert.equal(await page.locator('[data-hud="claim"]').count(),0);
   await page.evaluate(()=>{const q=player.mercenary.active[0];for(let i=0;i<q.count;i++)EquipmentSystem.recordKill({baseName:q.targetName,region:q.targetRegion},player);updateUI();});
-  await page.locator('[data-hud="claim"]').click();
+  assert.equal(await page.locator('[data-hud="claim"]').count(),0);
   assert.equal(await page.evaluate(id=>player.inventory.find(i=>i.id===id)?.qty,offer.rewardId),offer.rewardQty);
   assert.equal(await page.evaluate(()=>player.mercenary.active.length),0);
-  results.flows.push('fixed mercenary reward, completion, claim exactly once');
+  results.flows.push('fixed mercenary reward, automatic completion exactly once');
   // A fully equipped character makes the visual fixtures representative; no balance changes.
   await page.evaluate(()=>{for(const slot of EquipmentData.slots)player.equipment[slot]={...EquipmentSystem.createItem('Floresta',slot,player.class,'comum'),uid:'qa_'+slot};player.hp=getCurrentCaps().maxHp;player.mp=getCurrentCaps().maxMp;displayState.playerHp=player.hp;displayState.playerMp=player.mp;});
   for(const width of [1366,1024,768,390,320]){

@@ -15,7 +15,7 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
  assert((await p.locator('#levelUpPanel').innerText()).includes('Escolha sua subclasse'));
  await p.getByRole('button',{name:'Cavaleiro',exact:true}).click();assert.equal(await p.evaluate(()=>player.subclassChoices.tier30),'cavaleiro');
  await p.evaluate(()=>{player.coins=100000;enemy=null;setMode('camp');});
- await p.locator('[data-hud="camp-tab"][data-value="status"]').click();
+ await p.locator('[data-hud="camp-tab"][data-value="equipamentos"]').click();
  await p.locator('[data-hud="respec"]').click();
  assert(await p.locator('#levelUpPanel').isVisible(),'trainer allocation must be visible in camp');
  assert.equal(await p.evaluate(()=>levelUpPoints),29);

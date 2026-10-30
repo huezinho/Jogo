@@ -121,8 +121,15 @@ const EquipmentSystem = (function(){
     // At most the next two regions are requested; every such material is available through contracts.
     if(rank >= 2){ const foreign = names[Math.min(names.length - 1, index + (rank === 4 ? 2 : 1))]; if(foreign !== region) add(foreign, rank >= 3 ? 2 : 0, true, rank - 1); else if(index > 0) add(names[index - 1], 2, true, rank - 1); }
     if(rank >= 3 && index > 0) add(names[index - 1], 1, false, rank - 1);
+    // The strongest armor slot must cost more than legs, including harder local drops.
+    if(slot === "chest"){
+      const legs = recipeFor(region, "legs", className, rarity);
+      for(const [id, qty] of Object.entries(legs.requirements)) req[id] = Math.max(req[id] || 0, qty);
+      add(region, 2, false, 2 + rank);
+      add(region, 2, true, 1 + rank);
+    }
     const id = `${result.templateId}|${rarity}`;
-    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil((20 + result.itemLevel * 2) * (1 + rank * .6) * (slot === "weapon" ? 1.25 : 1)), requirements: req, result };
+    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil((20 + result.itemLevel * 2) * (1 + rank * .6) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.35 : 1)), requirements: req, result };
   }
   function getRecipes(actor, options = {}){
     actor = actorNow(actor);
@@ -139,9 +146,14 @@ const EquipmentSystem = (function(){
     return list;
   }
   function recipeById(id, actor){ return getRecipes(actor).find(recipe => recipe.id === id) || null; }
+  function ownsRecipeItem(recipe, actor){
+    actor = actorNow(actor);
+    const template = recipe?.result?.templateId;
+    return !!(actor && template && [...(actor.inventory || []), ...Object.values(actor.equipment || {})].some(item => item?.type === "equipment" && (item.templateId || item.baseItemId) === template));
+  }
   function canCraft(recipe, actor){
     actor = actorNow(actor);
-    return !!(actor && recipe && isRegionUnlocked(recipe.region, actor) && actor.coins >= recipe.cost && Object.entries(recipe.requirements).every(([id, qty]) => inventoryCount(actor, id) >= qty));
+    return !!(actor && recipe && !ownsRecipeItem(recipe, actor) && isRegionUnlocked(recipe.region, actor) && actor.coins >= recipe.cost && Object.entries(recipe.requirements).every(([id, qty]) => inventoryCount(actor, id) >= qty));
   }
   function removeMaterials(actor, requirements){
     for(const [id, qty] of Object.entries(requirements)){
@@ -157,6 +169,7 @@ const EquipmentSystem = (function(){
     const actor = actorNow();
     if(!actor || currentMode !== "village" || isProcessingTurn || isDead) return false;
     const recipe = recipeById(id, actor);
+    if(ownsRecipeItem(recipe, actor)){ notify("Voce ja possui esta peca na bolsa ou equipada. Venda a peca para fabricar outra."); return false; }
     if(!canCraft(recipe, actor)){ notify("Receita indisponivel, moedas ou materiais insuficientes. Troque materiais de outras regioes com o mercenario."); return false; }
     // All checks precede mutation; material requirements are canonical, never accepted from the caller.
     removeMaterials(actor, recipe.requirements); actor.coins -= recipe.cost;
@@ -278,19 +291,41 @@ const EquipmentSystem = (function(){
     const name = enemy.baseName || String(enemy.name || "").replace(/ Lv\.\d+$/, ""), region = enemy.region || enemy.regionName;
     const state = normalizeMercenary(actor);
     for(const quest of state.active) if(quest.targetName === name && quest.targetRegion === region && isRegionUnlocked(region, actor) && quest.progress < quest.count) quest.progress++;
+    collectCompletedContracts(actor);
   }
-  function claimContract(id){
-    const actor = actorNow();
-    if(!actor || currentMode !== "village" || isDead || isProcessingTurn) return false;
+  function settleContract(id, actor){
     const state = normalizeMercenary(actor), index = state.active.findIndex(entry => entry.id === id);
     if(index < 0 || state.claimed.includes(id)) return false;
     const quest = state.active[index], material = materialById(quest.rewardId);
     if(quest.progress < quest.count || !material) return false;
     // Remove and mark before delivering. Repeated clicks cannot grant the same reward twice.
     state.active.splice(index, 1); state.claimed.push(id); state.claimed = state.claimed.slice(-256); state.completed++;
-    const reward = addInventoryItem({ ...material, qty: quest.rewardQty });
+    let reward;
+    if(actor === actorNow()) reward = addInventoryItem({ ...material, qty: quest.rewardQty });
+    else{
+      reward = actor.inventory.find(item => item.type === "material" && item.id === material.id);
+      if(reward) reward.qty = (reward.qty || 1) + quest.rewardQty;
+      else{ reward = { ...copy(material), qty: quest.rewardQty, uid: `${material.id}_${Date.now()}_${Math.floor(Math.random()*1000000)}` }; actor.inventory.push(reward); }
+    }
     actor.stats.mercenaryContracts = state.completed;
-    notify(`Contrato concluido: ${reward.name} x${quest.rewardQty}.`); changed(); return reward;
+    if(actor === actorNow()){
+      notify(`Contrato concluido: ${quest.targetName}. ${reward.name} x${quest.rewardQty} recebido automaticamente.`);
+      if(typeof showGameNotice === "function") showGameNotice("Contrato concluído!", `${quest.targetName}: ${quest.count} derrotados. Recebido: ${reward.name} ×${quest.rewardQty}.`);
+      if(typeof queueCampaignSave === "function") queueCampaignSave();
+    }
+    return reward;
+  }
+  function collectCompletedContracts(actor){
+    actor = actorNow(actor); if(!actor) return [];
+    const ready = normalizeMercenary(actor).active.filter(quest => quest.progress >= quest.count).map(quest => quest.id);
+    return ready.map(id => settleContract(id, actor)).filter(Boolean);
+  }
+  function claimContract(id){
+    const actor = actorNow();
+    if(!actor || currentMode !== "village" || isDead || isProcessingTurn) return false;
+    const reward = settleContract(id, actor);
+    if(reward) changed();
+    return reward;
   }
   function abandonContract(id){
     const actor = actorNow(); if(!actor || currentMode !== "village" || isDead || isProcessingTurn) return false;
@@ -301,8 +336,8 @@ const EquipmentSystem = (function(){
     const actor = actorNow(), state = refreshContracts(actor); if(!state) return "";
     const remaining = Math.max(0, (state.boardCycle + 1) * EquipmentData.boardIntervalMs - Date.now());
     return `<div class="mercenary-panel"><div class="panel-header"><strong>Mercenario â€” Contratos de Caca</strong><span class="coin-badge">${state.active.length}/${EquipmentData.maxActiveContracts} ativos</span></div><p class="lock-note">Os alvos ficam apenas em regioes desbloqueadas. A recompensa e fixa e considera o alvo, a quantidade de abates e a origem do componente. Materiais recebidos nao desbloqueiam regioes ou receitas.</p><p class="mercenary-timer">Novas ofertas em <strong>${Math.ceil(remaining / 60000)} min</strong>. Contratos aceitos continuam ativos depois da troca do quadro.</p>
-      <h4>Seus contratos</h4>${state.active.length ? state.active.map(quest => { const material = materialById(quest.rewardId); return `<article class="mercenary-contract"><strong>${escape(quest.targetName)} â€” ${escape(quest.targetRegion)}</strong><p>Derrotados: ${quest.progress}/${quest.count}</p><p>Pagamento: ${escape(material.name)} x${quest.rewardQty} <small>(${escape(material.regionName)})</small></p><div class="button-row"><button onclick="EquipmentSystem.claimContract('${quest.id}')" ${quest.progress >= quest.count ? "" : "disabled"}>Receber recompensa</button><button onclick="EquipmentSystem.abandonContract('${quest.id}')">Abandonar</button></div></article>`; }).join("") : '<p class="lock-note">Aceite um contrato abaixo para comecar.</p>'}
-      <h4>Quadro de ofertas</h4><div class="mercenary-offers">${state.offers.map(offer => { const taken = state.active.some(quest => quest.id === offer.id) || state.claimed.includes(offer.id); return `<article class="mercenary-contract"><strong>Cace ${offer.count} ${escape(offer.targetName)}</strong><p class="lock-note">Local: ${escape(offer.targetRegion)}. Pagamento de ${escape(offer.rewardRegion)}:</p><p>Recompensa: ${escape(materialById(offer.rewardId).name)} x${offer.rewardQty}</p><p class="lock-note">Dificuldade: ${escape(offer.difficulty)}</p><button onclick="EquipmentSystem.acceptContract('${offer.id}')" ${taken || state.active.length >= EquipmentData.maxActiveContracts ? "disabled" : ""}>${taken ? "Contrato ja retirado" : "Aceitar contrato"}</button></article>`; }).join("")}</div></div>`;
+      <h4>Seus contratos</h4>${state.active.length ? state.active.map(quest => { const material = materialById(quest.rewardId); return `<article class="mercenary-contract"><strong>${escape(quest.targetName)} â€” ${escape(quest.targetRegion)}</strong><p>Derrotados: ${quest.progress}/${quest.count}</p><p>Pagamento: ${escape(material.name)} x${quest.rewardQty} <small>(${escape(material.regionName)})</small></p><div class="button-row"><span>Recompensa entregue automaticamente ao concluir.</span><button onclick="EquipmentSystem.abandonContract('${quest.id}')">Abandonar</button></div></article>`; }).join("") : '<p class="lock-note">Aceite um contrato abaixo para comecar.</p>'}
+      <h4>Quadro de ofertas</h4><div class="mercenary-offers">${state.offers.filter(offer => !state.active.some(quest => quest.id === offer.id) && !state.claimed.includes(offer.id)).map(offer => `<article class="mercenary-contract"><strong>Cace ${offer.count} ${escape(offer.targetName)}</strong><p class="lock-note">Local: ${escape(offer.targetRegion)}. Pagamento de ${escape(offer.rewardRegion)}:</p><p>Recompensa: ${escape(materialById(offer.rewardId).name)} x${offer.rewardQty}</p><p class="lock-note">Dificuldade: ${escape(offer.difficulty)}</p><button onclick="EquipmentSystem.acceptContract('${offer.id}')" ${state.active.length >= EquipmentData.maxActiveContracts ? "disabled" : ""}>Aceitar contrato</button></article>`).join("") || '<p>Nenhuma oferta disponivel nesta rotacao.</p>'}</div></div>`;
   }
 
   function runtime(effects){
@@ -501,6 +536,6 @@ const EquipmentSystem = (function(){
     if(typeof triggerForgeFeedback === "function" && equippedSlot) triggerForgeFeedback(equippedSlot, "success");
     changed(); return improved;
   }
-  return { createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
+  return { createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
 })();
 if(typeof window !== "undefined") window.EquipmentSystem = EquipmentSystem;

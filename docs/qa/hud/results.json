@@ -12,7 +12,7 @@
       "screen": "workshop",
       "width": 1366,
       "scroll": 1366,
-      "height": 967,
+      "height": 1011,
       "duplicates": [],
       "broken": []
     },
@@ -28,7 +28,7 @@
       "screen": "character",
       "width": 1366,
       "scroll": 1366,
-      "height": 768,
+      "height": 871,
       "duplicates": [],
       "broken": []
     },
@@ -36,7 +36,7 @@
       "screen": "bag",
       "width": 1366,
       "scroll": 1366,
-      "height": 768,
+      "height": 871,
       "duplicates": [],
       "broken": []
     },
@@ -92,7 +92,7 @@
       "screen": "workshop",
       "width": 1024,
       "scroll": 1024,
-      "height": 1071,
+      "height": 1074,
       "duplicates": [],
       "broken": []
     },
@@ -108,7 +108,7 @@
       "screen": "character",
       "width": 1024,
       "scroll": 1024,
-      "height": 928,
+      "height": 1137,
       "duplicates": [],
       "broken": []
     },
@@ -116,7 +116,7 @@
       "screen": "bag",
       "width": 1024,
       "scroll": 1024,
-      "height": 928,
+      "height": 1137,
       "duplicates": [],
       "broken": []
     },
@@ -124,7 +124,7 @@
       "screen": "mercenary",
       "width": 1024,
       "scroll": 1024,
-      "height": 1539,
+      "height": 1374,
       "duplicates": [],
       "broken": []
     },
@@ -172,7 +172,7 @@
       "screen": "workshop",
       "width": 768,
       "scroll": 768,
-      "height": 1071,
+      "height": 1074,
       "duplicates": [],
       "broken": []
     },
@@ -188,7 +188,7 @@
       "screen": "character",
       "width": 768,
       "scroll": 768,
-      "height": 928,
+      "height": 1137,
       "duplicates": [],
       "broken": []
     },
@@ -196,7 +196,7 @@
       "screen": "bag",
       "width": 768,
       "scroll": 768,
-      "height": 928,
+      "height": 1137,
       "duplicates": [],
       "broken": []
     },
@@ -204,7 +204,7 @@
       "screen": "mercenary",
       "width": 768,
       "scroll": 768,
-      "height": 1539,
+      "height": 1374,
       "duplicates": [],
       "broken": []
     },
@@ -212,7 +212,7 @@
       "screen": "inn",
       "width": 768,
       "scroll": 768,
-      "height": 878,
+      "height": 895,
       "duplicates": [],
       "broken": []
     },
@@ -252,7 +252,7 @@
       "screen": "workshop",
       "width": 390,
       "scroll": 390,
-      "height": 1684,
+      "height": 1751,
       "duplicates": [],
       "broken": []
     },
@@ -268,7 +268,7 @@
       "screen": "character",
       "width": 390,
       "scroll": 390,
-      "height": 1322,
+      "height": 1536,
       "duplicates": [],
       "broken": []
     },
@@ -276,7 +276,7 @@
       "screen": "bag",
       "width": 390,
       "scroll": 390,
-      "height": 1322,
+      "height": 1536,
       "duplicates": [],
       "broken": []
     },
@@ -284,7 +284,7 @@
       "screen": "mercenary",
       "width": 390,
       "scroll": 390,
-      "height": 1957,
+      "height": 1795,
       "duplicates": [],
       "broken": []
     },
@@ -292,7 +292,7 @@
       "screen": "inn",
       "width": 390,
       "scroll": 390,
-      "height": 916,
+      "height": 989,
       "duplicates": [],
       "broken": []
     },
@@ -332,7 +332,7 @@
       "screen": "workshop",
       "width": 320,
       "scroll": 320,
-      "height": 1752,
+      "height": 1819,
       "duplicates": [],
       "broken": []
     },
@@ -348,7 +348,7 @@
       "screen": "character",
       "width": 320,
       "scroll": 320,
-      "height": 1343,
+      "height": 1600,
       "duplicates": [],
       "broken": []
     },
@@ -356,7 +356,7 @@
       "screen": "bag",
       "width": 320,
       "scroll": 320,
-      "height": 1343,
+      "height": 1600,
       "duplicates": [],
       "broken": []
     },
@@ -364,7 +364,7 @@
       "screen": "mercenary",
       "width": 320,
       "scroll": 320,
-      "height": 2061,
+      "height": 1898,
       "duplicates": [],
       "broken": []
     },
@@ -372,7 +372,7 @@
       "screen": "inn",
       "width": 320,
       "scroll": 320,
-      "height": 971,
+      "height": 1062,
       "duplicates": [],
       "broken": []
     },
@@ -403,11 +403,11 @@
   ],
   "flows": [
     "basic attack and stable disabled action slots",
-    "consumables dialog, keyboard isolation and Escape",
+    "quick consumable HUD, keyboard isolation and Escape",
     "locked crafting region and common crafting with actual materials/cost",
     "bag inspection does not mutate equipment; explicit equip works",
     "sequential rarity upgrade and missing-material guard",
-    "fixed mercenary reward, completion, claim exactly once",
+    "fixed mercenary reward, automatic completion exactly once",
     "all four classes render; mage basic cost and mana lock match engine",
     "restricted storage preserves session without persistent save overlay",
     "inn recovery and save/reload persistence",

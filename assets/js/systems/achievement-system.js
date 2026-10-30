@@ -160,7 +160,7 @@ function getTrophyEntryTooltip(entry){
 
 function getTrophyHoverAttrs(entry){
   const tooltip = getTrophyEntryTooltip(entry);
-  return `data-trophy-tooltip="${escapeHtml(tooltip)}" onmouseenter="showTrophyCategoryPopup(event,'${escapeJsString(tooltip)}')" onmousemove="moveTrophyCategoryPopup(event)" onmouseleave="hideTrophyCategoryPopup()"`;
+  return `data-trophy-tooltip="${escapeHtml(tooltip)}"`;
 }
 
 function getTrophyPopupElement(){

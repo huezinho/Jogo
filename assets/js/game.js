@@ -28,7 +28,7 @@ let currentMode = "battle";
 let bestiaryRegionFilter = null;
 let artisanRegionFilter = null;
 let selectedTrophyCategory = "Todas";
-let campTab = "status";
+let campTab = "equipamentos";
 let villageTab = "inn";
 let villageNpcEntryPending = "";
 let startScreenTab = "continue";
@@ -41,6 +41,9 @@ let isSettingsOpen = false;
 let forgeFeedback = { slot: "", result: "", timeoutId: null };
 let actionFeedback = { scope: "", message: "", tone: "info", timeoutId: null };
 let inventoryFlash = { uid: "", id: "", result: "", timeoutId: null };
+let gameNoticeTimer = null;
+let gameNoticeOwner = null;
+const gameNoticeQueue = [];
 const INVENTORY_MIN_SLOTS = 40;
 const INVENTORY_SLOT_COLUMNS = 8;
 const MAX_LOG_ENTRIES = 90;
@@ -340,9 +343,9 @@ function loadUiSettings(){
   }
 }
 
-function saveUiSettings(){
+function saveUiSettings(render = true){
   GameStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(uiSettings));
-  renderSettingsPanel();
+  if(render) renderSettingsPanel();
 }
 
 function toggleSettingsPanel(){
@@ -465,6 +468,32 @@ function triggerInventoryFlash(item, result = "success"){
   };
 }
 
+function showGameNotice(title, message){
+  if(gameNoticeOwner !== player?.characterId){
+    clearTimeout(gameNoticeTimer); gameNoticeTimer = null; gameNoticeQueue.length = 0;
+    const old = document.getElementById("gameNotice");
+    if(old){ if(old.matches(':popover-open')) old.hidePopover(); old.hidden = true; }
+    gameNoticeOwner = player?.characterId;
+  }
+  gameNoticeQueue.push({title, message});
+  if(!gameNoticeTimer) showNextGameNotice();
+}
+
+function showNextGameNotice(){
+  if(!gameNoticeQueue.length){gameNoticeTimer = null;return;}
+  let notice = document.getElementById("gameNotice");
+  if(!notice){notice=document.createElement("div");notice.id="gameNotice";notice.popover="manual";notice.setAttribute("role","status");notice.setAttribute("aria-live","polite");document.body.append(notice);}
+  const entry=gameNoticeQueue.shift(),title=document.createElement("strong"),detail=document.createElement("span");
+  title.textContent=entry.title;detail.textContent=entry.message;notice.replaceChildren(title,detail);notice.hidden=false;
+  if(!notice.matches(':popover-open'))notice.showPopover();
+  gameNoticeTimer=setTimeout(()=>{if(notice.matches(':popover-open'))notice.hidePopover();notice.hidden=true;showNextGameNotice();},6000);
+}
+
+function raiseGameNotice(){
+  const notice=document.getElementById("gameNotice");
+  if(notice?.matches(':popover-open')){notice.hidePopover();notice.showPopover();}
+}
+
 function ensureRegionMusicAudio(){
   if(regionMusicAudio){ return regionMusicAudio; }
   regionMusicAudio = new Audio();
@@ -535,7 +564,11 @@ function applyMusicSettings(){
 function setMusicVolume(nextVolume){
   uiSettings.musicVolume = Math.min(1, Math.max(0, nextVolume));
   applyMusicSettings();
-  saveUiSettings();
+  saveUiSettings(false);
+  const slider=document.getElementById("musicVolume"),label=document.getElementById("musicVolumeValue");
+  const percent=Math.round(uiSettings.musicVolume*100);
+  if(slider) slider.value=String(percent);
+  if(label) label.textContent=`${percent}%`;
 }
 
 function adjustMusicVolume(delta){
@@ -600,20 +633,9 @@ function renderSettingsPanel(){
     panel.innerHTML = "";
     return;
   }
-  const options = [
-    { id: "instantanea", label: "Instantanea" },
-    { id: "rapida", label: "Rapida" },
-    { id: "media", label: "Media" },
-    { id: "lenta", label: "Lenta" }
-  ];
   panel.innerHTML = `
     <h3>Configuracao</h3>
     ${player ? `<div class="settings-options settings-main-actions"><button class="danger-btn" onclick="exitToCharacterSelect()">Sair para personagens</button></div>` : ""}
-    <span class="lock-note">Velocidade da barra de vida do inimigo</span>
-    <div class="settings-options">
-      ${options.map(option => `<button class="${uiSettings.enemyBarSpeed === option.id ? "active" : ""}" onclick="setEnemyBarSpeed('${option.id}')">${option.label}</button>`).join("")}
-    </div>
-    <span class="settings-note">Para Guerreiro e Arqueiro, as opcoes continuam mais rapidas que para o Mago para preservar o impacto do Missel Magico.</span>
     ${DEV_MODE ? `<div style="margin-top:14px;">
       <span class="lock-note">Testes de renascimento</span>
       <div class="settings-options">
@@ -623,13 +645,11 @@ function renderSettingsPanel(){
       <span class="settings-note">Opcao de teste para renascer sem tempo de espera.</span>
     </div>` : ""}
     <div style="margin-top:14px;">
-      <span class="lock-note">Volume da musica</span>
+      <div class="settings-volume"><label for="musicVolume">Volume da música</label><output id="musicVolumeValue" for="musicVolume">${Math.round((uiSettings.musicVolume ?? .5)*100)}%</output><input id="musicVolume" type="range" min="0" max="100" step="1" value="${Math.round((uiSettings.musicVolume ?? .5)*100)}" oninput="setMusicVolume(Number(this.value)/100)"></div>
       <div class="settings-options">
-        <button onclick="adjustMusicVolume(-0.1)">Diminuir</button>
-        <button onclick="adjustMusicVolume(0.1)">Aumentar</button>
         <button class="${uiSettings.musicMuted ? "active" : ""}" onclick="toggleMusicMute()">${uiSettings.musicMuted ? "Desmutar" : "Mutar"}</button>
       </div>
-      <span class="settings-note">Volume atual: ${Math.round((uiSettings.musicVolume ?? 0.5) * 100)}%${uiSettings.musicMuted ? " | Mutado" : ""}</span>
+
     </div>
     ${DEV_MODE ? `<div style="margin-top:14px;">
       <span class="lock-note">Dev</span>
@@ -1117,7 +1137,7 @@ function getAdjustedRegionSpawnWeights(enemyList, regionName = currentRegion){
   }));
   const rareEntry = rawEntries.find(entry => getEnemyRarity(regionName, entry.enemyData.name, false).key === "rara");
   if(!rareEntry){
-    return rawEntries;
+    return typeof CreatureTracking !== "undefined" ? CreatureTracking.weights(rawEntries, regionName) : rawEntries;
   }
   const baseTotal = rawEntries.reduce((sum, entry) => sum + entry.baseWeight, 0) || 1;
   const rawTotal = rawEntries.reduce((sum, entry) => sum + entry.weight, 0) || 1;
@@ -1130,11 +1150,11 @@ function getAdjustedRegionSpawnWeights(enemyList, regionName = currentRegion){
   }
   const allowedRareChance = baseRareChance + ((rawRareChance - baseRareChance) * revealProgress);
   if(rawRareChance <= allowedRareChance || allowedRareChance >= 0.999){
-    return rawEntries;
+    return typeof CreatureTracking !== "undefined" ? CreatureTracking.weights(rawEntries, regionName) : rawEntries;
   }
   const otherWeight = Math.max(0.0001, rawTotal - rareEntry.weight);
   rareEntry.weight = Math.max(1, (allowedRareChance * otherWeight) / Math.max(0.0001, 1 - allowedRareChance));
-  return rawEntries;
+  return typeof CreatureTracking !== "undefined" ? CreatureTracking.weights(rawEntries, regionName) : rawEntries;
 }
 
 function getRegionSpawnPreview(regionName){
@@ -1142,7 +1162,7 @@ function getRegionSpawnPreview(regionName){
   if(!regionData?.enemies?.length){
     return [];
   }
-  if(regionName === currentRegion && !isDungeonMode() && enemiesSpawned < 3){
+  if(regionName === currentRegion && !isDungeonMode() && enemiesSpawned < 3 && !(typeof CreatureTracking !== "undefined" && CreatureTracking.inRegion(regionName))){
     const forcedEnemy = regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio");
     if(forcedEnemy){
       return regionData.enemies.map(enemyData => ({
@@ -1650,7 +1670,8 @@ function normalizePlayerState(){
   delete player.activeSkills;
   delete player.passiveSkills;
   playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
-  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.normalizePlayer(player); }
+  if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.normalizePlayer(player); EquipmentSystem.collectCompletedContracts(player); }
+  if(typeof CreatureTracking !== "undefined"){ CreatureTracking.normalize(player); }
 }
 
 function getAttributePointGain(attribute, targetLevel = player?.level || 1){
@@ -1927,13 +1948,12 @@ function needsSubclassChoice(){
 }
 
 function setCampTab(tab){
-  campTab = ["status", "equipamentos", "habilidades"].includes(tab) ? tab : "status";
+  campTab = ["equipamentos", "habilidades"].includes(tab) ? tab : "equipamentos";
   updateUI();
 }
 
 function renderCampTabs(){
   const tabs = [
-    { id: "status", label: "Status do heroi" },
     { id: "equipamentos", label: "Equipamentos" },
     { id: "habilidades", label: "Habilidades" }
   ];
@@ -4398,6 +4418,7 @@ function renderVillagePanel(){
         <strong>Recuperacao de mana</strong><br>
         <span class="lock-note">Recupera toda a sua mana atual por ${getManaHealCost()} moedas.</span>
         <div class="button-row"><button onclick="restoreManaAtVillage()">Curar Mana (${getManaHealCost()} moedas)</button></div>
+        <div class="button-row"><button onclick="restoreBothAtVillage()" ${getHealCost()+getManaHealCost()===0||player.coins<getHealCost()+getManaHealCost()?"disabled":""}>Curar Vida e Mana (${getHealCost()+getManaHealCost()} moedas)</button></div>
       </div>
     </div>`;
 }
@@ -4911,60 +4932,21 @@ function openChest(itemUid){
 }
 
 async function useManaPotion(){
-  if(isDead || currentMode === "trophies" || isProcessingTurn){ return; }
-  if(currentMode === "battle" && enemy){
-    isProcessingTurn = true;
-    if(await handlePlayerTurnStartEffects()){
-      return;
-    }
-  }
-  const item = player.inventory.find(entry => entry.id === "mana_potion" && entry.qty > 0);
-  if(!item){
-    if(currentMode === "battle" && enemy){
-      isProcessingTurn = false;
-    }
-    log("Voce nao tem Pocao de Mana no inventario.");
-    return;
-  }
-  const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
-  removeInventoryUnit(itemIndex);
-  const maxMp = getPreviewStats().maxMp;
-  const manaBefore = player.mp;
-  const recovered = Math.max(1, Math.floor(maxMp * 0.35));
-  player.mp = Math.min(maxMp, player.mp + recovered);
-  displayState.playerMp = player.mp;
-  log(`Voce usou uma Pocao de Mana e recuperou ${player.mp - manaBefore} de mana.`);
-  updateUI();
-  if(currentMode === "dungeon" && isDungeonConnected()){
-    syncDungeonProfile();
-    return;
-  }
-  if(currentMode === "battle" && enemy){
-    await wait(220);
-    await enemyTurn();
-  }
+  return useConsumable("mana_potion");
 }
 
 async function useConsumable(itemId){
-  if(itemId === "mana_potion"){
-    await useManaPotion();
-    return;
-  }
   if(isDead || currentMode === "trophies" || isProcessingTurn){ return; }
-  if(currentMode === "battle" && enemy){
+  const item = player.inventory.find(entry => entry.id === itemId && entry.qty > 0);
+  const config = consumableCatalog[itemId];
+  if(!item || !config){ log("Esse consumivel nao esta disponivel."); return; }
+  const battleTurn = currentMode === "battle" && !!enemy;
+  if(battleTurn){
     isProcessingTurn = true;
     if(await handlePlayerTurnStartEffects()){
       return;
     }
-  }
-  const item = player.inventory.find(entry => entry.id === itemId && entry.qty > 0);
-  const config = consumableCatalog[itemId];
-  if(!item || !config){
-    if(currentMode === "battle" && enemy){
-      isProcessingTurn = false;
-    }
-    log("Esse consumivel nao esta disponivel.");
-    return;
+    beginEquipmentAction("consumable");
   }
   const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
   removeInventoryUnit(itemIndex);
@@ -5017,9 +4999,13 @@ async function useConsumable(itemId){
     return;
   }
   if(currentMode === "battle" && enemy){
+    if(config.effectType === "buff_skill") playerEffects.freshBuffs.push("skillBuffTurns");
+    if(config.effectType === "buff_attack") playerEffects.freshBuffs.push("attackBuffTurns");
+    decayPlayerBuffs();
+    endEquipmentAction();
     updateUI();
     await wait(220);
-    await enemyTurn();
+    await afterTurn();
   }
 }
 
@@ -5068,11 +5054,13 @@ function equipItem(itemUid){
     return;
   }
   const equipped = player.equipment?.[item.slot] || null;
+  const piece = { ...item, qty: 1 };
+  if(item.qty > 1) piece.uid = `equipped_${Date.now()}_${Math.floor(Math.random() * 1000000000)}`;
   removeInventoryUnit(itemIndex);
   if(equipped){
     addInventoryItem(equipped);
   }
-  player.equipment[item.slot] = item;
+  player.equipment[item.slot] = piece;
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp);
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp);
   displayState.playerHp = player.hp;
@@ -5205,7 +5193,7 @@ function spawnEnemy(isBoss = false){
   const regionData = isDungeonMode() ? dungeonData : regions[currentRegion];
   const template = isBoss
     ? regionData.boss
-    : enemiesSpawned < 3
+    : enemiesSpawned < 3 && !(typeof CreatureTracking !== "undefined" && CreatureTracking.inRegion(currentRegion))
       ? (!isDungeonMode() ? regionData.enemies.find(enemyData => enemyData.name === "Lobo Sombrio") : null) || chooseWeightedEnemy(regionData.enemies, { regionName: isDungeonMode() ? "Dungeon" : currentRegion })
       : chooseWeightedEnemy(regionData.enemies, { regionName: isDungeonMode() ? "Dungeon" : currentRegion });
   enemy = createEnemyFromTemplate(template, isBoss);
@@ -5337,6 +5325,18 @@ function restoreManaAtVillage(){
   displayState.playerMp = player.mp;
   log(`Voce descansou a mente no vilarejo e recuperou toda a mana por ${cost} moedas.`);
   updateUI();
+}
+
+function restoreBothAtVillage(){
+  if(currentMode !== "village" || isProcessingTurn || isDead || enemy) return false;
+  const cost = getHealCost() + getManaHealCost();
+  if(cost <= 0 || player.coins < cost) return false;
+  player.coins -= cost;
+  const caps = getCurrentCaps();
+  player.hp = caps.maxHp; player.mp = caps.maxMp;
+  displayState.playerHp = player.hp; displayState.playerMp = player.mp;
+  log(`Voce descansou na pousada e recuperou vida e mana por ${cost} moedas.`);
+  updateUI(); return true;
 }
 
 function buyConsumable(itemId){
@@ -5868,10 +5868,10 @@ function renderRegionMapCard(){
       <div class="region-map-frame">
         <img class="region-map-image" src="assets/visual/maps/region-map.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
         ${markers}
-        <div class="region-map-boss-hud">
+      </div>
+      <div class="region-map-boss-hud">
           <span class="region-map-boss-progress">${bossUnlockProgress.defeated}/${bossUnlockProgress.total}</span>
           <button class="region-map-boss-btn boss-btn action-btn" data-tooltip="${escapeHtml(bossProgressTooltip)}" onclick="challengeBoss()" aria-label="Enfrentar chefao" ${controlsDisabled || !bossUnlockProgress.unlocked ? "disabled" : ""}>Chefao</button>
-        </div>
       </div>
     </div>`;
 }
@@ -5897,7 +5897,6 @@ function renderLocationMapNavigation(){
       <button
         class="location-map-marker action-btn ${option.id === activeMode ? "active" : ""}"
         style="--x:${option.x}%;--y:${option.y}%"
-        title="${option.label} | Atalho ${option.shortcut}"
         data-tooltip="${option.label} | Atalho ${option.shortcut}"
         onclick="setMode('${option.id}')"
         aria-label="Ir para ${option.label}"
@@ -7414,6 +7413,13 @@ setInterval(() => {
   const mercenaryMinute = Math.floor(Date.now() / 60000);
   if(player && currentMode === "village" && villageTab === "mercenary" && mercenaryMinute !== lastMercenaryUiMinute){
     lastMercenaryUiMinute = mercenaryMinute; EquipmentSystem.refreshContracts(player); updateUI();
+  }
+  if(player?.creatureTracking && typeof CreatureTracking !== "undefined"){
+    if(!CreatureTracking.active()){
+      player.creatureTracking = null; log("O periodo de rastreamento terminou."); updateUI();
+    }else if(mercenaryMinute !== lastMercenaryUiMinute && currentMode === "battle"){
+      lastMercenaryUiMinute = mercenaryMinute; updateUI();
+    }
   }
   if(isDead){
     updateUI();
