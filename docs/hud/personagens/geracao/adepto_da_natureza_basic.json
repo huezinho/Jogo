@@ -1,0 +1,21 @@
+{
+  "kind": "fx",
+  "skillKind": "basic",
+  "id": "adepto_da_natureza_basic",
+  "name": "Ataque bÃ¡sico",
+  "className": "Adepto da Natureza",
+  "path": "assets/visual/skill-fx/adepto_da_natureza_basic.webp",
+  "prompt": "Production animated BASIC ATTACK EFFECT sheet for Adepto da Natureza. A living thorn branch whipping rightwards with green leaf sparks. Hand-painted dark fantasy RPG effect matching the supplied skill icon reference. Exactly FOUR columns by TWO rows, EIGHT evenly spaced animation cells, chronological left to right. Sequence gather tiny energy, build, launch, moving, impact peak, scatter, fade, last tiny remnants. EFFECT ONLY, no character, body, portraits, UI, frame, text or numbers. Entire effect inside CENTRAL 70% of each cell, LARGE empty transparent gutters, never overlaps neighboring cells. GENUINELY TRANSPARENT background. Reference is style/effect reference, not an edit target. Distinct evolving frames, not repeated identical icons.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-e2960081-040f-40b4-a189-fa7a1fa66016.png",
+  "atlas": {
+    "columns": 4,
+    "rows": 2,
+    "frameWidth": 256,
+    "frameHeight": 256,
+    "frames": 8,
+    "sourceSize": [
+      1774,
+      887
+    ]
+  }
+}

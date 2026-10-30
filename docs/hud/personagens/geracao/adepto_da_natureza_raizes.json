@@ -1,0 +1,27 @@
+{
+  "kind": "fx",
+  "skillKind": "active",
+  "id": "adepto_da_natureza_raizes",
+  "name": "Raizes",
+  "className": "Adepto da Natureza",
+  "mechanics": {
+    "level": 20,
+    "id": "raizes",
+    "name": "Raizes",
+    "type": "nature_roots"
+  },
+  "path": "assets/visual/skill-fx/adepto_da_natureza_raizes.webp",
+  "prompt": "Production animated visual EFFECT SPRITE SHEET for fantasy RPG ability \"Raizes\" for Adepto da Natureza, ability mechanic nature_roots. Reference image is only the effect's visual identity and painterly style, NOT an edit target. Create exactly 4 COLUMNS x 2 ROWS = EIGHT equal cells, chronological left-to-right then next row. An actual effect animation: tiny gathering energy, building up, launching, expanding, strong impact peak, smaller fading impact, dispersing sparks, nearly vanished remnants. Each frame visibly different. Express this PARTICULAR ability, its motif and color from the reference. Warrior melee skills use slashing force/impact, support skills aura/runes; archer skills arrows/traps; magic skills their actual element; nature skills vines/leaves or regeneration. EFFECT ONLY: no character, body, equipment item, portrait, enemy or UI. GENUINELY TRANSPARENT background. Hand-painted premium dark fantasy illustration, bright crisp readable effect against transparent emptiness. Large transparent gutters, entire effect contained in CENTRAL 70% of EACH cell, never touching neighboring frames, consistent origin and scale. No lettering, borders, labels, grid lines or watermarks. Clean alpha transparency is required.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-11f03a43-b40e-4df0-b308-2584e3b3f919.png",
+  "atlas": {
+    "columns": 4,
+    "rows": 2,
+    "frameWidth": 256,
+    "frameHeight": 256,
+    "frames": 8,
+    "sourceSize": [
+      1774,
+      887
+    ]
+  }
+}

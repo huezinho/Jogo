@@ -64,7 +64,7 @@ const CampaignHUD = (() => {
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
     panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal">${renderBestiary()}</section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
-    if(currentMode==='battle') dockVitals();
+    if(currentMode==='battle'){dockVitals();if(typeof CharacterMotion!=='undefined')CharacterMotion.prepare(getSkillInfo());}
     document.getElementById('regionInfo').innerHTML=renderRegionMapCard().replace(/<p class="map-current-label">[\s\S]*?<\/p>/,`<p class="rpg-map-caption">${esc(currentRegion)}</p>`);
     renderActions(); renderLevelUpPanel(); animateBars(); nav(); syncChronicle();
     for(const control of root.querySelectorAll('button[data-tooltip]:not([aria-label])'))control.setAttribute('aria-label',control.textContent.trim());

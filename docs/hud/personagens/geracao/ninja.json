@@ -1,0 +1,21 @@
+{
+  "id": "ninja",
+  "className": "Guerreiro",
+  "name": "Ninja",
+  "description": "Mobilidade extrema, evasao e assassinato oportunista.",
+  "kind": "hero",
+  "path": "assets/visual/heroes-v2/ninja.webp",
+  "prompt": "Production animation SPRITE SHEET. Art style reference: premium hand-painted fantasy RPG skill icons. Character is black masked ninja, short paired blades, no shield. Class/subclass Ninja: Mobilidade extrema, evasao e assassinato oportunista.. Exactly 4 COLUMNS x 4 ROWS, 16 equal square cells, overall square sheet. The SAME full-body character, identical face, armor and weapon in EVERY frame, three-quarter view FACING RIGHT. Central 65% of each cell only, VERY LARGE completely empty transparent gutters, pull camera back. Same scale and ground baseline. No body part, weapon, hair or wing touches an adjacent frame. Row1 FOUR subtly different idle breathing poses. Row2 FOUR sequential melee basic attack with their own weapon: raise weapon close, downward slash, close-body follow-through with blade pointed down, recover. Row3 FOUR skill/support action poses: raise free hand or focus, gather small light at hand, release with a close-body gesture, recover. Row4 FOUR taking-damage poses: brace, visible torso/head recoil backward, regain balance, return to ready. Paint real articulated motion, not identical repeated drawings. No scenery, floor, shadows outside character, text, gridlines, numbers, frames, large projectiles or effects spreading outside silhouette. Complete feet and equipment inside every cell. GENUINE transparent background. Detailed coherent anatomy and painterly materials.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-e59fad0f-10b6-40e1-be3a-5bf857dbba21.png",
+  "atlas": {
+    "columns": 4,
+    "rows": 4,
+    "frameWidth": 256,
+    "frameHeight": 320,
+    "frames": 16,
+    "sourceSize": [
+      1254,
+      1254
+    ]
+  }
+}

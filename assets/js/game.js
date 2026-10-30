@@ -721,6 +721,7 @@ const LOCATION_MODE_OPTIONS = [
 
 function getVisualSpritePath(kind, assetKey){
   const normalizedKind = kind === "heroes" ? "heroes" : "enemies";
+  if(normalizedKind === "heroes" && typeof CharacterMotion !== "undefined")return new URL(CharacterMotion.heroPath(assetKey),window.location.href).href;
   const resolvedKey = combatArtAliases[normalizedKind]?.[assetKey] || assetKey;
   const path = `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
   return new URL(path, window.location.href).href;
@@ -729,7 +730,7 @@ function getVisualSpritePath(kind, assetKey){
 function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extraClass = ""){
   const source = getVisualSpritePath(kind, assetKey);
   const safeLabel = String(label || "").replace(/"/g, "&quot;");
-  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${extraClass}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></div>`;
+  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2' : ''} ${extraClass}" style="--sprite-url:url('${source}');${kind==='heroes'&&typeof CharacterMotion!=='undefined'?'--portrait-top:'+CharacterMotion.portraitTop(assetKey)+'px':''}" role="img" aria-label="${safeLabel}"></div>`;
 }
 
 function getHeroSpriteMarkup(targetPlayer = player){
@@ -739,7 +740,7 @@ function getHeroSpriteMarkup(targetPlayer = player){
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
   const source = getVisualSpritePath(kind, assetKey);
   const safeLabel = String(altText || "").replace(/"/g, "&quot;");
-  return `<span class="combat-avatar-media sprite-avatar" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
+  return `<span class="combat-avatar-media sprite-avatar ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2-avatar' : ''}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
 }
 
 function getProjectilePath(projectileKey){
@@ -1367,6 +1368,7 @@ function restartElementAnimation(element, className){
 }
 
 function pulseSpriteClass(elementId, className, duration = 260){
+  if(elementId === "heroSpriteBox" && className === "hit" && typeof CharacterMotion !== "undefined")CharacterMotion.hurt();
   const element = document.getElementById(elementId);
   if(!element){ return Promise.resolve(); }
   const timerKey = `${elementId}:${className}`;
@@ -1408,7 +1410,11 @@ function getSpriteAnimationTiming(attacker = "hero", style = "attack"){
   return { attackerDuration: 820, hitDelay: 260, settleDelay: 190, betweenHits: 120 };
 }
 
-async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = null, betweenHits = null){
+async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = null, betweenHits = null, skillInfo = null){
+  if(attacker === "hero" && typeof CharacterMotion !== "undefined" && document.querySelector("#heroSpriteBox .hero-v2"))return CharacterMotion.action({style,skill:skillInfo,connectHit,hitRepeats,hitDelay,betweenHits});
+  const motionStarted = performance.now();
+  const reactions = [];
+  const paintedBattle = typeof CharacterMotion !== "undefined" && !!document.querySelector("#heroSpriteBox .hero-v2");
   const attackerId = attacker === "hero" ? "heroSpriteBox" : "enemySpriteBox";
   const defenderId = attacker === "hero" ? "enemySpriteBox" : "heroSpriteBox";
   const attackerClass = style === "cast" ? "casting" : style === "buff" ? "buffing" : style === "skill" ? "skilling" : "attacking";
@@ -1421,17 +1427,18 @@ async function playSpriteAttackAnimation(attacker = "hero", style = "attack", co
     playSceneProjectile(attacker, style, resolvedHitDelay + 120);
   }
   if(!connectHit){
-    await wait(Math.floor(resolvedHitDelay * 0.85));
+    await wait(paintedBattle ? attackerDuration : Math.floor(resolvedHitDelay * 0.85));
     return;
   }
   await wait(resolvedHitDelay);
   for(let hitIndex = 0; hitIndex < Math.max(1, hitRepeats); hitIndex++){
-    pulseSpriteClass(defenderId, "hit", 500);
+    reactions.push(pulseSpriteClass(defenderId, "hit", 500));
     if(hitIndex < hitRepeats - 1){
       await wait(resolvedBetweenHits);
     }
   }
   await wait(timing.settleDelay);
+  if(paintedBattle){ await Promise.all(reactions); await wait(Math.max(0,attackerDuration-(performance.now()-motionStarted))); }
 }
 
 function playEnemyEntranceAnimation(){
@@ -2340,7 +2347,8 @@ async function handlePlayerTurnStartEffects(){
     displayState.playerHp = player.hp;
     log(`Voce sofreu ${burnDamage} de dano por queimadura.`);
     updateUI();
-    await wait(180);
+    if(burnDamage > 0 && typeof CharacterMotion !== "undefined")await CharacterMotion.hurt();
+    else await wait(180);
     if(player.hp <= 0){
       handleDeath("A queimadura consumiu seu heroi.");
       return true;
@@ -6501,11 +6509,21 @@ async function attack(){
   applyTurnStartPassives();
   log(result.message);
   playerEffects.lastActionType = "basic_attack";
+  if(typeof CharacterMotion !== "undefined")await CharacterMotion.ready(null,"attack");
   if(player.class === "Mago" && result.hitDamages?.length){
-    await playSpriteAttackAnimation("hero", "cast", false);
-    await animateEnemyHitSequence(result.hitDamages);
+    if(typeof CharacterMotion !== "undefined"){
+      const missileTiming = getEnemyBarAnimationConfig(true);
+      const animation = playSpriteAttackAnimation("hero", "cast", false, result.hitDamages.length, CharacterMotion.impactDelay(null,"cast")+missileTiming.missileStartDelay, missileTiming.missileHitDelay);
+      await wait(CharacterMotion.impactDelay(null,"cast"));
+      await Promise.all([animation,animateEnemyHitSequence(result.hitDamages)]);
+    }else{
+      await playSpriteAttackAnimation("hero", "cast", false);
+      await animateEnemyHitSequence(result.hitDamages);
+    }
   }else{
-    await playSpriteAttackAnimation("hero", "attack", result.damage > 0);
+    const basicMotion = playSpriteAttackAnimation("hero", "attack", result.damage > 0);
+    if(typeof CharacterMotion !== "undefined")await wait(CharacterMotion.impactDelay(null,"attack"));
+    else await basicMotion;
     const animationConfig = getEnemyBarAnimationConfig(false);
     await animateEnemyBarTo(
       enemy.hp,
@@ -6515,6 +6533,7 @@ async function attack(){
       animationConfig.frameDivisor,
       animationConfig.startDelay
     );
+    await basicMotion;
   }
   decayPlayerBuffs();
   applyEndOfTurnRecovery();
@@ -6557,7 +6576,10 @@ async function useSkill(index){
   displayState.playerMp = player.mp;
   updateUI();
   await wait(80);
-  await playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0);
+  if(typeof CharacterMotion !== "undefined")await CharacterMotion.ready(skillInfo,getSkillAnimationStyle(skillInfo));
+  const skillMotion = playSpriteAttackAnimation("hero", getSkillAnimationStyle(skillInfo), result.damage > 0, 1, null, null, skillInfo);
+  if(typeof CharacterMotion !== "undefined")await wait(CharacterMotion.impactDelay(skillInfo,getSkillAnimationStyle(skillInfo)));
+  else await skillMotion;
   if(result.damage > 0){
     const animationConfig = getEnemyBarAnimationConfig(false);
     await animateEnemyBarTo(
@@ -6569,6 +6591,7 @@ async function useSkill(index){
       animationConfig.startDelay
     );
   }
+  await skillMotion;
   decayPlayerBuffs();
   applyEndOfTurnRecovery();
   updateUI();

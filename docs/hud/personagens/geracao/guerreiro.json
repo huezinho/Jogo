@@ -1,0 +1,21 @@
+{
+  "id": "guerreiro",
+  "className": "Guerreiro",
+  "name": "Guerreiro",
+  "description": "Classe base",
+  "kind": "hero",
+  "path": "assets/visual/heroes-v2/guerreiro.webp",
+  "prompt": "Regenerate this production character animation sheet with the EXACT SAME warrior identity, armor, face, sword, shield and painterly quality. Fix frame isolation and consistency: exactly 4 columns x 4 rows equal square cells. Every cell must have VERY LARGE empty transparent gutters, the complete character INCLUDING THE SWORD confined to the CENTRAL 65% of its cell, never touching a neighboring cell. Pull camera back substantially. Exactly the same character scale and ground baseline in all 16 cells. Transparent background, no grid lines. Row1 idle FOUR subtle breathing poses. Row2 sword basic attack FOUR frames: ready blade held upwards close to body, downward diagonal close-body slash, downward follow-through WITH BLADE POINTING DOWN not horizontally extended, recovery. Row3 FOUR spell/support gestures: raise free hand, gather small light INSIDE palm, release with close-body gesture, recover. NO large cone, projectile, slash trails, aura or effects outside silhouette; separate effect sprites will be added by game. Row4 FOUR damage reaction poses: brace, torso/head recoil visibly backwards, regain balance, return. Entire body, feet, hands, sword, shield inside each cell with large margins in every pose. Three-quarter view facing RIGHT in every cell. No labels. No frames touching, NO overlapping characters. A correct isolated 16-frame animation atlas, not a collage.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-88807fc3-1978-4f36-b9f0-15dc5d90ec8f.png",
+  "atlas": {
+    "columns": 4,
+    "rows": 4,
+    "frameWidth": 256,
+    "frameHeight": 320,
+    "frames": 16,
+    "sourceSize": [
+      1254,
+      1254
+    ]
+  }
+}

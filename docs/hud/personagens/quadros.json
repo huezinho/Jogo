@@ -1,0 +1,548 @@
+[
+  {
+    "id": "guerreiro",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "cavaleiro",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "espadachim",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "paladino",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "berserker",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "samurai",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "ninja",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "mago",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "elementalista",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "arcanista",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "mago-incendiario",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "mago-frigido",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "arquimago",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "corrompido",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "arqueiro",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "atirador",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "cacador",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "atirador-arcano",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "sniper",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "espreitador",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "guarda-florestal",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "adepto-da-natureza",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "druida",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "espirito-da-floresta",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "druida-sombrio",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "avatar-da-natureza",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "fada-monarca",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "protetor-da-floresta",
+    "frames": 16,
+    "occupied": 16,
+    "distinct": 16
+  },
+  {
+    "id": "guerreiro_recuperar_folego",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_esbarrao",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_investida",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_contundir",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_golpes_velozes",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_brado",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_corte_profundo",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_julgamento",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_escudo_de_fe",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_ira",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_valhala",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_voce_ira_me_parar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_furar_blindagem",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_cortes_ultrasonicos",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_bomba_de_fumaca",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_mata_gigantes",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_mirar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_camuflagem",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_headshot",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_rajada_de_flechas",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_tiro_perfurante",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_armadilha",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_emergencia_arcana",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_sobreaquecer",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_executar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_ponto_fraco",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_surpresa",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_mirar_no_pe",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_tranquilizante",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_tiro_cortante",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_explosao_de_mana",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_bola_de_fogo",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_descarregar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_congelar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_escudo_de_mana",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_bafo_de_fogo",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_fenix_sagrada",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_explodir",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_bola_de_neve",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_nevasca",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_avalanche",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_concentracao",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_sobrecarregar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_corrupcao",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_incorporar_demonio",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_semente_viva",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_raizes",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_flor_do_pantano",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_encanto_da_brisa",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_colheita",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_cancao_ancestral",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_apodrecer",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_colapso_do_brejo",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_forma_verdadeira",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_esmagar_invasor",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_decreto_da_rainha",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_coroar",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_casulo_de_vinhas",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_jogar_espinhos",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "guerreiro_basic",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "arqueiro_basic",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "mago_basic",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  },
+  {
+    "id": "adepto_da_natureza_basic",
+    "frames": 8,
+    "occupied": 8,
+    "distinct": 8
+  }
+]

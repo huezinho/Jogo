@@ -83,6 +83,12 @@ A implementação usa imagens separadas e controles reais. Nenhuma captura conce
 - Mercenário: ofertas e contratos ativos, recompensa fixa, progresso, renovação do quadro e recebimento da recompensa.
 - Pousada, alquimista, bestiário, troféus e tela inicial receberam o mesmo acabamento. Arena e dungeon continuam com suas próprias interfaces.
 
+## Personagens pintados e animações de combate
+
+As quatro classes base e suas 24 subclasses usam agora folhas próprias no estilo pintado das habilidades. Cada personagem tem 16 quadros: repouso, ataque básico, conjuração/suporte e reação a dano. As 59 habilidades ativas têm efeitos individuais com oito quadros; os quatro ataques básicos também têm efeitos próprios. O módulo `character-motion.js` coordena os quadros, a trajetória dos efeitos, os impactos, a reação ao dano e o retorno ao repouso. O turno aguarda a conclusão e a preferência de movimento reduzido é respeitada.
+
+As artes ficam em `assets/visual/heroes-v2/` e `assets/visual/skill-fx/`. A galeria, as capturas, os prompts da geração integrada e a documentação estão em `docs/hud/personagens/`. A suíte `personagens/verificar.cjs` verifica os 28 personagens, as 59 habilidades, ataques básicos reais das quatro classes e três larguras de tela. `python scripts/verify-character-art.py` confere transparência, dimensões e quadros distintos. A integração é exclusiva da campanha e não altera fórmulas de combate.
+
 ## Código e artes
 
 - `assets/js/systems/campaign-hud.js`: apresentação e navegação da campanha; chama os sistemas existentes para executar as ações.

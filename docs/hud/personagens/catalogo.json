@@ -1,0 +1,1084 @@
+[
+  {
+    "id": "guerreiro",
+    "className": "Guerreiro",
+    "name": "Guerreiro",
+    "description": "Classe base",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/guerreiro.webp"
+  },
+  {
+    "id": "cavaleiro",
+    "className": "Guerreiro",
+    "name": "Cavaleiro",
+    "description": "Defesa robusta, tecnica de impacto e sustentacao em combate.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/cavaleiro.webp"
+  },
+  {
+    "id": "espadachim",
+    "className": "Guerreiro",
+    "name": "Espadachim",
+    "description": "Tecnica veloz, esquiva e ofensiva refinada com a espada.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/espadachim.webp"
+  },
+  {
+    "id": "paladino",
+    "className": "Guerreiro",
+    "name": "Paladino",
+    "description": "Guardiao sagrado de grande vida maxima e retaliacao pesada.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/paladino.webp"
+  },
+  {
+    "id": "berserker",
+    "className": "Guerreiro",
+    "name": "Berserker",
+    "description": "Furia brutal que troca seguranca por agressao extrema.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/berserker.webp"
+  },
+  {
+    "id": "samurai",
+    "className": "Guerreiro",
+    "name": "Samurai",
+    "description": "Disciplina, cortes precisos e sustentacao em duelos longos.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/samurai.webp"
+  },
+  {
+    "id": "ninja",
+    "className": "Guerreiro",
+    "name": "Ninja",
+    "description": "Mobilidade extrema, evasao e assassinato oportunista.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/ninja.webp"
+  },
+  {
+    "id": "mago",
+    "className": "Mago",
+    "name": "Mago",
+    "description": "Classe base",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/mago.webp"
+  },
+  {
+    "id": "elementalista",
+    "className": "Mago",
+    "name": "Elementalista",
+    "description": "Manipula fogo e reforca o poder bruto das magias.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/elementalista.webp"
+  },
+  {
+    "id": "arcanista",
+    "className": "Mago",
+    "name": "Arcanista",
+    "description": "Acumula cargas arcanas e transforma mana em dano bruto.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/arcanista.webp"
+  },
+  {
+    "id": "mago-incendiario",
+    "className": "Mago",
+    "name": "Mago Incendiario",
+    "description": "Canaliza fogo puro em cada feitiço.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/mago-incendiario.webp"
+  },
+  {
+    "id": "mago-frigido",
+    "className": "Mago",
+    "name": "Mago Frigido",
+    "description": "Frio absoluto com grande reserva arcana.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/mago-frigido.webp"
+  },
+  {
+    "id": "arquimago",
+    "className": "Mago",
+    "name": "Arquimago",
+    "description": "Mestria suprema entre mana, ataque e poder arcano.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/arquimago.webp"
+  },
+  {
+    "id": "corrompido",
+    "className": "Mago",
+    "name": "Corrompido",
+    "description": "Poder instavel que mistura mana, arma e sacrificio.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/corrompido.webp"
+  },
+  {
+    "id": "arqueiro",
+    "className": "Arqueiro",
+    "name": "Arqueiro",
+    "description": "Classe base",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/arqueiro.webp"
+  },
+  {
+    "id": "atirador",
+    "className": "Arqueiro",
+    "name": "Atirador",
+    "description": "Especialista em tiros tecnicos, precisao e burst em alvo unico.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/atirador.webp"
+  },
+  {
+    "id": "cacador",
+    "className": "Arqueiro",
+    "name": "Cacador",
+    "description": "Predador oportunista focado em rajadas, esquiva e recompensas.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/cacador.webp"
+  },
+  {
+    "id": "atirador-arcano",
+    "className": "Arqueiro",
+    "name": "Atirador Arcano",
+    "description": "Transforma mana em disparos tecnicos e marcas arcanas.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/atirador-arcano.webp"
+  },
+  {
+    "id": "sniper",
+    "className": "Arqueiro",
+    "name": "Sniper",
+    "description": "Concentra cada disparo em execucao letal de alvo unico.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/sniper.webp"
+  },
+  {
+    "id": "espreitador",
+    "className": "Arqueiro",
+    "name": "Espreitador",
+    "description": "Predador furtivo com equilibrio entre mana e dano oportunista.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/espreitador.webp"
+  },
+  {
+    "id": "guarda-florestal",
+    "className": "Arqueiro",
+    "name": "Guarda Florestal",
+    "description": "Sentinela resistente que domina tiros de controle e sobrevivencia.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/guarda-florestal.webp"
+  },
+  {
+    "id": "adepto-da-natureza",
+    "className": "Adepto da Natureza",
+    "name": "Adepto da Natureza",
+    "description": "Classe base",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/adepto-da-natureza.webp"
+  },
+  {
+    "id": "druida",
+    "className": "Adepto da Natureza",
+    "name": "Druida",
+    "description": "Rota ancestral ligada a formas naturais, vigor e controle vivo.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/druida.webp"
+  },
+  {
+    "id": "espirito-da-floresta",
+    "className": "Adepto da Natureza",
+    "name": "Espirito da Floresta",
+    "description": "Rota eterea da mata, focada em magia natural, ritmo e encanto.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/espirito-da-floresta.webp"
+  },
+  {
+    "id": "druida-sombrio",
+    "className": "Adepto da Natureza",
+    "name": "Druida Sombrio",
+    "description": "Canaliza o lado decadente da natureza e da corrupcao viva.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/druida-sombrio.webp"
+  },
+  {
+    "id": "avatar-da-natureza",
+    "className": "Adepto da Natureza",
+    "name": "Avatar da Natureza",
+    "description": "Manifestacao do ciclo natural em forma de poder bruto e resiliencia.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/avatar-da-natureza.webp"
+  },
+  {
+    "id": "fada-monarca",
+    "className": "Adepto da Natureza",
+    "name": "Fada Monarca",
+    "description": "Soberania feerica, magia refinada e dominio dos encantos da floresta.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/fada-monarca.webp"
+  },
+  {
+    "id": "protetor-da-floresta",
+    "className": "Adepto da Natureza",
+    "name": "Protetor da Floresta",
+    "description": "Guardiao espiritual da mata, firmeza viva e defesa natural.",
+    "kind": "hero",
+    "path": "assets/visual/heroes-v2/protetor-da-floresta.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_recuperar_folego",
+    "name": "Recuperar Folego",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 1,
+      "id": "recuperar_folego",
+      "name": "Recuperar Folego",
+      "type": "warrior_second_wind"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_recuperar_folego.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_esbarrao",
+    "name": "Esbarrao",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 20,
+      "id": "esbarrao",
+      "name": "Esbarrao",
+      "type": "warrior_shove"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_esbarrao.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_investida",
+    "name": "Investida",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 20,
+      "id": "investida",
+      "name": "Investida",
+      "type": "warrior_shove"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_investida.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_contundir",
+    "name": "Contundir",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 30,
+      "id": "contundir",
+      "name": "Contundir",
+      "type": "warrior_stagger"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_contundir.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_golpes_velozes",
+    "name": "Golpes Velozes",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 30,
+      "id": "golpes_velozes",
+      "name": "Golpes Velozes",
+      "type": "warrior_swift_strikes"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_golpes_velozes.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_brado",
+    "name": "Brado",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "brado",
+      "name": "Brado",
+      "type": "warrior_warcry"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_brado.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_corte_profundo",
+    "name": "Corte Profundo",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "corte_profundo",
+      "name": "Corte Profundo",
+      "type": "warrior_deep_cut"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_corte_profundo.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_julgamento",
+    "name": "Julgamento",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "julgamento",
+      "name": "Julgamento",
+      "type": "warrior_judgment"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_julgamento.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_escudo_de_fe",
+    "name": "Escudo de Fe",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "escudo_de_fe",
+      "name": "Escudo de Fe",
+      "type": "warrior_faith_shield"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_escudo_de_fe.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_ira",
+    "name": "Ira",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 50,
+      "id": "ira",
+      "name": "Ira",
+      "type": "warrior_warcry"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_ira.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_valhala",
+    "name": "Vallhala",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "valhala",
+      "name": "Vallhala",
+      "type": "warrior_valhalla"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_valhala.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_voce_ira_me_parar",
+    "name": "Voce Ira Me Parar?",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "voce_ira_me_parar",
+      "name": "Voce Ira Me Parar?",
+      "type": "warrior_unstoppable"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_voce_ira_me_parar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_furar_blindagem",
+    "name": "Furar Blindagem",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "furar_blindagem",
+      "name": "Furar Blindagem",
+      "type": "warrior_armor_piercer"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_furar_blindagem.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_cortes_ultrasonicos",
+    "name": "Cortes Ultrasonicos",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "cortes_ultrasonicos",
+      "name": "Cortes Ultrasonicos",
+      "type": "warrior_ultrasonic_cuts"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_cortes_ultrasonicos.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_bomba_de_fumaca",
+    "name": "Bomba de Fumaca",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 60,
+      "id": "bomba_de_fumaca",
+      "name": "Bomba de Fumaca",
+      "type": "warrior_smoke_bomb"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_bomba_de_fumaca.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "guerreiro_mata_gigantes",
+    "name": "Mata-Gigantes",
+    "className": "Guerreiro",
+    "mechanics": {
+      "level": 80,
+      "id": "mata_gigantes",
+      "name": "Mata-Gigantes",
+      "type": "warrior_giant_slayer"
+    },
+    "path": "assets/visual/skill-fx/guerreiro_mata_gigantes.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_mirar",
+    "name": "Mirar",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 1,
+      "id": "mirar",
+      "name": "Mirar",
+      "type": "archer_focus"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_mirar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_camuflagem",
+    "name": "Camuflagem",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 20,
+      "id": "camuflagem",
+      "name": "Camuflagem",
+      "type": "archer_camouflage"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_camuflagem.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_headshot",
+    "name": "Headshot",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 30,
+      "id": "headshot",
+      "name": "Headshot",
+      "type": "archer_headshot"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_headshot.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_rajada_de_flechas",
+    "name": "Rajada de Flechas",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 30,
+      "id": "rajada_de_flechas",
+      "name": "Rajada de Flechas",
+      "type": "archer_barrage"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_rajada_de_flechas.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_tiro_perfurante",
+    "name": "Tiro Perfurante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 50,
+      "id": "tiro_perfurante",
+      "name": "Tiro Perfurante",
+      "type": "archer_piercing_shot"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_tiro_perfurante.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_armadilha",
+    "name": "Armadilha",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 50,
+      "id": "armadilha",
+      "name": "Armadilha",
+      "type": "archer_trap"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_armadilha.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_emergencia_arcana",
+    "name": "Emergencia Arcana",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "emergencia_arcana",
+      "name": "Emergencia Arcana",
+      "type": "archer_arcane_shot"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_emergencia_arcana.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_sobreaquecer",
+    "name": "Sobreaquecer",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "sobreaquecer",
+      "name": "Sobreaquecer",
+      "type": "archer_overcharge"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_sobreaquecer.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_executar",
+    "name": "Executar",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "executar",
+      "name": "Executar",
+      "type": "archer_execute"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_executar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_ponto_fraco",
+    "name": "Ponto Fraco",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "ponto_fraco",
+      "name": "Ponto Fraco",
+      "type": "archer_weak_spot"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_ponto_fraco.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_surpresa",
+    "name": "Surpresa",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "surpresa",
+      "name": "Surpresa",
+      "type": "archer_surprise"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_surpresa.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_mirar_no_pe",
+    "name": "Mirar no Pe",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "mirar_no_pe",
+      "name": "Mirar no Pe",
+      "type": "archer_aim_leg"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_mirar_no_pe.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_tranquilizante",
+    "name": "Tranquilizante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 60,
+      "id": "tranquilizante",
+      "name": "Tranquilizante",
+      "type": "archer_tranquilizer"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_tranquilizante.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "arqueiro_tiro_cortante",
+    "name": "Tiro Cortante",
+    "className": "Arqueiro",
+    "mechanics": {
+      "level": 80,
+      "id": "tiro_cortante",
+      "name": "Tiro Cortante",
+      "type": "archer_cutting_shot"
+    },
+    "path": "assets/visual/skill-fx/arqueiro_tiro_cortante.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_explosao_de_mana",
+    "name": "Explosao de Mana",
+    "className": "Mago",
+    "mechanics": {
+      "level": 20,
+      "id": "explosao_de_mana",
+      "name": "Explosao de Mana",
+      "type": "mage_mana_burst"
+    },
+    "path": "assets/visual/skill-fx/mago_explosao_de_mana.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_bola_de_fogo",
+    "name": "Bola de Fogo",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "bola_de_fogo",
+      "name": "Bola de Fogo",
+      "type": "mage_fireball"
+    },
+    "path": "assets/visual/skill-fx/mago_bola_de_fogo.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_descarregar",
+    "name": "Descarregar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "descarregar",
+      "name": "Descarregar",
+      "type": "mage_discharge"
+    },
+    "path": "assets/visual/skill-fx/mago_descarregar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_congelar",
+    "name": "Congelar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "congelar",
+      "name": "Congelar",
+      "type": "mage_freeze"
+    },
+    "path": "assets/visual/skill-fx/mago_congelar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_escudo_de_mana",
+    "name": "Escudo de Mana",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "escudo_de_mana",
+      "name": "Escudo de Mana",
+      "type": "mage_mana_shield"
+    },
+    "path": "assets/visual/skill-fx/mago_escudo_de_mana.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_bafo_de_fogo",
+    "name": "Bafo de Fogo",
+    "className": "Mago",
+    "mechanics": {
+      "level": 50,
+      "id": "bafo_de_fogo",
+      "name": "Bafo de Fogo",
+      "type": "mage_freeze"
+    },
+    "path": "assets/visual/skill-fx/mago_bafo_de_fogo.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_fenix_sagrada",
+    "name": "Fenix Sagrada",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "fenix_sagrada",
+      "name": "Fenix Sagrada",
+      "type": "mage_sacred_phoenix"
+    },
+    "path": "assets/visual/skill-fx/mago_fenix_sagrada.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_explodir",
+    "name": "Explodir",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "explodir",
+      "name": "Explodir",
+      "type": "mage_explode"
+    },
+    "path": "assets/visual/skill-fx/mago_explodir.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_bola_de_neve",
+    "name": "Bola de Neve",
+    "className": "Mago",
+    "mechanics": {
+      "level": 30,
+      "id": "bola_de_neve",
+      "name": "Bola de Neve",
+      "type": "mage_fireball"
+    },
+    "path": "assets/visual/skill-fx/mago_bola_de_neve.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_nevasca",
+    "name": "Nevasca",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "nevasca",
+      "name": "Nevasca",
+      "type": "mage_blizzard"
+    },
+    "path": "assets/visual/skill-fx/mago_nevasca.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_avalanche",
+    "name": "Avalanche",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "avalanche",
+      "name": "Avalanche",
+      "type": "mage_avalanche"
+    },
+    "path": "assets/visual/skill-fx/mago_avalanche.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_concentracao",
+    "name": "Concentracao",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "concentracao",
+      "name": "Concentracao",
+      "type": "mage_concentration"
+    },
+    "path": "assets/visual/skill-fx/mago_concentracao.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_sobrecarregar",
+    "name": "Sobrecarregar",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "sobrecarregar",
+      "name": "Sobrecarregar",
+      "type": "mage_overcharge"
+    },
+    "path": "assets/visual/skill-fx/mago_sobrecarregar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_corrupcao",
+    "name": "Corrupcao",
+    "className": "Mago",
+    "mechanics": {
+      "level": 60,
+      "id": "corrupcao",
+      "name": "Corrupcao",
+      "type": "mage_corruption"
+    },
+    "path": "assets/visual/skill-fx/mago_corrupcao.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "mago_incorporar_demonio",
+    "name": "Incorporar Demonio",
+    "className": "Mago",
+    "mechanics": {
+      "level": 80,
+      "id": "incorporar_demonio",
+      "name": "Incorporar Demonio",
+      "type": "mage_demon_form"
+    },
+    "path": "assets/visual/skill-fx/mago_incorporar_demonio.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_semente_viva",
+    "name": "Semente Viva",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 1,
+      "id": "semente_viva",
+      "name": "Semente Viva",
+      "type": "nature_living_seed"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_semente_viva.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_raizes",
+    "name": "Raizes",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 20,
+      "id": "raizes",
+      "name": "Raizes",
+      "type": "nature_roots"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_raizes.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_flor_do_pantano",
+    "name": "Flor do Pantano",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 30,
+      "id": "flor_do_pantano",
+      "name": "Flor do Pantano",
+      "type": "nature_swamp_flower"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_flor_do_pantano.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_encanto_da_brisa",
+    "name": "Encanto da Brisa",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 30,
+      "id": "encanto_da_brisa",
+      "name": "Encanto da Brisa",
+      "type": "nature_breeze_charm"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_encanto_da_brisa.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_colheita",
+    "name": "Colheita",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 50,
+      "id": "colheita",
+      "name": "Colheita",
+      "type": "nature_harvest"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_colheita.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_cancao_ancestral",
+    "name": "Cancao Ancestral",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 50,
+      "id": "cancao_ancestral",
+      "name": "Cancao Ancestral",
+      "type": "nature_ancestral_song"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_cancao_ancestral.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_apodrecer",
+    "name": "Apodrecer",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "apodrecer",
+      "name": "Apodrecer",
+      "type": "nature_decay"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_apodrecer.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_colapso_do_brejo",
+    "name": "Colapso do Brejo",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "colapso_do_brejo",
+      "name": "Colapso do Brejo",
+      "type": "nature_swamp_collapse"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_colapso_do_brejo.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_forma_verdadeira",
+    "name": "Forma Verdadeira",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "forma_verdadeira",
+      "name": "Forma Verdadeira",
+      "type": "nature_true_form"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_forma_verdadeira.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_esmagar_invasor",
+    "name": "Esmagar Invasor",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "esmagar_invasor",
+      "name": "Esmagar Invasor",
+      "type": "nature_crush_invader"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_esmagar_invasor.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_decreto_da_rainha",
+    "name": "Decreto da Rainha",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "decreto_da_rainha",
+      "name": "Decreto da Rainha",
+      "type": "nature_queen_decree"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_decreto_da_rainha.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_coroar",
+    "name": "Coroar",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "coroar",
+      "name": "Coroar",
+      "type": "nature_crown"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_coroar.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_casulo_de_vinhas",
+    "name": "Casulo de Vinhas",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 60,
+      "id": "casulo_de_vinhas",
+      "name": "Casulo de Vinhas",
+      "type": "nature_vine_cocoon"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_casulo_de_vinhas.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "active",
+    "id": "adepto_da_natureza_jogar_espinhos",
+    "name": "Jogar Espinhos",
+    "className": "Adepto da Natureza",
+    "mechanics": {
+      "level": 80,
+      "id": "jogar_espinhos",
+      "name": "Jogar Espinhos",
+      "type": "nature_throw_thorns"
+    },
+    "path": "assets/visual/skill-fx/adepto_da_natureza_jogar_espinhos.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "basic",
+    "id": "guerreiro_basic",
+    "name": "Ataque básico",
+    "className": "Guerreiro",
+    "path": "assets/visual/skill-fx/guerreiro_basic.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "basic",
+    "id": "arqueiro_basic",
+    "name": "Ataque básico",
+    "className": "Arqueiro",
+    "path": "assets/visual/skill-fx/arqueiro_basic.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "basic",
+    "id": "mago_basic",
+    "name": "Mísseis Mágicos",
+    "className": "Mago",
+    "path": "assets/visual/skill-fx/mago_basic.webp"
+  },
+  {
+    "kind": "fx",
+    "skillKind": "basic",
+    "id": "adepto_da_natureza_basic",
+    "name": "Ataque básico",
+    "className": "Adepto da Natureza",
+    "path": "assets/visual/skill-fx/adepto_da_natureza_basic.webp"
+  }
+]

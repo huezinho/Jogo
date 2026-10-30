@@ -1,0 +1,21 @@
+{
+  "id": "arqueiro",
+  "className": "Arqueiro",
+  "name": "Arqueiro",
+  "description": "Classe base",
+  "kind": "hero",
+  "path": "assets/visual/heroes-v2/arqueiro.webp",
+  "prompt": "Production animation SPRITE SHEET. Art style reference: premium hand-painted fantasy RPG skill icons. Character is green leather archer, simple wooden bow and quiver. Class/subclass Arqueiro: Classe base. Exactly 4 COLUMNS x 4 ROWS, 16 equal square cells, overall square sheet. The SAME full-body character, identical face, armor and weapon in EVERY frame, three-quarter view FACING RIGHT. Central 65% of each cell only, VERY LARGE completely empty transparent gutters, pull camera back. Same scale and ground baseline. No body part, weapon, hair or wing touches an adjacent frame. Row1 FOUR subtly different idle breathing poses. Row2 FOUR sequential bow attack: draw arrow, release bowstring, follow-through, recover. Row3 FOUR skill/support action poses: raise free hand or focus, gather small light at hand, release with a close-body gesture, recover. Row4 FOUR taking-damage poses: brace, visible torso/head recoil backward, regain balance, return to ready. Paint real articulated motion, not identical repeated drawings. No scenery, floor, shadows outside character, text, gridlines, numbers, frames, large projectiles or effects spreading outside silhouette. Complete feet and equipment inside every cell. GENUINE transparent background. Detailed coherent anatomy and painterly materials.",
+  "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a17fcf-b497-7fe3-a53f-145d75a20f79\\exec-4e180c75-d3f1-4e7d-8fef-abc9059d3bd6.png",
+  "atlas": {
+    "columns": 4,
+    "rows": 4,
+    "frameWidth": 256,
+    "frameHeight": 320,
+    "frames": 16,
+    "sourceSize": [
+      1254,
+      1254
+    ]
+  }
+}
