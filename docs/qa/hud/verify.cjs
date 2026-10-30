@@ -26,11 +26,11 @@ async function screenshot(page,file){
   await page.waitForFunction(()=>!isProcessingTurn,{},{timeout:20000});
   assert(await page.evaluate(hp=>!enemy||enemy.hp<hp,before.hp));
   results.flows.push('basic attack and stable disabled action slots');
-  await page.locator('[data-hud="skills"]').click();
+  await page.locator('[data-hud="consumables"]').click();
   const hpBeforeModal=await page.evaluate(()=>enemy?.hp);
   await page.keyboard.press('1');assert.equal(await page.evaluate(()=>enemy?.hp),hpBeforeModal);
   await page.keyboard.press('Escape');assert.equal(await page.locator('#rpgDialog').evaluate(d=>d.open),false);
-  results.flows.push('skill details dialog, keyboard isolation and Escape');
+  results.flows.push('consumables dialog, keyboard isolation and Escape');
   await page.evaluate(()=>{enemy=null;currentMode='village';villageTab='artisan';updateUI();});
   await page.locator('[data-hud="craft-map"]').click();
   assert(await page.locator('[data-hud="craft-region"][data-value="Caverna"]').isDisabled());

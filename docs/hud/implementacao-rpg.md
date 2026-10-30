@@ -110,3 +110,8 @@ Executar `node scripts/run-regressions.cjs`.
 - Progressão: gastar o último ponto e confirmar, escolher subclasse, redistribuir no treinador, confirmar fuga e debitar o custo, abrir configurações, morrer e renascer.
 
 Evidências em `docs/qa/hud/`, incluindo `results.json`, `progression-results.json` e capturas das telas reais em desktop e celular. Os personagens das capturas são fixtures descartáveis de teste; não representam uma simulação de balanceamento.
+
+
+## Janelas e informações contextuais
+
+Os rastros das criaturas restantes aparecem junto ao selo do chefe ao passar o mouse ou focar o botão; tocar também revela a informação. O combate apresenta diretamente as habilidades disponíveis, sem o botão de lista duplicada. A bolsa é acessada pela lateral, inclusive no acampamento. A distribuição de pontos e a escolha de subclasse ficam em uma janela modal que abre automaticamente e fecha depois da conclusão. Os controles de atributos cabem em uma linha no celular. O ferreiro usa o cenário inteiro, sem recorte de fundo. Verificações em `docs/qa/hud/popups.cjs`, `progression.cjs`, `verify.cjs` e `docs/hud/chefe/capturar.cjs`.
