@@ -60,7 +60,7 @@
       "screen": "alchemist",
       "width": 1366,
       "scroll": 1366,
-      "height": 824,
+      "height": 808,
       "duplicates": [],
       "broken": []
     },
@@ -140,7 +140,7 @@
       "screen": "alchemist",
       "width": 1024,
       "scroll": 1024,
-      "height": 1054,
+      "height": 1038,
       "duplicates": [],
       "broken": []
     },
@@ -220,7 +220,7 @@
       "screen": "alchemist",
       "width": 768,
       "scroll": 768,
-      "height": 1195,
+      "height": 1104,
       "duplicates": [],
       "broken": []
     },
@@ -292,7 +292,7 @@
       "screen": "inn",
       "width": 390,
       "scroll": 390,
-      "height": 915,
+      "height": 916,
       "duplicates": [],
       "broken": []
     },
@@ -300,7 +300,7 @@
       "screen": "alchemist",
       "width": 390,
       "scroll": 390,
-      "height": 1329,
+      "height": 1208,
       "duplicates": [],
       "broken": []
     },
@@ -364,7 +364,7 @@
       "screen": "mercenary",
       "width": 320,
       "scroll": 320,
-      "height": 2082,
+      "height": 2061,
       "duplicates": [],
       "broken": []
     },
@@ -372,7 +372,7 @@
       "screen": "inn",
       "width": 320,
       "scroll": 320,
-      "height": 959,
+      "height": 971,
       "duplicates": [],
       "broken": []
     },
@@ -380,7 +380,7 @@
       "screen": "alchemist",
       "width": 320,
       "scroll": 320,
-      "height": 1412,
+      "height": 1366,
       "duplicates": [],
       "broken": []
     },

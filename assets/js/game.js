@@ -4359,8 +4359,8 @@ function getEnemyStatusEffects(targetEnemy){
   return effects;
 }
 
-function renderAlchemistPanel(){
-  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong><span class="coin-badge">${player.coins} moedas</span></div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price} moedas)</button></div>`, true)).join("")}</div></div>`;
+function renderAlchemistPanel({compact = false} = {}){
+  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong>${compact?'':`<span class="coin-badge">${player.coins} moedas</span>`}</div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price}${compact?' <img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt="moedas">':' moedas'})</button></div>`, true)).join("")}</div></div>`;
 }
 
 function renderArtisanPanel(){ return EquipmentSystem.renderArtisan(); }
@@ -5316,7 +5316,6 @@ function healAtVillage(){
   player.coins -= cost;
   player.hp = maxHp;
   displayState.playerHp = player.hp;
-  triggerActionFeedback("village", `Vida restaurada por ${cost} moedas.`, "success");
   log(`Voce descansou no vilarejo e recuperou toda a vida por ${cost} moedas.`);
   updateUI();
 }
@@ -5336,7 +5335,6 @@ function restoreManaAtVillage(){
   player.coins -= cost;
   player.mp = maxMp;
   displayState.playerMp = player.mp;
-  triggerActionFeedback("village", `Mana restaurada por ${cost} moedas.`, "success");
   log(`Voce descansou a mente no vilarejo e recuperou toda a mana por ${cost} moedas.`);
   updateUI();
 }

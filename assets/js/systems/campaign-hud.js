@@ -14,7 +14,7 @@ const CampaignHUD = (() => {
   const locked = () => isProcessingTurn || isDead || player.hp <= 0;
   const progressionPending = () => levelUpPoints>0||Object.values(allocation).some(value=>Number(value)>0)||needsSubclassChoice();
   const pageTitle = () => currentMode === 'battle' ? currentRegion : currentMode === 'camp' ? 'Personagem' : currentMode === 'village' ? ({artisan:'Oficina',forge:'Oficina',inn:'Pousada',alchemist:'Alquimista',mercenary:'Mercenário'}[villageTab]) : ({bestiary:'Bestiário',trophies:'Sala de troféus',arena:'Portal da arena',dungeon:'Portal da dungeon'}[currentMode] || 'Aventura');
-  const money = () => `<span class="rpg-coins"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""> ${player.coins.toLocaleString('pt-BR')} <small>moedas</small></span>`;
+  const money = () => `<span class="rpg-coins" tabindex="0" aria-label="${player.coins.toLocaleString('pt-BR')} moedas" data-hud-description="${player.coins.toLocaleString('pt-BR')} moedas"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""><span>${player.coins.toLocaleString('pt-BR')}</span></span>`;
   const itemArt = item => {
     if(item?.type !== 'equipment') return getInventoryItemSymbol(item);
     if(item.slot==='accessory')return getInventoryItemSymbol(item);
@@ -120,8 +120,8 @@ const CampaignHUD = (() => {
   function renderVillage(){
     if(villageTab==='artisan'||villageTab==='forge') return serviceNav()+renderWorkshop();
     if(villageTab==='mercenary') return serviceNav()+renderMercenary();
-    if(villageTab==='alchemist') return serviceNav()+`<section class="rpg-village-interior rpg-alchemy"><div class="rpg-service-copy"><h2>Poções e preparados</h2><p>Prepare seus consumíveis antes de voltar à trilha.</p></div><div class="rpg-shop">${renderActionFeedback('village')}${renderAlchemistPanel()}</div></section>`;
-    return serviceNav()+`<section class="rpg-village-interior"><div class="rpg-service-copy"><h2>Descanse, aventureiro</h2><p>Recupere suas forças antes da próxima expedição.</p></div><div class="rpg-inn rpg-paper">${renderActionFeedback('village')}<h2><img class="rpg-inn-title" src="assets/visual/hud/inn-title.webp" alt="Pousada"></h2>${innMeter("Vida",player.hp,getCurrentCaps().maxHp,"hp")}${button(`Recuperar vida · ${getHealCost()} moedas`,'heal','',player.coins<getHealCost()?'disabled':'')}${innMeter("Mana",player.mp,getCurrentCaps().maxMp,"mp")}${button(`Recuperar mana · ${getManaHealCost()} moedas`,'mana','',player.coins<getManaHealCost()?'disabled':'')}</div></section>`;
+    if(villageTab==='alchemist') return serviceNav()+`<section class="rpg-village-interior rpg-alchemy"><div class="rpg-service-copy"><h2>Poções e preparados</h2><p>Prepare seus consumíveis antes de voltar à trilha.</p></div><div class="rpg-shop">${renderActionFeedback('village')}${renderAlchemistPanel({compact:true})}</div></section>`;
+    return serviceNav()+`<section class="rpg-village-interior"><div class="rpg-service-copy"><h2>Descanse, aventureiro</h2><p>Recupere suas forças antes da próxima expedição.</p></div><div class="rpg-inn rpg-paper"><h2><img class="rpg-inn-title" src="assets/visual/hud/inn-title-rustic.webp" alt="Pousada"></h2>${innMeter("Vida",player.hp,getCurrentCaps().maxHp,"hp")}${button(`Recuperar vida · ${getHealCost()} moedas`,'heal','',player.coins<getHealCost()?'disabled':'')}${innMeter("Mana",player.mp,getCurrentCaps().maxMp,"mp")}${button(`Recuperar mana · ${getManaHealCost()} moedas`,'mana','',player.coins<getManaHealCost()?'disabled':'')}</div></section>`;
   }
   function currentCraft(){
     const unlocked=EquipmentSystem.unlockedRegions(player);

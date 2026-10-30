@@ -12,8 +12,8 @@
  const tip=document.createElement('div');tip.id='rpgActionTooltip';tip.role='tooltip';tip.hidden=true;document.body.append(tip);
  let owner=null;
  function hide(){if(owner){owner.removeAttribute('aria-describedby');owner=null;}tip.hidden=true;}
- function show(event){const b=event.target.closest('[data-hud-description],[data-hud="flee"]');if(!b){hide();return;}owner=b;tip.textContent=b.dataset.hudDescription||b.dataset.tooltip;currency(tip);tip.hidden=false;b.setAttribute('aria-describedby',tip.id);
-  const r=b.getBoundingClientRect(),t=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-t.width-8,r.left+r.width/2-t.width/2))+'px';tip.style.top=Math.max(8,r.top-t.height-12)+'px';
+ function show(event){const b=event.target.closest('[data-hud-description],[data-hud="flee"],.region-map-boss-btn');if(!b){hide();return;}owner=b;tip.dataset.kind=b.matches('.region-map-boss-btn')?'boss':b.matches('.rpg-coins')?'balance':'action';tip.textContent=b.dataset.hudDescription||b.dataset.tooltip;currency(tip);tip.hidden=false;b.setAttribute('aria-describedby',tip.id);
+  const r=b.getBoundingClientRect(),t=tip.getBoundingClientRect(),side=b.matches('.region-map-boss-btn,.rpg-coins');tip.style.left=Math.max(8,Math.min(innerWidth-t.width-8,side?r.left-t.width-12:r.left+r.width/2-t.width/2))+'px';tip.style.top=Math.max(8,Math.min(innerHeight-t.height-8,side?r.top+(r.height-t.height)/2:r.top-t.height-12))+'px';
  }
  document.addEventListener('mouseover',show);document.addEventListener('focusin',show);
  document.addEventListener('mouseout',e=>{if(owner&&!owner.contains(e.relatedTarget))hide();});
