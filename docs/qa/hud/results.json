@@ -28,7 +28,7 @@
       "screen": "character",
       "width": 1366,
       "scroll": 1366,
-      "height": 871,
+      "height": 970,
       "duplicates": [],
       "broken": []
     },
@@ -36,7 +36,7 @@
       "screen": "bag",
       "width": 1366,
       "scroll": 1366,
-      "height": 871,
+      "height": 970,
       "duplicates": [],
       "broken": []
     },
@@ -108,7 +108,7 @@
       "screen": "character",
       "width": 1024,
       "scroll": 1024,
-      "height": 1137,
+      "height": 1236,
       "duplicates": [],
       "broken": []
     },
@@ -116,7 +116,7 @@
       "screen": "bag",
       "width": 1024,
       "scroll": 1024,
-      "height": 1137,
+      "height": 1236,
       "duplicates": [],
       "broken": []
     },
@@ -188,7 +188,7 @@
       "screen": "character",
       "width": 768,
       "scroll": 768,
-      "height": 1137,
+      "height": 1236,
       "duplicates": [],
       "broken": []
     },
@@ -196,7 +196,7 @@
       "screen": "bag",
       "width": 768,
       "scroll": 768,
-      "height": 1137,
+      "height": 1236,
       "duplicates": [],
       "broken": []
     },
@@ -268,7 +268,7 @@
       "screen": "character",
       "width": 390,
       "scroll": 390,
-      "height": 1536,
+      "height": 1770,
       "duplicates": [],
       "broken": []
     },
@@ -276,7 +276,7 @@
       "screen": "bag",
       "width": 390,
       "scroll": 390,
-      "height": 1536,
+      "height": 1770,
       "duplicates": [],
       "broken": []
     },
@@ -284,7 +284,7 @@
       "screen": "mercenary",
       "width": 390,
       "scroll": 390,
-      "height": 1795,
+      "height": 1792,
       "duplicates": [],
       "broken": []
     },
@@ -348,7 +348,7 @@
       "screen": "character",
       "width": 320,
       "scroll": 320,
-      "height": 1600,
+      "height": 1819,
       "duplicates": [],
       "broken": []
     },
@@ -356,7 +356,7 @@
       "screen": "bag",
       "width": 320,
       "scroll": 320,
-      "height": 1600,
+      "height": 1819,
       "duplicates": [],
       "broken": []
     },
@@ -364,7 +364,7 @@
       "screen": "mercenary",
       "width": 320,
       "scroll": 320,
-      "height": 1898,
+      "height": 1916,
       "duplicates": [],
       "broken": []
     },

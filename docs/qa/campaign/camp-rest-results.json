@@ -1,0 +1,85 @@
+{
+  "checks": [
+    "3-second real timer; no instant healing, duplicate tick, mana gain or charge; elapsed catch-up retains partial interval",
+    "rest continues across tabs, crafting and equipping; only camp can stop it; indicator returns to camp",
+    "normal/boss encounters, keyboard entry and arena/dungeon entry stay blocked until standing; reload preserves rest",
+    "direct combat-page URLs return to camp; rest UI fits1366/390/320; HP caps without auto-standing; standing unlocks combat",
+    {
+      "moderateChestRecipes": [
+        {
+          "region": "Floresta",
+          "total": 7,
+          "cost": 48,
+          "legs": 40
+        },
+        {
+          "region": "Caverna",
+          "total": 7,
+          "cost": 71,
+          "legs": 60
+        },
+        {
+          "region": "Ruinas",
+          "total": 7,
+          "cost": 95,
+          "legs": 80
+        },
+        {
+          "region": "Pantano",
+          "total": 7,
+          "cost": 118,
+          "legs": 100
+        },
+        {
+          "region": "Vulcao",
+          "total": 7,
+          "cost": 142,
+          "legs": 120
+        },
+        {
+          "region": "Abismo",
+          "total": 7,
+          "cost": 166,
+          "legs": 140
+        },
+        {
+          "region": "Fortaleza",
+          "total": 7,
+          "cost": 189,
+          "legs": 160
+        },
+        {
+          "region": "Necropole",
+          "total": 7,
+          "cost": 213,
+          "legs": 180
+        },
+        {
+          "region": "Citadela",
+          "total": 7,
+          "cost": 236,
+          "legs": 200
+        },
+        {
+          "region": "Panteao",
+          "total": 7,
+          "cost": 260,
+          "legs": 220
+        },
+        {
+          "region": "Cataclismo",
+          "total": 7,
+          "cost": 260,
+          "legs": 220
+        },
+        {
+          "region": "Paradoxo",
+          "total": 7,
+          "cost": 260,
+          "legs": 220
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

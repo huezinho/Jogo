@@ -1,0 +1,92 @@
+{
+  "checks": [
+    {
+      "growth": [
+        {
+          "cls": "Guerreiro",
+          "levels": 99,
+          "maxHp": 6390,
+          "maxMp": 5340,
+          "attack": 678,
+          "counts": {
+            "vitality": 33,
+            "wisdom": 33,
+            "strength": 33,
+            "hpGain": 6270,
+            "mpGain": 5280,
+            "attackGain": 660,
+            "skillGain": 660
+          }
+        },
+        {
+          "cls": "Arqueiro",
+          "levels": 99,
+          "maxHp": 6370,
+          "maxMp": 5360,
+          "attack": 676,
+          "counts": {
+            "vitality": 33,
+            "wisdom": 33,
+            "strength": 33,
+            "hpGain": 6270,
+            "mpGain": 5280,
+            "attackGain": 660,
+            "skillGain": 660
+          }
+        },
+        {
+          "cls": "Mago",
+          "levels": 99,
+          "maxHp": 6350,
+          "maxMp": 5380,
+          "attack": 674,
+          "counts": {
+            "vitality": 33,
+            "wisdom": 33,
+            "strength": 33,
+            "hpGain": 6270,
+            "mpGain": 5280,
+            "attackGain": 660,
+            "skillGain": 660
+          }
+        },
+        {
+          "cls": "Adepto da Natureza",
+          "levels": 99,
+          "maxHp": 6370,
+          "maxMp": 5380,
+          "attack": 672,
+          "counts": {
+            "vitality": 33,
+            "wisdom": 33,
+            "strength": 33,
+            "hpGain": 6270,
+            "mpGain": 5280,
+            "attackGain": 660,
+            "skillGain": 660
+          }
+        }
+      ],
+      "description": "all 396 level transitions rescale existing points before allocation; 4 trainer redistributions produce identical totals"
+    },
+    "historical save with mixed old gains rescales once; original save backup exists; 10 normalizations and reload never compound totals",
+    "valid older network profiles canonicalize counts and gains with the same scaling rule",
+    "three labelled red/green/blue investment squares show confirmed point counts at1366/390/320",
+    {
+      "explosion": {
+        "actual": 29358,
+        "expected": 29358,
+        "spentMp": 500,
+        "cost": 500,
+        "spentHp": 2922,
+        "hpCost": 2922,
+        "native": 29558,
+        "nativeExpected": 29558,
+        "responses": 1,
+        "blockedMana": true,
+        "blockedLife": true
+      }
+    }
+  ],
+  "errors": []
+}

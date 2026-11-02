@@ -29,6 +29,7 @@ let bestiaryRegionFilter = null;
 let artisanRegionFilter = null;
 let selectedTrophyCategory = "Todas";
 let campTab = "equipamentos";
+const CAMP_REST_INTERVAL_MS = 3000;
 let villageTab = "inn";
 let villageNpcEntryPending = "";
 let startScreenTab = "continue";
@@ -1672,6 +1673,45 @@ function normalizePlayerState(){
   playerEffects = { ...createDefaultPlayerEffects(), ...(playerEffects || {}) };
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.normalizePlayer(player); EquipmentSystem.collectCompletedContracts(player); }
   if(typeof CreatureTracking !== "undefined"){ CreatureTracking.normalize(player); }
+  if(!player.campRest || typeof player.campRest !== "object" || !Number.isSafeInteger(player.campRest.lastTickAt) || player.campRest.lastTickAt <= 0 || enemy || isDead || player.hp <= 0){
+    player.campRest = null;
+  }else{
+    player.campRest = { lastTickAt: Math.min(player.campRest.lastTickAt, Date.now()) };
+  }
+}
+
+function isCampResting(){ return !!player?.campRest; }
+
+function getCampRestHealing(){ return Math.max(1, Math.floor(getCurrentCaps().maxHp * .01)); }
+
+function recoverCampRest(now = Date.now()){
+  if(!isCampResting() || enemy || isDead || player.hp <= 0 || IS_ARENA_PAGE || IS_DUNGEON_PAGE){ return false; }
+  const rest = player.campRest;
+  if(now < rest.lastTickAt){ rest.lastTickAt = now; return false; }
+  const ticks = Math.floor((now - rest.lastTickAt) / CAMP_REST_INTERVAL_MS);
+  if(ticks < 1){ return false; }
+  rest.lastTickAt += ticks * CAMP_REST_INTERVAL_MS;
+  player.hp = Math.min(getCurrentCaps().maxHp, player.hp + ticks * getCampRestHealing());
+  displayState.playerHp = player.hp;
+  return true;
+}
+
+function toggleCampRest(){
+  if(currentMode !== "camp" || enemy || isProcessingTurn || isDead || player.hp <= 0 || IS_ARENA_PAGE || IS_DUNGEON_PAGE){ return false; }
+  if(isCampResting()){
+    recoverCampRest(); player.campRest = null;
+    log("Voce se levantou e esta pronto para combater.");
+  }else{
+    player.campRest = { lastTickAt: Date.now() };
+    log(`Voce comecou a descansar: recupera ${getCampRestHealing()} de vida a cada 3 segundos. Volte ao acampamento e levante antes de combater.`);
+  }
+  updateUI(); queueCampaignSave(); return true;
+}
+
+function blockCombatWhileResting(){
+  if(!isCampResting()){ return false; }
+  log("Voce esta descansando. Volte ao acampamento e clique em Levantar antes de combater.");
+  return true;
 }
 
 function getAttributePointGain(attribute, targetLevel = player?.level || 1){
@@ -1695,10 +1735,11 @@ function getPendingAllocationGains(targetLevel = player?.level || 1){
 }
 
 function createDefaultInvestedStats(saved = {}){
+  const points = value => Number.isFinite(Number(value)) ? Math.max(0, Math.floor(Number(value))) : 0;
   return {
-    vitality: Number(saved.vitality ?? saved.hp ?? 0) || 0,
-    wisdom: Number(saved.wisdom ?? saved.mp ?? 0) || 0,
-    strength: Number(saved.strength ?? saved.attack ?? 0) || 0,
+    vitality: points(saved.vitality ?? saved.hp ?? 0),
+    wisdom: points(saved.wisdom ?? saved.mp ?? 0),
+    strength: points(saved.strength ?? saved.attack ?? 0),
     hpGain: Number(saved.hpGain) || 0,
     mpGain: Number(saved.mpGain) || 0,
     attackGain: Number(saved.attackGain) || 0,
@@ -1753,6 +1794,7 @@ function getUnlockedPassiveSkills(){
 }
 
 function getPassiveModifiers(){
+  if(player?.stats && player.stats.investedAtLevel !== player.level){ syncInvestedStatsFromCurrentTotals(); }
   const base = {
     bonusHp: 0,
     bonusMp: 0,
@@ -3546,7 +3588,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   let message = `${actorName} usou ${skillInfo.name}.`;
   let freeTurn = false;
   let freezeApplied = false;
-  if(["mage_mana_burst", "mage_fireball", "mage_freeze", "mage_sacred_phoenix", "mage_avalanche", "warrior_shove", "warrior_stagger", "warrior_judgment", "warrior_armor_piercer", "warrior_giant_slayer", "warrior_deep_cut"].includes(skillInfo.type)){
+  if(["mage_mana_burst", "mage_fireball", "mage_freeze", "mage_sacred_phoenix", "mage_avalanche", "mage_explode", "warrior_shove", "warrior_stagger", "warrior_judgment", "warrior_armor_piercer", "warrior_giant_slayer", "warrior_deep_cut"].includes(skillInfo.type)){
     damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
     if(!applyToTarget){
       damage = Math.floor(damage * (1 + getUniversalDamagePercentBonus()));
@@ -5190,6 +5232,7 @@ function createEnemyFromTemplate(template, isBoss = false, originOverride = null
 }
 
 function spawnEnemy(isBoss = false){
+  if(blockCombatWhileResting()){ return false; }
   const regionData = isDungeonMode() ? dungeonData : regions[currentRegion];
   const template = isBoss
     ? regionData.boss
@@ -5214,6 +5257,7 @@ function spawnEnemy(isBoss = false){
 }
 
 function ensureEnemy(){
+  if(blockCombatWhileResting()){ return false; }
   if(!["battle", "dungeon"].includes(currentMode) || levelUpPoints > 0 || isProcessingTurn || isDead){ return; }
   blurActiveControl();
   if(!enemy || needsNewEnemy){
@@ -5224,6 +5268,7 @@ function ensureEnemy(){
 }
 
 function challengeBoss(){
+  if(blockCombatWhileResting()){ return false; }
   if(currentMode !== "battle" || levelUpPoints > 0 || isProcessingTurn || isDead || !!enemy){ return; }
   if(!isRegionUnlockedForBattle(currentRegion)){
     log(`A regiao ${currentRegion} exige ${getRegionRequirement(currentRegion)}.`);
@@ -5489,6 +5534,15 @@ function continueCampaign(characterId = ""){
   }
   if(state && state.schemaVersion !== SAVE_SCHEMA_VERSION){ GameStorage.backup(CHARACTER_SAVES_KEY); GameStorage.backup(SAVE_KEY); }
   if(!state){ return; }
+  if(state.player.stats?.investedAtLevel !== state.player.level){
+    for(const key of [CHARACTER_SAVES_KEY, SAVE_KEY]){
+      const backupKey = `${key}:before_investment_scaling`;
+      if(!GameStorage.getItem(backupKey)){
+        const previous = GameStorage.getItem(key);
+        if(previous) GameStorage.setItem(backupKey, previous);
+      }
+    }
+  }
   GameStorage.setItem(ACTIVE_CHARACTER_KEY, state.characterId);
   player = state.player;
   player.characterId = state.characterId;
@@ -5525,6 +5579,9 @@ function continueCampaign(characterId = ""){
   }
   isProcessingTurn = false;
   normalizePlayerState();
+  if(isCampResting() && (IS_DUNGEON_PAGE || IS_ARENA_PAGE)){
+    returnToMainPage("camp"); return;
+  }
   if(enemy){
     const enemyTemplate = getEnemyTemplateByName(enemy.baseName || getBaseEnemyName(enemy.name));
     if(enemyTemplate){
@@ -5871,7 +5928,7 @@ function renderRegionMapCard(){
       </div>
       <div class="region-map-boss-hud">
           <span class="region-map-boss-progress">${bossUnlockProgress.defeated}/${bossUnlockProgress.total}</span>
-          <button class="region-map-boss-btn boss-btn action-btn" data-tooltip="${escapeHtml(bossProgressTooltip)}" onclick="challengeBoss()" aria-label="Enfrentar chefao" ${controlsDisabled || !bossUnlockProgress.unlocked ? "disabled" : ""}>Chefao</button>
+          <button class="region-map-boss-btn boss-btn action-btn" data-tooltip="${escapeHtml(isCampResting() ? 'Volte ao acampamento e levante antes de combater.' : bossProgressTooltip)}" onclick="challengeBoss()" aria-label="Enfrentar chefao" ${controlsDisabled || isCampResting() || !bossUnlockProgress.unlocked ? "disabled" : ""}>Chefao</button>
       </div>
     </div>`;
 }
@@ -5913,6 +5970,7 @@ function renderLocationMapNavigation(){
 }
 
 function updateUI(){
+  if(player){ recoverCampRest(); }
   if(typeof CampaignHUD !== "undefined" && CampaignHUD.render()){
     queueCampaignSave();
     return;
@@ -7151,6 +7209,7 @@ async function enemyTurn(){
 
 function gainXP(amount){
   const totalAmount = amount + Math.floor(amount * getPassiveModifiers().xpBonus);
+  const previousHp = player.maxHp, previousMp = player.maxMp;
   if(player.level >= MAX_LEVEL){
     player.xp = getXpToNextLevel();
     return;
@@ -7162,6 +7221,12 @@ function gainXP(amount){
     pendingLevelUps++;
     levelUpPoints++;
     log("Voce subiu de nivel! Distribua 1 ponto de atributo.");
+  }
+  if(player.stats.investedAtLevel !== player.level){
+    syncInvestedStatsFromCurrentTotals();
+    player.hp = Math.min(getCurrentCaps().maxHp, player.hp + Math.max(0, player.maxHp - previousHp));
+    player.mp = Math.min(getCurrentCaps().maxMp, player.mp + Math.max(0, player.maxMp - previousMp));
+    displayState.playerHp = player.hp; displayState.playerMp = player.mp;
   }
   if(player.level >= MAX_LEVEL){
     player.level = MAX_LEVEL;
@@ -7205,20 +7270,16 @@ function syncInvestedStatsFromCurrentTotals(){
   const hpGain = Math.max(0, (player.maxHp || baseStats.hp) - baseStats.hp);
   const mpGain = Math.max(0, (player.maxMp || baseStats.mp) - baseStats.mp);
   const attackGain = Math.max(0, (player.attack || baseStats.attack) - baseStats.attack);
-  invested.hpGain = hpGain;
-  invested.mpGain = mpGain;
-  invested.attackGain = attackGain;
-  invested.skillGain = attackGain;
   const vitalityValue = Math.max(1, getAttributePointGain("vitality"));
   const wisdomValue = Math.max(1, getAttributePointGain("wisdom"));
   const strengthValue = Math.max(1, getAttributePointGain("strength"));
-  if((invested.vitality || 0) <= 0 && hpGain > 0){
+  if(!player.stats.investedAtLevel && (invested.vitality || 0) <= 0 && hpGain > 0){
     invested.vitality = Math.max(0, Math.round(hpGain / vitalityValue));
   }
-  if((invested.wisdom || 0) <= 0 && mpGain > 0){
+  if(!player.stats.investedAtLevel && (invested.wisdom || 0) <= 0 && mpGain > 0){
     invested.wisdom = Math.max(0, Math.round(mpGain / wisdomValue));
   }
-  if((invested.strength || 0) <= 0 && attackGain > 0){
+  if(!player.stats.investedAtLevel && (invested.strength || 0) <= 0 && attackGain > 0){
     invested.strength = Math.max(0, Math.round(attackGain / strengthValue));
   }
   const maxSpendable = Math.max(0, (player.level || 1) - 1);
@@ -7232,7 +7293,16 @@ function syncInvestedStatsFromCurrentTotals(){
       overflow -= reducible;
     }
   }
+  // Counts are authoritative. Rebuild instead of adding a second scaling delta on reload.
+  invested.hpGain = invested.vitality * vitalityValue;
+  invested.mpGain = invested.wisdom * wisdomValue;
+  invested.attackGain = invested.strength * strengthValue;
+  invested.skillGain = invested.attackGain;
+  player.maxHp = baseStats.hp + invested.hpGain;
+  player.maxMp = baseStats.mp + invested.mpGain;
+  player.attack = baseStats.attack + invested.attackGain;
   player.stats.invested = invested;
+  player.stats.investedAtLevel = player.level;
 }
 
 function getInvestedSummary(){
@@ -7313,34 +7383,24 @@ function resetInvestedStatsAtCamp(){
 
 function finishLevelUp(){
   if(levelUpPoints > 0){ return; }
-
+  syncInvestedStatsFromCurrentTotals();
+  const previousHp = player.maxHp, previousMp = player.maxMp, previousAttack = player.attack;
   player.stats.invested = createDefaultInvestedStats(player.stats.invested || {});
   const spentVitality = Number(allocation.vitality) || 0;
   const spentWisdom = Number(allocation.wisdom) || 0;
   const spentStrength = Number(allocation.strength) || 0;
-  const vitalityGainPerPoint = getAttributePointGain("vitality");
-  const wisdomGainPerPoint = getAttributePointGain("wisdom");
-  const strengthGainPerPoint = getAttributePointGain("strength");
-  const hpGain = spentVitality * vitalityGainPerPoint;
-  const mpGain = spentWisdom * wisdomGainPerPoint;
-  const attackGain = spentStrength * strengthGainPerPoint;
   player.stats.invested.vitality += spentVitality;
   player.stats.invested.wisdom += spentWisdom;
   player.stats.invested.strength += spentStrength;
-  player.stats.invested.hpGain += hpGain;
-  player.stats.invested.mpGain += mpGain;
-  player.stats.invested.attackGain += attackGain;
-  player.stats.invested.skillGain += attackGain;
-  player.maxHp += hpGain;
-  player.maxMp += mpGain;
-  player.attack += attackGain;
+  syncInvestedStatsFromCurrentTotals();
+  const hpGain = player.maxHp - previousHp, mpGain = player.maxMp - previousMp, attackGain = player.attack - previousAttack;
+  allocation = { strength: 0, wisdom: 0, vitality: 0 };
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp + hpGain);
   player.mp = Math.min(getCurrentCaps().maxMp, player.mp + mpGain);
   displayState.playerHp = player.hp;
   displayState.playerMp = player.mp;
   displayState.playerXp = player.xp;
   pendingLevelUps = 0;
-  allocation = { strength: 0, wisdom: 0, vitality: 0 };
   isProcessingTurn = false;
   log(`Atributos atualizados: +${hpGain} HP max, +${mpGain} MP max, +${attackGain} ATQ e +${attackGain} dano de habilidade.`);
   enemy = null;
@@ -7410,6 +7470,7 @@ if(shouldShowCharacterSelectOnly){
 renderSettingsPanel();
 let lastMercenaryUiMinute = Math.floor(Date.now() / 60000);
 setInterval(() => {
+  if(player && !isStartScreenVisible() && recoverCampRest()){ updateUI(); }
   const mercenaryMinute = Math.floor(Date.now() / 60000);
   if(player && currentMode === "village" && villageTab === "mercenary" && mercenaryMinute !== lastMercenaryUiMinute){
     lastMercenaryUiMinute = mercenaryMinute; EquipmentSystem.refreshContracts(player); updateUI();

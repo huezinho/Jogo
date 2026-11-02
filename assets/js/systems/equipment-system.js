@@ -121,15 +121,12 @@ const EquipmentSystem = (function(){
     // At most the next two regions are requested; every such material is available through contracts.
     if(rank >= 2){ const foreign = names[Math.min(names.length - 1, index + (rank === 4 ? 2 : 1))]; if(foreign !== region) add(foreign, rank >= 3 ? 2 : 0, true, rank - 1); else if(index > 0) add(names[index - 1], 2, true, rank - 1); }
     if(rank >= 3 && index > 0) add(names[index - 1], 1, false, rank - 1);
-    // The strongest armor slot must cost more than legs, including harder local drops.
+    // A moderate premium over other armor: extra primary drops, without duplicating the legs recipe.
     if(slot === "chest"){
-      const legs = recipeFor(region, "legs", className, rarity);
-      for(const [id, qty] of Object.entries(legs.requirements)) req[id] = Math.max(req[id] || 0, qty);
-      add(region, 2, false, 2 + rank);
-      add(region, 2, true, 1 + rank);
+      add(region, 2, false, 3 + rank);
     }
     const id = `${result.templateId}|${rarity}`;
-    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil((20 + result.itemLevel * 2) * (1 + rank * .6) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.35 : 1)), requirements: req, result };
+    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil((20 + result.itemLevel * 2) * (1 + rank * .6) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.18 : 1)), requirements: req, result };
   }
   function getRecipes(actor, options = {}){
     actor = actorNow(actor);

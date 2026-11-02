@@ -65,6 +65,10 @@
       gains[key] = gain;
     }
     if(input.maxHp !== base.hp + gains.hpGain || input.maxMp !== base.mp + gains.mpGain || input.attack !== base.attack + gains.attackGain){ return null; }
+    // Accept valid historical totals, then canonicalize every point at this level.
+    gains.hpGain = counts.vitality * getAttributePointGain("vitality", level);
+    gains.mpGain = counts.wisdom * getAttributePointGain("wisdom", level);
+    gains.attackGain = counts.strength * getAttributePointGain("strength", level);
     const choices = input.subclassChoices || {};
     const tier30 = level >= 30 && getTier30ChoiceDef(input.class, choices.tier30) ? choices.tier30 : null;
     const tier60 = level >= 60 && tier30 && getTier60ChoiceDef(input.class, tier30, choices.tier60) ? choices.tier60 : null;
@@ -89,7 +93,7 @@
         enemiesDefeated: 0, bossesDefeated: 0, deaths: 0, coinsEarned: 0,
         dungeonClears: 0, dungeonBestStep: 0, arenaDuels: 0, arenaWins: 0,
         regionKills: {}, regionBossKills: {},
-        invested: { ...counts, ...gains, skillGain: gains.attackGain }
+        invested: { ...counts, ...gains, skillGain: gains.attackGain }, investedAtLevel: level
       }
     };
     for(const slot of equipmentSlots){ hero.equipment[slot] = cleanEquipment(input.equipment?.[slot], input.class, slot); }

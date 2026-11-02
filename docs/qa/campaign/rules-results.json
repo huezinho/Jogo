@@ -9,26 +9,26 @@
     "lendaria"
   ],
   "offer": {
-    "id": "contract_1494481_2862207101_0",
+    "id": "contract_1494711_2862207101_0",
     "targetRegion": "Floresta",
-    "targetName": "Aranha Gigante",
-    "count": 11,
+    "targetName": "Lobo Sombrio",
+    "count": 7,
     "rewardRegion": "Caverna",
     "rewardId": "parte_morcego_de_pedra",
-    "rewardQty": 2,
-    "difficulty": "Media",
-    "offeredAt": 1793377200000,
-    "expiresAt": 1793378400000
+    "rewardQty": 1,
+    "difficulty": "Simples",
+    "offeredAt": 1793653200000,
+    "expiresAt": 1793654400000
   },
   "accepted": {
-    "id": "contract_1494481_2862207101_0",
+    "id": "contract_1494711_2862207101_0",
     "targetRegion": "Floresta",
-    "targetName": "Aranha Gigante",
-    "count": 11,
+    "targetName": "Lobo Sombrio",
+    "count": 7,
     "progress": 0,
     "rewardId": "parte_morcego_de_pedra",
-    "rewardQty": 2,
-    "acceptedAt": 1793378249095
+    "rewardQty": 1,
+    "acceptedAt": 1793653545685
   },
   "hasSelect": false,
   "map": true

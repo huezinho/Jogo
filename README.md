@@ -11,9 +11,12 @@ Execute `python -m http.server 8000` e abra http://localhost:8000.
 - Depois de vencer o chefe de uma região, o rastreador permite contratar uma criatura local por 15 minutos. Custa `30 + 8 × nível da criatura` moedas e eleva a chance dela para pelo menos 90%. Um novo rastreamento substitui o anterior; duração e alvo são salvos com o personagem. O desafio ao chefe fica apenas no mapa, também em telas pequenas.
 - A pousada recupera vida e mana juntas pela soma dos custos individuais. No acampamento, clicar num slot permite escolher e equipar uma peça compatível da bolsa.
 - Contratos do mercenário entregam a recompensa automaticamente no último abate necessário e mostram um aviso temporário de contrato concluído. Conquistas mantêm seu funcionamento anterior.
-- Ao fabricar, a peça pisca em verde; a indicação de peça já possuída tem fundo verde. O peitoral exige mais moedas e materiais que a calça, incluindo componentes da criatura mais forte da região.
+- Ao fabricar, a peça pisca em verde; a indicação de peça já possuída tem fundo verde. O peitoral comum exige 7 materiais, incluindo componentes primários da criatura mais forte da região, e 18% mais moedas que as demais armaduras, antes do arredondamento.
+- No acampamento, Descansar recupera 1% da vida máxima a cada 3 segundos, arredondado para baixo e com mínimo de 1 HP, gratuitamente. O descanso continua ao navegar, fabricar, equipar e recarregar a página; o tempo decorrido é contabilizado. Encontros e entrada em arena/dungeon ficam bloqueados até voltar ao acampamento e clicar em Levantar. Vida cheia não encerra o descanso automaticamente.
 - Em batalha, Itens abre um painel compacto de ícones acima do botão; passar o mouse mostra o efeito e clicar usa o consumível. Poções consomem turno e reduzem as durações dos buffs já ativos; um tônico recém-aplicado mantém sua duração inicial.
 - O treinador fica abaixo dos equipamentos no acampamento. Procurar inimigo mostra as chances reais dos encontros ao passar o mouse. O volume usa um slider nas configurações; o controle de velocidade da barra de vida foi removido da interface.
+- Todos os pontos já investidos usam o valor por ponto do nível atual, tanto nos atributos permanentes quanto no poder de habilidade de Força. Subir nível, carregar o save e redistribuir no treinador seguem a mesma regra; a migração guarda uma cópia do save anterior. Equipamentos mostra Força, Vitalidade e Sabedoria em três quadros coloridos com a quantidade de pontos.
+- Explodir aplica seu dano calculado ao inimigo, respeitando armadura/escudo e os custos de vida e mana.
 
 Arena e dungeon não fazem parte desta rodada de desenvolvimento.
 
@@ -39,3 +42,5 @@ A primeira opção valida regras, interface e habilidades da campanha. `--analys
 [Análise da campanha até o nível 40](docs/analise_campanha_nivel40.md). Evidências em `docs/qa/campaign/`. Relatórios antigos retratam versões anteriores e não definem as regras atuais.
 
 [Análise ampliada de balanceamento até o nível 70](docs/analise_balanceamento_nivel70.md): quatro classes-base, 16 especializações finais, oito distribuições de atributos, todos os 48 inimigos e avaliação de relevância das habilidades. [Evidências e reprodução](docs/qa/balance70/README.md).
+
+[Catálogo de habilidades e fórmulas por classe e subclasse](docs/habilidades_classes_subclasses.md): kit completo das 28 formas, incluindo variantes herdadas, passivas e habilidades do 80. [Análise de incentivos e propostas de fórmulas](docs/analise_incentivos_habilidades.md), com sondagens atuais até o 100 e [instruções de reprodução](docs/qa/skills-formulas/README.md).
