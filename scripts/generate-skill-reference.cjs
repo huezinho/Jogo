@@ -9,7 +9,7 @@ async function main(){
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   let browser;
   try{
-    browser = await chromium.launch({ headless: true, channel: 'msedge' });
+    browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium' });
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -40,12 +40,12 @@ async function main(){
     const duration = skill => Object.entries(skill).filter(([key, value]) => /turns|duration/i.test(key) && typeof value === 'number').map(([key, value]) => `${key}: ${value}`).join('; ') || 'Ver efeito';
     const lines = [
       '# Referência atual de habilidades', '',
-      'Catálogo gerado a partir do código executável atual em 28/10/2026. Não utiliza o documento antigo de balanceamento.', '',
+      'Catálogo gerado a partir do código executável atual em 03/11/2026. Não utiliza o documento antigo de balanceamento.', '',
       `São ${forms.length} formas de classe/subclasse e ${activeIds.size} nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.`, '',
       'Os exemplos usam distribuição equilibrada dos pontos, sem equipamentos, níveis 20/50/100 conforme o estágio da árvore, vida e mana cheias, zero Cargas Arcanas, zero Cadência e alvo com 20.000 de vida máxima. As passivas iniciais de combate permanecem ativas. Valores dependentes de vida, mana, ataque, alvo e estado são fotografias desse contexto; não são coeficientes fixos nem uma avaliação de balanceamento.', '',
       'Custos e descrições vêm de `getSkillInfo()` e `useSkillCost()`; passivas vêm de `getUnlockedPassiveSkills()` e `getPassiveStatusDescription()`. O JSON contém também os campos numéricos dos descritores e os modificadores passivos. A aplicação final ocorre em `applySkillLocally()`, no ataque básico e nos resolvedores de combate: buffs globais, crítico, mitigação e efeitos de equipamentos podem alterar o resultado. A coluna de duração reproduz os campos retornados pelo código; detalhes condicionais estão no texto.', '',
       'Para regenerar: `node scripts/generate-skill-reference.cjs`. Dados completos: [skills-reference.json](qa/2026-10-28/skills-reference.json).', '',
-      'Correções verificadas nesta revisão: bônus global aplicado uma vez; bônus fixo de Transbordando aplicado uma vez por ação de mísseis; crítico do Sniper sem duplicação; Escudo de Fé com três respostas inimigas; Cortes Ultrassônicos com três ataques básicos; imunidade a controle de Você Irá Me Parar?; Corrupção bloqueando escudos ativos e a conversão passiva de Transbordando. Os coeficientes de definição das classes, subclasses, pontos e `getSkillInfo()` foram comparados com o HEAD anterior e preservados.', ''
+      'Revisão de 03/11/2026: fórmulas e custos do Guerreiro e subclasses rebalanceados; esquiva bloqueia novos efeitos hostis; sangramentos acumulam com duração própria; Investida e Você Irá Me Parar? rompem perda de turno; Cortes Ultrassônicos exige intervalo após expirar. Arqueiro e subclasses também rebalanceados; rastreio passa a seis minutos com custo quadrático por nível e raridade. Análises: docs/analise_guerreiro_progressao_adaptativa_2026-11-03.md e docs/analise_arqueiro_2026-11-03.md.', ''
     ];
     for(const form of forms){
       lines.push(`## ${form.name} — nível ${form.level}`, '', `Classe: **${form.className}**. Rota: ${form.tier30 || 'base'}${form.tier60 ? ' → ' + form.tier60 : ''}. Vida máxima: ${form.stats.maxHp}; mana máxima: ${form.stats.maxMp}; ataque: ${form.stats.attack}.`, '', `**${clean(form.basic.name)}:** ${clean(form.basic.description)}`, '',

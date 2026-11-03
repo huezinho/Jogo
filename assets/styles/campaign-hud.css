@@ -480,3 +480,8 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign .rpg-world-map .region-map-boss-btn{min-height:26px;padding:3px;font-size:10px}
  .rpg-campaign #campaignHud #rpgAccount .rpg-coins{padding:4px 6px}
 }
+
+/* Enemy effects remain interactive inside the scene's passive vital dock. */
+.rpg-campaign .rpg-enemy-plate .enemy-status-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rpg-campaign .rpg-enemy-plate .enemy-status-pill{pointer-events:auto;cursor:help;background:#291b23;max-width:100%;overflow-wrap:anywhere}
+.rpg-campaign .rpg-enemy-plate .enemy-status-pill:focus-visible{outline:2px solid #e7c68a;outline-offset:2px}

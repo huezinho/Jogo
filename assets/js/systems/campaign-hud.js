@@ -2,7 +2,7 @@
 const CampaignHUD = (() => {
   'use strict';
   const art = 'assets/visual/hud/';
-  const state = { bag: false, quickItems: false, region: null, slot: 'weapon', upgrade: null, item: null, contractTab: 'active', contract: null, dialog: null, opener: null };
+  const state = { chestSummary: '', bag: false, quickItems: false, region: null, slot: 'weapon', upgrade: null, item: null, contractTab: 'active', contract: null, dialog: null, opener: null };
   let mounted = false;
   let characterId = null;
   const esc = value => escapeHtml(String(value ?? ''));
@@ -56,7 +56,7 @@ const CampaignHUD = (() => {
 
   function render(){
     if(!enabled()) return false;
-    if(characterId!==player.characterId){state.bag=false;state.quickItems=false;state.item=null;state.region=null;state.upgrade=null;characterId=player.characterId;}
+    if(characterId!==player.characterId){state.chestSummary='';state.bag=false;state.quickItems=false;state.item=null;state.region=null;state.upgrade=null;characterId=player.characterId;}
     mount(); document.body.classList.add('rpg-playing');
     if(typeof hideTrophyCategoryPopup==='function')hideTrophyCategoryPopup();
     const root=document.getElementById('campaignHud');
@@ -82,7 +82,7 @@ const CampaignHUD = (() => {
     return `<section class="rpg-battle ${enemy?.isBoss?'is-boss':''}"><div class="rpg-battle-banner"><span>${isDead?'Derrotado':isCampResting()?'Descansando':levelUpPoints>0?'Evolução pendente':needsSubclassChoice()?'Escolha sua subclasse':isProcessingTurn?'Turno em andamento':enemy?'Sua vez':'Exploração'}</span></div>
       <aside class="rpg-quest" style="--boss-progress:${Math.round(360*Math.min(1,Math.max(0,progress.defeated/Math.max(1,progress.total))))}deg" aria-label="Rastreador da região" data-state="${enemy?.isBoss?'fighting':progress.unlocked?'ready':'tracking'}"><span class="rpg-boss-seal" role="img" aria-label="${text(regions[currentRegion].boss.name)}: ${progress.defeated} de ${progress.total} criaturas vencidas"><img src="assets/visual/bosses/${slugify(regions[currentRegion].boss.name)}.webp?v=20261029" alt="" width="64" height="64"></span>${renderTracker(progress)}</aside>
       ${renderCombatScene(enemy,currentRegion)}
-      <div class="rpg-vital-dock"><section class="rpg-hero-plate"><div class="rpg-portrait">${getHeroSpriteMarkup().replace(/id="heroSprite"/g,'id="hudHeroPortrait"')}</div><div><strong>${esc(title)}</strong><div id="rpgHeroVitals"></div></div></section>${enemy?`<section class="rpg-enemy-plate"><div><button class="rpg-target-name" data-hud="target">${esc(enemy.name)}</button><div id="rpgEnemyVitals"></div></div><div class="rpg-enemy-portrait">${getEnemySpriteMarkup(enemy).replace(/id="enemySprite"/g,'id="enemyPortrait"')}</div></section>`:`<section class="rpg-expedition-note"><span>${esc(regions[currentRegion].description)}</span></section>`}</div>
+      <div class="rpg-vital-dock"><section class="rpg-hero-plate"><div class="rpg-portrait">${getHeroSpriteMarkup().replace(/id="heroSprite"/g,'id="hudHeroPortrait"')}</div><div><strong>${esc(title)}</strong><div id="rpgHeroVitals"></div></div></section>${enemy?`<section class="rpg-enemy-plate"><div><button class="rpg-target-name" data-hud="target">${esc(enemy.name)}</button><div id="rpgEnemyVitals"></div><div class="enemy-status-list">${getEnemyStatusEffects(enemy).map(effect=>`<span tabindex="0" class="enemy-status-pill ${effect.kind}" data-hud-description="${esc(effect.details||effect.text)}">${text(effect.text)}</span>`).join('')}</div></div><div class="rpg-enemy-portrait">${getEnemySpriteMarkup(enemy).replace(/id="enemySprite"/g,'id="enemyPortrait"')}</div></section>`:`<section class="rpg-expedition-note"><span>${esc(regions[currentRegion].description)}</span></section>`}</div>
     </section>`;
   }
   function renderTracker(progress){
@@ -96,7 +96,7 @@ const CampaignHUD = (() => {
   function showTracking(){
     if(!(player.stats.regionBossKills?.[currentRegion]>0)||enemy||locked()||progressionPending())return;
     const hunt=CreatureTracking.active();
-    openDialog('tracking',`Rastrear em ${currentRegion}`,`<p>Escolha uma criatura: durante 15 minutos, ela terá pelo menos 90% de chance de aparecer nesta região.</p>${hunt?`<p>Ativo: ${text(hunt.name)} em ${text(hunt.region)}. Uma nova contratação substitui o rastreamento atual.</p>`:''}<div class="rpg-tracking-list">${regions[currentRegion].enemies.map(e=>{const offer=CreatureTracking.offer(e.name);return `<article><h3>${text(e.name)} · Nv. ${e.level}</h3><p>15 minutos · pelo menos 90% de chance</p>${button(`Rastrear · ${offer.cost} moedas`,'buy-tracking',e.name,player.coins<offer.cost?'disabled':'')}</article>`;}).join('')}</div>`);
+    openDialog('tracking',`Rastrear em ${currentRegion}`,`<p>Escolha uma criatura: durante 6 minutos, ela terá pelo menos 90% de chance de aparecer nesta região. O preço aumenta com o nível e a raridade.</p>${hunt?`<p>Ativo: ${text(hunt.name)} em ${text(hunt.region)}. Uma nova contratação substitui o rastreamento atual.</p>`:''}<div class="rpg-tracking-list">${regions[currentRegion].enemies.map(e=>{const offer=CreatureTracking.offer(e.name);return `<article><h3>${text(e.name)} · Nv. ${e.level}</h3><p>6 minutos · pelo menos 90% de chance</p>${button(`Rastrear · ${offer.cost} moedas`,'buy-tracking',e.name,player.coins<offer.cost?'disabled':'')}</article>`;}).join('')}</div>`);
   }
   function dockVitals(){
     for(const [kind, target] of [['hero','rpgHeroVitals'],['enemy','rpgEnemyVitals']]){
@@ -120,7 +120,9 @@ const CampaignHUD = (() => {
     const skills=getSkillInfo(),busy=locked()||progressionPending();
     const basicCost=player.class==='Mago'?Math.floor(3+.1*player.level)*3:0;
     const skillButtons=skills.map((skill,index)=>{const available=getSkillActionState(skill),blocked=busy||!available.canUse||playerEffects.forcedBasicTurns>0;return button(`${skillArt(skill)}<strong>${text(skill.name)}</strong><small>${available.manaCost} mana${skill.hpCostPercent?' · vida':''}</small><span class="rpg-hotkey">${index+2<=9?index+2:''}</span>`,'skill',index,`class="rpg-ability" data-hud-hotkey="${index+2}" data-hud-description="${esc(skill.description+(available.reason?' · '+available.reason:''))}" ${blocked?'disabled':''} aria-label="${text(skill.name)}, ${available.manaCost} de mana${blocked?', indisponível':''}"`);}).join('');
-    area.innerHTML=`<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',`aria-expanded="${state.quickItems}" aria-controls="rpgQuickItems" ${busy?'disabled':''}`)}${state.quickItems?renderQuickItems():''}</div><div class="rpg-ability-list">${button(`${skillArt(null)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',`data-tooltip="Custa ${getFleeCost()} moedas. Encerra a batalha sem recompensas.${player.coins<getFleeCost()?' Moedas insuficientes.':''}" aria-description="Fugir custa ${getFleeCost()} moedas e encerra a batalha sem recompensas." ${busy?'disabled':''}`)}</div></div>`;
+    const breakChoices=skills.filter(skill=>skill.canBreakControl&&getSkillActionState(skill).canUse).map(skill=>text(skill.name));
+    const controlWarning=playerEffects.skipNextTurn&&!(playerEffects.controlImmuneTurns>0)?`<p class="rpg-control-warning">Turno bloqueado: ${breakChoices.length?'use '+breakChoices.join(' ou ')+', ou encerre o turno.':'encerre o turno.'}</p>`:'';
+    area.innerHTML=`${controlWarning}<div class="rpg-command-belt"><div class="rpg-potion-slot">${button(`${image('icon-potion')}<span>Itens</span>`,'consumables','',`aria-expanded="${state.quickItems}" aria-controls="rpgQuickItems" ${busy?'disabled':''}`)}${state.quickItems?renderQuickItems():''}</div><div class="rpg-ability-list">${button(`${skillArt(null)}<strong>${text(getBasicAttackLabel())}</strong><small>${basicCost} mana</small><span class="rpg-hotkey">1</span>`,'attack','',`class="rpg-ability" data-hud-hotkey="1" data-hud-description="${esc(getBasicAttackTooltip())}" ${busy||player.mp<basicCost?'disabled':''}`)}${skillButtons}</div><div class="rpg-turn-actions">${button('Encerrar turno','pass','',busy?'disabled':'')}${button('Fugir','flee','',`data-tooltip="Custa ${getFleeCost()} moedas. Encerra a batalha sem recompensas.${player.coins<getFleeCost()?' Moedas insuficientes.':''}" aria-description="Fugir custa ${getFleeCost()} moedas e encerra a batalha sem recompensas." ${busy?'disabled':''}`)}</div></div>`;
     if(state.quickItems){
       document.getElementById('rpgQuickItems').showPopover();positionQuickItems();
     }
@@ -198,7 +200,8 @@ const CampaignHUD = (() => {
   function renderBag(){
     const items=getVisibleInventoryItems();
     const selected=player.inventory.find(item=>item.uid===state.item);
-    return `<section class="rpg-bag"><div class="rpg-bag-content"><header><h2>Seus pertences</h2><span>${player.inventory.length} pilhas de itens</span></header>${renderActionFeedback('inventory')}<div class="rpg-bag-filters">${INVENTORY_FILTER_OPTIONS.map(filter=>button(esc(filter.label),'filter',filter.id,`aria-pressed="${inventoryFilter===filter.id}"`)).join('')}</div><div class="rpg-bag-grid">${items.map(item=>button(`${itemArt(item)}<span class="rpg-item-qty">${item.qty>1?'×'+item.qty:''}</span>`,'inspect-item',item.uid,`class="rpg-bag-slot rarity-${item.rarity||'comum'} ${flashes(item)?'rpg-crafted':''}" aria-pressed="${state.item===item.uid}" aria-label="${esc(item.name)}"`)).join('')||'<p>Sua bolsa está vazia neste filtro.</p>'}</div></div><aside class="rpg-paper rpg-item-detail">${selected?renderItemDetail(selected):'<h2>Inspecione um item</h2><p>Selecione para ver atributos, comparação e ações. Selecionar não equipa nem vende.</p>'}</aside></section>`;
+    const chestCount=player.inventory.filter(item=>item.type==='chest'&&Object.prototype.hasOwnProperty.call(regions,item.region)&&Number.isSafeInteger(item.qty??1)&&(item.qty??1)>0).reduce((sum,item)=>sum+(item.qty??1),0);
+    return `<section class="rpg-bag"><div class="rpg-bag-content"><header><h2>Seus pertences</h2><span>${player.inventory.length} pilhas de itens</span></header>${chestCount?`<div class="rpg-bag-actions">${button(`Abrir todos os baús (${chestCount})`,'open-all-chests','',locked()?'disabled':'')}</div>`:''}${state.chestSummary?`<p role="status">${esc(state.chestSummary)}</p>`:''}${renderActionFeedback('inventory')}<div class="rpg-bag-filters">${INVENTORY_FILTER_OPTIONS.map(filter=>button(esc(filter.label),'filter',filter.id,`aria-pressed="${inventoryFilter===filter.id}"`)).join('')}</div><div class="rpg-bag-grid">${items.map(item=>button(`${itemArt(item)}<span class="rpg-item-qty">${item.qty>1?'×'+item.qty:''}</span>`,'inspect-item',item.uid,`class="rpg-bag-slot rarity-${item.rarity||'comum'} ${flashes(item)?'rpg-crafted':''}" aria-pressed="${state.item===item.uid}" aria-label="${esc(item.name)}"`)).join('')||'<p>Sua bolsa está vazia neste filtro.</p>'}</div></div><aside class="rpg-paper rpg-item-detail">${selected?renderItemDetail(selected):'<h2>Inspecione um item</h2><p>Selecione para ver atributos, comparação e ações. Selecionar não equipa nem vende.</p>'}</aside></section>`;
   }
   function renderItemDetail(item, equippedSlot=''){
     const gear=item.type==='equipment',old=gear?player.equipment[item.slot]:null;
@@ -228,7 +231,7 @@ const CampaignHUD = (() => {
   function navigate(target){
     if(target==='more'){openDialog('more','Diário e outros caminhos',`<div class="rpg-more">${button('Bestiário','navigate','bestiary')}${button('Troféus e conquistas','navigate','trophies')}${button('Arena','navigate','arena')}${button('Dungeon','navigate','dungeon')}${button('Configurações','settings')}</div>`);return;}
     closeDialog();
-    if(target==='bag'){state.bag=true;openDialog('bag','Bolsa do aventureiro',renderBag());return;}
+    if(target==='bag'){state.chestSummary='';state.bag=true;openDialog('bag','Bolsa do aventureiro',renderBag());return;}
     state.bag=false;
     if(target==='camp'&&currentMode!=='camp')campTab='equipamentos';
     setMode(target);
@@ -244,7 +247,7 @@ const CampaignHUD = (() => {
     if(action==='map')return showMap();if(action==='craft-map')return showMap(true);
     if(action==='craft-region'){if(!EquipmentSystem.isRegionUnlocked(value,player))return;state.region=value;closeDialog();updateUI();return;}
     if(action==='history'){openDialog('history','Histórico de batalha','');document.getElementById('logPanel').hidden=false;document.getElementById('log').style.display='block';return;}
-    if(action==='target')return openDialog('target',enemy?.name||'Inimigo',enemy?`<p>Vida: ${Math.ceil(enemy.hp)} / ${enemy.maxHp}</p><p>Armadura: ${getEnemyDisplayedArmor(enemy)}</p><h3>Efeitos</h3><p>${esc(getEnemyStatusEffects(enemy).map(effect=>effect.text).join(' · ')||'Sem efeitos ativos.')}</p><h3>Possíveis drops</h3><p>${esc(enemy.possibleDrop||'Consulte o bestiário.')}</p>`:'');
+    if(action==='target')return openDialog('target',enemy?.name||'Inimigo',enemy?`<p>Vida: ${Math.ceil(enemy.hp)} / ${enemy.maxHp}</p><p>Armadura: ${getEnemyDisplayedArmor(enemy)}</p><h3>Efeitos</h3><p>${esc(getEnemyStatusEffects(enemy).map(effect=>effect.details?effect.text+': '+effect.details:effect.text).join(' · ')||'Sem efeitos ativos.')}</p><h3>Possíveis drops</h3><p>${esc(enemy.possibleDrop||'Consulte o bestiário.')}</p>`:'');
     if(action==='consumables'){state.quickItems=!state.quickItems;renderActions();if(event.detail===0)document.querySelector('#rpgQuickItems button')?.focus({preventScroll:true});return;}
     if(action==='quick-use'){if(locked()||!enemy||currentMode!=='battle')return;closeQuickItems();return activateInventoryItem(value);}
     if(action==='service'){if(locked())return;state.bag=false;if(value==='mercenary')state.contractTab=EquipmentSystem.refreshContracts(player).active.length?'active':'offers';setVillageTab(value);return;}
@@ -261,6 +264,7 @@ const CampaignHUD = (() => {
     if(action==='contract-select'){state.contract=value;updateUI();return;}
     if(action==='abandon-confirm')return openDialog('abandon','Abandonar contrato',`<p>O progresso desta caçada será perdido.</p>${button('Abandonar contrato','abandon',value)}`);
     if(locked()&&!['respawn','restart'].includes(action))return;
+    if(action==='open-all-chests'){state.item=null;const result=openAllChests();state.chestSummary=result.opened?`${result.opened} baús abertos. ${result.opened*4} materiais recebidos.`:'';updateUI();return result;}
     if(action==='attack')return attack();if(action==='skill')return useSkill(Number(value));if(action==='pass')return passTurn();
     if(action==='find')return ensureEnemy();
     if(action==='flee')return fleeBattle();

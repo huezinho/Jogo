@@ -45,6 +45,8 @@ Armas usam apenas ataque e poder, renormalizados para 100%. Fortaleza/Panteão: 
 
 ## Artefatos
 
+O Colar de Raízes reflete dano recebido em todas as quatro classes. No Guerreiro, soma-se à reflexão da passiva de classe; as regras das outras passivas não foram alteradas.
+
 ```
 efeito = mínimo(limite próprio, efeito base × fator de raridade × 3)
 ```
@@ -63,7 +65,23 @@ Preço de referência = teto(270 × progressão da raridade × multiplicador do 
 
 Multiplicadores: arma=1,25; peito=1,18; cabeça/pernas/pés=1; acessório=4.
 
-Fabricação somente comum. A melhoria cobra as diferenças positivas de materiais entre as duas receitas e a diferença de preços (mínimo de 100 moedas). Materiais da receita de referência: teto(quantidade-base × fator de raridade × 1,5), ou ×3 para acessórios. Como alguns componentes mudam entre raridades, o total efetivamente consumido é a soma da fabricação e das melhorias, não apenas a receita de referência da última raridade.
+Fabricação somente comum. Cada fabricação usa exatamente dois tipos de materiais da própria região. Cada melhoria cobra uma receita completa da etapa, sem subtrair materiais da etapa anterior. O custo em moedas continua sendo a diferença de preços (mínimo de 100 moedas).
+
+| Etapa | Dois componentes locais | Componentes adicionais |
+|---|---|---|
+| Fabricação comum | Da região da peça | Nenhum |
+| Comum → incomum | Da região da peça | Um tipo de cada: Floresta, Caverna, Ruínas |
+| Incomum → rara | Da região da peça | Um tipo de cada: Pântano, Vulcão, Abismo |
+| Rara → ultra rara | Da região da peça | Um tipo de cada: Fortaleza, Necrópole, Cidadela |
+| Ultra rara → lendária | Da região da peça | Um tipo de cada: Panteão, Cataclismo, Paradoxo |
+
+```
+Quantidade local A = teto(8 × peso × fator da raridade de destino × prêmio)
+Quantidade local B = teto(5 × peso × fator da raridade de destino × prêmio)
+Quantidade por região adicional = teto(3 × peso × fator da raridade de destino × prêmio)
+```
+
+Prêmio: 1 para peças normais, 2 para acessórios (peso 0,6). Peças mais pesadas exigem quantidades maiores e componentes mais difíceis. A seleção percorre materiais primários/secundários de inimigos progressivamente mais fortes, até os materiais do chefe. Se a região da peça estiver na faixa adicional, o componente extra dessa região é distinto dos dois componentes locais. Assim, a fabricação tem dois tipos e cada melhoria tem cinco tipos distintos. Materiais e quantidades não dependem do nível do herói.
 
 Acessórios comuns vêm da queda, sem fabricação; seus totais consideram somente melhorias. Ultra raro → lendário consome também outra cópia comum do mesmo acessório na bolsa. Falhas não consomem recursos.
 
@@ -87,3 +105,9 @@ Simples: menos de 10 alvos; média: 10–15; difícil: 16 ou mais. A progressão
 `node scripts/export-equipment-catalog.cjs` gera o catálogo em docs/equipamentos: 540 variantes com atributos no nível 50, materiais e moedas acumulados, próxima melhoria e cópia comum adicional. Materiais/custos não dependem do nível do herói.
 
 `node scripts/test-equipment-balance.cjs` verifica 4.800 combinações, fatores, efeitos sem escala de nível, pagamentos regionais acelerados, pagamento único de ouro/XP, subida de nível, redução geral, oficina e save/reload.
+
+## Drops e baús da campanha
+
+Chefes: material primário 65%, secundário 55%, baú 100% e acessório comum 3%, com sorteios independentes. Comuns permanecem com 40% de material primário e 24% de secundário.
+
+Cada baú faz quatro sorteios independentes com reposição entre os oito materiais da região (dois de cada um dos três inimigos e dois do chefe). Cada material tem 12,5% por sorteio. Sempre entrega quatro unidades, agregadas em pilhas quando repetidas, podendo sair 4 iguais, 3+1, 2+2, 2+1+1 ou quatro diferentes.

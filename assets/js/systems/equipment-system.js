@@ -99,7 +99,7 @@ const EquipmentSystem = (function(){
     const materials = getMaterials(name, enemy.region);
     const result = [];
     for(let index = 0; index < materials.length; index++){
-      const chance = enemy.isBoss ? (index ? .55 : 1) : (index ? .24 : .4);
+      const chance = enemy.isBoss ? (index ? .55 : .65) : (index ? .24 : .4);
       if(Math.random() < chance){
         const roll = Math.random();
         result.push({ ...materials[index], qty: enemy.isBoss || index ? 1 : roll < .05 ? 3 : roll < .2 ? 2 : 1 });
@@ -111,34 +111,36 @@ const EquipmentSystem = (function(){
   function recipeFor(region, slot, className, rarity, actor){
     const result = createItem(region, slot, className, rarity, actor);
     if(!result) return null;
-    const names = regionNames(), index = names.indexOf(region), rank = rarityRank(rarity), data = regions[region];
-    const req = {};
-    const add = (r, enemyIndex, secondary, qty) => {
+    const names = regionNames(), rank = rarityRank(rarity);
+    const weight = slot === "accessory" ? .6 : EquipmentData.slotWeights[slot];
+    const premium = slot === "accessory" ? 2 : 1;
+    const tier = slot === "accessory" ? 4 : ["feet", "head", "legs", "chest", "weapon"].indexOf(slot);
+    const factor = EquipmentData.rarityFactors[rarity];
+    // Ordered by encounter difficulty and material rarity; heavier pieces use later entries.
+    const poolFor = r => {
       const enemies = [...regions[r].enemies, regions[r].boss];
-      const material = getMaterials(enemies[enemyIndex].name, r)[secondary ? 1 : 0];
+      const pairs = enemies.map(enemy => getMaterials(enemy.name, r));
+      return [pairs[0][0], pairs[1][0], pairs[0][1], pairs[2][0], pairs[1][1], pairs[2][1], pairs[3][0], pairs[3][1]];
+    };
+    const req = {}, localRequirements = {}, regionalRequirements = {};
+    const add = (material, qty, group) => {
+      group[material.id] = (group[material.id] || 0) + qty;
       req[material.id] = (req[material.id] || 0) + qty;
     };
-    // Slot and region select different enemies so both drops from every common enemy have a purpose.
-    const slotIndex = Math.max(0, EquipmentData.slots.indexOf(slot)), regionIndex = names.indexOf(region);
-    const primaryEnemy = (slotIndex + regionIndex) % 3, secondaryEnemy = (slotIndex * 2 + regionIndex + 1) % 3;
-    add(region, primaryEnemy, false, 3 + rank * 2 + (slot === "weapon" ? 2 : 0));
-    add(region, secondaryEnemy, true, 1 + rank);
-    if(rank > 0 || slot === "weapon") add(region, (primaryEnemy + 1) % 3, false, 1 + rank);
-    if(slot === "accessory") add(region, 3, false, rank + 1);
-    else if(rank >= 2) add(region, 3, false, rank - 1);
-    if(rank >= 3) add(region, 3, true, rank - 2);
-    if(rank === 1 && index > 0) add(names[index - 1], 0, true, 1);
-    // At most the next two regions are requested; every such material is available through contracts.
-    if(rank >= 2){ const foreign = names[Math.min(names.length - 1, index + (rank === 4 ? 2 : 1))]; if(foreign !== region) add(foreign, rank >= 3 ? 2 : 0, true, rank - 1); else if(index > 0) add(names[index - 1], 2, true, rank - 1); }
-    if(rank >= 3 && index > 0) add(names[index - 1], 1, false, rank - 1);
-    // A moderate premium over other armor: extra primary drops, without duplicating the legs recipe.
-    if(slot === "chest"){
-      add(region, 2, false, 3 + rank);
+    const local = poolFor(region), start = Math.min(6, tier + Math.floor(rank / 2));
+    add(local[start], Math.ceil(8 * weight * factor * premium), localRequirements);
+    add(local[start + 1], Math.ceil(5 * weight * factor * premium), localRequirements);
+    if(rank > 0){
+      const band = names.slice((rank - 1) * 3, rank * 3);
+      for(const r of band){
+        const pool = poolFor(r), preferred = Math.min(7, tier + rank - 1);
+        // If the item region is inside the band, keep this extra component distinct from its two local components.
+        const material = [...pool.slice(preferred), ...pool.slice(0, preferred).reverse()].find(entry => !req[entry.id]);
+        add(material, Math.ceil(3 * weight * factor * premium), regionalRequirements);
+      }
     }
-    const materialMultiplier = (slot === "accessory" ? 3 : 1.5) * EquipmentData.rarityFactors[rarity];
-    for(const id of Object.keys(req)) req[id] = Math.ceil(req[id] * materialMultiplier);
     const id = `${result.templateId}|${rarity}`;
-    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil(270 * [1, 6, 20, 60, 280][rank] * (slot === "accessory" ? 4 : 1) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.18 : 1)), requirements: req, result };
+    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil(270 * [1, 6, 20, 60, 280][rank] * (slot === "accessory" ? 4 : 1) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.18 : 1)), requirements: req, localRequirements, regionalRequirements, result };
   }
   function getRecipes(actor, options = {}){
     actor = actorNow(actor);
@@ -381,7 +383,7 @@ const EquipmentSystem = (function(){
     const active = actorNow() === actor;
     return { maxHp: context?.maxHp || (active && typeof getCurrentCaps === "function" ? getCurrentCaps().maxHp : actor.maxHp), maxMp: context?.maxMp || (active && typeof getCurrentCaps === "function" ? getCurrentCaps().maxMp : actor.maxMp), power: Math.max(1, context?.power || (active && typeof getActiveAttack === "function" && typeof getSkillPowerBonus === "function" ? getActiveAttack() + getSkillPowerBonus() : actor.attack + (actor.stats?.invested?.skillGain || 0))) };
   }
-  function hasDot(target){ return !!target && ((target.dotTurns > 0 && target.dotDamagePerTurn > 0) || (target.natureMarkTurns > 0 && target.natureMarkDamage > 0) || (target.naturePoisonTurns > 0 && target.naturePoisonDamage > 0) || (target.natureDecayTurns > 0 && target.natureDecayDamage > 0)); }
+  function hasDot(target){ return !!target && ((target.bleedTurns > 0 && target.bleedDamagePerTurn > 0) || (target.dotTurns > 0 && target.dotDamagePerTurn > 0) || (target.natureMarkTurns > 0 && target.natureMarkDamage > 0) || (target.naturePoisonTurns > 0 && target.naturePoisonDamage > 0) || (target.natureDecayTurns > 0 && target.natureDecayDamage > 0)); }
   function beginAction(actor, effects, context = {}){
     const state = runtime(effects);
     state.turn++; state.dotHealUsed = 0;
@@ -457,7 +459,7 @@ const EquipmentSystem = (function(){
   function getDotDamageMultiplier(actor){ return 1 + (getSetBonuses(actor).bonuses.dotDamagePercent || 0); }
   function noteDotApplication(actor, effects, target, turnKeys, options = {}){
     if(!actor || !effects || !target) return false;
-    const damageFields = { dotTurns: "dotDamagePerTurn", natureMarkTurns: "natureMarkDamage", naturePoisonTurns: "naturePoisonDamage", natureDecayTurns: "natureDecayDamage" };
+    const damageFields = { bleedTurns: "bleedDamagePerTurn", dotTurns: "dotDamagePerTurn", natureMarkTurns: "natureMarkDamage", naturePoisonTurns: "naturePoisonDamage", natureDecayTurns: "natureDecayDamage" };
     const owner = String(actor.characterId || actor.id || actor.class);
     let applied = false;
     for(const turnKey of Array.isArray(turnKeys) ? turnKeys : [turnKeys]){
@@ -515,8 +517,8 @@ const EquipmentSystem = (function(){
     if(skill && current.dotApplied && has("Floresta", 5)){ state.dotActions = (state.dotActions || 0) + 1; if(state.dotActions >= 3){ state.forestReady = true; state.dotActions = 0; } }
     if(has("Vulcao", 5) && skill && damage > 0){ state.offensiveActions = (state.offensiveActions || 0) + 1; if(state.offensiveActions >= 3 && !state.cooldowns.burn && target?.hp > 0){ target.dotDamagePerTurn = Math.max(target.dotDamagePerTurn || 0, Math.floor(current.power * .15)); target.dotTurns = Math.max(target.dotTurns || 0, 2); target.dotSourceName = "Brasas Vivas"; noteDotApplication(actor, effects, target, ["dotTurns"], { equipmentProc: true }); state.offensiveActions = 0; state.cooldowns.burn = 3; } }
     if(has("Necropole", 5) && target && !state.cooldowns.extend){
-      const owner = String(actor.characterId || actor.id || actor.class), own = [["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].filter(([turnKey, damageKey]) => target[turnKey] > 0 && target[damageKey] > 0 && target.equipmentDotOwners?.[turnKey] === owner);
-      if(own.length >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
+      const owner = String(actor.characterId || actor.id || actor.class), own = [["bleedTurns", "bleedDamagePerTurn"], ["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].filter(([turnKey, damageKey]) => target[turnKey] > 0 && target[damageKey] > 0 && target.equipmentDotOwners?.[turnKey] === owner);
+      if(own.length >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ if(turnKey === "bleedTurns"){ for(const stack of target.bleedStacks || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } if(typeof syncBleeding === "function") syncBleeding(target); } else target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
     }
     if(skill && current.costReady && state.cycleReady){ state.cycleReady = false; state.cooldowns.cycle = 4; }
     state.current = null;
@@ -530,13 +532,10 @@ const EquipmentSystem = (function(){
     const priorRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, current.rarity, actor);
     const nextRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, nextRarity, actor);
     if(!priorRecipe || !nextRecipe) return null;
-    const requirements = {};
-    for(const [id, qty] of Object.entries(nextRecipe.requirements)){
-      const difference = qty - (priorRecipe.requirements[id] || 0);
-      if(difference > 0) requirements[id] = difference;
-    }
+    // Each improvement pays its own complete stage recipe, not a difference from the previous stage.
+    const requirements = copy(nextRecipe.requirements);
     const duplicate = current.slot === "accessory" && rank === 3 ? { regionName: current.regionName, rarity: "comum", qty: 1 } : null;
-    return { requirements, duplicate, cost: Math.max(100, nextRecipe.cost - priorRecipe.cost), fromRarity: current.rarity, toRarity: nextRarity, nextItem: copy(nextRecipe.result), region: current.regionName };
+    return { requirements, localRequirements: copy(nextRecipe.localRequirements), regionalRequirements: copy(nextRecipe.regionalRequirements), duplicate, cost: Math.max(100, nextRecipe.cost - priorRecipe.cost), fromRarity: current.rarity, toRarity: nextRarity, nextItem: copy(nextRecipe.result), region: current.regionName };
   }
   function duplicateCount(actor, item, upgrade){
     if(!upgrade?.duplicate) return 0;

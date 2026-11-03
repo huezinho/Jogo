@@ -13,6 +13,87 @@ const { server, chromium } = require('../docs/qa/2026-10-27/smoke.cjs');
       selectClass('Guerreiro'); enemy = null; currentMode = 'village';
       player.stats.regionBossKills = Object.fromEntries(Object.keys(regions).map(r => [r, 1]));
       const E = EquipmentSystem, D = EquipmentData;
+      let reflectionCases = 0;
+      const reflectionRandom=Math.random;
+      try{
+        Math.random=()=>.99;
+        for(const cls of Object.keys(classes)) for(const rarity of [null,...rarityOrder]){
+          selectClass(cls); player.hp=player.maxHp=10000; playerEffects=createDefaultPlayerEffects();
+          player.equipment=rarity?{accessory:E.createBossAccessory('Floresta',rarity)}:{};
+          enemy=createEnemyFromTemplate(regions.Floresta.enemies[0],false,'Floresta');
+          enemy.hp=enemy.maxHp=100000; enemy.armor=0; enemy.shieldValue=0;
+          const before=enemy.hp;
+          const received=applyIncomingDamage(1000);
+          const rate=rarity?E.createBossAccessory('Floresta',rarity).reflectPercent:0;
+          check(before-enemy.hp===Math.floor(received.damage*rate),'collar reflection '+cls+' '+rarity);
+          check(player.hp===10000-received.damage,'reflection does not prevent incoming damage');
+          reflectionCases++;
+        }
+      }finally{Math.random=reflectionRandom;}
+      selectClass('Guerreiro'); enemy=null; currentMode='village';
+      player.stats.regionBossKills=Object.fromEntries(Object.keys(regions).map(r=>[r,1]));
+      let recipeStages = 0;
+      const used = new Set();
+      for(const region of Object.keys(regions)) for(const slot of [...D.slots, 'accessory']) {
+        if(slot!=='accessory'){
+          const recipe=E.getRecipes(player,{region,slot})[0];
+          check(Object.keys(recipe.requirements).length===2,'exactly two fabrication materials');
+          check(Object.keys(recipe.requirements).every(id=>E.materialById(id).regionName===region),'fabrication local only');
+          Object.keys(recipe.requirements).forEach(id=>used.add(id));
+        }
+        for(let rank=0;rank<4;rank++){
+          const current=E.createItem(region,slot,'Guerreiro',rarityOrder[rank],player);
+          const u=E.getUpgradeRequirements(current,player);
+          check(Object.keys(u.localRequirements).length===2,'two local upgrade materials');
+          check(Object.keys(u.regionalRequirements).length===3,'three band materials');
+          check(Object.keys(u.requirements).length===5,'five distinct upgrade materials');
+          check(Object.keys(u.localRequirements).every(id=>E.materialById(id).regionName===region),'local upgrade region');
+          const band=Object.keys(regions).slice(rank*3,rank*3+3).sort();
+          check(JSON.stringify(Object.keys(u.regionalRequirements).map(id=>E.materialById(id).regionName).sort())===JSON.stringify(band),'exact three-region band');
+          check(Object.entries(u.requirements).every(([id,qty])=>qty===(u.localRequirements[id]||0)+(u.regionalRequirements[id]||0)),'full stage requirements');
+          Object.keys(u.requirements).forEach(id=>used.add(id)); recipeStages++;
+        }
+      }
+      check(E.allMaterials().every(m=>used.has(m.id)),'every material used');
+      for(const rarity of rarityOrder.slice(0,4)){
+        let last=0;
+        for(const slot of ['feet','head','legs','chest','weapon']){
+          const u=E.getUpgradeRequirements(E.createItem('Floresta',slot,'Guerreiro',rarity),player);
+          const qty=Object.values(u.requirements).reduce((a,b)=>a+b,0);
+          check(qty>last,'heavier piece costs more'); last=qty;
+        }
+      }
+      const originalRandom=Math.random;
+      try{
+        for(const region of Object.keys(regions)){
+          const boss={baseName:regions[region].boss.name,region,isBoss:true};
+          Math.random=()=>.649999;check(E.rollDrops(boss).some(m=>m.materialTier==='primary'),'boss primary below 65%');
+          Math.random=()=>.65;check(!E.rollDrops(boss).some(m=>m.materialTier==='primary'),'boss primary stops at 65%');
+          Math.random=()=>.549999;check(E.rollDrops(boss).some(m=>m.materialTier==='secondary'),'boss secondary below 55%');
+          Math.random=()=>.55;check(!E.rollDrops(boss).some(m=>m.materialTier==='secondary'),'boss secondary stops at 55%');
+          const pool=[...regions[region].enemies,regions[region].boss].flatMap(e=>E.getMaterials(e.name,region));
+          for(let i=0;i<8;i++){
+            Math.random=()=> (i+.5)/8;
+            const contents=getBossChestItems(region);
+            check(contents.length===1&&contents[0].id===pool[i].id&&contents[0].qty===4,'all eight chest materials can repeat four times');
+          }
+          for(const rolls of [[0,0,1,1],[0,1,1,1],[0,2,4,7]]){
+            let n=0;Math.random=()=> (rolls[n++]+.5)/8;
+            const contents=getBossChestItems(region);
+            check(contents.reduce((sum,m)=>sum+m.qty,0)===4,'four chest units');
+            check(contents.every(m=>m.regionName===region),'chest regional materials only');
+            check(contents.length===new Set(rolls).size,'chest duplicate merging');
+          }
+        }
+        player.inventory=[];
+        addInventoryItem({...createRegionChest('Floresta'),uid:'chest-test',qty:2});
+        Math.random=()=>.99;openChest('chest-test');
+        check(player.inventory.find(i=>i.uid==='chest-test').qty===1,'one chest consumed');
+        check(player.inventory.filter(i=>i.type==='material').reduce((sum,m)=>sum+m.qty,0)===4,'four materials delivered');
+        openChest('chest-test');
+        check(!player.inventory.some(i=>i.uid==='chest-test'),'last chest removed');
+        check(player.inventory.filter(i=>i.type==='material').reduce((sum,m)=>sum+m.qty,0)===8,'second chest adds four');
+      }finally{Math.random=originalRandom;}
       let variants = 0;
       for(const [region, profile] of Object.entries(D.regionStats)) {
         check(Math.abs(Object.values(profile).reduce((a,b)=>a+b,0)-1)<1e-9, region+' proportions');
@@ -133,7 +214,7 @@ const { server, chromium } = require('../docs/qa/2026-10-27/smoke.cjs');
       player.equipment.chest={...E.createItem('Floresta','chest','Guerreiro'),uid:'saved'};
       saveCampaign();
       const examples=[['Floresta','chest','lendaria',50],['Caverna','chest','rara',50],['Abismo','weapon','rara',50],['Paradoxo','accessory','lendaria',50],['Citadela','accessory','lendaria',50],['Floresta','chest','lendaria',100]].map(([region,slot,rarity,level])=>({region,slot,rarity,level,stats:E.createItem(region,slot,'Guerreiro',rarity,{level}).stats}));
-      return {variants,low,high,recipeCost:recipe.cost,artifactCost:u.cost,examples};
+      return {variants,reflectionCases,recipeStages,low,high,recipeCost:recipe.cost,artifactCost:u.cost,examples};
     });
     await page.reload();
     await page.evaluate(()=>continueCampaign());
