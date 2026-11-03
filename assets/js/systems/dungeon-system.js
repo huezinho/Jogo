@@ -9,6 +9,9 @@
   const baseChooseSubclass = window.chooseSubclass;
   const baseRenderLevelUpPanel = window.renderLevelUpPanel;
   const DUNGEON_TIMEOUT_MS = 12000;
+  const enemyMotions = new Map();
+  const enemyMotionDuration = { attack: 820, hurt: 450 };
+  let lastRenderedEnemyHp = new Map();
   let dungeonHeartbeatTimer = null;
   let closingDungeon = false;
 
@@ -1095,10 +1098,18 @@
       ${intermissionPanel}`;
   }
 
-  function renderDungeonEnemyCard(targetEnemy){
+  function renderDungeonEnemyCard(targetEnemy, now){
     const selected = dungeonMultiplayer.selectedEnemyId === targetEnemy.instanceId;
+    const previousHp = lastRenderedEnemyHp.get(targetEnemy.instanceId);
+    if(previousHp > targetEnemy.hp && !enemyMotions.has(targetEnemy.instanceId)){
+      enemyMotions.set(targetEnemy.instanceId, { kind: "hurt", startedAt: now });
+    }
+    const motion = enemyMotions.get(targetEnemy.instanceId);
+    const motionAttributes = motion
+      ? ` data-enemy-motion="${motion.kind}" style="--enemy-motion-delay:${-Math.max(0, Math.round(now - motion.startedAt))}ms"`
+      : "";
     return `
-      <div class="dungeon-enemy-tile ${selected ? "selected" : ""}">
+      <div class="dungeon-enemy-tile ${selected ? "selected" : ""}"${motionAttributes}>
         <div class="simple-combat-avatar dungeon-enemy-avatar">${renderCombatAvatar("enemies", toCssToken(targetEnemy.baseName || targetEnemy.name), getEnemySpriteIcon(targetEnemy), targetEnemy.baseName || targetEnemy.name)}</div>
         <strong>${targetEnemy.baseName}</strong>
         <span class="${targetEnemy.rarityClass}">${targetEnemy.rarityLabel}</span>
@@ -1115,6 +1126,13 @@
   function renderDungeonBattlePanel(){
     const run = getDungeonRun();
     ensureDungeonSelectedEnemy();
+    const now = performance.now();
+    for(const [id, motion] of enemyMotions){
+      if(now - motion.startedAt >= enemyMotionDuration[motion.kind]){ enemyMotions.delete(id); }
+    }
+    const enemies = run.enemies.filter(target => target.hp > 0);
+    const enemyCards = enemies.map(target => renderDungeonEnemyCard(target, now)).join("");
+    lastRenderedEnemyHp = new Map(enemies.map(target => [target.instanceId, target.hp]));
     return `
       <div class="combat-arena-card enemy-card dungeon-battle-card">
         <div class="combat-scene-header">
@@ -1128,7 +1146,7 @@
           </div>
         </div>
         <div class="dungeon-enemy-grid">
-          ${run.enemies.filter(target => target.hp > 0).map(renderDungeonEnemyCard).join("")}
+          ${enemyCards}
         </div>
       </div>`;
   }
@@ -1906,10 +1924,10 @@
     return actorEnemy.hp <= 0;
   }
 
-  function broadcastDungeonLog(message, sourceId = ""){
+  function broadcastDungeonLog(message, sourceId = "", attackingEnemyId = ""){
     if(message){
       log(message);
-      broadcastToDungeonPeers({ type: "log", message, sourceId });
+      broadcastToDungeonPeers({ type: "log", message, sourceId, attackingEnemyId });
     }
   }
 
@@ -1936,7 +1954,9 @@
           return;
         }
         const packet = buildDungeonEnemyAttackPacket(actorEnemy, targetProfile);
-        broadcastDungeonLog(packet.message, "");
+        const attackingEnemyId = packet.type === "attack" ? packet.sourceEnemyId : "";
+        if(attackingEnemyId){ enemyMotions.set(attackingEnemyId, { kind: "attack", startedAt: performance.now() }); }
+        broadcastDungeonLog(packet.message, "", attackingEnemyId);
         if(packet.type === "attack"){
           applyDungeonIncomingPacketToHero(packet, targetProfile.id);
           if(getDungeonRun().phase !== "battle"){ return; }
@@ -2449,6 +2469,9 @@
         return;
       }
       log(data.message);
+      if(data.attackingEnemyId && getDungeonRun().enemies.some(target => target.instanceId === data.attackingEnemyId)){
+        enemyMotions.set(data.attackingEnemyId, { kind: "attack", startedAt: performance.now() });
+      }
       return;
     }
     if(data.type === "encounter_reward"){

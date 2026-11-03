@@ -33,7 +33,23 @@ const CharacterMotion=(()=>{
   const cls=p.pose==='cast'?'casting':'attacking';box.classList.add(cls);box.dataset.ability=p.key||'support';emit('start',p);
   let sequence=[0,1,2,3];if(p.pose==='attack'&&p.hits>1)sequence=[0,...Array.from({length:p.hits},()=>[1,2]).flat(),3];
   else if(repeats>1&&!reduced())sequence=[0,1,...Array.from({length:Math.max(2,Math.ceil(p.duration/225)-3)},()=>2),3];
-  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit)pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}})()]);}finally{box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
+  const impacts=async()=>{
+   const marks=p.pose==='attack'&&p.hits>1
+    ? sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[])
+    : Array.from({length:repeats},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));
+   let elapsed=0;
+   let lastReaction;
+   for(let i=0;i<marks.length;i++){
+    await pause(Math.max(0,marks[i]-elapsed));
+    elapsed=marks[i];
+    emit('impact',{...p,hit:i});
+    if(connectHit)lastReaction=pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);
+   }
+   // The next combat render replaces the sprite, so finish its last recoil first.
+   await lastReaction;
+  };
+  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence),effect(p),impacts()]);}
+  finally{box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
  }
  return {profile,action,hurt,prepare,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath:key=>`assets/visual/heroes-v2/${key}.webp?v=20261029-motion`};
 })();

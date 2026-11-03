@@ -1328,3 +1328,40 @@ img.village-npc-sprite{
 .rpg-campaign .rpg-inn-meter::before,.rpg-campaign .rpg-inn-meter::after{content:'';position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;border:1px solid #b39a6a;background:radial-gradient(at 30% 25%,#b2a17b,#292219 75%);box-shadow:0 1px 2px #000;pointer-events:none}
 .rpg-campaign .rpg-inn-meter::before{left:0}.rpg-campaign .rpg-inn-meter::after{right:0}
 .rpg-campaign .rpg-inn>h2{width:100%}
+
+/* Painted enemy atlases have eight square poses in a 4 × 2 layout. */
+.sheet-sprite.enemy-v2{width:256px;height:256px;background-size:400% 200%;background-position:0 0}
+.sprite-avatar.enemy-v2{width:min(100%, var(--enemy-avatar-size, 104px));height:auto;aspect-ratio:1;background-size:400% 200%;background-position:0 0}
+.dungeon-enemy-avatar{--enemy-avatar-size:88px}
+.rpg-campaign .rpg-enemy-portrait .sheet-sprite.enemy-v2{top:50%;transform:translate(-50%,-50%) scale(.29);transform-origin:center}
+.bestiary-preview-stage .sheet-sprite.enemy-v2{bottom:50%;transform:translate(-50%,50%) scale(1.25);transform-origin:center}
+
+:is(.enemy-entity,.bestiary-preview-stage,.dungeon-enemy-avatar) .enemy-v2{animation:paintedEnemyIdle 2.8s step-end infinite!important}
+:is(.attacking,.casting,.skilling,.buffing) .sheet-sprite.enemy-v2{animation:paintedEnemyStrike .82s step-end both!important}
+:is(.casting,.skilling,.buffing) .sheet-sprite.enemy-v2{animation-duration:.95s!important}
+:is(.hit,.hit-impact) .sheet-sprite.enemy-v2{animation:paintedEnemyHurt .45s step-end both!important}
+.dungeon-enemy-tile[data-enemy-motion=attack] .sprite-avatar.enemy-v2{animation:paintedEnemyIdle 2.8s step-end infinite,paintedEnemyStrike .82s step-end!important}
+.dungeon-enemy-tile[data-enemy-motion=hurt] .sprite-avatar.enemy-v2{animation:paintedEnemyIdle 2.8s step-end infinite,paintedEnemyHurt .45s step-end!important}
+.dungeon-enemy-tile[data-enemy-motion] .sprite-avatar.enemy-v2{animation-delay:0s,var(--enemy-motion-delay,0ms)!important}
+
+@keyframes paintedEnemyIdle{50%{background-position:33.3333% 0}}
+@keyframes paintedEnemyStrike{
+  0%{background-position:0 100%}
+  30%{background-position:33.3333% 100%}
+  51%{background-position:66.6667% 100%}
+  76%{background-position:100% 100%}
+}
+@keyframes paintedEnemyHurt{
+  0%{background-position:66.6667% 0}
+  47%{background-position:100% 0}
+}
+@media(max-width:480px){
+  .bestiary-preview-stage .sheet-sprite.enemy-v2{transform:translate(-50%,50%) scale(.95)}
+  .rpg-campaign .rpg-battle .battle-scene .combat-entity.enemy-entity{left:min(75%, calc(100% - 84px))}
+  .rpg-campaign .rpg-battle .battle-scene .enemy-entity.enemy-boss{--entity-scale:.7}
+}
+@media(prefers-reduced-motion:reduce){
+  .enemy-entity:has(.enemy-v2),
+  :is(.enemy-entity,.bestiary-preview-stage,.dungeon-enemy-avatar) :is(.sheet-sprite,.sprite-avatar).enemy-v2{animation:none!important}
+  .dungeon-enemy-tile[data-enemy-motion] .sprite-avatar.enemy-v2{animation:none!important}
+}

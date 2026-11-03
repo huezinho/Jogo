@@ -747,14 +747,28 @@ function getVisualSpritePath(kind, assetKey){
   const normalizedKind = kind === "heroes" ? "heroes" : "enemies";
   if(normalizedKind === "heroes" && typeof CharacterMotion !== "undefined")return new URL(CharacterMotion.heroPath(assetKey),window.location.href).href;
   const resolvedKey = combatArtAliases[normalizedKind]?.[assetKey] || assetKey;
-  const path = `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
+  const enemyArt = normalizedKind === "enemies" && paintedEnemyKeys.has(resolvedKey);
+  const path = enemyArt
+    ? `assets/visual/enemies-v2/${resolvedKey}.webp?v=20261103-painted`
+    : `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
   return new URL(path, window.location.href).href;
+}
+
+const paintedEnemyKeys = new Set(Object.values(regions).flatMap(({boss, enemies}) =>
+  [boss, ...enemies].map(template => toCssToken(template.name))
+));
+
+function getPaintedEnemyClass(kind, assetKey){
+  if(kind !== "enemies") return "";
+  const resolvedKey = combatArtAliases.enemies[assetKey] || assetKey;
+  return paintedEnemyKeys.has(resolvedKey) ? "enemy-v2" : "";
 }
 
 function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extraClass = ""){
   const source = getVisualSpritePath(kind, assetKey);
   const safeLabel = String(label || "").replace(/"/g, "&quot;");
-  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2' : ''} ${extraClass}" style="--sprite-url:url('${source}');${kind==='heroes'&&typeof CharacterMotion!=='undefined'?'--portrait-top:'+CharacterMotion.portraitTop(assetKey)+'px':''}" role="img" aria-label="${safeLabel}"></div>`;
+  const paintedClass = kind === "heroes" && typeof CharacterMotion !== "undefined" ? "hero-v2" : getPaintedEnemyClass(kind, assetKey);
+  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${paintedClass} ${extraClass}" style="--sprite-url:url('${source}');${kind==='heroes'&&typeof CharacterMotion!=='undefined'?'--portrait-top:'+CharacterMotion.portraitTop(assetKey)+'px':''}" role="img" aria-label="${safeLabel}"></div>`;
 }
 
 function getHeroSpriteMarkup(targetPlayer = player){
@@ -764,7 +778,8 @@ function getHeroSpriteMarkup(targetPlayer = player){
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
   const source = getVisualSpritePath(kind, assetKey);
   const safeLabel = String(altText || "").replace(/"/g, "&quot;");
-  return `<span class="combat-avatar-media sprite-avatar ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2-avatar' : ''}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
+  const paintedClass = kind === "heroes" && typeof CharacterMotion !== "undefined" ? "hero-v2-avatar" : getPaintedEnemyClass(kind, assetKey);
+  return `<span class="combat-avatar-media sprite-avatar ${paintedClass}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
 }
 
 function getProjectilePath(projectileKey){
