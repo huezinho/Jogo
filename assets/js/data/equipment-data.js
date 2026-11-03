@@ -4,24 +4,27 @@ const EquipmentData = Object.freeze({
   boardIntervalMs: 20 * 60 * 1000,
   maxActiveContracts: 3,
   slots: ["head", "chest", "weapon", "legs", "feet"],
-  rarityFactors: { comum: 1, incomum: 1.1, rara: 1.2, ultra_rara: 1.3, lendaria: 1.4 },
-  slotWeights: { weapon: 1.4, chest: 1.2, head: 0.8, legs: 0.9, feet: 0.7 },
+  rarityFactors: { comum: 1, incomum: 1.5, rara: 2, ultra_rara: 3, lendaria: 4 },
+  slotWeights: { weapon: 1.2, chest: 1, head: 0.6, legs: 0.8, feet: 0.5 },
   regionStats: {
-    Floresta:{bonusHp:.30,bonusMp:.40,skillPower:.30}, Caverna:{bonusHp:.45,equipmentRating:.35,bonusAttack:.20},
+    Floresta:{bonusHp:.30,bonusMp:.40,skillPower:.30}, Caverna:{bonusHp:.45,flatReduction:.35,bonusAttack:.20},
     Ruinas:{skillPower:.50,bonusMp:.30,bonusHp:.20}, Pantano:{bonusMp:.35,skillPower:.35,bonusHp:.30},
     Vulcao:{skillPower:.55,bonusAttack:.30,bonusHp:.15}, Abismo:{bonusAttack:.40,skillPower:.40,bonusMp:.20},
-    Fortaleza:{bonusHp:.45,equipmentRating:.40,shieldPowerPercent:.15}, Necropole:{bonusMp:.30,skillPower:.40,bonusHp:.30},
+    Fortaleza:{bonusHp:.45,flatReduction:.40,shieldPowerPercent:.15}, Necropole:{bonusMp:.30,skillPower:.40,bonusHp:.30},
     Citadela:{bonusAttack:.55,skillPower:.25,bonusMp:.20}, Panteao:{bonusMp:.35,bonusHp:.30,healPowerPercent:.20,shieldPowerPercent:.15},
-    Cataclismo:{bonusAttack:.55,bonusHp:.30,equipmentRating:.15}, Paradoxo:{bonusAttack:.30,skillPower:.35,bonusMp:.35}
+    Cataclismo:{bonusAttack:.55,bonusHp:.30,flatReduction:.15}, Paradoxo:{bonusAttack:.30,skillPower:.35,bonusMp:.35}
   },
-  statValues: { bonusHp: 15, bonusMp: 12, bonusAttack: 2, skillPower: 2, equipmentRating: 12, healPowerPercent: 1 / 300, shieldPowerPercent: 1 / 300 },
+  weaponFallback: { Guerreiro: { bonusAttack: 1 }, Arqueiro: { bonusAttack: 1 }, Mago: { skillPower: 1 }, "Adepto da Natureza": { skillPower: 1 } },
+  // One budget unit buys 12 HP or MP, 2 attack/skill, or 0.4 flat damage reduction.
+  statValues: { bonusHp: 12, bonusMp: 12, bonusAttack: 2, skillPower: 2, flatReduction: 0.4, healPowerPercent: 1 / 300, shieldPowerPercent: 1 / 300 },
   accessoryEffects: {
     Floresta: { reflectPercent: .02 }, Caverna: { coinBonus: .02 }, Ruinas: { xpBonus: .02 },
     Pantano: { turnHealPercent: .003 }, Vulcao: { burnDamageReductionPercent: .084 }, Abismo: { flatReduction: 5 },
     Fortaleza: { bonusMpPercent: .01 }, Necropole: { bonusHpPercent: .01 }, Citadela: { totalDamagePercent: .01 },
     Panteao: { fatalSaveHealPercent: .05 }, Cataclismo: { critChanceBonus: .05 }, Paradoxo: { totalDamagePercent: .10 }
   },
-  accessoryEffectCaps: { reflectPercent: .10, coinBonus: .10, xpBonus: .10, turnHealPercent: .01, burnDamageReductionPercent: .25, flatReduction: 15, bonusMpPercent: .06, bonusHpPercent: .06, totalDamagePercent: .15, fatalSaveHealPercent: .10, critChanceBonus: .10 },
+  accessoryRegionEffectCaps: { Citadela: { totalDamagePercent: .15 }, Paradoxo: { totalDamagePercent: 1.5 } },
+  accessoryEffectCaps: { reflectPercent: .30, coinBonus: .30, xpBonus: .30, turnHealPercent: .05, burnDamageReductionPercent: .95, flatReduction: 75, bonusMpPercent: .15, bonusHpPercent: .15, totalDamagePercent: .40, fatalSaveHealPercent: .75, critChanceBonus: .75 },
   slotNames: { head: "Capuz", chest: "Armadura", legs: "Perneiras", feet: "Botas" },
   weaponNames: { Guerreiro: "Espada", Arqueiro: "Arco", Mago: "Cajado", "Adepto da Natureza": "Ramo Vivo" },
   secondaryMaterials: {
@@ -40,7 +43,7 @@ const EquipmentData = Object.freeze({
   },
   sets: {
     Floresta: { id: "raizes_vivas", name: "Raizes Vivas", two: "+6% de mana maxima", four: "+8% de dano periodico", five: "Aplicar DOT em 3 acoes prepara +20% na proxima cura ou escudo.", bonuses2: { bonusMpPercent: .06 }, bonuses4: { dotDamagePercent: .08 } },
-    Caverna: { id: "pedra_guardia", name: "Pedra Guardia", two: "+6% de vida maxima", four: "+8% no rating de resistencia dos equipamentos", five: "Apos 3 golpes diretos, recebe escudo limitado a 8% da vida ou 1x poder combinado. Recarga: 3 turnos.", bonuses2: { bonusHpPercent: .06 }, bonuses4: { equipmentRatingPercent: .08 } },
+    Caverna: { id: "pedra_guardia", name: "Pedra Guardia", two: "+6% de vida maxima", four: "+8% na reducao fixa de dano geral", five: "Apos 3 golpes diretos, recebe escudo limitado a 8% da vida ou 1x poder combinado. Recarga: 3 turnos.", bonuses2: { bonusHpPercent: .06 }, bonuses4: { flatReductionPercent: .08 } },
     Ruinas: { id: "eco_antigo", name: "Eco Antigo", two: "+6% de poder de habilidade", four: "Duas habilidades diferentes preparam +8% no proximo dano direto", five: "O golpe preparado ecoa 25% do dano, limitado a 0,6x poder combinado. Recarga: 3 turnos.", bonuses2: { skillPowerPercent: .06 }, bonuses4: {} },
     Pantano: { id: "seiva_toxica", name: "Seiva Toxica", two: "+6% de mana maxima", four: "+10% de dano periodico", five: "Acertar alvo com DOT aplica veneno de 12% do poder combinado por 2 turnos. Recarga: 3 turnos.", bonuses2: { bonusMpPercent: .06 }, bonuses4: { dotDamagePercent: .10 } },
     Vulcao: { id: "brasas_vivas", name: "Brasas Vivas", two: "+6% de poder de habilidade", four: "+8% de dano direto contra alvos com DOT", five: "A terceira habilidade ofensiva aplica queimadura de 15% do poder combinado por 2 turnos. Recarga: 3 turnos.", bonuses2: { skillPowerPercent: .06 }, bonuses4: {} },

@@ -50,7 +50,10 @@ const {server,chromium}=require('../2026-10-27/smoke.cjs');
   }finally{wait=original.wait;playSpriteAttackAnimation=original.playSpriteAttackAnimation;enemyTurn=original.enemyTurn;Math.random=original.random;isProcessingTurn=false;enemy=null;}return rows;
  });for(const r of potions.filter(r=>r.id)){assert.equal(r.responses,1);assert.equal(r.spent,1);assert.equal(r.dodge,2);assert.equal(r.attack,r.id==='attack_tonic'?3:2);assert.equal(r.skill,r.id==='skill_tonic'?3:2);}assert.equal(potions[4].outsideBattle,3);assert.equal(potions[5].unavailable,0);assert.equal(potions[5].dodge,3);checks.push({potions});
  await p.evaluate(()=>{currentMode='camp';campTab='equipamentos';updateUI();});await p.locator('[data-hud="equipped"][data-value="weapon"]').click();
- const contractReward=await p.evaluate(()=>{const q=player.mercenary.active[0],before=getInventoryCountById(q.rewardId);for(let i=q.progress;i<q.count;i++)EquipmentSystem.recordKill({baseName:q.targetName,region:q.targetRegion},player);updateUI();return{id:q.id,reward:q.rewardId,qty:q.rewardQty,before};});
+ const contractReward=await p.evaluate(()=>{
+ // Keep this notice/modal fixture below its next XP threshold; level-up rewards have separate coverage.
+ player.level=10;player.xp=0;
+ const q=player.mercenary.active[0],before=getInventoryCountById(q.rewardId);for(let i=q.progress;i<q.count;i++)EquipmentSystem.recordKill({baseName:q.targetName,region:q.targetRegion},player);updateUI();return{id:q.id,reward:q.rewardId,qty:q.rewardQty,before};});
  assert((await p.locator('#gameNotice').innerText()).includes('Contrato concluído'));assert(await p.locator('#gameNotice').evaluate(e=>e.matches(':popover-open')));assert(await p.locator('#rpgDialog').evaluate(e=>e.open));
  assert.equal(await p.evaluate(()=>player.mercenary.active.length),0);assert.equal(await p.evaluate(id=>getInventoryCountById(id),contractReward.reward),contractReward.before+contractReward.qty);
  await p.waitForFunction(()=>document.getElementById('gameNotice').hidden,{},{timeout:8000});await p.keyboard.press('Escape');

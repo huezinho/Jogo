@@ -1515,25 +1515,26 @@ function getRegionSetLabel(regionName){
 }
 
 function formatStatBonusList(source){
+  if(source?.type === "equipment") source = EquipmentSystem.normalizeItem(source) || source;
+  const percent = value => Number((value * 100).toFixed(2));
   const parts = [];
   if(source?.bonusHp){ parts.push(`+${source.bonusHp} vida maxima`); }
   if(source?.bonusMp){ parts.push(`+${source.bonusMp} mana maxima`); }
   if(source?.bonusAttack){ parts.push(`+${source.bonusAttack} dano de ataque`); }
   if(source?.skillPower){ parts.push(`+${source.skillPower} dano de habilidade`); }
-  if(source?.reflectPercent){ parts.push(`+${Math.floor(source.reflectPercent * 100)}% reflexao de dano`); }
-  if(source?.coinBonus){ parts.push(`+${Math.floor(source.coinBonus * 100)}% moedas`); }
-  if(source?.xpBonus){ parts.push(`+${Math.floor(source.xpBonus * 100)}% XP`); }
-  if(source?.turnHealPercent){ parts.push(`+${(source.turnHealPercent * 100).toFixed(1)}% regen de vida`); }
-  if(source?.burnDamageReductionPercent){ parts.push(`-${(source.burnDamageReductionPercent * 100).toFixed(1)}% dano de queimadura recebido`); }
+  if(source?.reflectPercent){ parts.push(`+${percent(source.reflectPercent)}% reflexao de dano`); }
+  if(source?.coinBonus){ parts.push(`+${percent(source.coinBonus)}% moedas`); }
+  if(source?.xpBonus){ parts.push(`+${percent(source.xpBonus)}% XP`); }
+  if(source?.turnHealPercent){ parts.push(`+${percent(source.turnHealPercent)}% regen de vida`); }
+  if(source?.burnDamageReductionPercent){ parts.push(`-${percent(source.burnDamageReductionPercent)}% dano de queimadura recebido`); }
   if(source?.flatReduction){ parts.push(`+${source.flatReduction} resistencia fixa`); }
-  if(source?.bonusHpPercent){ parts.push(`+${Math.floor(source.bonusHpPercent * 100)}% vida maxima`); }
-  if(source?.bonusMpPercent){ parts.push(`+${Math.floor(source.bonusMpPercent * 100)}% mana maxima`); }
-  if(source?.totalDamagePercent){ parts.push(`+${Math.floor(source.totalDamagePercent * 100)}% dano total`); }
-  if(source?.fatalSaveHealPercent){ parts.push(`1 salvamento fatal por combate e cura de ${Math.floor(source.fatalSaveHealPercent * 100)}% da vida`); }
-  if(source?.equipmentRating){ parts.push(`+${source.equipmentRating} resistencia de equipamento`); }
-  if(source?.healPowerPercent){ parts.push(`+${Math.round(source.healPowerPercent*100)}% potencia de cura`); }
-  if(source?.shieldPowerPercent){ parts.push(`+${Math.round(source.shieldPowerPercent*100)}% potencia de escudo`); }
-  if(source?.critChanceBonus){ parts.push(`+${Math.floor(source.critChanceBonus * 100)}% chance de critico`); }
+  if(source?.bonusHpPercent){ parts.push(`+${percent(source.bonusHpPercent)}% vida maxima`); }
+  if(source?.bonusMpPercent){ parts.push(`+${percent(source.bonusMpPercent)}% mana maxima`); }
+  if(source?.totalDamagePercent){ parts.push(`+${percent(source.totalDamagePercent)}% dano total`); }
+  if(source?.fatalSaveHealPercent){ parts.push(`1 salvamento fatal por combate e cura de ${percent(source.fatalSaveHealPercent)}% da vida`); }
+  if(source?.healPowerPercent){ parts.push(`+${percent(source.healPowerPercent)}% potencia de cura`); }
+  if(source?.shieldPowerPercent){ parts.push(`+${percent(source.shieldPowerPercent)}% potencia de escudo`); }
+  if(source?.critChanceBonus){ parts.push(`+${percent(source.critChanceBonus)}% chance de critico`); }
   return parts.join(", ");
 }
 
@@ -1820,7 +1821,7 @@ function getPassiveModifiers(){
     fatalSaveHealPercent: 0,
     critChanceBonus: 0,
     preciousMana: false,
-    equipmentRating: 0,
+    armorFlatReduction: 0,
     manaToLifePercent: 0
   };
   const pendingGains = getPendingAllocationGains();
@@ -1911,7 +1912,7 @@ function getPassiveModifiers(){
     base.skillPower += subclass.skillPower || 0;
   }
   for(const slot of equipmentSlots){
-    const item = player.equipment?.[slot];
+    const item = EquipmentSystem.normalizeItem(player.equipment?.[slot], player);
     if(!item){ continue; }
     base.bonusHp += item.bonusHp || 0;
     base.bonusMp += item.bonusMp || 0;
@@ -1922,8 +1923,8 @@ function getPassiveModifiers(){
     base.xpBonus += item.xpBonus || 0;
     base.turnHealPercent += item.turnHealPercent || 0;
     base.burnDamageReductionPercent += item.burnDamageReductionPercent || 0;
-    base.flatReduction += item.flatReduction || 0;
-    base.equipmentRating += item.equipmentRating || 0;
+    if(slot === "accessory") base.flatReduction += item.flatReduction || 0;
+    else base.armorFlatReduction += item.flatReduction || 0;
     base.bonusMpPercentAccessory += item.bonusMpPercent || 0;
     base.bonusHpPercentAccessory += item.bonusHpPercent || 0;
     base.totalDamagePercent += item.totalDamagePercent || 0;
@@ -1937,7 +1938,7 @@ function getPassiveModifiers(){
   base.skillPower += activeSetBonuses.skillPower || 0;
   base.totalDamagePercent += activeSetBonuses.totalDamagePercent || 0;
   base.critChanceBonus += activeSetBonuses.critChanceBonus || 0;
-  base.equipmentRating = Math.floor(base.equipmentRating * (1 + (activeSetBonuses.equipmentRatingPercent || 0)));
+  base.flatReduction = Math.floor((base.flatReduction + base.armorFlatReduction) * (1 + (activeSetBonuses.flatReductionPercent || 0)));
   if(activeSetBonuses.bonusMpPercent > 0){
     base.bonusMp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * activeSetBonuses.bonusMpPercent);
   }
@@ -3368,11 +3369,6 @@ function applyIncomingDamage(baseDamage, options = {}){
     }
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
-  const rating = getPassiveModifiers().equipmentRating || 0;
-  if(rating > 0 && !options.ignoreEquipmentResistance){
-    const reduction = Math.min(0.45, rating / (rating + 100 + 10 * player.level));
-    damage = Math.max(0, damage - Math.floor(damage * reduction));
-  }
   const flatReduction = getPassiveModifiers().flatReduction;
   if(flatReduction > 0 && !options.ignoreFlatReduction){
     damage = Math.max(0, damage - flatReduction);
@@ -4373,9 +4369,10 @@ function renderForgePanel(){
     const cost = getForgeUpgradeCost(entry.item);
     const atMax = getRarityRank(entry.item.rarity) >= rarityOrder.length - 1;
     const upgrade = entry.item.schemaVersion === 2 ? EquipmentSystem.getUpgradeRequirements(entry.item, player) : null;
-    const materialInfo = upgrade ? `<ul class="recipe-materials">${Object.entries(upgrade.requirements).map(([id,qty]) => `<li><span>${escapeHtml(EquipmentSystem.materialById(id)?.name || id)}</span><strong>${getInventoryCountById(id)}/${qty}</strong></li>`).join("")}</ul>` : "";
+    const duplicateInfo = upgrade?.duplicate ? `<p>Consome outro ${escapeHtml(entry.item.name)} na raridade comum: ${EquipmentSystem.duplicateCount(player, entry.item, upgrade)}/1 na bolsa.</p>` : "";
+    const materialInfo = upgrade ? duplicateInfo + `<ul class="recipe-materials">${Object.entries(upgrade.requirements).map(([id,qty]) => `<li><span>${escapeHtml(EquipmentSystem.materialById(id)?.name || id)}</span><strong>${getInventoryCountById(id)}/${qty}</strong></li>`).join("")}</ul>` : "";
     const feedbackClass = forgeFeedback.slot === entry.slot ? (forgeFeedback.result === "success" ? "forge-feedback-success" : forgeFeedback.result === "fail" ? "forge-feedback-fail" : "") : "";
-    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : upgrade ? `Melhoria garantida: ${cost} moedas e componentes adicionais.` : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `${materialInfo}<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
+    return `<div class="${feedbackClass}">${getInventoryItemCardMarkup(entry.item, `${entry.label}. ${atMax ? "Raridade maxima alcancada." : upgrade ? `Melhoria garantida: ${cost} moedas e componentes adicionais.` : `Tentativa: ${cost} moedas | Chance: ${chance}%`}`, `${materialInfo}<div class="button-row"><button onclick="tryUpgradeEquippedItem('${entry.slot}')" ${atMax || !EquipmentSystem.canUpgrade(entry.item, player) ? "disabled" : ""}>Aprimorar</button></div>`, true)}</div>`;
   }).join("")}</div></div>`;
 }
 
@@ -7218,6 +7215,7 @@ function gainXP(amount){
   while(player.level < MAX_LEVEL && player.xp >= getXpToNextLevel()){
     player.xp -= getXpToNextLevel();
     player.level++;
+    EquipmentSystem.refreshEquipmentStats(player);
     pendingLevelUps++;
     levelUpPoints++;
     log("Voce subiu de nivel! Distribua 1 ponto de atributo.");

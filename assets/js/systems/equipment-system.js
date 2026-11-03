@@ -2,8 +2,8 @@
 const EquipmentSystem = (function(){
   const callbacks = new WeakMap();
   const ui = { region: "" };
-  const statKeys = ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "equipmentRating", "shieldPowerPercent", "healPowerPercent"];
-  const zeroBonuses = () => ({ bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0, bonusAttackPercent: 0, skillPowerPercent: 0, equipmentRatingPercent: 0, dotDamagePercent: 0, shieldPowerPercent: 0, healPowerPercent: 0, critChanceBonus: 0, critDamageBonus: 0, armorPenetrationPercent: 0 });
+  const statKeys = ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "flatReduction", "shieldPowerPercent", "healPowerPercent"];
+  const zeroBonuses = () => ({ bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0, bonusAttackPercent: 0, skillPowerPercent: 0, flatReductionPercent: 0, dotDamagePercent: 0, shieldPowerPercent: 0, healPowerPercent: 0, critChanceBonus: 0, critDamageBonus: 0, armorPenetrationPercent: 0 });
   const slug = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const copy = value => JSON.parse(JSON.stringify(value));
@@ -11,7 +11,6 @@ const EquipmentSystem = (function(){
   const actorNow = actor => actor || (typeof player !== "undefined" ? player : null);
   const regionNames = () => Object.keys(regions);
   const rarityRank = rarity => Object.keys(EquipmentData.rarityFactors).indexOf(rarity);
-  const itemLevel = region => Math.min(100, (regionNames().indexOf(region) + 1) * 10);
   const notify = message => { if(typeof log === "function") log(message); };
   const changed = () => { if(typeof updateUI === "function") updateUI(); if(typeof saveCampaign === "function") saveCampaign(); };
   function unlockedRegions(actor){
@@ -20,42 +19,53 @@ const EquipmentSystem = (function(){
   }
   function isRegionUnlocked(region, actor){ return unlockedRegions(actor).includes(region); }
   function getDefinition(region, slot, className){
-    if(slot === "accessory" && EquipmentData.sets[region]) return { templateId: `v2_${slug(region)}_accessory`, slot, classRestriction: null, regionName: region, itemLevel: itemLevel(region), setId: null, setName: null, name: typeof bossAccessoryProfiles !== "undefined" ? bossAccessoryProfiles[region]?.name || `Reliquia de ${region}` : `Reliquia de ${region}` };
+    if(slot === "accessory" && EquipmentData.sets[region]) return { templateId: `v2_${slug(region)}_accessory`, slot, classRestriction: null, regionName: region, setId: null, setName: null, name: typeof bossAccessoryProfiles !== "undefined" ? bossAccessoryProfiles[region]?.name || `Reliquia de ${region}` : `Reliquia de ${region}` };
     if(!EquipmentData.sets[region] || !EquipmentData.slots.includes(slot)) return null;
     if(slot === "weapon" && !Object.prototype.hasOwnProperty.call(EquipmentData.weaponNames, className)) return null;
     const set = EquipmentData.sets[region];
     const restriction = slot === "weapon" ? className : null;
-    return { templateId: `v2_${slug(region)}_${slot}_${restriction ? slug(restriction) : "all"}`, slot, classRestriction: restriction, regionName: region, itemLevel: itemLevel(region), setId: `${set.id}_v2`, setName: set.name, name: `${restriction ? EquipmentData.weaponNames[restriction] : EquipmentData.slotNames[slot]} - ${set.name}` };
+    return { templateId: `v2_${slug(region)}_${slot}_${restriction ? slug(restriction) : "all"}`, slot, classRestriction: restriction, regionName: region, setId: `${set.id}_v2`, setName: set.name, name: `${restriction ? EquipmentData.weaponNames[restriction] : EquipmentData.slotNames[slot]} - ${set.name}` };
   }
-  function createItem(region, slot, className, rarity = "comum"){
-    if(slot === "accessory") return createBossAccessory(region, rarity);
+  function heroLevel(actor){ return clampInt(actorNow(actor)?.level || 1, 1, 100); }
+  function budgetFor(region, weight, rarity, actor){
+    return (1 + heroLevel(actor) * .5) * weight * EquipmentData.rarityFactors[rarity];
+  }
+  function statProfile(region, slot, className){
+    const profile = EquipmentData.regionStats[region];
+    if(slot !== "weapon") return profile;
+    const damage = Object.fromEntries(Object.entries(profile).filter(([key]) => ["bonusAttack", "skillPower"].includes(key)));
+    const total = Object.values(damage).reduce((sum, value) => sum + value, 0);
+    return total ? Object.fromEntries(Object.entries(damage).map(([key, value]) => [key, value / total])) : EquipmentData.weaponFallback[className];
+  }
+  function createItem(region, slot, className, rarity = "comum", actor){
+    if(slot === "accessory") return createBossAccessory(region, rarity, actor);
     const definition = getDefinition(region, slot, className);
     if(!definition || !EquipmentData.regionStats[region] || !Object.prototype.hasOwnProperty.call(EquipmentData.rarityFactors, rarity)) return null;
-    const budget = (1 + definition.itemLevel * .25) * EquipmentData.slotWeights[slot] * EquipmentData.rarityFactors[rarity];
+    const budget = budgetFor(region, EquipmentData.slotWeights[slot], rarity, actor);
     const stats = {};
-    for(const [key, share] of Object.entries(EquipmentData.regionStats[region])){
+    for(const [key, share] of Object.entries(statProfile(region, slot, className))){
       const value = budget * share * EquipmentData.statValues[key];
       if(value > 0) stats[key] = key.endsWith("Percent") ? Math.floor(value * 10000) / 10000 : Math.floor(value);
     }
     const label = typeof rarityData !== "undefined" ? rarityData[rarity]?.label : rarity;
-    return { ...definition, id: `${definition.templateId}_${rarity}`, baseItemId: definition.templateId, type: "equipment", schemaVersion: 2, rarity, rarityLabel: label || rarity, name: `${definition.name} ${label || rarity}`, stats: copy(stats), ...stats, budget: Math.floor(budget * 100) / 100 };
+    return { ...definition, id: `${definition.templateId}_${rarity}`, baseItemId: definition.templateId, type: "equipment", schemaVersion: 2, rarity, rarityLabel: label || rarity, name: `${definition.name} ${label || rarity}`, scaledHeroLevel: heroLevel(actor), stats: copy(stats), ...stats, budget: Math.floor(budget * 100) / 100 };
   }
-  function createBossAccessory(region, rarity = "rara"){
+  function createBossAccessory(region, rarity = "rara", actor){
     const definition = getDefinition(region, "accessory", null), factor = EquipmentData.rarityFactors[rarity];
     if(!definition || !Object.prototype.hasOwnProperty.call(EquipmentData.rarityFactors, rarity)) return null;
-    const budget = (1 + definition.itemLevel * .25) * .6 * factor;
+    const budget = budgetFor(region, .6, rarity, actor);
     // Forty percent of the accessory budget buys plain stats; the remainder is reserved for its bounded boss effect.
-    const stats = { bonusHp: Math.floor(budget * .2 * 15), bonusMp: Math.floor(budget * .2 * 12) };
+    const stats = { bonusHp: Math.floor(budget * .2 * EquipmentData.statValues.bonusHp), bonusMp: Math.floor(budget * .2 * EquipmentData.statValues.bonusMp) };
     for(const [key, base] of Object.entries(EquipmentData.accessoryEffects[region] || {})){
-      const value = Math.min(EquipmentData.accessoryEffectCaps[key], base * factor);
+      const value = Math.min(EquipmentData.accessoryRegionEffectCaps[region]?.[key] ?? EquipmentData.accessoryEffectCaps[key], base * factor * 3);
       stats[key] = key === "flatReduction" ? Math.floor(value) : Math.floor(value * 10000) / 10000;
     }
     const label = typeof rarityData !== "undefined" ? rarityData[rarity]?.label : rarity;
-    return { ...definition, id: `${definition.templateId}_${rarity}`, baseItemId: definition.templateId, type: "equipment", schemaVersion: 2, rarity, rarityLabel: label || rarity, uniqueEffectId: `boss_${slug(region)}`, name: `${definition.name} ${label || rarity}`, stats: copy(stats), ...stats, budget: Math.floor(budget * 100) / 100 };
+    return { ...definition, id: `${definition.templateId}_${rarity}`, baseItemId: definition.templateId, type: "equipment", schemaVersion: 2, rarity, rarityLabel: label || rarity, uniqueEffectId: `boss_${slug(region)}`, name: `${definition.name} ${label || rarity}`, scaledHeroLevel: heroLevel(actor), stats: copy(stats), ...stats, budget: Math.floor(budget * 100) / 100 };
   }
-  function normalizeItem(item){
+  function normalizeItem(item, actor){
     if(!item || item.type !== "equipment") return null;
-    const expected = createItem(item.regionName, item.slot, item.classRestriction || actorNow()?.class, item.rarity);
+    const expected = createItem(item.regionName, item.slot, item.classRestriction || actorNow(actor)?.class, item.rarity, actor);
     if(!expected) return null;
     if(item.uid) expected.uid = String(item.uid).slice(0, 160);
     expected.qty = clampInt(item.qty || 1, 1, 9999);
@@ -98,8 +108,8 @@ const EquipmentSystem = (function(){
     return result;
   }
   function inventoryCount(actor, id){ return (actor?.inventory || []).reduce((n, entry) => n + (entry.id === id ? clampInt(entry.qty || 1, 1, 999999) : 0), 0); }
-  function recipeFor(region, slot, className, rarity){
-    const result = createItem(region, slot, className, rarity);
+  function recipeFor(region, slot, className, rarity, actor){
+    const result = createItem(region, slot, className, rarity, actor);
     if(!result) return null;
     const names = regionNames(), index = names.indexOf(region), rank = rarityRank(rarity), data = regions[region];
     const req = {};
@@ -125,8 +135,10 @@ const EquipmentSystem = (function(){
     if(slot === "chest"){
       add(region, 2, false, 3 + rank);
     }
+    const materialMultiplier = (slot === "accessory" ? 3 : 1.5) * EquipmentData.rarityFactors[rarity];
+    for(const id of Object.keys(req)) req[id] = Math.ceil(req[id] * materialMultiplier);
     const id = `${result.templateId}|${rarity}`;
-    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil((20 + result.itemLevel * 2) * (1 + rank * .6) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.18 : 1)), requirements: req, result };
+    return { id, region, slot, className: result.classRestriction, rarity, cost: Math.ceil(270 * [1, 6, 20, 60, 280][rank] * (slot === "accessory" ? 4 : 1) * (slot === "weapon" ? 1.25 : slot === "chest" ? 1.18 : 1)), requirements: req, result };
   }
   function getRecipes(actor, options = {}){
     actor = actorNow(actor);
@@ -137,7 +149,7 @@ const EquipmentSystem = (function(){
       for(const slot of EquipmentData.slots){
         if(options.slot && options.slot !== slot) continue;
         if(options.rarity && options.rarity !== "comum") continue;
-        list.push(recipeFor(region, slot, actor.class, "comum"));
+        list.push(recipeFor(region, slot, actor.class, "comum", actor));
       }
     }
     return list;
@@ -176,12 +188,18 @@ const EquipmentSystem = (function(){
     if(typeof triggerInventoryFlash === "function") triggerInventoryFlash(item, "success");
     changed(); return item;
   }
+  function refreshEquipmentStats(actor){
+    actor = actorNow(actor); if(!actor) return;
+    for(const slot of Object.keys(actor.equipment || {})) if(actor.equipment[slot]) actor.equipment[slot] = normalizeItem(actor.equipment[slot], actor);
+    actor.inventory = (actor.inventory || []).map(item => item.type === "equipment" ? normalizeItem(item, actor) || item : item);
+  }
   function normalizePlayer(actor){
     if(!actor) return;
     actor.stats = actor.stats || {};
     actor.inventory = Array.isArray(actor.inventory) ? actor.inventory : [];
     actor.equipment = actor.equipment && typeof actor.equipment === "object" ? actor.equipment : {};
     normalizeMercenary(actor);
+    refreshEquipmentStats(actor);
   }
   function getSetBonuses(actor){
     actor = actorNow(actor); const bonuses = zeroBonuses(), found = {}, seen = new Set();
@@ -206,15 +224,17 @@ const EquipmentSystem = (function(){
   }
   function setCount(actor, region){ return getSetBonuses(actor).sets.find(set => set.region === region)?.count || 0; }
   function describe(item, actor){
-    const labels = { bonusHp: "vida", bonusMp: "mana", bonusAttack: "ataque", skillPower: "poder de habilidade", equipmentRating: "resistencia (rating)", shieldPowerPercent: "potencia de escudo", healPowerPercent: "potencia de cura" };
-    const parts = statKeys.filter(key => item[key] > 0).map(key => `+${key.endsWith("Percent") ? `${(item[key] * 100).toFixed(1)}%` : item[key]} ${labels[key]}`);
+    item = normalizeItem(item, actor);
+    if(!item) return "Equipamento invalido.";
+    const labels = { bonusHp: "vida", bonusMp: "mana", bonusAttack: "ataque", skillPower: "poder de habilidade", flatReduction: "reducao fixa de dano", shieldPowerPercent: "potencia de escudo", healPowerPercent: "potencia de cura" };
+    const parts = statKeys.filter(key => item[key] > 0).map(key => `+${key.endsWith("Percent") ? `${Number((item[key] * 100).toFixed(2))}%` : item[key]} ${labels[key]}`);
     const set = EquipmentData.sets[item.regionName];
     if(item.slot === "accessory"){
       const effects = { reflectPercent: "reflexao", coinBonus: "moedas", xpBonus: "XP", turnHealPercent: "cura por turno", burnDamageReductionPercent: "resistencia a queimadura", flatReduction: "reducao fixa", bonusMpPercent: "mana maxima", bonusHpPercent: "vida maxima", totalDamagePercent: "dano total", fatalSaveHealPercent: "cura ao evitar um golpe fatal (1x por combate)", critChanceBonus: "critico" };
-      for(const [key, label] of Object.entries(effects)) if(item[key] > 0) parts.push(`+${key === "flatReduction" ? item[key] : `${(item[key] * 100).toFixed(1)}%`} ${label}`);
+      for(const [key, label] of Object.entries(effects)) if(key !== "flatReduction" && item[key] > 0) parts.push(`+${key === "flatReduction" ? item[key] : `${Number((item[key] * 100).toFixed(2))}%`} ${label}`);
       parts.push(`Reliquia do chefe de ${item.regionName}; nao conta para o conjunto`);
     }else if(set){ parts.push(`${set.name} ${setCount(actorNow(actor), item.regionName)}/5`); parts.push(`2 pecas: ${set.two}; 4 pecas: ${set.four}; 5 pecas: ${set.five}`); }
-    parts.push(`Nivel do item ${item.itemLevel}. ${item.classRestriction ? `Arma de ${item.classRestriction}` : "Qualquer classe"}.`);
+    parts.push(`Escala com o heroi: nivel ${item.scaledHeroLevel}. ${item.classRestriction ? `Arma de ${item.classRestriction}` : "Qualquer classe"}.`);
     return parts.join(". ");
   }
   function setArtisanFilter(field, value){
@@ -234,6 +254,15 @@ const EquipmentSystem = (function(){
   }
   function hash(value){ let result = 2166136261; for(const c of String(value)) result = Math.imul(result ^ c.charCodeAt(0), 16777619); return result >>> 0; }
   const validContractId = value => typeof value === "string" && /^contract_\d{1,12}_\d{1,10}_[0-5]$/.test(value);
+  function contractRewards(quest, actor){
+    actor = actorNow(actor);
+    const unlocked = unlockedRegions(actor);
+    const region = unlocked.includes(quest.payoutRegion) ? quest.payoutRegion : unlocked.includes(typeof currentRegion !== "undefined" ? currentRegion : "") ? currentRegion : quest.targetRegion;
+    const rank = Math.max(1, regionNames().indexOf(region) + 1);
+    const difficulty = quest.count >= 16 ? "Dificil" : quest.count >= 10 ? "Media" : "Simples";
+    const factor = { Simples: 1, Media: 2, Dificil: 3 }[difficulty];
+    return { payoutRegion: region, difficulty, rewardGold: Math.floor(120 * Math.pow(1.5, rank - 1) * factor), rewardXp: Math.floor(60 * Math.pow(1.5, rank - 1) * factor) };
+  }
   function normalizeMercenary(actor){
     const saved = actor.mercenary && typeof actor.mercenary === "object" ? actor.mercenary : {};
     const claimed = Array.isArray(saved.claimed) ? [...new Set(saved.claimed.filter(validContractId))].slice(-256) : [];
@@ -243,7 +272,7 @@ const EquipmentSystem = (function(){
       const reward = materialById(quest.rewardId);
       if(!reward || reward.regionName === quest.targetRegion) continue;
       const count = clampInt(quest.count, 1, 100);
-      active.push({ id: quest.id, targetRegion: quest.targetRegion, targetName: quest.targetName, count, progress: clampInt(quest.progress, 0, count), rewardId: reward.id, rewardQty: clampInt(quest.rewardQty, 1, reward.isBossMaterial ? 1 : 5), acceptedAt: clampInt(quest.acceptedAt, 0, Number.MAX_SAFE_INTEGER) });
+      active.push({ ...contractRewards(quest, actor), id: quest.id, targetRegion: quest.targetRegion, targetName: quest.targetName, count, progress: clampInt(quest.progress, 0, count), rewardId: reward.id, rewardQty: clampInt(quest.rewardQty, 1, reward.isBossMaterial ? 1 : 5), acceptedAt: clampInt(quest.acceptedAt, 0, Number.MAX_SAFE_INTEGER) });
       seen.add(quest.id);
       if(active.length >= EquipmentData.maxActiveContracts) break;
     }
@@ -271,7 +300,7 @@ const EquipmentSystem = (function(){
       const targetRank=regions[target.region].enemies.indexOf(targetDef);
       const count=4+targetRank*2+gap*3+(reward.isBossMaterial?8:reward.materialTier==='secondary'?3:0);
       const rewardQty=reward.isBossMaterial?1:Math.min(5,1+Math.floor((count*(1+targetRank*.35))/(6+gap*4)));
-      return { id: `contract_${cycle}_${hash(signature)}_${index}`, targetRegion: target.region, targetName: target.name, count, rewardRegion, rewardId:reward.id,rewardQty,difficulty:count>=16?'Dificil':count>=10?'Media':'Simples', offeredAt: cycle * EquipmentData.boardIntervalMs, expiresAt: (cycle + 1) * EquipmentData.boardIntervalMs };
+      return { ...contractRewards({ count, targetRegion: target.region }, actor), id: `contract_${cycle}_${hash(signature)}_${index}`, targetRegion: target.region, targetName: target.name, count, rewardRegion, rewardId:reward.id,rewardQty,difficulty:count>=16?'Dificil':count>=10?'Media':'Simples', offeredAt: cycle * EquipmentData.boardIntervalMs, expiresAt: (cycle + 1) * EquipmentData.boardIntervalMs };
     });
     return state;
   }
@@ -280,7 +309,7 @@ const EquipmentSystem = (function(){
     if(!actor || currentMode !== "village" || isDead || isProcessingTurn) return false;
     const state = refreshContracts(actor), offer = state.offers.find(entry => entry.id === id);
     if(!offer || !isRegionUnlocked(offer.targetRegion, actor) || state.active.length >= EquipmentData.maxActiveContracts || state.active.some(entry => entry.id === id) || state.claimed.includes(id)) return false;
-    state.active.push({ id: offer.id, targetRegion: offer.targetRegion, targetName: offer.targetName, count: offer.count, progress: 0, rewardId: offer.rewardId, rewardQty: offer.rewardQty, acceptedAt: Date.now() });
+    state.active.push({ ...contractRewards(offer, actor), id: offer.id, targetRegion: offer.targetRegion, targetName: offer.targetName, count: offer.count, progress: 0, rewardId: offer.rewardId, rewardQty: offer.rewardQty, acceptedAt: Date.now() });
     notify(`Contrato aceito: derrote ${offer.count} ${offer.targetName} em ${offer.targetRegion}.`); changed(); return true;
   }
   function recordKill(enemy, actor){
@@ -304,10 +333,15 @@ const EquipmentSystem = (function(){
       if(reward) reward.qty = (reward.qty || 1) + quest.rewardQty;
       else{ reward = { ...copy(material), qty: quest.rewardQty, uid: `${material.id}_${Date.now()}_${Math.floor(Math.random()*1000000)}` }; actor.inventory.push(reward); }
     }
+    const payment = contractRewards(quest, actor);
+    actor.coins = (actor.coins || 0) + payment.rewardGold;
+    actor.stats.coinsEarned = (actor.stats.coinsEarned || 0) + payment.rewardGold;
+    if(actor === actorNow() && typeof gainXP === "function") gainXP(payment.rewardXp);
+    else actor.xp = (actor.xp || 0) + payment.rewardXp;
     actor.stats.mercenaryContracts = state.completed;
     if(actor === actorNow()){
-      notify(`Contrato concluido: ${quest.targetName}. ${reward.name} x${quest.rewardQty} recebido automaticamente.`);
-      if(typeof showGameNotice === "function") showGameNotice("Contrato concluído!", `${quest.targetName}: ${quest.count} derrotados. Recebido: ${reward.name} ×${quest.rewardQty}.`);
+      notify(`Contrato concluido: ${quest.targetName}. ${reward.name} x${quest.rewardQty}, ${payment.rewardGold} ouro e ${payment.rewardXp} XP base recebidos automaticamente.`);
+      if(typeof showGameNotice === "function") showGameNotice("Contrato concluído!", `${quest.targetName}: ${quest.count} derrotados. Recebido: ${reward.name} ×${quest.rewardQty}, ${payment.rewardGold} ouro e ${payment.rewardXp} XP base.`);
       if(typeof queueCampaignSave === "function") queueCampaignSave();
     }
     return reward;
@@ -333,8 +367,8 @@ const EquipmentSystem = (function(){
     const actor = actorNow(), state = refreshContracts(actor); if(!state) return "";
     const remaining = Math.max(0, (state.boardCycle + 1) * EquipmentData.boardIntervalMs - Date.now());
     return `<div class="mercenary-panel"><div class="panel-header"><strong>Mercenario â€” Contratos de Caca</strong><span class="coin-badge">${state.active.length}/${EquipmentData.maxActiveContracts} ativos</span></div><p class="lock-note">Os alvos ficam apenas em regioes desbloqueadas. A recompensa e fixa e considera o alvo, a quantidade de abates e a origem do componente. Materiais recebidos nao desbloqueiam regioes ou receitas.</p><p class="mercenary-timer">Novas ofertas em <strong>${Math.ceil(remaining / 60000)} min</strong>. Contratos aceitos continuam ativos depois da troca do quadro.</p>
-      <h4>Seus contratos</h4>${state.active.length ? state.active.map(quest => { const material = materialById(quest.rewardId); return `<article class="mercenary-contract"><strong>${escape(quest.targetName)} â€” ${escape(quest.targetRegion)}</strong><p>Derrotados: ${quest.progress}/${quest.count}</p><p>Pagamento: ${escape(material.name)} x${quest.rewardQty} <small>(${escape(material.regionName)})</small></p><div class="button-row"><span>Recompensa entregue automaticamente ao concluir.</span><button onclick="EquipmentSystem.abandonContract('${quest.id}')">Abandonar</button></div></article>`; }).join("") : '<p class="lock-note">Aceite um contrato abaixo para comecar.</p>'}
-      <h4>Quadro de ofertas</h4><div class="mercenary-offers">${state.offers.filter(offer => !state.active.some(quest => quest.id === offer.id) && !state.claimed.includes(offer.id)).map(offer => `<article class="mercenary-contract"><strong>Cace ${offer.count} ${escape(offer.targetName)}</strong><p class="lock-note">Local: ${escape(offer.targetRegion)}. Pagamento de ${escape(offer.rewardRegion)}:</p><p>Recompensa: ${escape(materialById(offer.rewardId).name)} x${offer.rewardQty}</p><p class="lock-note">Dificuldade: ${escape(offer.difficulty)}</p><button onclick="EquipmentSystem.acceptContract('${offer.id}')" ${state.active.length >= EquipmentData.maxActiveContracts ? "disabled" : ""}>Aceitar contrato</button></article>`).join("") || '<p>Nenhuma oferta disponivel nesta rotacao.</p>'}</div></div>`;
+      <h4>Seus contratos</h4>${state.active.length ? state.active.map(quest => { const material = materialById(quest.rewardId); return `<article class="mercenary-contract"><strong>${escape(quest.targetName)} â€” ${escape(quest.targetRegion)}</strong><p>Derrotados: ${quest.progress}/${quest.count}</p><p>Pagamento: ${quest.rewardGold} ouro, ${quest.rewardXp} XP base e ${escape(material.name)} x${quest.rewardQty} <small>(${escape(material.regionName)})</small></p><div class="button-row"><span>Recompensa entregue automaticamente ao concluir.</span><button onclick="EquipmentSystem.abandonContract('${quest.id}')">Abandonar</button></div></article>`; }).join("") : '<p class="lock-note">Aceite um contrato abaixo para comecar.</p>'}
+      <h4>Quadro de ofertas</h4><div class="mercenary-offers">${state.offers.filter(offer => !state.active.some(quest => quest.id === offer.id) && !state.claimed.includes(offer.id)).map(offer => `<article class="mercenary-contract"><strong>Cace ${offer.count} ${escape(offer.targetName)}</strong><p class="lock-note">Local: ${escape(offer.targetRegion)}. Pagamento de ${escape(offer.rewardRegion)}:</p><p>Recompensa: ${offer.rewardGold} ouro, ${offer.rewardXp} XP base e ${escape(materialById(offer.rewardId).name)} x${offer.rewardQty}</p><p class="lock-note">Dificuldade: ${escape(offer.difficulty)}</p><button onclick="EquipmentSystem.acceptContract('${offer.id}')" ${state.active.length >= EquipmentData.maxActiveContracts ? "disabled" : ""}>Aceitar contrato</button></article>`).join("") || '<p>Nenhuma oferta disponivel nesta rotacao.</p>'}</div></div>`;
   }
 
   function runtime(effects){
@@ -392,7 +426,7 @@ const EquipmentSystem = (function(){
   function modifyHealing(actor, effects, amount, options = {}){
     const state = runtime(effects), active = getSetBonuses(actor).bonuses;
     let bonus = active.healPowerPercent || 0;
-    for(const slot of EquipmentData.slots) bonus += actor?.equipment?.[slot]?.healPowerPercent || 0;
+    for(const slot of EquipmentData.slots) bonus += normalizeItem(actor?.equipment?.[slot], actor)?.healPowerPercent || 0;
     const canHeal = typeof options.canHeal === "boolean" ? options.canHeal : actor.hp < caps(actor).maxHp && !(effects.healReductionTurns > 0 && effects.healReductionPercent >= 1);
     if(state.forestReady && amount > 0 && canHeal){ bonus += .2; state.forestReady = false; }
     const result = Math.floor(amount * (1 + bonus)); if(state.current) state.current.healingRequested = result;
@@ -401,7 +435,7 @@ const EquipmentSystem = (function(){
   function modifyShield(actor, effects, amount, options = {}){
     const state = runtime(effects), active = getSetBonuses(actor).bonuses;
     let bonus = active.shieldPowerPercent || 0;
-    for(const slot of EquipmentData.slots) bonus += actor?.equipment?.[slot]?.shieldPowerPercent || 0;
+    for(const slot of EquipmentData.slots) bonus += normalizeItem(actor?.equipment?.[slot], actor)?.shieldPowerPercent || 0;
     if(state.forestReady && amount > 0){ bonus += .2; state.forestReady = false; }
     const result = Math.floor(amount * (1 + bonus));
     if(options.track !== false) noteShield(actor, effects, result);
@@ -490,18 +524,28 @@ const EquipmentSystem = (function(){
   function noteHpCost(actor, effects, amount){ const state = runtime(effects); if(state.current) state.current.hpCost += Math.max(0, Number(amount) || 0); }
   function getUpgradeRequirements(item, actor){
     actor = actorNow(actor);
-    const current = normalizeItem(item), rank = current ? rarityRank(current.rarity) : -1;
+    const current = normalizeItem(item, actor), rank = current ? rarityRank(current.rarity) : -1;
     if(!current || rank < 0 || rank >= 4) return null;
     const nextRarity = Object.keys(EquipmentData.rarityFactors)[rank + 1];
-    const priorRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, current.rarity);
-    const nextRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, nextRarity);
+    const priorRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, current.rarity, actor);
+    const nextRecipe = recipeFor(current.regionName, current.slot, current.classRestriction || actor?.class, nextRarity, actor);
     if(!priorRecipe || !nextRecipe) return null;
     const requirements = {};
     for(const [id, qty] of Object.entries(nextRecipe.requirements)){
       const difference = qty - (priorRecipe.requirements[id] || 0);
       if(difference > 0) requirements[id] = difference;
     }
-    return { requirements, cost: Math.max(10, nextRecipe.cost - priorRecipe.cost), fromRarity: current.rarity, toRarity: nextRarity, nextItem: copy(nextRecipe.result), region: current.regionName };
+    const duplicate = current.slot === "accessory" && rank === 3 ? { regionName: current.regionName, rarity: "comum", qty: 1 } : null;
+    return { requirements, duplicate, cost: Math.max(100, nextRecipe.cost - priorRecipe.cost), fromRarity: current.rarity, toRarity: nextRarity, nextItem: copy(nextRecipe.result), region: current.regionName };
+  }
+  function duplicateCount(actor, item, upgrade){
+    if(!upgrade?.duplicate) return 0;
+    return (actor.inventory || []).reduce((sum, entry) => sum + (entry.uid !== item.uid && entry.type === "equipment" && entry.slot === "accessory" && entry.regionName === item.regionName && entry.rarity === "comum" ? (entry.qty || 1) : 0), 0);
+  }
+  function canUpgrade(item, actor){
+    actor = actorNow(actor);
+    const upgrade = getUpgradeRequirements(item, actor);
+    return !!(actor && upgrade && isRegionUnlocked(item.regionName, actor) && (!item.classRestriction || item.classRestriction === actor.class) && actor.coins >= upgrade.cost && Object.entries(upgrade.requirements).every(([id, qty]) => inventoryCount(actor, id) >= qty) && (!upgrade.duplicate || duplicateCount(actor, item, upgrade) >= 1));
   }
   function getUpgradeCost(item){ return getUpgradeRequirements(item)?.cost || 0; }
   function upgradeItem(item){
@@ -517,8 +561,13 @@ const EquipmentSystem = (function(){
     const item = equippedSlot ? actor.equipment[equippedSlot] : actor.inventory[inventoryIndex];
     const upgrade = getUpgradeRequirements(item, actor);
     if(!upgrade || !isRegionUnlocked(item.regionName, actor) || (item.classRestriction && item.classRestriction !== actor.class)) return false;
-    if(actor.coins < upgrade.cost || !Object.entries(upgrade.requirements).every(([id, qty]) => inventoryCount(actor, id) >= qty)){
-      notify("A melhoria exige as moedas e os componentes adicionais da proxima raridade. Consulte a receita no artesao."); return false;
+    if(!canUpgrade(item, actor)){
+      notify("A melhoria exige moedas e componentes; artefatos lendarios tambem consomem outra copia comum do mesmo acessorio na bolsa."); return false;
+    }
+    if(upgrade.duplicate){
+      const index = actor.inventory.findIndex(entry => entry.uid !== item.uid && entry.type === "equipment" && entry.slot === "accessory" && entry.regionName === item.regionName && entry.rarity === "comum");
+      if((actor.inventory[index].qty || 1) > 1) actor.inventory[index].qty--;
+      else actor.inventory.splice(index, 1);
     }
     removeMaterials(actor, upgrade.requirements); actor.coins -= upgrade.cost;
     const improved = { ...upgrade.nextItem, uid: item.uid };
@@ -533,6 +582,6 @@ const EquipmentSystem = (function(){
     if(typeof triggerForgeFeedback === "function" && equippedSlot) triggerForgeFeedback(equippedSlot, "success");
     changed(); return improved;
   }
-  return { createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
+  return { contractRewards, refreshEquipmentStats, canUpgrade, duplicateCount, createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
 })();
 if(typeof window !== "undefined") window.EquipmentSystem = EquipmentSystem;
