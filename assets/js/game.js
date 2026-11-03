@@ -6787,7 +6787,8 @@ function handleEnemyDefeat(){
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.recordKill(enemy, player); }
   tryEnemyMaterialDrop(enemy);
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
-  const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 4) + enemy.level * 3 + Math.floor(Math.random() * 4)) * coinMultiplier);
+  const randomCoinMultiplier = 1 + Math.random() * 0.4;
+  const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 5) + enemy.level * 3) * randomCoinMultiplier * coinMultiplier);
   const baseXpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
   const xpEarned = baseXpEarned + Math.floor(baseXpEarned * getPassiveModifiers().xpBonus);
   player.coins += coinsEarned;
