@@ -1,0 +1,11 @@
+{
+  "runs": 36,
+  "fights": 11463,
+  "allReplicatePriorOutcomes": true,
+  "allHaveEntryLevelGearAndRounds": true,
+  "allHaveHpObservations": true,
+  "distinctEnemies": 48,
+  "allQuitsRespectPreparationLimit": true,
+  "maxWinningOverlevel": 8,
+  "easyMatchups": 57
+}

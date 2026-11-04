@@ -2,11 +2,21 @@
 window.startMageProgression = function(config){
  const E=EquipmentSystem,clone=x=>JSON.parse(JSON.stringify(x)),names=Object.keys(regions);
  const tier30=['mago_frigido','mago_incendiario'].includes(config.route)?'elementalista':'arcanista';
- const s={rng:config.seed,fights:0,turns:0,deaths:[],bosses:[],gifts:[],skills:{},endgameDeaths:0,retreats:0};
+ const s={rng:config.seed,fights:0,turns:0,deaths:[],bosses:[],gifts:[],skills:{},endgameDeaths:0,retreats:0,records:[]};
  Math.random=()=>{s.rng=(Math.imul(s.rng,1664525)+1013904223)>>>0;return s.rng/4294967296;};
  updateUI=()=>{};saveCampaign=()=>{};queueCampaignSave=()=>{};showGameNotice=()=>{};log=()=>{};
  wait=async()=>{};playSpriteAttackAnimation=async()=>{};animateEnemyBarTo=async()=>{};animateEnemyHitSequence=async()=>{};blurActiveControl=()=>{};
  CharacterMotion.ready=async()=>{};CharacterMotion.hurt=async()=>{};triggerForgeFeedback=()=>{};triggerInventoryFlash=()=>{};
+ if(config.captureFights){
+  const defeat=handleEnemyDefeat;
+  handleEnemyDefeat=function(...args){
+   const before={hp:player.hp,maxHp:getCurrentCaps().maxHp,mp:player.mp,maxMp:getCurrentCaps().maxMp};
+   const kills=player.stats.enemiesDefeated+player.stats.bossesDefeated;
+   const result=defeat(...args);
+   if(player.stats.enemiesDefeated+player.stats.bossesDefeated>kills)s.lastVictoryState=before;
+   return result;
+  };
+ }
  localStorage.clear();selectClass('Mago');enemy=null;isProcessingTurn=false;
  let retry=null,failedOnce=false;
  const gear=()=>Object.fromEntries(equipmentSlots.map(slot=>[slot,player.equipment[slot]?{region:player.equipment[slot].regionName,rarity:player.equipment[slot].rarity}:null]));
@@ -71,15 +81,19 @@ window.startMageProgression = function(config){
    prepare();const region=retry?.region||names.filter(isRegionUnlockedForBattle).at(-1);currentRegion=region;
    const boss=retry?retry.isBoss:getBossUnlockProgress(region).unlocked;
    if(retry){const template=boss?regions[region].boss:regions[region].enemies.find(e=>e.name===retry.name);enemy=createEnemyFromTemplate(template,boss,region);resetCombatEffects();}else spawnEnemy(boss);
+   const start = config.captureFights ? {level:player.level,gear:gear(),enemyLevel:enemy.level,enemyMaxHp:enemy.maxHp,hpStart:player.hp,maxHpStart:getCurrentCaps().maxHp} : null;
+   s.lastVictoryState=null;let hpMinRatio=player.hp/getCurrentCaps().maxHp;
    const foe={region,name:enemy.baseName,isBoss:enemy.isBoss};const before=player.stats.deaths,killsBefore=player.stats.enemiesDefeated+player.stats.bossesDefeated,prepared=full();
    let n=0,lastProgress=0,lowest=enemy.hp,pressure=0;
    while(enemy&&!isDead){
     const index=n-lastProgress>100?-2:choose(pressure>0),type=index===-2?'pass':index===-1?'basic':getSkillInfo()[index].type;s.skills[type]=(s.skills[type]||0)+1;
     if(index===-2)await passTurn();else if(index===-1)await attack();else await useSkill(index);
+    if(config.captureFights){const h=s.lastVictoryState||{hp:player.hp,maxHp:getCurrentCaps().maxHp};hpMinRatio=Math.min(hpMinRatio,h.hp/h.maxHp);}
     s.turns++;n++;if(pressure>0)pressure--;if(enemy&&enemy.hp<lowest){lowest=enemy.hp;lastProgress=n;}if(n-lastProgress>=12)pressure=4;if(n>2000)throw Error('Combat stalled: '+JSON.stringify(foe));
    }
    s.fights++;
    const died=player.stats.deaths>before,escaped=player.stats.enemiesDefeated+player.stats.bossesDefeated===killsBefore&&!died;
+   if(start)s.records.push({fight:s.fights,foe,...start,rounds:n,hpMinRatio,preReward:s.lastVictoryState,outcome:died?"death":escaped?"escape":"win"});
    if(died||escaped){
     if(died&&prepared)s.endgameDeaths++;
     if(died)s.deaths.push({fight:s.fights,level:player.level,foe,prepared,gear:gear()});else s.retreats++;
@@ -91,6 +105,6 @@ window.startMageProgression = function(config){
    }else{retry=null;failedOnce=false;if(foe.isBoss)s.bosses.push({region,level:player.level,fight:s.fights,deaths:player.stats.deaths,gear:gear()});}
    allocate();
   }
-  return{route:config.route,seed:config.seed,done:done(),reason:player.stats.regionBossKills.Paradoxo?'Paradoxo derrotado':s.endgameDeaths>10?'11 mortes no nivel 100 com seis lendarios':null,level:player.level,region:currentRegion,fights:s.fights,turns:s.turns,deaths:player.stats.deaths,retreats:s.retreats,endgameDeaths:s.endgameDeaths,fullLegendary:full(),invested:clone(player.stats.invested),gear:gear(),bosses:s.bosses,deathEvents:s.deaths,gifts:s.gifts,skills:s.skills};
+  return{route:config.route,seed:config.seed,done:done(),reason:player.stats.regionBossKills.Paradoxo?'Paradoxo derrotado':s.endgameDeaths>10?'11 mortes no nivel 100 com seis lendarios':null,level:player.level,region:currentRegion,fights:s.fights,turns:s.turns,deaths:player.stats.deaths,retreats:s.retreats,endgameDeaths:s.endgameDeaths,fullLegendary:full(),invested:clone(player.stats.invested),gear:gear(),bosses:s.bosses,deathEvents:s.deaths,gifts:s.gifts,skills:s.skills,...(config.captureFights?{encounters:s.records}:{})};
  };
 };

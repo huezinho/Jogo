@@ -5,6 +5,7 @@
 - [Equipamentos e balanceamento](equipamentos_balanceamento_2026-11-03.md)
 - [Custos dos equipamentos](equipamentos/custos-de-todos-os-equipamentos.md)
 - [Análise de Guerreiro e Arqueiro](analise_guerreiro_arqueiro_inimigos_2026-11-04.md)
+- [Gargalos, overlevel, underlevel e equipamento fraco](analise_gargalos_progressao_2026-11-04.md)
 - [Análise do Mago](analise_mago_2026-11-04.md)
 - [Regras de inimigos e DOTs](balanceamento/inimigos_2026-11-04.md)
 - [Regras do Mago](balanceamento/mago_2026-11-04.md)

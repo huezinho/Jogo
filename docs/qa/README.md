@@ -28,3 +28,14 @@ node scripts/run-mage-progression.cjs
 ```
 
 As pastas antigas de balanceamento até 70, catálogos anteriores e progressões anteriores à reformulação dos inimigos foram removidas. Os utilitários de navegador e fixtures de `2026-10-27/` permanecem porque as suítes atuais os importam. A opção histórica `--analysis` do runner da campanha cobre seu recorte antigo de progressão; use os scripts acima para os relatórios atuais.
+
+## Medição detalhada de gargalos
+
+`progression-bottlenecks-2026-11-04/` contém as 36 campanhas instrumentadas, com nível e equipamentos na entrada, rodadas, menor proporção de vida observada e estado anterior às recompensas. Os totais são conferidos contra as campanhas anteriores. Os níveis de desbloqueio e a lógica de jogo não são alterados.
+
+```sh
+node scripts/run-progression-bottlenecks.cjs
+python3 scripts/generate-progression-bottlenecks-report.py
+```
+
+O coletor reutiliza os dois motores de progressão com `captureFights: true`; execuções normais mantêm o comportamento anterior. CSVs e critérios de classificação ficam junto ao [relatório](../analise_gargalos_progressao_2026-11-04.md).
