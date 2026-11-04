@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../../"><title>Inimigos — revisão por fases</title>
+<link rel="stylesheet" href="assets/styles/game.css"><link rel="stylesheet" href="assets/styles/campaign-hud.css"><link rel="stylesheet" href="assets/styles/campaign-theme.css"><link rel="stylesheet" href="assets/styles/character-motion.css"><link rel="stylesheet" href="assets/styles/zenith-motion.css"><link rel="stylesheet" href="assets/styles/enemy-motion.css">
+<style>
+body.rpg-campaign{margin:0;min-height:100vh;background:#111017;color:#f4e6c9}.review{max-width:1160px;margin:auto;padding:32px 24px 60px}.eyebrow{color:#bd985d;font:12px system-ui;letter-spacing:.2em;text-transform:uppercase}.review h1{font-size:clamp(30px,5vw,48px);font-weight:500;margin:10px 0}.review p{color:#c6bca9;line-height:1.5;max-width:850px}.phases{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 18px}.review button,.review select{font:15px system-ui;color:#f5e2bc;background:#28221b;border:1px solid #79603c;border-radius:4px;padding:12px 14px;cursor:pointer}.review button:hover{background:#45321e}.review button[aria-pressed=true]{background:#61451f;border-color:#d4ac65}.review button:focus-visible,.review select:focus-visible{outline:2px solid #f7db9c;outline-offset:3px}.review button:disabled{opacity:.45;cursor:wait}.art-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}.art-grid button{padding:8px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px}.art-grid .thumb{display:block;width:144px;height:180px;background-repeat:no-repeat;background-position:0 0;background-size:400% var(--rows)}.review details{margin:14px 0;color:#d5b77e}.review summary{cursor:pointer;font:14px system-ui;padding:8px 0}.picker{display:flex;align-items:center;gap:14px;margin:16px 0}.picker select{min-width:260px}.tag{font:13px system-ui;color:#ccb480}.review .rpg-battle{border:1px solid #745837;box-shadow:0 15px 50px #0008}.review .battle-scene{background-position:center;background-size:cover;min-height:440px;height:440px}.review .stage-label{position:absolute;top:16px;left:18px;z-index:18;font:13px system-ui;padding:7px 12px;background:#151219d9;border:1px solid #a3834c66;max-width:85%}.nameplates{position:absolute;bottom:18px;left:5%;right:5%;display:flex;justify-content:space-between;z-index:18;text-shadow:0 2px 5px #000;pointer-events:none}.nameplates strong{font-size:21px}.nameplates small{display:block;font:12px system-ui;color:#caba98;margin-top:4px}.nameplates>div:last-child{text-align:right}.controls{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}.forms{margin-top:30px;border-top:1px solid #98734355;padding-top:18px}.forms label{display:block;font-size:22px;margin-bottom:12px}.review .caption{font:13px/1.6 system-ui;color:#ab9e88}.review a{color:#d6ba7e}
+@media(max-width:760px){.review{padding:22px 12px 40px}.phases button{flex:1 1 100%;text-align:left}.picker{align-items:flex-start;flex-direction:column}.picker select{width:100%;min-width:0}.review .battle-scene{height:350px;min-height:350px}.controls button{flex:1 1 42%}.nameplates strong{font-size:17px}.nameplates small{font-size:11px}.review .stage-label{font-size:11px}.forms select{max-width:100%}}
+</style>
+</head>
+<body class="rpg-campaign"><main class="review">
+<div class="eyebrow">Direção de arte · Campanha</div>
+<h1>Inimigos, por fases</h1>
+<p>Escolha um inimigo e confira suas ações ao lado do Paladino atual. As poses e os efeitos seguem as habilidades existentes no jogo.</p>
+<nav class="phases" aria-label="Fases de criação">
+<button data-phase="1" aria-pressed="true">1 · Sem habilidades — 20</button>
+<button data-phase="2" aria-pressed="false">2 · Habilidades e passivas — 16</button>
+<button data-phase="3" aria-pressed="false">3 · Chefes individuais — 12</button>
+</nav>
+<div class="picker"><label for="enemyPick">Inimigo</label><select id="enemyPick"></select><span class="tag" id="enemyInfo"></span></div>
+<details id="overview"><summary>Ver todos os desenhos desta fase</summary><div id="thumbnails" class="art-grid"></div></details>
+<div class="rpg-battle"><div class="battle-scene has-enemy">
+<div class="stage-label" id="motionStatus" role="status" aria-live="polite">Repouso</div>
+<div id="heroSpriteBox" class="combat-entity hero-entity"><div class="sprite-figure sheet-sprite hero-v2" role="img" aria-label="Paladino atual"></div></div>
+<div id="enemySpriteBox" class="combat-entity enemy-entity"></div>
+<div class="nameplates"><div><strong id="heroName">Paladino</strong><small>Referência de escala</small></div><div><strong id="enemyName"></strong><small id="enemyRegion"></small></div></div>
+</div></div>
+<div class="controls" id="controls" aria-label="Ações do inimigo"></div>
+<p class="caption" id="phaseNote"></p>
+<div class="forms"><label for="heroForm">Formas dos heróis</label><select id="heroForm"><option value="paladino">Paladino — referência atual</option><option value="corrompido">Corrompido — normal</option><option value="corrompido-demonio">Corrompido — Incorporar Demônio</option><option value="fada-monarca">Fada Monarca — normal</option><option value="fada-monarca-coroada">Fada Monarca — Coroada</option><option value="avatar-da-natureza">Avatar da Natureza — normal</option><option value="avatar-da-natureza-verdadeira">Avatar da Natureza — Forma Verdadeira</option></select><div class="controls"><button id="heroAttack">Ataque do herói</button><button id="heroCast">Pose de habilidade do herói</button></div></div>
+<p class="caption">Esta galeria permite revisar a arte sem criar personagens ou modificar salvamentos. A preferência por movimento reduzido é respeitada. <a href="index.html">Abrir o jogo</a> · <a href="docs/arte/avatar-do-zenith/index.html">Amostra aprovada do Avatar do Zenith</a></p>
+</main>
+<script>
+const player={class:'Guerreiro'};let enemy=null;
+const slugify=value=>value.toLowerCase().replace(/\s+/g,'-');
+function pulseSpriteClass(id,name,duration){const el=document.getElementById(id);el?.classList.add(name);return new Promise(r=>setTimeout(()=>{el?.classList.remove(name);r();},duration));}
+</script>
+<script src="assets/js/data/enemy-art.js"></script><script src="assets/js/systems/enemy-motion.js"></script><script src="assets/js/systems/zenith-motion.js"></script><script src="assets/js/systems/character-motion.js"></script>
+<script>
+let phase=1,busy=false;
+const entries=Object.entries(EnemyArt).filter(([,a])=>!a.egg),pick=document.getElementById('enemyPick'),status=document.getElementById('motionStatus');
+const scene=document.querySelector('.battle-scene'),box=document.getElementById('enemySpriteBox');
+function choosePhase(value){phase=Number(value);document.querySelectorAll('[data-phase]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.phase)===phase)));pick.innerHTML=entries.filter(([,a])=>a.phase===phase).map(([k,a])=>`<option value="${k}">${a.name}</option>`).join('');showEnemy(pick.value);if(document.getElementById("overview").open)renderThumbs();}
+function showEnemy(key){
+ const a=EnemyArt[key];enemy={baseName:a.name,campaignState:{timers:{}}};box.className=`combat-entity enemy-entity enemy-${key}${a.boss?' enemy-boss':''}`;
+ const zenith=key==='avatar-do-zenith';
+ box.innerHTML=`<div class="sprite-figure sheet-sprite ${zenith?'zenith-painted':`enemy-painted${a.boss?' enemy-painted-boss':''}`}" ${zenith?'':`data-enemy-art="${key}"`} style="--sprite-url:url('${new URL(zenith?ZenithMotion.spritePath():EnemyMotion.spritePath(key),document.baseURI).href}');${EnemyMotion.style(key)}" role="img" aria-label="${a.name}"></div>`;
+ scene.style.backgroundImage=`linear-gradient(0deg,#100e1d44,#231d3711),url('assets/visual/backgrounds/regions/${a.region.toLowerCase()}.webp')`;
+ document.getElementById('enemyName').textContent=a.name;document.getElementById('enemyRegion').textContent=a.region+(a.boss?' · Chefão':'');
+ document.getElementById('enemyInfo').textContent=a.boss?'Arte individual · escala de chefe':Object.keys(a.skills).length?'Habilidades ativas':'Apenas ataques físicos'+(Object.keys(a.passives).length?' · passiva própria':'');
+ const buttons=[['basic','Ataque básico'],['hurt','Reação ao golpe'],...Object.keys(a.skills).map(id=>[id,titles[id]||id]),...Object.keys(a.passives).map(id=>['passive:'+id,passiveTitles[id]||id])];
+ if(zenith)buttons.push(['aura','Áurea Divina']);if(key==='fenix-sombria')buttons.push(['egg','Ovo e eclosão']);
+ document.getElementById('controls').innerHTML=buttons.map(([id,label])=>`<button data-action="${id}">${label}</button>`).join('');
+ document.getElementById('phaseNote').textContent=phase===1?'Sem conjuração: repouso, preparação do ataque, contato físico e reação ao golpe.':phase===2?'Ações ativas têm poses próprias; passivas usam seu efeito visual sem inventar uma conjuração.':'Cada chefe tem uma folha individual com 16 poses e efeitos de suas habilidades, em escala maior que os inimigos comuns.';
+ status.textContent='Repouso · '+a.name;zenith?ZenithMotion.prepare():EnemyMotion.prepare(key);
+}
+const titles={fang:'Presa Venenosa',roots:'Raízes',stone:'Escudo de Pedra',haunt:'Assombrar',lament:'Lamento Real',shed:'Troca de Pele',breath:'Sopro Corrosivo',viscous:'Pele Viscosa',scales:'Escamas Ardentes',eruption:'Explosão Vulcânica',rock:'Pele Pétrea',reality:'Dilacerar Realidade',mantle:'Manto do Vazio',deathmark:'Marca da Morte',order:'Ordem de Guerra',steel:'Estocada Rasga-Aço',reap:'Ceifar Alma',sentence:'Sentença Fúnebre',pact:'Pacto Fúnebre',unprotected:'Ceifa do Desprotegido',double:'Ataque Duplo',dominion:'Domínio Crepuscular',umbra:'Lâmina Umbra',solar:'Fogo Solar',judgment:'Julgamento Solar',glare:'Clarão Absoluto',prism:'Prisma do Zenith',wave:'Onda Vital',collapse:'Colapso Final',annihilate:'Aniquilação Perfurante',zero:'Zerar',devour:'Devorar',time:'Ruptura Temporal',doom:'Fim Inadiável',zeroCollapse:'Colapso Zero'};
+const passiveTitles={toxicity:'Gosma Tóxica',rebirth:'Como uma Fênix',purge:'Na Visão',stoneguard:'Duro como Pedra',decay:'Tempo Implacável',march:'Marcha de Ferro',stellar:'Ruptura Estelar',ruin:'Manto da Ruína',eras:'Armadura de Eras'};
+async function playSample(id){
+ if(busy)return;busy=true;const key=pick.value,zenith=key==='avatar-do-zenith',motion=zenith?ZenithMotion:EnemyMotion;
+ document.querySelectorAll('button,select').forEach(e=>e.disabled=true);status.textContent=titles[id]||passiveTitles[id.split(':')[1]]||id;
+ try{
+  if(id==='hurt')await CharacterMotion.action({style:'attack'});
+  else if(id==='egg'){enemy.campaignState.timers.rest=3;await EnemyMotion.sync();status.textContent='Fênix Sombria · ovo';await new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion:reduce)').matches?90:1500));enemy.campaignState.timers.rest=0;await EnemyMotion.sync();}
+  else if(id.startsWith('passive:'))await EnemyMotion.passive(id.split(':')[1]);
+  else if(id==='aura')await ZenithMotion.passive();
+  else if(EnemyArt[key].skills[id]?.charge||id==='prism'){
+   await motion.action({skill:{id,visualPhase:'charge'},connectHit:false});status.textContent=titles[id]+' · preparação';await new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion:reduce)').matches?90:900));await motion.action({skill:{id,visualPhase:'release'}});
+  }else await motion.action({skill:id==='basic'?null:{id},connectHit:!EnemyArt[key].skills[id]?.self});
+ }finally{busy=false;document.querySelectorAll('button,select').forEach(e=>e.disabled=false);status.textContent='Repouso · '+EnemyArt[key].name;}
+}
+function renderThumbs(){document.getElementById('thumbnails').innerHTML=entries.filter(([,a])=>a.phase===phase).map(([key,a])=>`<button data-preview="${key}"><span class="thumb" style="--rows:${a.rows*100}%;background-image:url('${new URL(key==='avatar-do-zenith'?ZenithMotion.spritePath():EnemyMotion.spritePath(key),document.baseURI).href}')" aria-hidden="true"></span><span>${a.name}</span></button>`).join('');}
+document.getElementById('overview').addEventListener('toggle',e=>{if(e.target.open)renderThumbs();});document.getElementById('thumbnails').addEventListener('click',e=>{const b=e.target.closest('[data-preview]');if(b){pick.value=b.dataset.preview;showEnemy(pick.value);}});
+window.playEnemySample=playSample;
+document.querySelectorAll('[data-phase]').forEach(b=>b.addEventListener('click',()=>choosePhase(b.dataset.phase)));
+pick.addEventListener('change',()=>showEnemy(pick.value));document.getElementById('controls').addEventListener('click',e=>{if(e.target.dataset.action)playSample(e.target.dataset.action);});
+document.getElementById('heroForm').addEventListener('change',e=>{const el=document.querySelector('#heroSpriteBox .hero-v2');el.style.setProperty('--sprite-url',`url('${new URL(CharacterMotion.heroPath(e.target.value),document.baseURI).href}')`);document.getElementById('heroName').textContent=e.target.selectedOptions[0].textContent;el.setAttribute('aria-label',e.target.selectedOptions[0].textContent);});
+document.getElementById('heroAttack').addEventListener('click',()=>CharacterMotion.action({style:'attack'}));document.getElementById('heroCast').addEventListener('click',()=>CharacterMotion.action({style:'buff'}));
+document.querySelector('#heroSpriteBox .hero-v2').style.setProperty('--sprite-url',`url('${new URL(CharacterMotion.heroPath('paladino'),document.baseURI).href}')`);
+choosePhase(1);
+</script></body></html>

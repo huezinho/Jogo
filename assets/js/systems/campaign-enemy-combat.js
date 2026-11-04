@@ -46,13 +46,13 @@ const CampaignEnemyCombat = (() => {
     for(const key of ['attackDownPercent','armorDownPercent','healReductionPercent','nextDamageTakenPercent','frozenDamageBonusPercent','blizzardSkipChance'])enemy[key]=0;
     enemy.skipNextAttack=false;enemy.debuffSources={};enemy.naturePoisonStacks=[];
   }
-  const buffKeys=['attackBuffTurns','attackBuffAmount','attackBuffPercent','skillBuffTurns','skillBuffAmount','skillBuffPercent','finalDamageBuffTurns','finalDamageBuffPercent','guaranteedHitTurns','enemyMissBonusTurns','enemyMissBonus','regenTurns','regenPercent','manaRegenBuffTurns','manaRegenBuffPercent','invulnerableTurns','controlImmuneTurns','lifeStealTurns','lifeStealPercent','natureCrownedTurns','natureTrueFormTurns','natureShieldBonusTurns','natureShieldBonusPercent','nextDamageBonusPercent','nextBarrageDamageBonusPercent','nextIncomingAutoMiss','basicOnlyUntouchableTurns','forcedBasicTurns','percentReductionTurns','percentReduction','enemyMaxHpBonusTurns','enemyMaxHpBonusDamagePercent','natureCadence','arcaneCharges','arcaneChargeTurns','firstAttackDoubleAvailable','samuraiEchoAvailable'];
+  const buffKeys=['visualDemonTurns','attackBuffTurns','attackBuffAmount','attackBuffPercent','skillBuffTurns','skillBuffAmount','skillBuffPercent','finalDamageBuffTurns','finalDamageBuffPercent','guaranteedHitTurns','enemyMissBonusTurns','enemyMissBonus','regenTurns','regenPercent','manaRegenBuffTurns','manaRegenBuffPercent','invulnerableTurns','controlImmuneTurns','lifeStealTurns','lifeStealPercent','natureCrownedTurns','natureTrueFormTurns','natureShieldBonusTurns','natureShieldBonusPercent','nextDamageBonusPercent','nextBarrageDamageBonusPercent','nextIncomingAutoMiss','basicOnlyUntouchableTurns','forcedBasicTurns','percentReductionTurns','percentReduction','enemyMaxHpBonusTurns','enemyMaxHpBonusDamagePercent','natureCadence','arcaneCharges','arcaneChargeTurns','firstAttackDoubleAvailable','samuraiEchoAvailable'];
   function transferBuffs(){
     if(!enabled(enemy))return;
     const s=state(),dom=s.timers.dominion>0,oracle=index(enemy.baseName)===37;
     if(!dom&&!oracle)return;
-    const removed=buffKeys.some(key=>!!playerEffects[key]);
-    if(removed)log(dom?"Dominio Crepuscular roubou os buffs do heroi.":"Na Visao dissipou os buffs do heroi.");
+    const removed=buffKeys.some(key=>!key.startsWith('visual')&&!!playerEffects[key]);
+    if(removed){log(dom?"Dominio Crepuscular roubou os buffs do heroi.":"Na Visao dissipou os buffs do heroi.");if(oracle&&typeof EnemyMotion!=='undefined')EnemyMotion.passive('purge');}
     if(dom&&playerEffects.shieldValue>0){shield(playerEffects.shieldValue);playerEffects.shieldValue=0;playerEffects.shieldTurns=0;}
     if(dom){
       s.stolen.buffs ||= {};
@@ -95,12 +95,12 @@ const CampaignEnemyCombat = (() => {
     if(s.timers.dominion>0&&s.stolen.invulnerable)return true;
     if(s.timers.dominion>0&&s.stolen.autoMiss){s.stolen.autoMiss=false;return true;}
     const dodge=(i===43?.3:0)+(s.timers.dominion>0?s.stolen.dodge||0:0);
-    if(dodge>0&&Math.random()<Math.min(1,dodge)){if(i===43)shield(enemy.maxHp*.15);log(`${enemy.baseName} esquivou.`);return true;}return false;
+    if(dodge>0&&Math.random()<Math.min(1,dodge)){if(i===43){shield(enemy.maxHp*.15);if(typeof EnemyMotion!=='undefined')EnemyMotion.passive('ruin');}log(`${enemy.baseName} esquivou.`);return true;}return false;
   }
   function adjustDamage(damage){if(!enabled(enemy))return damage;const s=state();if(s.timers.dominion>0)damage=Math.max(0,Math.floor((damage-(s.stolen.flat||0))*(1-(s.stolen.reduction||0))));return damage;}
   function afterDamage(hpLost){
     if(!enabled(enemy))return;const s=state(),i=index(enemy.baseName);
-    if(i===6)addPeriodicStack(playerEffects,'poison',9,3,'Gosma Toxica');
+    if(i===6){addPeriodicStack(playerEffects,'poison',9,3,'Gosma Toxica');if(typeof EnemyMotion!=='undefined')EnemyMotion.passive('toxicity');}
     if(s.timers.retaliation>0)applyBurning(playerEffects,Math.max(1,Math.floor(getCurrentCaps().maxHp*.03)),3,'Escamas Ardentes');
     if(enemy.hp<=0)beforeDeath();
     heroCheck();
@@ -108,7 +108,7 @@ const CampaignEnemyCombat = (() => {
   function beforeDeath(){
     if(!enabled(enemy)||enemy.hp>0)return false;const s=state(),i=index(enemy.baseName);
     if(s.timers.pact>0){player.hp=0;log('Pacto Funebre matou o atacante.');}
-    if(i===18&&!s.revived){s.revived=true;enemy.hp=enemy.maxHp;s.timers.rest=3;log('Como uma Fenix restaurou toda a vida.');return true;}
+    if(i===18&&!s.revived){s.revived=true;enemy.hp=enemy.maxHp;s.timers.rest=3;if(typeof EnemyMotion!=='undefined')EnemyMotion.sync();log('Como uma Fenix restaurou toda a vida.');return true;}
     return false;
   }
   function heroDebuffCount(){
@@ -181,20 +181,22 @@ const CampaignEnemyCombat = (() => {
   }
   function damageMultiplier(){const s=state();return 1+(index(enemy.baseName)===35?s.turn*.01:0)+(s.timers.attack>0?s.attackBonus||0:0)+(s.timers.dominion>0?s.stolen.damage||0:0);}
   function basic(unavoidable=false){const s=state();let d=enemy.attack+(s.timers.dominion>0?s.stolen.attackFlat||0:0);d+=Math.floor(getCurrentCaps().maxHp*(enemy.maxHpStrikePercent||0));d=Math.floor(d*damageMultiplier()*(1+(s.timers.dominion>0?s.stolen.attackPercent||0:0)));if(enemy.attackDownTurns>0)d=Math.floor(d*(1-(enemy.attackDownPercent||0)));if(s.timers.dominion>0){d+=Math.floor(getCurrentCaps().maxHp*(s.stolen.enemyHpBonus||0));if(s.stolen.nextDamage){d+=Math.floor(d*s.stolen.nextDamage);s.stolen.nextDamage=0;}}const hpBefore=player.hp;const r=applyIncomingDamage(d,{ignoreDodge:unavoidable||s.timers.dominion>0&&s.stolen.buffs?.guaranteedHitTurns>0});if(s.timers.dominion>0&&s.stolen.lifeSteal)heal(Math.min(hpBefore,r.damage)*s.stolen.lifeSteal);if(r.missed&&!unavoidable)march();heroCheck();}
-  function march(){if(index(enemy.baseName)===27&&player.hp>0){log('Marcha de Ferro respondeu.');basic(true);}}
+  function march(){if(index(enemy.baseName)===27&&player.hp>0){log('Marcha de Ferro respondeu.');if(typeof EnemyMotion!=='undefined')EnemyMotion.passive('march');basic(true);}}
   async function turn(){
     const s=state(),i=index(enemy.baseName),old={...s.timers};s.turn++;
+    if(typeof EnemyMotion!=='undefined')await EnemyMotion.sync();
     if(s.shieldTime>0&&--s.shieldTime===0)enemy.shieldValue=0;
-    if(i===39){heal(enemy.maxHp*.04);shield(enemy.maxHp*.06);}if(i===47)enemy.armor+=22;
+    if(i===39){heal(enemy.maxHp*.04);shield(enemy.maxHp*.06);if(typeof ZenithMotion!=='undefined')await ZenithMotion.passive();}if(i===47)enemy.armor+=22;
     if(i===44){s.temporal=Math.min(1,(s.temporal||0)+.02);}
+    if(typeof EnemyMotion!=='undefined'){if(i===35)EnemyMotion.passive('stellar');if(i===44)EnemyMotion.passive('decay');if(i===47)EnemyMotion.passive('eras');}
     if(s.timers.regen>0)heal(enemy.maxHp*s.regen);
     if(s.timers.dominion>0&&s.stolen.regen>0)heal(enemy.maxHp*s.stolen.regen);
     if(s.timers.dominion>0&&s.stolen.manaRegen>0)enemy.mp=Math.min(enemy.maxMp,enemy.mp+Math.floor(enemy.maxMp*s.stolen.manaRegen));
     transferBuffs();
     const blocked=s.timers.rest>0||enemy.skipNextAttack||(enemy.aimLegTurns>0&&Math.random()<enemy.aimLegSkipChance)||(enemy.blizzardSkipChance>0&&Math.random()<enemy.blizzardSkipChance)||(getPassiveModifiers().enemySkipChance>0&&Math.random()<getPassiveModifiers().enemySkipChance);
     if(blocked){enemy.skipNextAttack=false;log(`${enemy.baseName} perdeu o turno.`);march();}
-    else if(s.charge){if(--s.charge.left===0){const a=s.charge.ability;s.charge=null;cast(a,true);await playSpriteAttackAnimation('enemy','cast',!s.lastMissed);}else{log(`${s.charge.ability.name} continua em preparacao.`);await playSpriteAttackAnimation('enemy','cast',false);}}
-    else{const action=choose();if(action){cast(action);await playSpriteAttackAnimation('enemy',action.power!==undefined?'cast':'buff',!!action.power&&!action.charge&&!s.lastMissed);}else{const count=s.timers.double>0?2:1;for(let n=0;n<count&&player.hp>0&&enemy.hp>0;n++){basic();await playSpriteAttackAnimation('enemy','attack',true);}}}
+    else if(s.charge){if(--s.charge.left===0){const a=s.charge.ability;s.charge=null;cast(a,true);await playSpriteAttackAnimation('enemy','cast',!s.lastMissed,1,null,null,{...a,visualPhase:'release'});}else{log(`${s.charge.ability.name} continua em preparacao.`);await playSpriteAttackAnimation('enemy','cast',false,1,null,null,{...s.charge.ability,visualPhase:'charge'});}}
+    else{const action=choose();if(action){cast(action);await playSpriteAttackAnimation('enemy',action.power!==undefined?'cast':'buff',!!action.power&&!action.charge&&!s.lastMissed,1,null,null,{...action,visualPhase:action.charge?'charge':'release'});}else{const count=s.timers.double>0?2:1;for(let n=0;n<count&&player.hp>0&&enemy.hp>0;n++){basic();await playSpriteAttackAnimation('enemy','attack',true);}}}
     for(const[k,v]of Object.entries(old))if(v>0&&s.timers[k]===v)s.timers[k]--;
     if(old.dominion>0){for(const[k,v]of Object.entries(s.stolen.buffs||{}))if(k.endsWith('Turns')&&v>0)s.stolen.buffs[k]--;refreshStolen(s);}
     for(const key of ['aimLegTurns','attackDownTurns','armorDownTurns','blizzardTurns'])if(enemy[key]>0)enemy[key]--;
@@ -202,7 +204,7 @@ const CampaignEnemyCombat = (() => {
     if(playerEffects.shieldTurns>0&&--playerEffects.shieldTurns===0)playerEffects.shieldValue=0;
     // Keep the existing mana recovery policy for bosses; ordinary enemies have finite mana.
     if(enemy.isBoss)enemy.mp=Math.min(enemy.maxMp,enemy.mp+Math.max(4,Math.floor(enemy.maxMp/8)));
-    transferBuffs();heroCheck();updateUI();await wait(320);
+    transferBuffs();heroCheck();if(typeof EnemyMotion!=='undefined')await EnemyMotion.sync();updateUI();await wait(320);
     if(player.hp<=0){handleDeath();return;}if(enemy.hp<=0){handleEnemyDefeat();return;}isProcessingTurn=false;updateUI();
   }
   function temporalDamage(d){return enabled(enemy)?Math.floor(d*(1-(state().temporal||0))):d;}

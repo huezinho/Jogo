@@ -2,6 +2,19 @@
 const CharacterMotion=(()=>{
  'use strict';const running=new WeakMap();const events=[];const loaded=new Map();const pause=ms=>new Promise(r=>setTimeout(r,ms));
  const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const forms=new Set(['corrompido-demonio','fada-monarca-coroada','avatar-da-natureza-verdadeira']);
+ function formKey(target,key){
+  if(typeof player==='undefined'||target!==player||typeof playerEffects==='undefined')return key;
+  if(key==='corrompido'&&playerEffects.visualDemonTurns>0)return 'corrompido-demonio';
+  if(key==='fada-monarca'&&playerEffects.natureCrownedTurns>0)return 'fada-monarca-coroada';
+  if(key==='avatar-da-natureza'&&playerEffects.natureTrueFormTurns>0)return 'avatar-da-natureza-verdadeira';
+  return key;
+ }
+ const heroPath=key=>`assets/visual/${forms.has(key)?'hero-forms':'heroes-v2'}/${key}.webp?v=20261104-forms`;
+ function syncForm(){
+  const el=document.querySelector('#heroSpriteBox .hero-v2');
+  if(el&&typeof getHeroCombatAssetKey==='function')el.style.setProperty('--sprite-url',`url('${new URL(heroPath(getHeroCombatAssetKey()),document.baseURI).href}')`);
+ }
  const emit=(phase,info)=>{const entry={phase,...info};events.push(entry);if(events.length>160)events.shift();window.dispatchEvent(new CustomEvent('rpg-motion',{detail:entry}));};
  const support=new Set(['warrior_second_wind','warrior_warcry','warrior_smoke_bomb','warrior_faith_shield','warrior_unstoppable','warrior_valhalla','warrior_ultrasonic_cuts','mage_concentration','mage_mana_shield','mage_demon_form','archer_focus','archer_camouflage','archer_overheat','nature_ancestral_song','nature_true_form','nature_vine_cocoon','nature_crown']);
  function preload(key){if(!key)return Promise.resolve();if(!loaded.has(key)){const image=new Image();image.src=`assets/visual/skill-fx/${key}.webp?v=20261029-motion`;loaded.set(key,image.decode().then(()=>true).catch(()=>false));}return loaded.get(key);}
@@ -27,13 +40,14 @@ const CharacterMotion=(()=>{
   return new Promise(resolve=>{const start=performance.now();function tick(now){if(!node.isConnected){resolve();return;}const t=Math.min(1,(now-start)/profile.duration),frame=Math.min(7,Math.floor(t*8));node.dataset.frame=String(frame);node.style.backgroundPosition=`${(frame%4)*100/3}% ${Math.floor(frame/4)*100}%`;const travel=profile.travel?Math.min(1,t/((profile.impactAt??profile.duration*.45)/profile.duration)):1;const x=(a.x+a.width*.68)*(1-travel)+(b.x+b.width/2)*travel-bounds.x;const y=(a.y+a.height*.4)*(1-travel)+(b.y+b.height*(profile.ground ? .82 : .45))*travel-bounds.y;node.style.left=`${x}px`;node.style.top=`${y}px`;if(t>=1){node.remove();resolve();return;}requestAnimationFrame(tick);}requestAnimationFrame(tick);});
  }
  async function action({style='attack',skill=null,connectHit=true,hitRepeats=1,hitDelay=null,betweenHits=null}={}){
+  syncForm();
   const p=profile(skill,style),box=document.getElementById('heroSpriteBox'),el=box?.querySelector('.hero-v2');if(!el)return;
   const repeats=Math.max(1,hitRepeats);if(!reduced()&&repeats>1){p.duration=Math.max(p.duration,(hitDelay??450)+(repeats-1)*(betweenHits??120)+250);p.impactAt=hitDelay??450;}
   await preload(p.key);if(!el.isConnected)return;
   const cls=p.pose==='cast'?'casting':'attacking';box.classList.add(cls);box.dataset.ability=p.key||'support';emit('start',p);
   let sequence=[0,1,2,3];if(p.pose==='attack'&&p.hits>1)sequence=[0,...Array.from({length:p.hits},()=>[1,2]).flat(),3];
   else if(repeats>1&&!reduced())sequence=[0,1,...Array.from({length:Math.max(2,Math.ceil(p.duration/225)-3)},()=>2),3];
-  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit)pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}})()]);}finally{box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
+  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit){if(typeof ZenithMotion!=='undefined')ZenithMotion.hurt();if(typeof EnemyMotion!=='undefined')EnemyMotion.hurt();pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}}})()]);}finally{box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
  }
- return {profile,action,hurt,prepare,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath:key=>`assets/visual/heroes-v2/${key}.webp?v=20261029-motion`};
+ return {profile,action,hurt,prepare,formKey,syncForm,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath};
 })();

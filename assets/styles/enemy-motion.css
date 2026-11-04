@@ -1,0 +1,27 @@
+/* Campaign painting sizes and authored atlas layouts. */
+.rpg-campaign .sheet-sprite.enemy-painted{width:var(--enemy-width,256px);height:var(--enemy-height,320px);background-size:400% var(--enemy-sheet-height,100%)!important;background-position:0 0;animation:none!important;image-rendering:auto}
+.rpg-campaign .sheet-sprite.enemy-painted-boss{width:360px;height:450px}
+.rpg-campaign .enemy-painted-avatar{background-size:400% var(--enemy-sheet-height,100%)!important;background-position:0 0!important}
+.rpg-campaign .rpg-enemy-portrait .enemy-painted{width:256px;height:320px;top:-29px;transform:translateX(-50%) scale(.46)}
+.rpg-campaign .rpg-battle .battle-scene:has(.enemy-painted-boss),.rpg-campaign .rpg-battle .battle-scene:has(.zenith-painted){height:580px;min-height:580px}
+.rpg-campaign .rpg-battle .battle-scene .enemy-entity:has(.enemy-painted){left:74%;bottom:70px;--entity-scale:.96}
+.rpg-campaign .rpg-battle .battle-scene .enemy-boss:has(.enemy-painted-boss){left:72%;bottom:65px;--entity-scale:1.1}
+.rpg-campaign .enemy-boss:has(.enemy-painted) .entity-shadow{width:185px;height:28px}
+.rpg-campaign .enemy-painted-fx{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;background-repeat:no-repeat;background-size:400% 200%;z-index:11;pointer-events:none}
+.rpg-campaign .enemy-painted-fx.is-self{width:350px;height:350px;margin:-175px 0 0 -175px;z-index:9}
+.rpg-campaign .enemy-painted-fx.is-ground{width:310px;height:220px;margin:-150px 0 0 -155px}
+.rpg-campaign .enemy-charge-fx{position:absolute;left:50%;top:-25px;width:150px;height:150px;margin-left:-75px;background-size:400% 200%;background-position:100% 0;z-index:5;pointer-events:none}
+.rpg-campaign .bestiary-preview-stage .enemy-painted,.rpg-campaign .bestiary-preview-stage .zenith-painted{transform:translateX(-50%) scale(1.05)}
+@media(min-width:761px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:1.2}}
+@media(max-width:760px){
+ .rpg-campaign .rpg-battle .battle-scene:has(.enemy-painted-boss),.rpg-campaign .rpg-battle .battle-scene:has(.zenith-painted){height:430px;min-height:430px}
+ .rpg-campaign .rpg-battle .battle-scene .enemy-entity:has(.enemy-painted){left:73%;bottom:75px;--entity-scale:.61}
+ .rpg-campaign .rpg-battle .battle-scene .enemy-boss:has(.enemy-painted-boss){left:62%;bottom:66px;--entity-scale:.76}
+ .rpg-campaign .enemy-painted-fx{width:210px;height:210px;margin:-105px 0 0 -105px}
+ .rpg-campaign .enemy-painted-fx.is-self{width:250px;height:250px;margin:-125px 0 0 -125px}
+ .rpg-campaign .enemy-painted-fx.is-ground{width:220px;height:160px;margin:-110px 0 0 -110px}
+}
+@media(max-width:760px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{left:64%;--entity-scale:.76}}
+@media(max-width:380px){.rpg-campaign .rpg-battle .battle-scene .enemy-boss:has(.enemy-painted-boss){--entity-scale:.7;left:57%}}
+@media(max-width:380px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:.74;left:59%}}
+@media(prefers-reduced-motion:reduce){.rpg-campaign .enemy-painted-fx{display:none}}

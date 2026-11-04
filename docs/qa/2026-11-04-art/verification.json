@@ -1,0 +1,1228 @@
+{
+  "errors": [],
+  "badResponses": [],
+  "layouts": [
+    {
+      "key": "lobo-sombrio",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "goblin",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "morcego-de-pedra",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "esqueleto-mineiro",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "sentinela-quebrada",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "cultista-perdido",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "sapo-colossal",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "bruxa-do-brejo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "salamandra-rubra",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "golem-de-brasa",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "cavaleiro-abissal",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "lamia-do-eclipse",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "escudeiro-de-ferro",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "maga-da-muralha",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-funebre",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "feiticeira-morta",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "anjo-caido",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "drake-celeste",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-aureo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "arauto-do-cataclismo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "aranha-gigante",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "slime-toxico",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "fantasma-antigo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "serpente-do-lodo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "fenix-sombria",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "colosso-do-vazio",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "carrasco-de-guerra",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "ceifador-de-ossos",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "executor-astral",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "oraculo-radiante",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "quimera-solar",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "titan-rachado",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "serafim-do-fim",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-temporal",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "oraculo-do-zero",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "devorador-de-eras",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "ent-ancestral",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "troll-das-profundezas",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "rei-espectral",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "hidra-do-lodo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "draco-magmatico",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "arauto-do-vazio",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "general-de-aco",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "lorde-da-cripta",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "imperador-do-eclipse",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "avatar-do-zenith",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 296
+    },
+    {
+      "key": "deus-da-ruina",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "soberano-do-paradoxo",
+      "width": 320,
+      "scroll": 320,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 315
+    },
+    {
+      "key": "lobo-sombrio",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "goblin",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "morcego-de-pedra",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "esqueleto-mineiro",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "sentinela-quebrada",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "cultista-perdido",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "sapo-colossal",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "bruxa-do-brejo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "salamandra-rubra",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "golem-de-brasa",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "cavaleiro-abissal",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "lamia-do-eclipse",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "escudeiro-de-ferro",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "maga-da-muralha",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-funebre",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "feiticeira-morta",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "anjo-caido",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "drake-celeste",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-aureo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "arauto-do-cataclismo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "aranha-gigante",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "slime-toxico",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "fantasma-antigo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "serpente-do-lodo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "fenix-sombria",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "colosso-do-vazio",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "carrasco-de-guerra",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "ceifador-de-ossos",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "executor-astral",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "oraculo-radiante",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "quimera-solar",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "titan-rachado",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "serafim-do-fim",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "guardiao-temporal",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "oraculo-do-zero",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "devorador-de-eras",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 195.20001220703125
+    },
+    {
+      "key": "ent-ancestral",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "troll-das-profundezas",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "rei-espectral",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "hidra-do-lodo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "draco-magmatico",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "arauto-do-vazio",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "general-de-aco",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "lorde-da-cripta",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "imperador-do-eclipse",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "avatar-do-zenith",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 304
+    },
+    {
+      "key": "deus-da-ruina",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "soberano-do-paradoxo",
+      "width": 390,
+      "scroll": 390,
+      "inside": true,
+      "hero": 243.20001220703125,
+      "enemy": 342
+    },
+    {
+      "key": "lobo-sombrio",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "goblin",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "morcego-de-pedra",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "esqueleto-mineiro",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "sentinela-quebrada",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "cultista-perdido",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "sapo-colossal",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "bruxa-do-brejo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "salamandra-rubra",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "golem-de-brasa",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "cavaleiro-abissal",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "lamia-do-eclipse",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "escudeiro-de-ferro",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "maga-da-muralha",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "guardiao-funebre",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "feiticeira-morta",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "anjo-caido",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "drake-celeste",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "guardiao-aureo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "arauto-do-cataclismo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "aranha-gigante",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "slime-toxico",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "fantasma-antigo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "serpente-do-lodo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "fenix-sombria",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "colosso-do-vazio",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "carrasco-de-guerra",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "ceifador-de-ossos",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "executor-astral",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "oraculo-radiante",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "quimera-solar",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "titan-rachado",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "serafim-do-fim",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "guardiao-temporal",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "oraculo-do-zero",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "devorador-de-eras",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 307.199951171875
+    },
+    {
+      "key": "ent-ancestral",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "troll-das-profundezas",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "rei-espectral",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "hidra-do-lodo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "draco-magmatico",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "arauto-do-vazio",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "general-de-aco",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "lorde-da-cripta",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "imperador-do-eclipse",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "avatar-do-zenith",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 480.0000305175781
+    },
+    {
+      "key": "deus-da-ruina",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    },
+    {
+      "key": "soberano-do-paradoxo",
+      "width": 1366,
+      "scroll": 1366,
+      "inside": true,
+      "hero": 377.5999755859375,
+      "enemy": 495
+    }
+  ],
+  "effects": [
+    {
+      "key": "ent-ancestral-roots",
+      "frame": 2
+    },
+    {
+      "key": "hidra-do-lodo-viscous",
+      "frame": 2
+    },
+    {
+      "key": "soberano-do-paradoxo-time",
+      "frame": 2
+    },
+    {
+      "key": "judgment",
+      "frame": 2
+    }
+  ],
+  "coverage": {
+    "phases": [
+      20,
+      16,
+      12
+    ],
+    "errors": [],
+    "decoded": 96
+  },
+  "actions": {
+    "physical": 48,
+    "skills": 35,
+    "passives": 9,
+    "remainingEffects": 0
+  },
+  "native": {
+    "errors": [],
+    "bodies": 48,
+    "forms": [
+      "corrompido-demonio",
+      "fada-monarca-coroada",
+      "avatar-da-natureza-verdadeira"
+    ],
+    "phoenix": {
+      "rest": [
+        "egg",
+        "egg",
+        "phoenix"
+      ],
+      "resurrected": true
+    },
+    "activated": [
+      {
+        "id": "corrompido",
+        "skill": "mage_demon_form",
+        "turns": 3,
+        "restored": true
+      },
+      {
+        "id": "fada_monarca",
+        "skill": "nature_crown",
+        "turns": 5,
+        "restored": true
+      },
+      {
+        "id": "avatar_da_natureza",
+        "skill": "nature_true_form",
+        "turns": 5,
+        "restored": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "body": {
+    "frames": 16,
+    "width": 320,
+    "height": 400
+  },
+  "effects": {
+    "judgment": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "glare": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "prism": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "aura": {
+      "frames": 8,
+      "distinct": 8
+    }
+  }
+}

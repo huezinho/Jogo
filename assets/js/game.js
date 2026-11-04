@@ -164,6 +164,7 @@ function createDefaultPlayerEffects(){
     glassCannonActions: 0,
     glassCannonFirstHit: false,
     incomingDamageBonusTurns: 0,
+    visualDemonTurns: 0,
     incomingDamageBonusPercent: 0,
     lastActionType: "",
     lastActionTurn: 0,
@@ -712,7 +713,8 @@ function getHeroSpriteClass(targetPlayer = player){
 
 function getHeroCombatAssetKey(targetPlayer = player){
   const currentSubclass = getCurrentSubclassDef(targetPlayer);
-  return toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro");
+  const key = toCssToken(currentSubclass?.id || targetPlayer?.class || "guerreiro");
+  return typeof CharacterMotion !== "undefined" ? CharacterMotion.formKey(targetPlayer, key) : key;
 }
 
 const VISUAL_ASSET_VERSION = "hd-v8-20260505";
@@ -748,6 +750,8 @@ const LOCATION_MODE_OPTIONS = [
 function getVisualSpritePath(kind, assetKey){
   const normalizedKind = kind === "heroes" ? "heroes" : "enemies";
   if(normalizedKind === "heroes" && typeof CharacterMotion !== "undefined")return new URL(CharacterMotion.heroPath(assetKey),window.location.href).href;
+  if(normalizedKind === "enemies" && typeof ZenithMotion !== "undefined" && ZenithMotion.supports(assetKey))return new URL(ZenithMotion.spritePath(),window.location.href).href;
+  if(normalizedKind === "enemies" && typeof EnemyMotion !== "undefined" && EnemyMotion.supports(assetKey))return new URL(EnemyMotion.spritePath(assetKey),window.location.href).href;
   const resolvedKey = combatArtAliases[normalizedKind]?.[assetKey] || assetKey;
   const path = `assets/visual/sprites/${normalizedKind}/${resolvedKey}.png?v=${VISUAL_ASSET_VERSION}`;
   return new URL(path, window.location.href).href;
@@ -755,8 +759,11 @@ function getVisualSpritePath(kind, assetKey){
 
 function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extraClass = ""){
   const source = getVisualSpritePath(kind, assetKey);
+  if(kind === "enemies" && typeof ZenithMotion !== "undefined" && ZenithMotion.supports(assetKey))extraClass += " zenith-painted";
+  const paintedEnemy = kind === "enemies" && typeof EnemyMotion !== "undefined" && EnemyMotion.supports(assetKey);
+  if(paintedEnemy)extraClass += ` enemy-painted${EnemyArt[assetKey].boss ? ' enemy-painted-boss' : ''}`;
   const safeLabel = String(label || "").replace(/"/g, "&quot;");
-  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" class="sprite-figure sheet-sprite ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2' : ''} ${extraClass}" style="--sprite-url:url('${source}');${kind==='heroes'&&typeof CharacterMotion!=='undefined'?'--portrait-top:'+CharacterMotion.portraitTop(assetKey)+'px':''}" role="img" aria-label="${safeLabel}"></div>`;
+  return `<span class="sprite-figure emoji-sprite sprite-fallback ${extraClass}" aria-hidden="true">${fallbackMarkup}</span><div id="${id}" ${paintedEnemy ? `data-enemy-art="${assetKey}"` : ''} class="sprite-figure sheet-sprite ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2' : ''} ${extraClass}" style="--sprite-url:url('${source}');${paintedEnemy ? EnemyMotion.style(assetKey) : ''}${kind==='heroes'&&typeof CharacterMotion!=='undefined'?'--portrait-top:'+CharacterMotion.portraitTop(assetKey)+'px':''}" role="img" aria-label="${safeLabel}"></div>`;
 }
 
 function getHeroSpriteMarkup(targetPlayer = player){
@@ -766,7 +773,8 @@ function getHeroSpriteMarkup(targetPlayer = player){
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
   const source = getVisualSpritePath(kind, assetKey);
   const safeLabel = String(altText || "").replace(/"/g, "&quot;");
-  return `<span class="combat-avatar-media sprite-avatar ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2-avatar' : ''}" style="--sprite-url:url('${source}')" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
+  const paintedEnemy = kind === "enemies" && typeof EnemyMotion !== "undefined" && EnemyMotion.supports(assetKey);
+  return `<span class="combat-avatar-media sprite-avatar ${kind === 'heroes' && typeof CharacterMotion !== 'undefined' ? 'hero-v2-avatar' : typeof ZenithMotion !== 'undefined' && ZenithMotion.supports(assetKey) ? 'zenith-avatar' : paintedEnemy ? 'enemy-painted-avatar' : ''}" style="--sprite-url:url('${source}');${paintedEnemy ? EnemyMotion.style(assetKey) : ''}" role="img" aria-label="${safeLabel}"></span><span class="combat-avatar-fallback">${fallbackMarkup}</span>`;
 }
 
 function getProjectilePath(projectileKey){
@@ -1441,6 +1449,8 @@ function getSpriteAnimationTiming(attacker = "hero", style = "attack"){
 }
 
 async function playSpriteAttackAnimation(attacker = "hero", style = "attack", connectHit = true, hitRepeats = 1, hitDelay = null, betweenHits = null, skillInfo = null){
+  if(attacker === "enemy" && typeof ZenithMotion !== "undefined" && document.querySelector("#enemySpriteBox .zenith-painted"))return ZenithMotion.action({style,skill:skillInfo,connectHit});
+  if(attacker === "enemy" && typeof EnemyMotion !== "undefined" && document.querySelector("#enemySpriteBox .enemy-painted"))return EnemyMotion.action({style,skill:skillInfo,connectHit});
   if(attacker === "hero" && typeof CharacterMotion !== "undefined" && document.querySelector("#heroSpriteBox .hero-v2"))return CharacterMotion.action({style,skill:skillInfo,connectHit,hitRepeats,hitDelay,betweenHits});
   const motionStarted = performance.now();
   const reactions = [];
@@ -2179,7 +2189,7 @@ function getEnemyMissChance(){
 function decayPlayerBuffs(){
   const previousInvulnerableTurns = playerEffects.invulnerableTurns;
   const previousUltrasonicTurns = playerEffects.basicOnlyUntouchableTurns;
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "visualDemonTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
     if(playerEffects[buffName] > 0){
       const newlyApplied = playerEffects.actionBuffSnapshot && playerEffects[buffName] > (playerEffects.actionBuffSnapshot[buffName] || 0);
       if(!newlyApplied && !playerEffects.freshBuffs?.includes(buffName)){ playerEffects[buffName]--; }
@@ -3888,6 +3898,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     message = `${actorName} usou ${skillInfo.name} e liberou ${damage} de dano arcano.`;
   }
   if(skillInfo.type === "mage_demon_form"){
+    playerEffects.visualDemonTurns = Math.max(playerEffects.visualDemonTurns || 0, skillInfo.turns);
     playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, skillInfo.turns);
     playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, skillInfo.damagePercent);
     playerEffects.incomingDamageBonusTurns = Math.max(playerEffects.incomingDamageBonusTurns, skillInfo.turns);
@@ -4179,7 +4190,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     warrior_second_wind:["finalDamageBuffTurns"], warrior_warcry:["attackBuffTurns","finalDamageBuffTurns","percentReductionTurns","lifeStealTurns"],
     warrior_valhalla:["incomingDamageBonusTurns","enemyMaxHpBonusTurns"],warrior_faith_shield:["invulnerableTurns"],
     warrior_unstoppable:["attackBuffTurns","controlImmuneTurns"],warrior_ultrasonic_cuts:["forcedBasicTurns","basicOnlyUntouchableTurns"],
-    mage_concentration:["skillBuffTurns","finalDamageBuffTurns","manaRegenBuffTurns"],mage_demon_form:["finalDamageBuffTurns","incomingDamageBonusTurns"],
+    mage_concentration:["skillBuffTurns","finalDamageBuffTurns","manaRegenBuffTurns"],mage_demon_form:["finalDamageBuffTurns","incomingDamageBonusTurns","visualDemonTurns"],
     archer_focus:["attackBuffTurns","skillBuffTurns","guaranteedHitTurns"],archer_camouflage:["enemyMissBonusTurns"],
     nature_true_form:["natureTrueFormTurns","attackBuffTurns","percentReductionTurns"],nature_crown:["natureCrownedTurns"]
   };
@@ -4806,8 +4817,9 @@ function getEnemyRigWrapperClass(targetEnemy){
 }
 
 function getEnemySpriteMarkup(targetEnemy){
-  const className = `${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}`;
-  const assetKey = toCssToken(targetEnemy?.baseName || targetEnemy?.name || "desconhecido");
+  const className = `${getEnemyRigTokenClass(targetEnemy)}${targetEnemy?.isBoss ? " enemy-boss" : ""}${targetEnemy?.baseName === "Avatar do Zenith" && targetEnemy.campaignState?.charge ? " zenith-charging" : targetEnemy?.campaignState?.charge ? " enemy-art-charging" : ""}`;
+  const key = toCssToken(targetEnemy?.baseName || targetEnemy?.name || "desconhecido");
+  const assetKey = typeof EnemyMotion !== "undefined" ? EnemyMotion.resolveKey(targetEnemy, key) : key;
   return renderSpriteSheetFigure("enemySprite", "enemies", assetKey, getEnemySpriteIcon(targetEnemy), targetEnemy?.baseName || targetEnemy?.name || "Inimigo", className);
 }
 function getHeroCombatFxMarkup(){
@@ -4821,7 +4833,7 @@ function getHeroCombatFxMarkup(){
 }
 
 function getEnemyCombatFxMarkup(){
-  return `
+  return `${typeof EnemyMotion!=="undefined" ? EnemyMotion.chargeMarkup(enemy) : ""}${typeof ZenithMotion!=="undefined" && enemy?.baseName==="Avatar do Zenith" && enemy.campaignState?.charge ? '<span class="zenith-persistent-prism" aria-hidden="true"></span>' : ""}
     <span class="combat-fx fx-hit-burst"></span>
     <span class="combat-fx fx-enemy-slash"></span>
     <span class="combat-fx fx-enemy-shot"></span>

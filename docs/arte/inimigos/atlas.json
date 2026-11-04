@@ -1,0 +1,484 @@
+{
+  "enemies": {
+    "lobo-sombrio": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "goblin": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "aranha-gigante": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "ent-ancestral": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "morcego-de-pedra": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "esqueleto-mineiro": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "slime-toxico": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "troll-das-profundezas": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "sentinela-quebrada": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "cultista-perdido": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "fantasma-antigo": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "rei-espectral": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "sapo-colossal": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "bruxa-do-brejo": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "serpente-do-lodo": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "hidra-do-lodo": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "salamandra-rubra": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "golem-de-brasa": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "fenix-sombria": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "draco-magmatico": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "cavaleiro-abissal": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "lamia-do-eclipse": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "colosso-do-vazio": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "arauto-do-vazio": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "escudeiro-de-ferro": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "maga-da-muralha": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "carrasco-de-guerra": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "general-de-aco": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "guardiao-funebre": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "feiticeira-morta": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "ceifador-de-ossos": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "lorde-da-cripta": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "anjo-caido": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "drake-celeste": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "executor-astral": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "imperador-do-eclipse": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "guardiao-aureo": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "oraculo-radiante": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "quimera-solar": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "avatar-do-zenith": {
+      "frames": 16,
+      "width": 320,
+      "height": 400,
+      "approvedPilot": true
+    },
+    "arauto-do-cataclismo": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "titan-rachado": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "serafim-do-fim": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "deus-da-ruina": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "guardiao-temporal": {
+      "frames": 4,
+      "distinct": 4,
+      "width": 256,
+      "height": 320
+    },
+    "oraculo-do-zero": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "devorador-de-eras": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    },
+    "soberano-do-paradoxo": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 320,
+      "height": 400
+    },
+    "fenix-sombria-ovo": {
+      "frames": 8,
+      "distinct": 8,
+      "width": 256,
+      "height": 320
+    }
+  },
+  "effects": {
+    "aranha-gigante-fang": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "ent-ancestral-roots": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "slime-toxico-toxicity": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "troll-das-profundezas-stone": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "fantasma-antigo-haunt": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "rei-espectral-lament": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "serpente-do-lodo-shed": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "hidra-do-lodo-breath": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "hidra-do-lodo-viscous": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "fenix-sombria-rebirth": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "draco-magmatico-scales": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "draco-magmatico-eruption": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "colosso-do-vazio-rock": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "arauto-do-vazio-reality": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "arauto-do-vazio-mantle": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "carrasco-de-guerra-deathmark": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "general-de-aco-order": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "general-de-aco-steel": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "general-de-aco-march": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "ceifador-de-ossos-reap": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "lorde-da-cripta-sentence": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "lorde-da-cripta-pact": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "lorde-da-cripta-unprotected": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "executor-astral-double": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "imperador-do-eclipse-dominion": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "imperador-do-eclipse-umbra": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "imperador-do-eclipse-stellar": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "oraculo-radiante-purge": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "quimera-solar-solar": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "titan-rachado-stoneguard": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "serafim-do-fim-wave": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "deus-da-ruina-collapse": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "deus-da-ruina-annihilate": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "deus-da-ruina-ruin": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "guardiao-temporal-decay": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "oraculo-do-zero-zero": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "devorador-de-eras-devour": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "soberano-do-paradoxo-time": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "soberano-do-paradoxo-doom": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "soberano-do-paradoxo-zeroCollapse": {
+      "frames": 8,
+      "distinct": 8
+    },
+    "soberano-do-paradoxo-eras": {
+      "frames": 8,
+      "distinct": 8
+    }
+  },
+  "forms": {
+    "corrompido-demonio": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 256,
+      "height": 320
+    },
+    "fada-monarca-coroada": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 256,
+      "height": 320
+    },
+    "avatar-da-natureza-verdadeira": {
+      "frames": 16,
+      "distinct": 16,
+      "width": 256,
+      "height": 320
+    }
+  }
+}

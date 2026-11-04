@@ -1,0 +1,17 @@
+/* The pilot is scoped to this boss; existing enemies keep their current art. */
+.rpg-campaign .sheet-sprite.zenith-painted{width:320px;height:400px;background-size:400% 400%!important;background-position:0 0;animation:none!important;image-rendering:auto;filter:drop-shadow(0 16px 18px #140b08aa)}
+.rpg-campaign .sheet-sprite.zenith-charging{background-position:33.333333% 66.666667%;filter:drop-shadow(0 0 15px #e9b857aa)}
+.rpg-campaign .zenith-avatar{background-size:400% 400%!important;background-position:0 0!important}
+.rpg-campaign .rpg-enemy-portrait .zenith-painted{width:256px;height:320px;top:-29px;transform:translateX(-50%) scale(.46)}
+.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:1.1;left:71%;bottom:77px}
+.rpg-campaign .enemy-avatar-do-zenith .entity-shadow{width:180px;height:28px;background:radial-gradient(ellipse,#31200bc9,transparent 70%)}
+.rpg-campaign .zenith-spell-fx{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;background-size:400% 200%;background-repeat:no-repeat;z-index:11;pointer-events:none}
+.rpg-campaign .zenith-fx-basic{width:160px;height:160px;margin:-80px 0 0 -80px;opacity:.8}
+.rpg-campaign .zenith-fx-aura{width:350px;height:350px;margin:-175px 0 0 -175px;z-index:2;opacity:.85}
+.rpg-campaign .zenith-fx-glare{width:380px;height:380px;margin:-190px 0 0 -190px}
+.rpg-campaign .zenith-fx-prism:not(.is-charging){width:390px;height:260px;margin:-130px 0 0 -195px}
+.rpg-campaign .zenith-persistent-prism{position:absolute;left:50%;top:-30px;width:140px;height:140px;margin-left:-70px;background:url('../visual/enemy-fx/zenith-prism.webp') no-repeat 66.666667% 0 / 400% 200%;z-index:5;pointer-events:none;animation:zenithChargeBreathe 1.8s ease-in-out infinite}
+@keyframes zenithChargeBreathe{0%,100%{opacity:.7;transform:translateY(0) scale(.94)}50%{opacity:1;transform:translateY(-7px) scale(1.04)}}
+@media(max-width:760px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:.84;left:69%;bottom:69px}.rpg-campaign .zenith-spell-fx{width:220px;height:220px;margin:-110px 0 0 -110px}.rpg-campaign .zenith-fx-aura{width:260px;height:260px;margin:-130px 0 0 -130px}.rpg-campaign .zenith-fx-prism:not(.is-charging){width:270px;height:210px;margin:-105px 0 0 -135px}.rpg-campaign .zenith-fx-basic{width:130px;height:130px;margin:-65px 0 0 -65px}}
+@media(max-width:380px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:.72;left:68%}}
+@media(prefers-reduced-motion:reduce){.rpg-campaign .zenith-spell-fx{display:none}.rpg-campaign .zenith-persistent-prism{animation:none}.rpg-campaign .sheet-sprite.zenith-painted{animation:none!important}}
