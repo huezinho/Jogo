@@ -1702,7 +1702,9 @@ function normalizePlayerState(){
 
 function isCampResting(){ return !!player?.campRest; }
 
-function getCampRestHealing(){ return Math.max(1, Math.floor(getCurrentCaps().maxHp * .01)); }
+function getCampRestHealing(){ return Math.max(1, Math.floor(getCurrentCaps().maxHp * .02)); }
+
+function getCampRestManaRecovery(){ return Math.max(1, Math.floor(getCurrentCaps().maxMp * .01)); }
 
 function recoverCampRest(now = Date.now()){
   if(!isCampResting() || enemy || isDead || player.hp <= 0 || IS_ARENA_PAGE || IS_DUNGEON_PAGE){ return false; }
@@ -1712,7 +1714,9 @@ function recoverCampRest(now = Date.now()){
   if(ticks < 1){ return false; }
   rest.lastTickAt += ticks * CAMP_REST_INTERVAL_MS;
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp + ticks * getCampRestHealing());
+  player.mp = Math.min(getCurrentCaps().maxMp, player.mp + ticks * getCampRestManaRecovery());
   displayState.playerHp = player.hp;
+  displayState.playerMp = player.mp;
   return true;
 }
 
@@ -1723,7 +1727,7 @@ function toggleCampRest(){
     log("Voce se levantou e esta pronto para combater.");
   }else{
     player.campRest = { lastTickAt: Date.now() };
-    log(`Voce comecou a descansar: recupera ${getCampRestHealing()} de vida a cada 3 segundos. Volte ao acampamento e levante antes de combater.`);
+    log(`Voce comecou a descansar: recupera ${getCampRestHealing()} de vida e ${getCampRestManaRecovery()} de mana a cada 3 segundos. Volte ao acampamento e levante antes de combater.`);
   }
   updateUI(); queueCampaignSave(); return true;
 }
