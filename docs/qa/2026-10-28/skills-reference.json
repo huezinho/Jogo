@@ -1026,7 +1026,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 15 MP, dispara 5 misseis e cada um causa entre 19 e 40 de dano."
+        "description": "Missel Magico: consome 15 MP, dispara 5 misseis e cada um causa entre 19 e 35 de dano."
       },
       "active": [
         {
@@ -1034,11 +1034,11 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 24,
-          "damage": 97,
+          "cost": 30,
+          "damage": 90,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 24 MP e causa 97 de dano.",
-          "effectiveCost": 24
+          "description": "Explosao de Mana: consome 30 MP e causa 90 de dano.",
+          "effectiveCost": 30
         }
       ],
       "passive": [
@@ -1093,7 +1093,7 @@
       ],
       "level": 50,
       "stats": {
-        "maxHp": 2430,
+        "maxHp": 2355,
         "maxMp": 1500,
         "attack": 218
       },
@@ -1108,7 +1108,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 24 MP, dispara 8 misseis e cada um causa entre 71 e 137 de dano."
+        "description": "Missel Magico: consome 24 MP, dispara 8 misseis e cada um causa entre 69 e 115 de dano."
       },
       "active": [
         {
@@ -1116,19 +1116,19 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 30,
-          "damage": 414,
+          "cost": 45,
+          "damage": 384,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 30 MP e causa 414 de dano.",
-          "effectiveCost": 30
+          "description": "Explosao de Mana: consome 45 MP e causa 384 de dano.",
+          "effectiveCost": 45
         },
         {
           "level": 30,
           "id": "bola_de_fogo",
           "name": "Bola de Fogo",
           "type": "mage_fireball",
-          "cost": 40,
-          "damage": 354,
+          "cost": 65,
+          "damage": 362,
           "burnDamage": 600,
           "burnTurns": 3,
           "healReductionPercent": 0.3,
@@ -1136,24 +1136,24 @@
           "chillAttackDownPercent": 0,
           "appliesBurn": true,
           "appliesChill": false,
-          "description": "Bola de Fogo: consome 40 MP e causa 354 de dano de fogo. A queimadura causa 600 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
-          "effectiveCost": 40
+          "description": "Bola de Fogo: consome 65 MP e causa 362 de dano de fogo. A queimadura causa 600 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
+          "effectiveCost": 65
         },
         {
           "level": 50,
           "id": "congelar",
           "name": "Congelar",
           "type": "mage_freeze",
-          "cost": 50,
-          "damage": 270,
+          "cost": 65,
+          "damage": 275,
           "freezeChance": 0.3,
           "burnDamage": 600,
           "burnTurns": 0,
           "chillTurns": 0,
           "chillAttackDownPercent": 0,
           "freezeVulnerabilityPercent": 0,
-          "description": "Congelar: consome 50 MP, causa 270 de dano e tem 30% de chance de impedir o proximo ataque do inimigo.",
-          "effectiveCost": 50
+          "description": "Congelar: consome 65 MP, causa 275 de dano e tem 30% de chance de impedir o proximo ataque do inimigo.",
+          "effectiveCost": 65
         }
       ],
       "passive": [
@@ -1169,11 +1169,11 @@
           "id": "mana_e_vida",
           "name": "Mana e Vida",
           "type": "mage_mana_to_life",
-          "description": "Mana e Vida: converte 50% da mana maxima em vida maxima."
+          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima."
         }
       ],
       "modifiers": {
-        "bonusHp": 750,
+        "bonusHp": 675,
         "bonusMp": 40,
         "bonusAttack": 0,
         "manaRegen": 0,
@@ -1198,7 +1198,7 @@
         "critChanceBonus": 0,
         "preciousMana": true,
         "armorFlatReduction": 0,
-        "manaToLifePercent": 0.5
+        "manaToLifePercent": 0.45
       }
     },
     {
@@ -1216,7 +1216,7 @@
       ],
       "level": 100,
       "stats": {
-        "maxHp": 9060,
+        "maxHp": 8789,
         "maxMp": 5420,
         "attack": 674
       },
@@ -1231,7 +1231,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 311 e 514 de dano."
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 284 e 421 de dano."
       },
       "active": [
         {
@@ -1239,19 +1239,19 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 40,
-          "damage": 2297,
+          "cost": 70,
+          "damage": 2080,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 40 MP e causa 2297 de dano.",
-          "effectiveCost": 40
+          "description": "Explosao de Mana: consome 70 MP e causa 2080 de dano.",
+          "effectiveCost": 70
         },
         {
           "level": 30,
           "id": "bola_de_fogo",
           "name": "Bola de Fogo",
           "type": "mage_fireball",
-          "cost": 40,
-          "damage": 3292,
+          "cost": 90,
+          "damage": 3192,
           "burnDamage": 1000,
           "burnTurns": 3,
           "healReductionPercent": 0.3,
@@ -1259,37 +1259,37 @@
           "chillAttackDownPercent": 0,
           "appliesBurn": true,
           "appliesChill": false,
-          "description": "Bola de Fogo: consome 40 MP e causa 3292 de dano de fogo. A queimadura causa 1000 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
-          "effectiveCost": 40
+          "description": "Bola de Fogo: consome 90 MP e causa 3192 de dano de fogo. A queimadura causa 1000 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
+          "effectiveCost": 90
         },
         {
           "level": 50,
           "id": "bafo_de_fogo",
           "name": "Bafo de Fogo",
           "type": "mage_freeze",
-          "cost": 60,
-          "damage": 1612,
+          "cost": 90,
+          "damage": 1568,
           "freezeChance": 0,
           "burnDamage": 1000,
           "burnTurns": 6,
           "chillTurns": 0,
           "chillAttackDownPercent": 0,
           "freezeVulnerabilityPercent": 0,
-          "description": "Bafo de Fogo: consome 60 MP, causa 1612 de dano e aplica queimadura por 6 turnos.",
-          "effectiveCost": 60
+          "description": "Bafo de Fogo: consome 90 MP, causa 1568 de dano e aplica queimadura por 6 turnos.",
+          "effectiveCost": 90
         },
         {
           "level": 60,
           "id": "fenix_sagrada",
           "name": "Fenix Sagrada",
           "type": "mage_sacred_phoenix",
-          "cost": 1925,
-          "damage": 3205,
+          "cost": 1817,
+          "damage": 3360,
           "burnDamage": 1000,
           "burnTurns": 1,
           "healReductionPercent": 0.3,
-          "description": "Fenix Sagrada: consome 1925 MP e causa 3205 de dano, aplicando queimadura por 1 turno.",
-          "effectiveCost": 1925
+          "description": "Fenix Sagrada: consome 1817 MP e causa 3360 de dano, aplicando queimadura por 1 turno.",
+          "effectiveCost": 1817
         },
         {
           "level": 80,
@@ -1298,8 +1298,8 @@
           "type": "mage_explode",
           "cost": 500,
           "hpCostPercent": 0.5,
-          "damage": 16972,
-          "description": "Explodir: consome 500 MP, 50% da sua vida maxima e causa 16972 de dano.",
+          "damage": 16696,
+          "description": "Explodir: consome 500 MP, 50% da sua vida maxima e causa 16696 de dano.",
           "effectiveCost": 500
         }
       ],
@@ -1316,7 +1316,7 @@
           "id": "mana_e_vida",
           "name": "Mana e Vida",
           "type": "mage_mana_to_life",
-          "description": "Mana e Vida: converte 50% da mana maxima em vida maxima. Alem disso, concede 975 de dano de habilidade."
+          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima. Alem disso, concede 867 de dano de habilidade."
         },
         {
           "level": 70,
@@ -1327,7 +1327,7 @@
         }
       ],
       "modifiers": {
-        "bonusHp": 2710,
+        "bonusHp": 2439,
         "bonusMp": 40,
         "bonusAttack": 0,
         "manaRegen": 0,
@@ -1335,7 +1335,7 @@
         "manaRegenPercentSet": null,
         "damageReduction": 0,
         "coinBonus": 0,
-        "skillPower": 1065,
+        "skillPower": 957,
         "flatReduction": 0,
         "reflectPercent": 0,
         "turnHealPercent": 0,
@@ -1352,7 +1352,7 @@
         "critChanceBonus": 0,
         "preciousMana": true,
         "armorFlatReduction": 0,
-        "manaToLifePercent": 0.5
+        "manaToLifePercent": 0.45
       }
     },
     {
@@ -1385,7 +1385,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 212 e 415 de dano."
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 204 e 341 de dano."
       },
       "active": [
         {
@@ -1393,19 +1393,19 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 40,
-          "damage": 1342,
+          "cost": 70,
+          "damage": 1225,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 40 MP e causa 1342 de dano.",
-          "effectiveCost": 40
+          "description": "Explosao de Mana: consome 70 MP e causa 1225 de dano.",
+          "effectiveCost": 70
         },
         {
           "level": 30,
           "id": "bola_de_neve",
           "name": "Bola de Neve",
           "type": "mage_fireball",
-          "cost": 40,
-          "damage": 999,
+          "cost": 90,
+          "damage": 1083,
           "burnDamage": 600,
           "burnTurns": 3,
           "healReductionPercent": 0.3,
@@ -1413,47 +1413,49 @@
           "chillAttackDownPercent": 0.3,
           "appliesBurn": false,
           "appliesChill": true,
-          "description": "Bola de Neve: consome 40 MP e causa 999 de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.",
-          "effectiveCost": 40
+          "description": "Bola de Neve: consome 90 MP e causa 1083 de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.",
+          "effectiveCost": 90
         },
         {
           "level": 50,
           "id": "congelar",
           "name": "Congelar",
           "type": "mage_freeze",
-          "cost": 60,
-          "damage": 717,
+          "cost": 90,
+          "damage": 770,
           "freezeChance": 0.3,
           "burnDamage": 600,
           "burnTurns": 0,
           "chillTurns": 2,
           "chillAttackDownPercent": 0.3,
           "freezeVulnerabilityPercent": 0.5,
-          "description": "Congelar: consome 60 MP, causa 717 de dano e tem 30% de chance de impedir o proximo ataque do inimigo. Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado.",
-          "effectiveCost": 60
+          "description": "Congelar: consome 90 MP, causa 770 de dano e tem 30% de chance de impedir o proximo ataque do inimigo. Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado.",
+          "effectiveCost": 90
         },
         {
           "level": 60,
           "id": "nevasca",
           "name": "Nevasca",
           "type": "mage_blizzard",
-          "cost": 120,
+          "cost": 170,
           "turns": 6,
           "enemySkipChance": 0.15,
-          "description": "Nevasca: consome 120 MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.",
-          "effectiveCost": 120
+          "chillTurns": 6,
+          "chillAttackDownPercent": 0.3,
+          "description": "Nevasca: consome 170 MP e faz o inimigo ter 15% de chance de perder o turno e reduz seu ataque em 30% por 6 turnos.",
+          "effectiveCost": 170
         },
         {
           "level": 80,
           "id": "avalanche",
           "name": "Avalanche",
           "type": "mage_avalanche",
-          "cost": 400,
-          "damage": 11149,
+          "cost": 450,
+          "damage": 8749,
           "chillTurns": 4,
           "chillAttackDownPercent": 0.3,
-          "description": "Avalanche: consome 400 MP, causa 11149 de dano e aplica resfriamento por 4 turnos.",
-          "effectiveCost": 400
+          "description": "Avalanche: consome 450 MP, causa 8749 de dano e aplica resfriamento por 4 turnos.",
+          "effectiveCost": 450
         }
       ],
       "passive": [
@@ -1537,7 +1539,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 468 por acao, dividido entre os projeteis.  consome 24 MP, dispara 8 misseis e cada um causa entre 50 e 119 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 390 por acao, dividido entre os projeteis.  consome 24 MP, dispara 8 misseis e cada um causa entre 50 e 98 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
       },
       "active": [
         {
@@ -1545,33 +1547,33 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 186,
-          "damage": 847,
+          "cost": 216,
+          "damage": 738,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 186 MP e causa 847 de dano.",
-          "effectiveCost": 186
+          "description": "Explosao de Mana: consome 216 MP e causa 738 de dano.",
+          "effectiveCost": 216
         },
         {
           "level": 30,
           "id": "descarregar",
           "name": "Descarregar",
           "type": "mage_discharge",
-          "cost": 156,
-          "damage": 611,
+          "cost": 171,
+          "damage": 585,
           "charges": 0,
-          "description": "Descarregar: consome 156 MP, gasta todas as cargas arcanas e causa 611 de dano.",
-          "effectiveCost": 156
+          "description": "Descarregar: consome 171 MP, gasta todas as cargas arcanas e causa 585 de dano.",
+          "effectiveCost": 171
         },
         {
           "level": 50,
           "id": "escudo_de_mana",
           "name": "Escudo de Mana",
           "type": "mage_mana_shield",
-          "cost": 390,
+          "cost": 405,
           "shield": 508,
           "turns": 2,
-          "description": "Escudo de Mana: consome 390 MP e concede 508 de escudo por 2 turnos.",
-          "effectiveCost": 390
+          "description": "Escudo de Mana: consome 405 MP e concede 508 de escudo por 2 turnos.",
+          "effectiveCost": 405
         }
       ],
       "passive": [
@@ -1587,7 +1589,7 @@
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 468 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 156."
+          "description": "Transbordando: concede 390 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 171."
         }
       ],
       "modifiers": {
@@ -1603,8 +1605,8 @@
         "flatReduction": 0,
         "reflectPercent": 0,
         "turnHealPercent": 0,
-        "skillCostIncrease": 156,
-        "totalDamageFlat": 468,
+        "skillCostIncrease": 171,
+        "totalDamageFlat": 390,
         "totalDamagePercent": 0,
         "enemyMissChance": 0,
         "enemySkipChance": 0,
@@ -1649,7 +1651,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 2826 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 143 e 352 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 2512 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 143 e 284 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
       },
       "active": [
         {
@@ -1657,11 +1659,11 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 1296,
-          "damage": 4146,
+          "cost": 1326,
+          "damage": 3706,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 1296 MP e causa 4146 de dano.",
-          "effectiveCost": 1296
+          "description": "Explosao de Mana: consome 1326 MP e causa 3706 de dano.",
+          "effectiveCost": 1326
         },
         {
           "level": 30,
@@ -1669,9 +1671,9 @@
           "name": "Descarregar",
           "type": "mage_discharge",
           "cost": 1256,
-          "damage": 2826,
+          "damage": 2512,
           "charges": 0,
-          "description": "Descarregar: consome 1256 MP, gasta todas as cargas arcanas e causa 2826 de dano.",
+          "description": "Descarregar: consome 1256 MP, gasta todas as cargas arcanas e causa 2512 de dano.",
           "effectiveCost": 1256
         },
         {
@@ -1692,9 +1694,9 @@
           "type": "mage_concentration",
           "cost": 1456,
           "turns": 4,
-          "percent": 0.2,
+          "percent": 0.3,
           "manaRegenPercent": 0.1,
-          "description": "Concentracao: consome 1456 MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.",
+          "description": "Concentracao: consome 1456 MP, aumenta o dano total em 30% e a regeneracao de mana em 10% por 4 turnos.",
           "effectiveCost": 1456
         },
         {
@@ -1702,11 +1704,11 @@
           "id": "sobrecarregar",
           "name": "Sobrecarregar",
           "type": "mage_overcharge",
-          "cost": 6280,
-          "damage": 9306,
+          "cost": 5966,
+          "damage": 8992,
           "charges": 0,
-          "description": "Sobrecarregar: consome 6280 MP e causa 9306 de dano usando sua mana maxima e as cargas arcanas.",
-          "effectiveCost": 6280
+          "description": "Sobrecarregar: consome 5966 MP e causa 8992 de dano usando sua mana maxima e as cargas arcanas.",
+          "effectiveCost": 5966
         }
       ],
       "passive": [
@@ -1722,7 +1724,7 @@
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 2826 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 1256."
+          "description": "Transbordando: concede 2512 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 1256."
         },
         {
           "level": 70,
@@ -1746,7 +1748,7 @@
         "reflectPercent": 0,
         "turnHealPercent": 0,
         "skillCostIncrease": 1256,
-        "totalDamageFlat": 2826,
+        "totalDamageFlat": 2512,
         "totalDamagePercent": 0,
         "enemyMissChance": 0,
         "enemySkipChance": 0,
@@ -1791,7 +1793,7 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 1734 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 146 e 359 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 1445 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 146 e 290 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
       },
       "active": [
         {
@@ -1799,33 +1801,33 @@
           "id": "explosao_de_mana",
           "name": "Explosao de Mana",
           "type": "mage_mana_burst",
-          "cost": 618,
-          "damage": 2993,
+          "cost": 705,
+          "damage": 2588,
           "enemyManaBurnAmount": 0,
-          "description": "Explosao de Mana: consome 618 MP e causa 2993 de dano.",
-          "effectiveCost": 618
+          "description": "Explosao de Mana: consome 705 MP e causa 2588 de dano.",
+          "effectiveCost": 705
         },
         {
           "level": 30,
           "id": "descarregar",
           "name": "Descarregar",
           "type": "mage_discharge",
-          "cost": 578,
-          "damage": 2095,
+          "cost": 635,
+          "damage": 1975,
           "charges": 0,
-          "description": "Descarregar: consome 578 MP, gasta todas as cargas arcanas e causa 2095 de dano.",
-          "effectiveCost": 578
+          "description": "Descarregar: consome 635 MP, gasta todas as cargas arcanas e causa 1975 de dano.",
+          "effectiveCost": 635
         },
         {
           "level": 50,
           "id": "escudo_de_mana",
           "name": "Escudo de Mana",
           "type": "mage_mana_shield",
-          "cost": 1445,
+          "cost": 1502,
           "shield": 1774,
           "turns": 2,
-          "description": "Escudo de Mana: consome 1445 MP e concede 1774 de escudo por 2 turnos.",
-          "effectiveCost": 1445
+          "description": "Escudo de Mana: consome 1502 MP e concede 1774 de escudo por 2 turnos.",
+          "effectiveCost": 1502
         },
         {
           "level": 60,
@@ -1833,11 +1835,11 @@
           "name": "Corrupcao",
           "type": "mage_corruption",
           "cost": 1734,
-          "damage": 4268,
+          "damage": 3620,
           "armorBreakPercent": 1,
           "armorBreakTurns": 5,
           "noShieldTurns": 5,
-          "description": "Corrupcao: consome 1734 MP, causa 4268 de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.",
+          "description": "Corrupcao: consome 1734 MP, causa 3620 de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.",
           "effectiveCost": 1734
         },
         {
@@ -1848,8 +1850,8 @@
           "cost": 1734,
           "turns": 3,
           "damagePercent": 2,
-          "vulnerabilityPercent": 0.3,
-          "description": "Incorporar Demonio: consome 1734 MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.",
+          "vulnerabilityPercent": 0.4,
+          "description": "Incorporar Demonio: consome 1734 MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.",
           "effectiveCost": 1734
         }
       ],
@@ -1866,14 +1868,14 @@
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 1734 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 578."
+          "description": "Transbordando: concede 1445 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 635. Tambem converte dano perdido na vida, ou impedido por Ultimo Recurso, em escudo."
         },
         {
           "level": 70,
           "id": "canhao_de_vidro",
           "name": "Canhao de Vidro",
           "type": "mage_glass_cannon",
-          "description": "Canhao de Vidro: o primeiro ataque do combate causa o dobro de dano, mas voce sofre 50% de dano adicional nos 2 primeiros turnos do combate."
+          "description": "Canhao de Vidro: sofre o dobro de dano no primeiro golpe inimigo que acertar; suas duas primeiras acoes que causarem dano recebem +50% de dano. Buffs, DOTs e projeteis extras nao gastam acoes adicionais."
         }
       ],
       "modifiers": {
@@ -1889,8 +1891,8 @@
         "flatReduction": 0,
         "reflectPercent": 0,
         "turnHealPercent": 0,
-        "skillCostIncrease": 578,
-        "totalDamageFlat": 1734,
+        "skillCostIncrease": 635,
+        "totalDamageFlat": 1445,
         "totalDamagePercent": 0,
         "enemyMissChance": 0,
         "enemySkipChance": 0,

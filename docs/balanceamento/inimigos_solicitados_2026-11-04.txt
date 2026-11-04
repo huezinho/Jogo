@@ -1,0 +1,105 @@
+lobo sombrio - 80 vida - 12 ataque - 0 armadura - 0 mana - 0 impacto
+goblin - 130 vida - 16 ataque - 2 armadura - 0 mana - 0 impacto
+aranha gigante - 200 vida - 20 ataque - 0 armadura - 20 mana - 0 impacto
+tem a habilidade: presa venenosa causa um dot de veneno de 5 de dano por 3 turnos custa 10 de mana (veneno pode acumular tal qual queimadura)
+ent ancestral - 400 vida - 22 ataque - 5 armadura - 60 mana - 0 impacto
+tem a habilidade: raizes que causa 30 de dano + 2% da vida max do alvo e custa 25 de mana
+
+morcego de pedra - 290 vida - 20 ataque - 8 armadura - 0 mana - 0 impacto
+esqueleto mineiro - 310 vida - 39 ataque - 0 armadura - 0 mana - 0 impacto
+slime toxico - 500 vida - 40 ataque - 0 armadura - 0 mana - 0 impacto
+tem a passiva: gosma toxica ao ser atacado causa um dot de veneno de 9 de dano por 3 turnos
+troll das profundezas 660 vida - 42 ataque - 12 armadura - 70 mana - 0 impacto
+tem a habilidade: escudo de pedra que da 42 de dano, ignora escudo e cria um escudo de 42 em si custa 35 de mana
+
+sentinela quebrada - 510 vida - 47 ataque - 11 armadura - 0 mana - 0 impacto
+cultista perdido - 550 vida - 62 ataque - 6 armadura - 100 mana - 0 impacto
+fantasma antigo - 660 vida - 74 ataque - 0 armadura - 35 mana - 0 impacto
+tem a habilidade: assombrar que causa 50 de dano e faz o heroi fugir depois de 2 rodadas se nao o matar custa 30 de mana (aparece como um debuff no heroi)
+rei espectral - 1100 vida - 72 ataque - 16 armadura - 91 mana - 0 impacto
+tem a habilidade: lamento real que causa 64 de dano e reduz o dano total do heroi em 20% por 3 turnos
+
+sapo colossal - 770 vida - 78 ataque - 12 armadura - 0 mana - 0 impacto
+bruxa do brejo - 800 vida - 90 ataque - 8 armadura - 0 mana - 0 impacto
+serpente do lodo - 910 vida - 100 ataque - 12 armadura - 40 mana - 0 impacto
+tem a habilidade: troca de pele recupera 99% do hp divido em 3 turnos custa 26 de mana
+hidra do lodo - 1690 vida - 101 ataque - 24 armadura - 124 mana - 0 impacto
+tem a habilidade: sopro corrosivo causa 40 de dano e causa dot de veneno de 20 de dano por 3 turnos e queimadura por 3 turnos custa 50 de mana
+tem a habilidade: pele viscosa que tira todos os debuffs que a hidra tiver cura 10% da vida por turno por 5 turnos e cria um escudo de 10% do hp max custa 38 de mana
+
+salamandra rubra - 1500 vida - 124 ataque - 28 armadura - 0 mana - 3% impacto
+golem de brasa - 1640 vida - 126 ataque - 38 armadura - 0 mana - 3% impacto
+fenix sombria - 1700 vida - 153 ataque - 12 armadura - 0 mana - 3% impacto
+tem a passiva: como uma fenix ao tomar dano fatal regenera 100% da vida e fica 3 turnos sem poder atacar, so pode fazer isso 1 vez por combate
+draco magmatico - 2640 vida - 160 ataque - 43 armadura - 179 mana - 4% impacto
+tem habilidade: escamas ardentes que concede 15% da vida max como escudo e por 5 turnos ao ser atacado causa queimadura de 3 turnos a quem atacou custa 70 de mana
+tem a habilidade: explosao vulcanica que causa 180 de dano, causa queimadura por 3 turnos e corta cura de 25% custa 80 de mana
+
+cavaleiro abissal - 2200 vida - 188 ataque - 62 armadura - 0 mana - 4% impacto
+lamia do eclipse - 2400 vida - 220 ataque - 51 armadura - 0 mana - 4% impacto
+colosso do vazio - 2800 vida - 228 ataque - 70 armadura - 45 mana - 4% impacto
+tem a habilidade: pele petrea que concede 40% da vida max como escudo e custa 20 de mana
+arauto do vazio - 3860 vida - 230 ataque - 80 armadura - 223 mana - 5% impacto
+tem a habilidade: dilacerar realidade tem dois turnos de preparação entao fica dois turno com o "buff" dilacerar realidade e depois causa 400 de dano + 10% da vida atual do heroi, ignorando resistencias custa 120 de mana
+tem a habilidade: manto do vazio que gera um escudo de 18% da vida max e aumenta o dano total em 26% por 5 turnos custa 80 de mana
+
+escudeiro de ferro - 3500 vida - 292 ataque - 91 armadura - 0 mana - 6% impacto
+maga da muralha - 3580 vida - 340 ataque - 72 armadura - 0 mana - 6% impacto
+carrasco de guerra - 3900 vida - 352 ataque - 81 armadura - 50 mana - 6% impacto
+tem a habilidade: marca da morte que marca o heroi inimigo com o debuff marca da morte que apos o countdown de 4 turnos, causa 100% da vida atual do heroi como dano ignorando armadura e escudos custa 50 de mana
+general de aço - 5160 vida - 358 ataque - 120 armadura - 270 mana - 7% impacto
+tem a passiva: marcha de ferro que ao ter seu turno pulado ou o inimigo esquivar causa dano equivalente a um ataque basico
+tem a habilidade: ordem de guerra que retira 60% da mana do heroi e tranforma em escudo para si 3*a mana retirada custa 110 de mana
+tem a habilidade: estocada rasga-aço que causa 360 de dano ignorando armadura e escudo e se o alvo tiver escudo duplica o dano e custa 100 de mana
+
+guardiao funebre - 4800 vida - 391 ataque - 130 armadura - 0 mana - 7% impacto
+feiticeira morta - 4960 vida - 450 ataque - 80 armadura - 100 mana - 7% impacto
+ceifador de ossos - 5400 vida - 466 ataque - 85 armadura - 55 mana - 7% impacto
+tem a habilidade: ceifar alma marca o inimigo para ser executado com 30% de hp, o debuff fica ativo ate o ceifador morrer e custa 45 de mana
+lorde da cripta - 7080 vida - 470 ataque - 135 armadura - 321 mana - 8% impacto
+tem a habilidade: sentenca funebre causa 450 de dano reduz o dano em 22% e corta a cura em 30% por 5 turnos custa 90 de mana
+tem a habilidade: pacto funebre que dura 4 turnos como um buff e se o inimigo for morrer enquanto esta com esse buff ele mata quem o atacou custa 200 de mana
+tem a habilidade: ceifa do desprotegido, se o alvo nao tiver escudo ativo o lorde rouba 30% da mana para si custa 30 de mana
+
+anjo caido - 6500 vida - 500 ataque - 130 armadura - 0 mana - 9% impacto
+drake celeste - 6890 vida - 530 ataque - 150 armadura - 0 mana - 9% impacto
+executor astral - 7400 vida - 561 ataque - 140 armadura - 60 mana - 9% impacto
+tem a habilidade: ataque duplo é um buff que fica ativo por 3 turnos enquanto tive esse buff ele bate duas vezes por ataque, isso significa que aplica redução de dano 2 vezes custa 30 de mana
+imperador do eclipse - 9590 vida - 582 ataque - 202 armadura - 391 mana - 10% impacto
+tem a passiva: ruptura estelar que aumenta o dano total do chefe em 1% a cada turno
+tem a habilidade: domínio crepuscular o herói fica com o debuff "sobre domínio" e por 5 turnos o imperador rouba toda a resistência do herói para si e quaisquer armadura que o herói tiver ou conjurar o imperador pegara para ele, os buffs que o herói conjurar também o imperador tirara dele e colocara para si custa 290 de mana
+tem a habilidade: lamina umbra que causa 400 de dano e deixa o herói sangrando 30% do dano que o ataque tiver causado depois de resistências por 3 turnos custa 102 de mana
+
+guardião áureo - 8900 vida - 630 ataque - 220 armadura - 0 mana - 11% impacto
+oraculo radiante - 9100 vida - 681 ataque - 200 armadura - 0 mana - 11% impacto
+tem a passiva: na visão que faz quaisquer buff no herói sumir a qualquer momento que for dado o buff
+quimera solar - 9900 vida - 725 ataque - 218 armadura - 65 mana - 11% impacto
+tem a habilidade: fogo solar que causa 600 de dano e deixa o herói com queimadura por 10 turnos custa 40 de mana
+avatar do Zenith - 13830 vida - 750 ataque - 283 armadura - 466 mana - 12% impacto
+tem a habilidade: julgamento solar que causa 621 de dano e deixa o herói com queimadura de 7% da vida max por 3 turnos custa 102 de mana
+tem a habilidade: clarao absoluto que diminui o dano do herói em 30% e tem chance de pular o turno do herói em 15% por 3 turnos custa 184 de mana
+tem a habilidade: prisma do Zenith que é um ataque carregado que demora 3 turnos de conjuração e causa 1620 de dano e custa 298 de mana
+tem a passiva: aurea divina que recupera 4% da vida máxima por turno e gera um escudo de 6% da vida max e é acumulativo
+
+arauto do cataclismo - 12000 vida - 810 ataque - 280 armadura - 0 mana - 13% impacto
+titan rachado - 12980 vida - 862 ataque - 312 armadura - 0 mana - 13% impacto
+tem a passiva: duro como pedra que faz ele começar o combate com um escudo de 80% da vida máxima que dura 14 turnos
+serafim do fim - 13000 vida - 918 ataque - 298 armadura - 70 mana - 13% impacto
+tem a habilidade: onde vital que causa 1001 e cura o dano causado no herói custa 30 de mana
+deus da ruina - 17890 vida - 920 ataque - 384 armadura - 550 mana - 14% impacto
+tem a habilidade: colapso final que causa queimadurade 4% da vida max, veneno de que causa dano igual a 4% da mana do herói e sangramento de 100 de dano todos por 3 turnos custa 204 de mana
+tem a passiva: manto da ruina que faz o chefe ter 30% de chance de esquiva e ao esquivar de um ataque gera um escudo de 15% da vida max
+tem a habilidade: aniquilação perfurante que causa 1280 de dano ignorando escudo e armadura e cortando a cura em 20% por 2 turnos custa 128 de mana
+tem a passiva: fim dos fracos se em algum momento o herói ficar com 5 ou mais debuff/dots o herói é executado
+
+guardião temporal - 15420 vida - 1010 ataque - 380 armadura - 0 mana - 15% impacto
+tem a passiva: tempo implacável que reduz o dano do herói em 2% por turno
+oraculo do zero - 15600 vida - 1130 ataque - 320 armadura - 50 mana - 15% impacto
+tem a habilidade: zerar que recupera a vida do oraculo para 100% e custa 42 de mana
+devorador de eras - 17000 vida - 1210 ataque - 338 armadura - 80 mana - 15% impacto
+tem a habilidade: devorar que causa 1400 de dano e aumenta a vida atual e máxima no mesmo valor custa 20 de mana
+soberano do paradoxo - 22222 vida - 1212 ataque - 515 armadura - 656 mana - 16% impacto
+tem a habilidade: ruptura temporal que causa 1100 de dano e volta a ultima ação do jogador, se o herói se buffou volta esse buff, se o herói bateu no soberano a vida que sofreu volta, se tomou debuff tira o debuff, mas não volta vida, nem debuff, nem mana do herói custa 202 de mana
+tem a passiva: armadura de eras que aumenta a armadura do chefe em 22 a cada turno
+tem a habilidade: fim inadiável que causa um DOT no herói que causa 1% da vida max de dano e aumenta em 1% por rodada e dura ate que alguém morra e não pode ser removido nem reaplicado custa 111 de mana
+tem a habilidade: colapso zero que gera um escudo de 75% da vida max, cura 10% da vida max e reduz o dano do herói em 30% por 4 rodadas e custa 222 de mana

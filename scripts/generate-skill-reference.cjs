@@ -38,19 +38,31 @@ async function main(){
     };
     const clean = value => String(value ?? '').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
     const duration = skill => Object.entries(skill).filter(([key, value]) => /turns|duration/i.test(key) && typeof value === 'number').map(([key, value]) => `${key}: ${value}`).join('; ') || 'Ver efeito';
+    const formulaSource = fs.readFileSync(path.join(root,'assets/js/game.js'),'utf8');
+    const skillStart=formulaSource.indexOf('function getSkillInfo()');
+    const skillSource = formulaSource.slice(skillStart,formulaSource.indexOf('\nfunction ',skillStart+1));
+    const branches = [...skillSource.matchAll(/^    if\(skill.type === "([^"]+)"\)/gm)];
+    const formulas = Object.fromEntries(branches.map((match,index)=>{
+      const block=skillSource.slice(match.index,branches[index+1]?.index ?? skillSource.length);
+      const expressions=[...block.matchAll(/const (damage|baseDamage|cost|heal|shield|manaBurstCost|currentManaCost|attackBonus|totalDamage|dotDamage|bonusCurrentHpDamage|currentHpBonus|skillFactor|manaFactor|charges|attackFactor|hits|isIncendiario|isFrigido|isArquimago|focusDamageBonus|focusActive|currentMana|missingMana|enemyCurrentHp|enemyManaBurnAmount|markTurns|markDamage|dotTurns|factor|costPercent) = ([\s\S]*?);/g)].map(m=>`${m[1]} = ${m[2].replace(/\s+/g,' ').trim()}`);
+      return [match[1],expressions.join('; ') || 'Ver efeito e condições'];
+    }));
     const lines = [
       '# Referência atual de habilidades', '',
-      'Catálogo gerado a partir do código executável atual em 03/11/2026. Não utiliza o documento antigo de balanceamento.', '',
+      'Catálogo gerado a partir do código executável atual em 04/11/2026. Não utiliza o documento antigo de balanceamento.', '',
       `São ${forms.length} formas de classe/subclasse e ${activeIds.size} nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.`, '',
       'Os exemplos usam distribuição equilibrada dos pontos, sem equipamentos, níveis 20/50/100 conforme o estágio da árvore, vida e mana cheias, zero Cargas Arcanas, zero Cadência e alvo com 20.000 de vida máxima. As passivas iniciais de combate permanecem ativas. Valores dependentes de vida, mana, ataque, alvo e estado são fotografias desse contexto; não são coeficientes fixos nem uma avaliação de balanceamento.', '',
       'Custos e descrições vêm de `getSkillInfo()` e `useSkillCost()`; passivas vêm de `getUnlockedPassiveSkills()` e `getPassiveStatusDescription()`. O JSON contém também os campos numéricos dos descritores e os modificadores passivos. A aplicação final ocorre em `applySkillLocally()`, no ataque básico e nos resolvedores de combate: buffs globais, crítico, mitigação e efeitos de equipamentos podem alterar o resultado. A coluna de duração reproduz os campos retornados pelo código; detalhes condicionais estão no texto.', '',
+      'Convenções das fórmulas: attack = ataque ativo; skillPower = poder de habilidade ativo; maxHp/maxMp = máximos do herói; enemy.hp/mp = valores atuais do alvo; enemy.maxHp = vida máxima do alvo; player.level = nível. Math.floor arredonda para baixo. warriorExtraCost e mageLevelCost = piso(0,5 × nível); mageExtraCost = S de Transbordando; getUniversalDamageFlatBonus() = F. As expressões condicionais mostram as variações herdadas por subclasse. Os valores da coluna de efeito são os exemplos calculados no contexto acima.', '',
+      'Condições gerais: esquiva impede novos efeitos ligados ao golpe evitado, mas não remove DOTs já ativos. Queimaduras, venenos e sangramentos acumulam com dano e prazo próprios. Canhão de Vidro conta duas ações de dano, não dois projéteis ou turnos; seu primeiro golpe recebido é um contador separado. Nevasca aplica seis turnos completos de resfriamento; aplicar resfriamento ativa Gelo Queima. Custos do Mago mantêm o teto de mana máxima. Investida e Você Irá Me Parar? podem romper perda de turno; Cortes Ultrassônicos exige uma ação de intervalo após terminar.', '',
+      'Revisão de 04/11/2026: Mago e subclasses rebalanceados; Canhão de Vidro usa dois contadores de eventos, resfriamento ativa Gelo Queima e rastreio usa (50 + 4 × nível²) × raridade. Detalhes: docs/balanceamento/mago_2026-11-04.md.', '',
       'Para regenerar: `node scripts/generate-skill-reference.cjs`. Dados completos: [skills-reference.json](qa/2026-10-28/skills-reference.json).', '',
       'Revisão de 03/11/2026: fórmulas e custos do Guerreiro e subclasses rebalanceados; esquiva bloqueia novos efeitos hostis; sangramentos acumulam com duração própria; Investida e Você Irá Me Parar? rompem perda de turno; Cortes Ultrassônicos exige intervalo após expirar. Arqueiro e subclasses também rebalanceados; rastreio passa a seis minutos com custo quadrático por nível e raridade. Análises: docs/analise_guerreiro_progressao_adaptativa_2026-11-03.md e docs/analise_arqueiro_2026-11-03.md.', ''
     ];
     for(const form of forms){
       lines.push(`## ${form.name} — nível ${form.level}`, '', `Classe: **${form.className}**. Rota: ${form.tier30 || 'base'}${form.tier60 ? ' → ' + form.tier60 : ''}. Vida máxima: ${form.stats.maxHp}; mana máxima: ${form.stats.maxMp}; ataque: ${form.stats.attack}.`, '', `**${clean(form.basic.name)}:** ${clean(form.basic.description)}`, '',
-        '| Ativa | Desbloqueio | Custo em MP neste contexto | Duração nos campos | Efeito atual |', '| --- | ---: | ---: | --- | --- |');
-      for(const skill of form.active) lines.push(`| ${clean(skill.name)} | ${skill.level} | ${skill.effectiveCost}${skill.hpCostPercent ? ` + ${Math.round(skill.hpCostPercent * 100)}% da vida máxima` : ''} | ${clean(duration(skill))} | ${clean(skill.description)} |`);
+        '| Ativa | Desbloqueio | Custo em MP neste contexto | Duração nos campos | Fórmula no código | Efeito atual |', '| --- | ---: | ---: | --- | --- | --- |');
+      for(const skill of form.active) lines.push(`| ${clean(skill.name)} | ${skill.level} | ${skill.effectiveCost}${skill.hpCostPercent ? ` + ${Math.round(skill.hpCostPercent * 100)}% da vida máxima` : ''} | ${clean(duration(skill))} | ${clean(formulas[skill.type] || "Ver efeito e condições")} | ${clean(skill.description)} |`);
       lines.push('', '| Passiva | Desbloqueio | Efeito atual |', '| --- | ---: | --- |');
       for(const skill of form.passive) lines.push(`| ${clean(skill.name)} | ${skill.level} | ${clean(skill.description)} |`);
       lines.push('');

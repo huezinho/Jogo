@@ -7,7 +7,7 @@ const CreatureTracking = (() => {
     if(!creature) return null;
     const rarity = getEnemyRarity(region, name).key;
     const rarityFactor = { comum: 1, incomum: 2, rara: 4 }[rarity] || 1;
-    return { region, name, level: creature.level, rarity, cost: Math.ceil((50 + 8 * creature.level * creature.level) * rarityFactor), durationMs, targetChance };
+    return { region, name, level: creature.level, rarity, cost: Math.ceil((50 + 4 * creature.level * creature.level) * rarityFactor), durationMs, targetChance };
   }
   function active(actor = player, now = Date.now()){
     const hunt = actor?.creatureTracking;

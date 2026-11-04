@@ -485,3 +485,6 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-enemy-plate .enemy-status-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .rpg-campaign .rpg-enemy-plate .enemy-status-pill{pointer-events:auto;cursor:help;background:#291b23;max-width:100%;overflow-wrap:anywhere}
 .rpg-campaign .rpg-enemy-plate .enemy-status-pill:focus-visible{outline:2px solid #e7c68a;outline-offset:2px}
+/* Status details in the passive vital dock must remain reachable by pointer and keyboard. */
+.rpg-campaign .scene-effect-chip{pointer-events:auto;cursor:help}
+.rpg-campaign .scene-effect-list{max-height:100px;overflow-y:auto;overscroll-behavior:contain}

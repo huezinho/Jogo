@@ -383,7 +383,7 @@ const EquipmentSystem = (function(){
     const active = actorNow() === actor;
     return { maxHp: context?.maxHp || (active && typeof getCurrentCaps === "function" ? getCurrentCaps().maxHp : actor.maxHp), maxMp: context?.maxMp || (active && typeof getCurrentCaps === "function" ? getCurrentCaps().maxMp : actor.maxMp), power: Math.max(1, context?.power || (active && typeof getActiveAttack === "function" && typeof getSkillPowerBonus === "function" ? getActiveAttack() + getSkillPowerBonus() : actor.attack + (actor.stats?.invested?.skillGain || 0))) };
   }
-  function hasDot(target){ return !!target && ((target.bleedTurns > 0 && target.bleedDamagePerTurn > 0) || (target.dotTurns > 0 && target.dotDamagePerTurn > 0) || (target.natureMarkTurns > 0 && target.natureMarkDamage > 0) || (target.naturePoisonTurns > 0 && target.naturePoisonDamage > 0) || (target.natureDecayTurns > 0 && target.natureDecayDamage > 0)); }
+  function hasDot(target){ return !!target && ((target.burnTurns > 0 && target.burnDamagePerTurn > 0) || (target.poisonTurns > 0 && target.poisonDamagePerTurn > 0) || (target.bleedTurns > 0 && target.bleedDamagePerTurn > 0) || (target.dotTurns > 0 && target.dotDamagePerTurn > 0) || (target.natureMarkTurns > 0 && target.natureMarkDamage > 0) || (target.naturePoisonTurns > 0 && target.naturePoisonDamage > 0) || (target.natureDecayTurns > 0 && target.natureDecayDamage > 0)); }
   function beginAction(actor, effects, context = {}){
     const state = runtime(effects);
     state.turn++; state.dotHealUsed = 0;
@@ -459,7 +459,7 @@ const EquipmentSystem = (function(){
   function getDotDamageMultiplier(actor){ return 1 + (getSetBonuses(actor).bonuses.dotDamagePercent || 0); }
   function noteDotApplication(actor, effects, target, turnKeys, options = {}){
     if(!actor || !effects || !target) return false;
-    const damageFields = { bleedTurns: "bleedDamagePerTurn", dotTurns: "dotDamagePerTurn", natureMarkTurns: "natureMarkDamage", naturePoisonTurns: "naturePoisonDamage", natureDecayTurns: "natureDecayDamage" };
+    const damageFields = { burnTurns: "burnDamagePerTurn", poisonTurns: "poisonDamagePerTurn", bleedTurns: "bleedDamagePerTurn", dotTurns: "dotDamagePerTurn", natureMarkTurns: "natureMarkDamage", naturePoisonTurns: "naturePoisonDamage", natureDecayTurns: "natureDecayDamage" };
     const owner = String(actor.characterId || actor.id || actor.class);
     let applied = false;
     for(const turnKey of Array.isArray(turnKeys) ? turnKeys : [turnKeys]){
@@ -496,7 +496,7 @@ const EquipmentSystem = (function(){
       if(bonus > 0) proc(bonus);
       if(has("Ruinas", 5) && current.buffs.ruin && !state.cooldowns.echo){ proc(Math.min(damage * .25, current.power * .6)); state.cooldowns.echo = 3; }
       if(has("Fortaleza", 5) && state.retaliation > 0 && !state.cooldowns.retaliation){ proc(Math.min(state.retaliation, current.power * .6)); state.retaliation = 0; state.cooldowns.retaliation = 3; }
-      if(has("Pantano", 5) && current.targetHadDot && !state.cooldowns.poison && target?.hp > 0){ target.naturePoisonDamage = Math.max(target.naturePoisonDamage || 0, Math.floor(current.power * .12)); target.naturePoisonTurns = Math.max(target.naturePoisonTurns || 0, 2); noteDotApplication(actor, effects, target, ["naturePoisonTurns"], { equipmentProc: true }); state.cooldowns.poison = 3; }
+      if(has("Pantano", 5) && current.targetHadDot && !state.cooldowns.poison && target?.hp > 0){ applyNaturePoison(Math.floor(current.power * .12), 2, {equipmentProc:true}); noteDotApplication(actor, effects, target, ["naturePoisonTurns"], { equipmentProc: true }); state.cooldowns.poison = 3; }
       if(current.penetrationReady) state.critPenReady = false;
     }
     if(skill){
@@ -515,10 +515,10 @@ const EquipmentSystem = (function(){
     if(has("Panteao", 5) && skill && damage === 0 && current.healed + current.shielded > 0){ state.supportActions = (state.supportActions || 0) + 1; if(state.supportActions >= 3 && !state.cooldowns.support){ state.supportReady = 1; state.supportActions = 0; state.cooldowns.support = 2; } }
     if(has("Cataclismo", 5) && current.hpCost > 0 && !state.cooldowns.sacrifice){ invoke(actor, effects, target, "shield", Math.min(current.hpCost * .5, current.maxHp * .12, current.power * 1.2)); state.cooldowns.sacrifice = 3; }
     if(skill && current.dotApplied && has("Floresta", 5)){ state.dotActions = (state.dotActions || 0) + 1; if(state.dotActions >= 3){ state.forestReady = true; state.dotActions = 0; } }
-    if(has("Vulcao", 5) && skill && damage > 0){ state.offensiveActions = (state.offensiveActions || 0) + 1; if(state.offensiveActions >= 3 && !state.cooldowns.burn && target?.hp > 0){ target.dotDamagePerTurn = Math.max(target.dotDamagePerTurn || 0, Math.floor(current.power * .15)); target.dotTurns = Math.max(target.dotTurns || 0, 2); target.dotSourceName = "Brasas Vivas"; noteDotApplication(actor, effects, target, ["dotTurns"], { equipmentProc: true }); state.offensiveActions = 0; state.cooldowns.burn = 3; } }
+    if(has("Vulcao", 5) && skill && damage > 0){ state.offensiveActions = (state.offensiveActions || 0) + 1; if(state.offensiveActions >= 3 && !state.cooldowns.burn && target?.hp > 0){ applyBurning(target, Math.floor(current.power * .15), 2, "Brasas Vivas", {equipmentProc:true}); state.offensiveActions = 0; state.cooldowns.burn = 3; } }
     if(has("Necropole", 5) && target && !state.cooldowns.extend){
-      const owner = String(actor.characterId || actor.id || actor.class), own = [["bleedTurns", "bleedDamagePerTurn"], ["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].filter(([turnKey, damageKey]) => target[turnKey] > 0 && target[damageKey] > 0 && target.equipmentDotOwners?.[turnKey] === owner);
-      if(own.length >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ if(turnKey === "bleedTurns"){ for(const stack of target.bleedStacks || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } if(typeof syncBleeding === "function") syncBleeding(target); } else target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
+      const owner = String(actor.characterId || actor.id || actor.class), own = [["burnTurns", "burnDamagePerTurn"], ["poisonTurns", "poisonDamagePerTurn"], ["bleedTurns", "bleedDamagePerTurn"], ["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].filter(([turnKey, damageKey]) => target[turnKey] > 0 && target[damageKey] > 0 && target.equipmentDotOwners?.[turnKey] === owner);
+      if(own.length >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ if(turnKey === "bleedTurns"){ for(const stack of target.bleedStacks || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } if(typeof syncBleeding === "function") syncBleeding(target); } else if(turnKey==="naturePoisonTurns" && target.naturePoisonStacks?.length){for(const stack of target.naturePoisonStacks)if(stack.extensions<2){stack.turns++;stack.extensions++;}syncNaturePoison(target);} else if(["burnTurns", "poisonTurns"].includes(turnKey)){ const kind = turnKey.replace("Turns", ""); for(const stack of target[kind + "Stacks"] || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } syncPeriodicStacks(target, kind); } else target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
     }
     if(skill && current.costReady && state.cycleReady){ state.cycleReady = false; state.cooldowns.cycle = 4; }
     state.current = null;

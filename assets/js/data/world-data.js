@@ -325,3 +325,392 @@ const subclassChoicesByClass = {
   }
 };
 
+
+// Explicit campaign combat totals from the 04/11/2026 balance specification.
+const campaignEnemyTotals = [
+  {
+    "name": "lobo sombrio",
+    "hp": 80,
+    "attack": 12,
+    "armor": 0,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "goblin",
+    "hp": 130,
+    "attack": 16,
+    "armor": 2,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "aranha gigante",
+    "hp": 200,
+    "attack": 20,
+    "armor": 0,
+    "mp": 20,
+    "impact": 0.0
+  },
+  {
+    "name": "ent ancestral",
+    "hp": 400,
+    "attack": 22,
+    "armor": 5,
+    "mp": 60,
+    "impact": 0.0
+  },
+  {
+    "name": "morcego de pedra",
+    "hp": 290,
+    "attack": 20,
+    "armor": 8,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "esqueleto mineiro",
+    "hp": 310,
+    "attack": 39,
+    "armor": 0,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "slime toxico",
+    "hp": 500,
+    "attack": 40,
+    "armor": 0,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "troll das profundezas",
+    "hp": 660,
+    "attack": 42,
+    "armor": 12,
+    "mp": 70,
+    "impact": 0.0
+  },
+  {
+    "name": "sentinela quebrada",
+    "hp": 510,
+    "attack": 47,
+    "armor": 11,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "cultista perdido",
+    "hp": 550,
+    "attack": 62,
+    "armor": 6,
+    "mp": 100,
+    "impact": 0.0
+  },
+  {
+    "name": "fantasma antigo",
+    "hp": 660,
+    "attack": 74,
+    "armor": 0,
+    "mp": 35,
+    "impact": 0.0
+  },
+  {
+    "name": "rei espectral",
+    "hp": 1100,
+    "attack": 72,
+    "armor": 16,
+    "mp": 91,
+    "impact": 0.0
+  },
+  {
+    "name": "sapo colossal",
+    "hp": 770,
+    "attack": 78,
+    "armor": 12,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "bruxa do brejo",
+    "hp": 800,
+    "attack": 90,
+    "armor": 8,
+    "mp": 0,
+    "impact": 0.0
+  },
+  {
+    "name": "serpente do lodo",
+    "hp": 910,
+    "attack": 100,
+    "armor": 12,
+    "mp": 40,
+    "impact": 0.0
+  },
+  {
+    "name": "hidra do lodo",
+    "hp": 1690,
+    "attack": 101,
+    "armor": 24,
+    "mp": 124,
+    "impact": 0.0
+  },
+  {
+    "name": "salamandra rubra",
+    "hp": 1500,
+    "attack": 124,
+    "armor": 28,
+    "mp": 0,
+    "impact": 0.03
+  },
+  {
+    "name": "golem de brasa",
+    "hp": 1640,
+    "attack": 126,
+    "armor": 38,
+    "mp": 0,
+    "impact": 0.03
+  },
+  {
+    "name": "fenix sombria",
+    "hp": 1700,
+    "attack": 153,
+    "armor": 12,
+    "mp": 0,
+    "impact": 0.03
+  },
+  {
+    "name": "draco magmatico",
+    "hp": 2640,
+    "attack": 160,
+    "armor": 43,
+    "mp": 179,
+    "impact": 0.04
+  },
+  {
+    "name": "cavaleiro abissal",
+    "hp": 2200,
+    "attack": 188,
+    "armor": 62,
+    "mp": 0,
+    "impact": 0.04
+  },
+  {
+    "name": "lamia do eclipse",
+    "hp": 2400,
+    "attack": 220,
+    "armor": 51,
+    "mp": 0,
+    "impact": 0.04
+  },
+  {
+    "name": "colosso do vazio",
+    "hp": 2800,
+    "attack": 228,
+    "armor": 70,
+    "mp": 45,
+    "impact": 0.04
+  },
+  {
+    "name": "arauto do vazio",
+    "hp": 3860,
+    "attack": 230,
+    "armor": 80,
+    "mp": 223,
+    "impact": 0.05
+  },
+  {
+    "name": "escudeiro de ferro",
+    "hp": 3500,
+    "attack": 292,
+    "armor": 91,
+    "mp": 0,
+    "impact": 0.06
+  },
+  {
+    "name": "maga da muralha",
+    "hp": 3580,
+    "attack": 340,
+    "armor": 72,
+    "mp": 0,
+    "impact": 0.06
+  },
+  {
+    "name": "carrasco de guerra",
+    "hp": 3900,
+    "attack": 352,
+    "armor": 81,
+    "mp": 50,
+    "impact": 0.06
+  },
+  {
+    "name": "general de aço",
+    "hp": 5160,
+    "attack": 358,
+    "armor": 120,
+    "mp": 270,
+    "impact": 0.07
+  },
+  {
+    "name": "guardiao funebre",
+    "hp": 4800,
+    "attack": 391,
+    "armor": 130,
+    "mp": 0,
+    "impact": 0.07
+  },
+  {
+    "name": "feiticeira morta",
+    "hp": 4960,
+    "attack": 450,
+    "armor": 80,
+    "mp": 100,
+    "impact": 0.07
+  },
+  {
+    "name": "ceifador de ossos",
+    "hp": 5400,
+    "attack": 466,
+    "armor": 85,
+    "mp": 55,
+    "impact": 0.07
+  },
+  {
+    "name": "lorde da cripta",
+    "hp": 7080,
+    "attack": 470,
+    "armor": 135,
+    "mp": 321,
+    "impact": 0.08
+  },
+  {
+    "name": "anjo caido",
+    "hp": 6500,
+    "attack": 500,
+    "armor": 130,
+    "mp": 0,
+    "impact": 0.09
+  },
+  {
+    "name": "drake celeste",
+    "hp": 6890,
+    "attack": 530,
+    "armor": 150,
+    "mp": 0,
+    "impact": 0.09
+  },
+  {
+    "name": "executor astral",
+    "hp": 7400,
+    "attack": 561,
+    "armor": 140,
+    "mp": 60,
+    "impact": 0.09
+  },
+  {
+    "name": "imperador do eclipse",
+    "hp": 9590,
+    "attack": 582,
+    "armor": 202,
+    "mp": 391,
+    "impact": 0.1
+  },
+  {
+    "name": "guardião áureo",
+    "hp": 8900,
+    "attack": 630,
+    "armor": 220,
+    "mp": 0,
+    "impact": 0.11
+  },
+  {
+    "name": "oraculo radiante",
+    "hp": 9100,
+    "attack": 681,
+    "armor": 200,
+    "mp": 0,
+    "impact": 0.11
+  },
+  {
+    "name": "quimera solar",
+    "hp": 9900,
+    "attack": 725,
+    "armor": 218,
+    "mp": 65,
+    "impact": 0.11
+  },
+  {
+    "name": "avatar do Zenith",
+    "hp": 13830,
+    "attack": 750,
+    "armor": 283,
+    "mp": 466,
+    "impact": 0.12
+  },
+  {
+    "name": "arauto do cataclismo",
+    "hp": 12000,
+    "attack": 810,
+    "armor": 280,
+    "mp": 0,
+    "impact": 0.13
+  },
+  {
+    "name": "titan rachado",
+    "hp": 12980,
+    "attack": 862,
+    "armor": 312,
+    "mp": 0,
+    "impact": 0.13
+  },
+  {
+    "name": "serafim do fim",
+    "hp": 13000,
+    "attack": 918,
+    "armor": 298,
+    "mp": 70,
+    "impact": 0.13
+  },
+  {
+    "name": "deus da ruina",
+    "hp": 17890,
+    "attack": 920,
+    "armor": 384,
+    "mp": 550,
+    "impact": 0.14
+  },
+  {
+    "name": "guardião temporal",
+    "hp": 15420,
+    "attack": 1010,
+    "armor": 380,
+    "mp": 0,
+    "impact": 0.15
+  },
+  {
+    "name": "oraculo do zero",
+    "hp": 15600,
+    "attack": 1130,
+    "armor": 320,
+    "mp": 50,
+    "impact": 0.15
+  },
+  {
+    "name": "devorador de eras",
+    "hp": 17000,
+    "attack": 1210,
+    "armor": 338,
+    "mp": 80,
+    "impact": 0.15
+  },
+  {
+    "name": "soberano do paradoxo",
+    "hp": 22222,
+    "attack": 1212,
+    "armor": 515,
+    "mp": 656,
+    "impact": 0.16
+  }
+];
+const campaignEnemyTotalsByName = Object.fromEntries(Object.values(regions).flatMap(r => [...r.enemies, r.boss]).map((enemy, index) => [enemy.name, campaignEnemyTotals[index]]));

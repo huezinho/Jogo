@@ -161,6 +161,8 @@ function createDefaultPlayerEffects(){
     arcaneCharges: 0,
     arcaneChargeTurns: 0,
     firstAttackDoubleAvailable: false,
+    glassCannonActions: 0,
+    glassCannonFirstHit: false,
     incomingDamageBonusTurns: 0,
     incomingDamageBonusPercent: 0,
     lastActionType: "",
@@ -793,14 +795,15 @@ function renderSceneArmorBadge(armor){
 }
 
 function getHeroSceneEffects(){
-  return getActiveBuffs().filter(effect => !effect.startsWith("Escudo "));
+  const critical = CampaignEnemyCombat.heroStatus();
+  return [...critical, ...getActiveBuffs().filter(effect => !effect.startsWith("Escudo ") && !critical.includes(effect))];
 }
 
 function renderSceneEffectChips(effects = []){
   if(!effects.length){ return ""; }
-  return `<div class="scene-effect-list">${effects.slice(0, 4).map(effect => {
-    const isDebuff = /-|Queimadura|Perdera|Somente/i.test(effect);
-    return `<span class="scene-effect-chip ${isDebuff ? "debuff" : "buff"}">${effect}</span>`;
+  return `<div class="scene-effect-list">${effects.map(effect => {
+    const isDebuff = /-|Queimadura|Veneno|Sangramento|Assombrar|Marca da Morte|Ceifar|Dominio|Inadiavel|Clarao|Perdera|Somente/i.test(effect);
+    return `<span tabindex="0" data-hud-description="${escapeHtml(effect)}" data-tooltip="${escapeHtml(effect)}" class="scene-effect-chip ${isDebuff ? "debuff" : "buff"}">${escapeHtml(effect)}</span>`;
   }).join("")}</div>`;
 }
 
@@ -1295,6 +1298,8 @@ function getEnemySpriteIcon(targetEnemy){
 
 function getEnemyStats(template, regionOverride = null, isBoss = false){
   const regionName = regionOverride || currentRegion;
+  const explicit = !IS_DUNGEON_PAGE && !IS_ARENA_PAGE && regionName !== "Dungeon" ? campaignEnemyTotalsByName[template.name] : null;
+  if(explicit) return {maxHp: explicit.hp, attack: explicit.attack, armor: explicit.armor, maxMp: explicit.mp, maxHpStrikePercent: explicit.impact};
   const combatProfile = regionCombatProfiles[regionName] || regionCombatProfiles.Floresta;
   const bossProfile = getBossDifficultyProfile(regionName, isBoss);
   const hpMultiplier = isBoss ? bossProfile.hpMultiplier : (combatProfile.hpMultiplier || 1);
@@ -1368,6 +1373,7 @@ function getBossAbilityLimit(regionName){
 }
 
 function getBossAbilitySet(enemyName, regionName = currentRegion){
+  if(!IS_DUNGEON_PAGE && !IS_ARENA_PAGE && campaignEnemyTotalsByName[enemyName]) return CampaignEnemyCombat.kit(enemyName);
   const abilities = bossAbilityCatalog[enemyName] || [];
   const bossProfile = getBossDifficultyProfile(regionName, true);
   return abilities.slice(0, getBossAbilityLimit(regionName)).map(ability => ({
@@ -1851,7 +1857,7 @@ function getPassiveModifiers(){
       base.preciousMana = true;
     }
     if(passive.type === "mage_mana_to_life"){
-      base.manaToLifePercent += tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
+      base.manaToLifePercent += tier60 === "mago_frigido" && player.level >= 60 ? .65 : .45;
     }
     if(passive.type === "mage_overflowing"){
       // applied after all mana bonuses are known
@@ -1950,16 +1956,16 @@ function getPassiveModifiers(){
     base.bonusMp += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * base.bonusMpPercentAccessory);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
-    const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
-    const costFactor = tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.1;
-    base.totalDamageFlat += Math.floor((player.maxMp + base.bonusMp) * damageFactor);
-    base.skillCostIncrease += Math.floor((player.maxMp + base.bonusMp) * costFactor);
+    const damageFactor = tier60 === "arquimago" && player.level >= 60 ? 0.4 : 0.25;
+    const costFactor = tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.11;
+    base.totalDamageFlat += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * damageFactor);
+    base.skillCostIncrease += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * costFactor);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "archer_mana_to_skill_bonus")){
     base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.05);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_mana_to_life") && tier60 === "mago_incendiario" && player.level >= 60){
-    base.skillPower += Math.floor((player.maxMp + base.bonusMp) * 0.18);
+    base.skillPower += Math.floor((player.maxMp + base.bonusMp + pendingGains.mpGain) * 0.16);
   }
   if(getUnlockedPassiveSkills().some(passive => passive.type === "nature_cycle") && tier30 === "espirito_da_floresta" && player.level >= 30){
     base.skillPower += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * 0.3);
@@ -1985,6 +1991,7 @@ function getPassiveModifiers(){
   }
   base.bonusAttack += Math.floor((player.attack + base.bonusAttack + pendingGains.attackGain) * (activeSetBonuses.bonusAttackPercent || 0));
   base.skillPower += Math.floor((base.skillPower + getAttackSkillBonus()) * (activeSetBonuses.skillPowerPercent || 0));
+  CampaignEnemyCombat.modifiers(base);
   return base;
 }
 
@@ -2172,7 +2179,7 @@ function getEnemyMissChance(){
 function decayPlayerBuffs(){
   const previousInvulnerableTurns = playerEffects.invulnerableTurns;
   const previousUltrasonicTurns = playerEffects.basicOnlyUntouchableTurns;
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "burnTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
+  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
     if(playerEffects[buffName] > 0){
       const newlyApplied = playerEffects.actionBuffSnapshot && playerEffects[buffName] > (playerEffects.actionBuffSnapshot[buffName] || 0);
       if(!newlyApplied && !playerEffects.freshBuffs?.includes(buffName)){ playerEffects[buffName]--; }
@@ -2305,11 +2312,15 @@ function applyNatureRoot(turns = 2, armorDownPercent = 0){
   }
 }
 
-function applyNaturePoison(damage, turns){
-  if(!enemy){ return; }
-  enemy.naturePoisonDamage = Math.max(enemy.naturePoisonDamage || 0, Math.max(0, Math.floor(damage)));
-  enemy.naturePoisonTurns = Math.max(enemy.naturePoisonTurns || 0, Math.max(0, Math.floor(turns)));
-  noteEnemyDotApplication("naturePoisonTurns");
+function syncNaturePoison(target){
+  target.naturePoisonStacks = (Array.isArray(target.naturePoisonStacks) ? target.naturePoisonStacks : []).filter(x=>Number.isFinite(x.damage)&&x.damage>0&&Number.isSafeInteger(x.turns)&&x.turns>0);
+  target.naturePoisonDamage = target.naturePoisonStacks.reduce((n,x)=>n+x.damage,0);
+  target.naturePoisonTurns = Math.max(0,...target.naturePoisonStacks.map(x=>x.turns));
+}
+function applyNaturePoison(damage, turns, options = {}){
+  if(!enemy || !(damage>0) || !(turns>0))return;
+  if(!enemy.naturePoisonStacks){enemy.naturePoisonStacks=[];if(enemy.naturePoisonTurns>0&&enemy.naturePoisonDamage>0)enemy.naturePoisonStacks.push({damage:enemy.naturePoisonDamage,turns:enemy.naturePoisonTurns,source:"Veneno anterior",extensions:0});}
+  enemy.naturePoisonStacks.push({damage:Math.floor(damage),turns:Math.floor(turns),source:"Veneno natural",extensions:0});syncNaturePoison(enemy);EquipmentSystem.noteDotApplication(player,playerEffects,enemy,["naturePoisonTurns"],options);
 }
 
 function applyNatureDecay(damage, turns){
@@ -2336,9 +2347,10 @@ function consumeNatureDotsForDamage(includeAllDots = false){
     enemy.natureMarkDamage = 0;
   }
   if(includeAllDots && enemy.naturePoisonTurns > 0){
-    damage += Math.floor((enemy.naturePoisonDamage || 0) * enemy.naturePoisonTurns);
+    damage += enemy.naturePoisonStacks?.length ? enemy.naturePoisonStacks.reduce((n,x)=>n+x.damage*x.turns,0) : Math.floor((enemy.naturePoisonDamage || 0) * enemy.naturePoisonTurns);
     enemy.naturePoisonTurns = 0;
     enemy.naturePoisonDamage = 0;
+    enemy.naturePoisonStacks = [];
   }
   if(includeAllDots && enemy.natureDecayTurns > 0){
     damage += Math.floor((enemy.natureDecayDamage || 0) * enemy.natureDecayTurns);
@@ -2350,12 +2362,13 @@ function consumeNatureDotsForDamage(includeAllDots = false){
 
 function applyNatureDotTick(label, damageKey, turnsKey, canTriggerSap = true){
   if(!enemy || !(enemy[turnsKey] > 0) || !(enemy[damageKey] > 0)){ return 0; }
-  const tickDamage = Math.floor(enemy[damageKey] * getNatureDotMultiplier() * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0)));
+  const transform = damage=>CampaignEnemyCombat.temporalDamage(Math.floor(damage * getNatureDotMultiplier() * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0))));
+  const tickDamage = turnsKey==="naturePoisonTurns" && enemy.naturePoisonStacks?.length ? enemy.naturePoisonStacks.reduce((n,x)=>n+transform(x.damage),0) : transform(enemy[damageKey]);
   const hpLost = Math.min(Math.max(0, enemy.hp), tickDamage);
   enemy.hp -= tickDamage;
   applyLifeSteal(hpLost);
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:tickDamage, rawDamage:tickDamage, source:"dot"}); }
-  enemy[turnsKey]--;
+  if(turnsKey==="naturePoisonTurns" && enemy.naturePoisonStacks?.length){enemy.naturePoisonStacks.forEach(x=>x.turns--);syncNaturePoison(enemy);}else enemy[turnsKey]--;
   log(`${enemy.baseName} sofreu ${tickDamage} de dano por ${label}.`);
   if(canTriggerSap && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_sap")){
     const healed = healPlayer(Math.floor(tickDamage * 0.08));
@@ -2403,9 +2416,11 @@ function applyEndOfTurnRecovery(){
 }
 
 async function handlePlayerTurnStartEffects(chosenSkill = null){
+  if(CampaignEnemyCombat.heroStart()) return true;
+  if(!playerEffects.burnStacks && playerEffects.burnTurns > 0) applyBurning(playerEffects, playerEffects.burnDamagePerTurn, playerEffects.burnTurns, "Queimadura anterior");
   if(playerEffects.burnTurns > 0 && playerEffects.burnDamagePerTurn > 0){
     const burnReduction = getPassiveModifiers().burnDamageReductionPercent || 0;
-    const burnDamage = Math.max(0, Math.floor(playerEffects.burnDamagePerTurn * (1 - burnReduction)));
+    const burnDamage = tickPeriodicStacks(playerEffects, "burn", damage=>Math.max(0,Math.floor(damage*(1-burnReduction))));
     if(burnDamage >= player.hp && getPassiveModifiers().fatalSaveHealPercent > 0 && !playerEffects.accessoryFatalSaveUsed){
       playerEffects.accessoryFatalSaveUsed = true;
       const healAmount = Math.max(1, Math.floor(getCurrentCaps().maxHp * getPassiveModifiers().fatalSaveHealPercent));
@@ -2456,6 +2471,7 @@ function getSkillInfo(){
   const attack = getActiveAttack();
   const skillPower = getSkillPowerBonus();
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
+  const mageLevelCost = Math.floor(.5 * player.level);
   const warriorExtraCost = player.class === "Guerreiro" ? Math.floor(0.5 * player.level) : 0;
   const clampMageSkillCost = cost => player.class === "Mago" ? Math.min(maxMp, Math.max(0, Math.floor(cost))) : Math.max(0, Math.floor(cost));
   return getUnlockedActiveSkills().map(skill => {
@@ -2552,23 +2568,23 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_mana_burst"){
       const skillFactor = subclassState.tier30 === "elementalista" && player.level >= 30 ? 1.0 : 0.6;
-      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.14 : 0.1;
-      const manaBurstCost = clampMageSkillCost(20 + Math.floor(0.2 * player.level) + mageExtraCost);
-      const enemyManaBurnAmount = enemy?.maxMp > 0 ? Math.floor((enemy.mp || 0) * 0.5) : 0;
-      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + (enemyManaBurnAmount * 4) + getUniversalDamageFlatBonus();
+      const manaFactor = subclassState.tier30 === "arcanista" && player.level >= 30 ? 0.12 : 0.08;
+      const manaBurstCost = clampMageSkillCost(20 + mageLevelCost + mageExtraCost);
+      const enemyManaBurnAmount = enemy?.maxMp > 0 ? Math.floor((enemy.mp || 0) * 0.4) : 0;
+      const damage = 30 + Math.floor(skillFactor * skillPower) + Math.floor(manaFactor * maxMp) + Math.floor(enemyManaBurnAmount * 3.5) + getUniversalDamageFlatBonus();
       return { ...skill, cost: manaBurstCost, damage, enemyManaBurnAmount, description: `${skill.name}: consome ${manaBurstCost} MP e causa ${damage} de dano.${enemyManaBurnAmount > 0 ? ` Tambem consome ${enemyManaBurnAmount} de mana do alvo e converte isso em dano extra.` : ""}` };
     }
     if(skill.type === "mage_fireball"){
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
       const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
       const currentHpBonus = isIncendiario && enemy ? Math.floor(enemy.hp * 0.05) : 0;
-      const damage = 50 + Math.floor(1.3 * skillPower) + currentHpBonus + getUniversalDamageFlatBonus();
+      const damage = 50 + Math.floor((isFrigido || isIncendiario ? .18 : .15) * attack) + Math.floor((isFrigido || isIncendiario ? 1.25 : 1.2) * skillPower) + currentHpBonus + getUniversalDamageFlatBonus();
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return {
         ...skill,
         name: isFrigido ? "Bola de Neve" : skill.name,
-        cost: clampMageSkillCost(40 + mageExtraCost),
+        cost: clampMageSkillCost(40 + mageLevelCost + mageExtraCost),
         damage,
         burnDamage,
         burnTurns: 3,
@@ -2578,13 +2594,14 @@ function getSkillInfo(){
         appliesBurn: !isFrigido,
         appliesChill: isFrigido,
         description: isFrigido
-          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
-          : `${skill.name}: consome ${clampMageSkillCost(40 + mageExtraCost)} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
+          ? `${isFrigido ? "Bola de Neve" : skill.name}: consome ${clampMageSkillCost(40 + mageLevelCost + mageExtraCost)} MP e causa ${damage} de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.`
+          : `${skill.name}: consome ${clampMageSkillCost(40 + mageLevelCost + mageExtraCost)} MP e causa ${damage} de dano de fogo. A queimadura causa ${burnDamage} por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.`
       };
     }
     if(skill.type === "mage_concentration"){
       const cost = clampMageSkillCost(200 + mageExtraCost);
-      return { ...skill, cost, turns: 4, percent: 0.2, manaRegenPercent: 0.1, description: `${skill.name}: consome ${cost} MP, aumenta o dano total em 20% e a regeneracao de mana em 10% por 4 turnos.` };
+      const percent = subclassState.tier60 === "arquimago" ? .3 : .2;
+      return { ...skill, cost, turns: 4, percent, manaRegenPercent: 0.1, description: `${skill.name}: consome ${cost} MP, aumenta o dano total em ${Math.round(percent*100)}% e a regeneracao de mana em 10% por 4 turnos.` };
     }
     if(skill.type === "mage_mana_shield"){
       const isArquimago = subclassState.tier60 === "arquimago" && player.level >= 60;
@@ -2597,8 +2614,8 @@ function getSkillInfo(){
     if(skill.type === "mage_freeze"){
       const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
-      const damage = 60 + Math.floor(0.9 * skillPower) + getUniversalDamageFlatBonus();
-      const cost = clampMageSkillCost(40 + Math.floor(0.2 * player.level) + mageExtraCost);
+      const damage = 60 + Math.floor(.08 * attack) + Math.floor((isIncendiario || isFrigido ? .9 : .85) * skillPower) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(40 + mageLevelCost + mageExtraCost);
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return {
@@ -2620,36 +2637,36 @@ function getSkillInfo(){
     if(skill.type === "mage_discharge"){
       const charges = getArcaneChargeInfo().charges;
       const damage = subclassState.tier60 === "arquimago" && player.level >= 60
-        ? Math.floor((player.level + (0.007 * maxMp)) * charges) + getUniversalDamageFlatBonus()
-        : 60 + (player.level * charges) + Math.floor(0.1 * skillPower) + Math.floor(0.04 * maxMp) + getUniversalDamageFlatBonus();
-      const cost = clampMageSkillCost((10 * charges) + mageExtraCost);
+        ? Math.floor((player.level + (0.0065 * maxMp)) * charges) + getUniversalDamageFlatBonus()
+        : 60 + (player.level * charges) + Math.floor(0.3 * skillPower) + Math.floor(0.045 * maxMp) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost((30 * charges) + mageExtraCost);
       return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP, gasta todas as cargas arcanas e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_sacred_phoenix"){
       const cost = clampMageSkillCost(200 + skillPower + mageExtraCost);
-      const damage = 100 + Math.floor(1.8 * skillPower) + getUniversalDamageFlatBonus();
+      const damage = 100 + Math.floor(.4 * attack) + Math.floor(1.85 * skillPower) + getUniversalDamageFlatBonus();
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
       return { ...skill, cost, damage, burnDamage, burnTurns: 1, healReductionPercent: 0.3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, aplicando queimadura por 1 turno.` };
     }
     if(skill.type === "mage_blizzard"){
-      const cost = clampMageSkillCost(120 + mageExtraCost);
-      return { ...skill, cost, turns: 6, enemySkipChance: 0.15, description: `${skill.name}: consome ${cost} MP e faz o inimigo ter 15% de chance de perder o turno por 6 turnos.` };
+      const cost = clampMageSkillCost(120 + mageLevelCost + mageExtraCost);
+      return { ...skill, cost, turns: 6, enemySkipChance: 0.15, chillTurns: 6, chillAttackDownPercent: .3, description: `${skill.name}: consome ${cost} MP e faz o inimigo ter 15% de chance de perder o turno e reduz seu ataque em 30% por 6 turnos.` };
     }
     if(skill.type === "mage_corruption"){
-      const currentManaCost = clampMageSkillCost(Math.floor(player.mp * 0.3));
-      const damage = 100 + Math.floor(1.0 * skillPower) + Math.floor(0.3 * maxMp) + getUniversalDamageFlatBonus();
+      const currentManaCost = clampMageSkillCost(Math.floor(maxMp * 0.3));
+      const damage = 100 + Math.floor(1.15 * skillPower) + Math.floor(0.22 * maxMp) + getUniversalDamageFlatBonus();
       return { ...skill, cost: currentManaCost, damage, armorBreakPercent: 1, armorBreakTurns: 5, noShieldTurns: 5, description: `${skill.name}: consome ${currentManaCost} MP, causa ${damage} de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.` };
     }
     if(skill.type === "mage_overcharge"){
       const charges = getArcaneChargeInfo().charges;
       const damage = 200 + maxMp + (player.level * charges) + getUniversalDamageFlatBonus();
-      const cost = clampMageSkillCost(Math.floor(maxMp * 0.95) + mageExtraCost);
+      const cost = clampMageSkillCost(Math.floor(maxMp * 0.75) + mageExtraCost);
       return { ...skill, cost, damage, charges, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano usando sua mana maxima e as cargas arcanas.` };
     }
     if(skill.type === "mage_demon_form"){
-      const cost = clampMageSkillCost(Math.floor(player.mp * 0.3));
-      return { ...skill, cost, turns: 3, damagePercent: 2, vulnerabilityPercent: 0.3, description: `${skill.name}: consome ${cost} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 30% de dano adicional pelo mesmo tempo.` };
+      const cost = clampMageSkillCost(Math.floor(maxMp * 0.3));
+      return { ...skill, cost, turns: 3, damagePercent: 2, vulnerabilityPercent: 0.4, description: `${skill.name}: consome ${cost} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.` };
     }
     if(skill.type === "mage_explode"){
       const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
@@ -2657,8 +2674,8 @@ function getSkillInfo(){
       return { ...skill, cost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${cost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
     }
     if(skill.type === "mage_avalanche"){
-      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
-      const cost = clampMageSkillCost(400 + mageExtraCost);
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.38 * (enemy?.hp || 0)) + getUniversalDamageFlatBonus();
+      const cost = clampMageSkillCost(400 + mageLevelCost + mageExtraCost);
       return { ...skill, cost, damage, chillTurns: 4, chillAttackDownPercent: 0.3, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica resfriamento por 4 turnos.` };
     }
     if(skill.type === "archer_focus"){
@@ -3032,14 +3049,14 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.`;
   }
   if(skill.type === "mage_mana_to_life"){
-    const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? 0.65 : 0.5;
-    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.18)} de dano de habilidade.` : "";
+    const factor = subclassState.tier60 === "mago_frigido" && player.level >= 60 ? .65 : .45;
+    const extraSkill = subclassState.tier60 === "mago_incendiario" && player.level >= 60 ? ` Alem disso, concede ${Math.floor(getPreviewStats().maxMp * 0.16)} de dano de habilidade.` : "";
     return `${skill.name}: converte ${Math.floor(factor * 100)}% da mana maxima em vida maxima.${extraSkill}`;
   }
   if(skill.type === "mage_overflowing"){
-    const damageFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.45 : 0.3;
-    const costFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.1;
-    return `${skill.name}: concede ${Math.floor(getPreviewStats().maxMp * damageFactor)} de dano adicional em ataques e habilidades e aumenta os custos das habilidades em ${Math.floor(getPreviewStats().maxMp * costFactor)}.`;
+    const damageFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.4 : 0.25;
+    const costFactor = subclassState.tier60 === "arquimago" && player.level >= 60 ? 0.2 : 0.11;
+    return `${skill.name}: concede ${Math.floor(getPreviewStats().maxMp * damageFactor)} de dano adicional em ataques e habilidades e aumenta os custos das habilidades em ${Math.floor(getPreviewStats().maxMp * costFactor)}.${subclassState.tier60 === "corrompido" ? " Tambem converte dano perdido na vida, ou impedido por Ultimo Recurso, em escudo." : ""}`;
   }
   if(skill.type === "mage_hellfire"){
     return `${skill.name}: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno.`;
@@ -3051,7 +3068,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: cada carga arcana aumenta o dano total em 5%. Atualmente: ${Math.floor((playerEffects.arcaneCharges || 0) * 5)}%.`;
   }
   if(skill.type === "mage_glass_cannon"){
-    return `${skill.name}: o primeiro ataque do combate causa o dobro de dano, mas voce sofre 50% de dano adicional nos 2 primeiros turnos do combate.`;
+    return `${skill.name}: sofre o dobro de dano no primeiro golpe inimigo que acertar; suas duas primeiras acoes que causarem dano recebem +50% de dano. Buffs, DOTs e projeteis extras nao gastam acoes adicionais.`;
   }
   if(skill.id === "mana_e_vida"){
     return `${skill.name}: converte ${Math.floor(getPreviewStats().maxMp * 0.1)} de mana maxima em vida maxima.`;
@@ -3203,6 +3220,9 @@ function getActiveBuffs(){
   if(playerEffects.nextBarrageDamageBonusPercent > 0){
     buffs.push(`Proxima rajada +${Math.floor(playerEffects.nextBarrageDamageBonusPercent * 100)}%`);
   }
+  if(playerEffects.glassCannonActions>0)buffs.push(`Canhao de Vidro: +50% nas proximas ${playerEffects.glassCannonActions} acoes de dano`);
+  if(playerEffects.glassCannonFirstHit)buffs.push("Canhao de Vidro: primeiro golpe recebido causa o dobro de dano");
+  buffs.push(...CampaignEnemyCombat.heroStatus());
   return buffs;
 }
 
@@ -3215,10 +3235,10 @@ function getBasicAttackTooltip(){
     const missiles = Math.floor(3 + 0.1 * player.level);
     const manaCost = missiles * 3;
     const subclassState = getPlayerSubclassState();
-    const elementalistaBonus = subclassState.tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
+    const elementalistaBonus = subclassState.tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.09 * getSkillPowerBonus()) : 0;
     const flatPerAction = getUniversalDamageFlatBonus();
     const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus;
-    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus;
+    const maxPerMissile = 7 + Math.floor(getActiveAttack() * 0.4) + elementalistaBonus;
     if(subclassState.tier30 === "arcanista" && player.level >= 30){
       return `Missel Magico: bonus fixo de ${flatPerAction} por acao, dividido entre os projeteis.  consome ${manaCost} MP, dispara ${missiles} misseis e cada um causa entre ${minPerMissile} e ${maxPerMissile} de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.`;
     }
@@ -3232,18 +3252,31 @@ function getBasicAttackTooltip(){
   return `Ataque basico. Dano entre ${attackMin} e ${attackMax}.`;
 }
 
+function restoreGlassCannonState(saved){
+  const unlocked=player?.class==="Mago"&&getPlayerSubclassState().tier60==="corrompido"&&player.level>=70;
+  if(unlocked&&saved.glassCannonActions===undefined){
+    playerEffects.glassCannonActions=2;playerEffects.glassCannonFirstHit=true;
+    if(playerEffects.incomingDamageBonusPercent===.5){playerEffects.incomingDamageBonusPercent=0;playerEffects.incomingDamageBonusTurns=0;}
+  }else{
+    playerEffects.glassCannonActions=unlocked?Math.max(0,Math.min(2,Math.floor(Number(saved.glassCannonActions)||0))):0;
+    playerEffects.glassCannonFirstHit=unlocked&&saved.glassCannonFirstHit===true;
+  }
+  playerEffects.firstAttackDoubleAvailable=false;
+}
+
 function resetCombatEffects(){
   const subclassState = getPlayerSubclassState();
   playerEffects = createDefaultPlayerEffects();
   playerEffects.accessoryFatalSaveUsed = false;
   playerEffects.firstSkillFreeAvailable = false;
-  playerEffects.firstAttackDoubleAvailable = player.class === "Mago" && subclassState.tier60 === "corrompido" && player.level >= 70;
-  playerEffects.incomingDamageBonusTurns = playerEffects.firstAttackDoubleAvailable ? 2 : 0;
-  playerEffects.incomingDamageBonusPercent = playerEffects.firstAttackDoubleAvailable ? 0.5 : 0;
-  playerEffects.freshBuffs = playerEffects.firstAttackDoubleAvailable ? ["incomingDamageBonusTurns"] : [];
+  playerEffects.firstAttackDoubleAvailable = false;
+  const glass = player.class === "Mago" && subclassState.tier60 === "corrompido" && player.level >= 70;
+  playerEffects.glassCannonActions = glass ? 2 : 0;
+  playerEffects.glassCannonFirstHit = glass;
   playerEffects.berserkerLastStandAvailable = player.class === "Guerreiro" && subclassState.tier60 === "berserker" && player.level >= 70;
   playerEffects.berserkerLastStandPending = false;
   playerEffects.samuraiEchoAvailable = player.class === "Guerreiro" && subclassState.tier60 === "samurai" && player.level >= 70;
+  CampaignEnemyCombat.transferBuffs();
 }
 
 function applyEnemyArmor(rawDamage, ignoreArmor = false){
@@ -3267,6 +3300,35 @@ function applyLifeSteal(hpLost){
   }
 }
 
+// Each application is independent; summary fields support existing DOT integrations.
+function syncPeriodicStacks(target, kind){
+  const key = kind + "Stacks";
+  target[key] = (Array.isArray(target[key]) ? target[key] : []).filter(x => Number.isFinite(x.damage) && x.damage > 0 && Number.isSafeInteger(x.turns) && x.turns > 0).map(x => ({damage: x.damage, turns: x.turns, source: String(x.source || kind).slice(0, 80), extensions: Math.max(0, Math.min(2, x.extensions || 0))}));
+  target[kind + "DamagePerTurn"] = target[key].reduce((n,x) => n+x.damage, 0);
+  target[kind + "Turns"] = Math.max(0, ...target[key].map(x => x.turns));
+}
+function addPeriodicStack(target, kind, damage, turns, source, options = {}){
+  if(!target || !(damage > 0) || !(turns > 0)) return;
+  target[kind + "Stacks"] ||= [];
+  target[kind + "Stacks"].push({damage: Math.floor(damage), turns: Math.floor(turns), source, extensions: 0});
+  syncPeriodicStacks(target, kind);
+  if(target === enemy) EquipmentSystem.noteDotApplication(player,playerEffects,target,[kind+"Turns"],options);
+}
+function tickPeriodicStacks(target, kind, transform = damage => damage){
+  syncPeriodicStacks(target, kind);
+  const damage = target[kind + "Stacks"].reduce((sum,stack)=>sum+transform(stack.damage),0);
+  target[kind + "Stacks"].forEach(x => x.turns--);
+  syncPeriodicStacks(target, kind);
+  return damage;
+}
+function applyEnemyChill(percent, turns){
+  if(!enemy || !(turns>0))return;
+  enemy.attackDownPercent = Math.max(enemy.attackDownPercent||0, percent);
+  enemy.attackDownTurns = Math.max(enemy.attackDownTurns||0, turns);
+  if(hasUnlockedPassiveType("mage_frostburn"))applyBurning(enemy,Math.max(1,Math.floor(enemy.maxHp*.03)),1,"Gelo Queima");
+}
+function applyBurning(target, damage, turns, source, options = {}){ addPeriodicStack(target, "burn", damage, turns, source, options); }
+
 function syncBleeding(target){
   target.bleedDamagePerTurn = (target.bleedStacks || []).reduce((sum, stack) => sum + stack.damage, 0);
   target.bleedTurns = Math.max(0, ...(target.bleedStacks || []).map(stack => stack.turns));
@@ -3280,7 +3342,7 @@ function applyBleeding(target, damage, turns){
 }
 function tickBleeding(target){
   if(!target.bleedStacks?.length) return 0;
-  const damage = Math.floor(target.bleedDamagePerTurn * EquipmentSystem.getDotDamageMultiplier(player));
+  const damage = CampaignEnemyCombat.temporalDamage(Math.floor(target.bleedDamagePerTurn * EquipmentSystem.getDotDamageMultiplier(player)));
   const hpLost = Math.min(Math.max(0, target.hp), damage);
   target.hp -= damage;
   applyLifeSteal(hpLost);
@@ -3294,6 +3356,8 @@ function tickBleeding(target){
 
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
+  if(CampaignEnemyCombat.beforeDamage()) return 0;
+  rawDamage = CampaignEnemyCombat.temporalDamage(rawDamage);
   const arenaTarget = currentMode === "arena_run" && enemy.arenaCombatant && typeof window.resolveArenaIncomingDamage === "function";
   let damage = arenaTarget ? Math.max(0, Math.floor(rawDamage)) : applyEnemyArmor(rawDamage, !!options.ignoreArmor);
   if(!options.equipmentProc){
@@ -3325,6 +3389,7 @@ function applyDamageToEnemy(rawDamage, options = {}){
   if(damage > 0 && playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
     damage += Math.floor(damage * playerEffects.finalDamageBuffPercent);
   }
+  if(damage > 0 && playerEffects.equipmentAction?.resolving && playerEffects.equipmentAction.glassBonus){damage += Math.floor(damage*.5);playerEffects.equipmentAction.glassDamageUsed=true;}
   if(damage > 0 && playerEffects.nextDamageBonusPercent > 0){
     const ambushBonus = Math.floor(damage * playerEffects.nextDamageBonusPercent);
     damage += ambushBonus;
@@ -3366,10 +3431,12 @@ function applyDamageToEnemy(rawDamage, options = {}){
       log(`O escudo de ${enemy.baseName} se partiu.`);
     }
   }
+  damage = CampaignEnemyCombat.adjustDamage(damage);
   const hpLost = Math.min(Math.max(0, enemy.hp), damage);
   enemy.hp -= damage;
   applyLifeSteal(hpLost);
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage, rawDamage, kind:playerEffects.equipmentAction?.kind || "reaction", source:"direct", equipmentProc:!!options.equipmentProc}); }
+  CampaignEnemyCombat.afterDamage(hpLost);
   return damage;
 }
 
@@ -3379,18 +3446,18 @@ function applyIncomingDamage(baseDamage, options = {}){
     playerEffects.storedFaithDamage += damage;
     return { damage: 0, missed: false, absorbed: damage, manaAbsorbed: 0 };
   }
-  if(playerEffects.basicOnlyUntouchableTurns > 0){
+  if(playerEffects.basicOnlyUntouchableTurns > 0 && !options.ignoreDodge){
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
   if(playerEffects.incomingDamageBonusTurns > 0 && playerEffects.incomingDamageBonusPercent > 0){
     damage += Math.floor(damage * playerEffects.incomingDamageBonusPercent);
   }
-  if(playerEffects.percentReductionTurns > 0 && playerEffects.percentReduction > 0){
+  if(!options.ignorePercentReduction && playerEffects.percentReductionTurns > 0 && playerEffects.percentReduction > 0){
     damage = Math.max(0, damage - Math.floor(damage * playerEffects.percentReduction));
   }
   const missChance = getEnemyMissChance();
   const autoMiss = playerEffects.nextIncomingAutoMiss;
-  if(autoMiss || (missChance > 0 && Math.random() < missChance)){
+  if(!options.ignoreDodge && (autoMiss || (missChance > 0 && Math.random() < missChance))){
     playerEffects.nextIncomingAutoMiss = false;
     if(getUnlockedPassiveSkills().some(skill => skill.type === "archer_dodge_damage_buff")){
       const subclassState = getPlayerSubclassState();
@@ -3422,6 +3489,7 @@ function applyIncomingDamage(baseDamage, options = {}){
     }
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
+  if(baseDamage > 0 && playerEffects.glassCannonFirstHit){damage *= 2;playerEffects.glassCannonFirstHit=false;}
   const flatReduction = getPassiveModifiers().flatReduction;
   if(flatReduction > 0 && !options.ignoreFlatReduction){
     damage = Math.max(0, damage - flatReduction);
@@ -3442,7 +3510,9 @@ function applyIncomingDamage(baseDamage, options = {}){
   let manaAbsorbed = 0;
   const passiveModifiers = getPassiveModifiers();
   const lastResortManaCost = damage * 2;
+  let lastResortPrevented = 0;
   if(!options.ignorePreciousMana && passiveModifiers.preciousMana && damage >= player.hp && damage > 0 && player.mp >= lastResortManaCost){
+    lastResortPrevented = damage;
     manaAbsorbed = lastResortManaCost;
     player.mp = Math.max(0, player.mp - lastResortManaCost);
     damage = 0;
@@ -3451,10 +3521,7 @@ function applyIncomingDamage(baseDamage, options = {}){
     }
     const subclassState = getPlayerSubclassState();
     if(subclassState.tier30 === "elementalista" && player.level >= 30 && enemy){
-      enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
-      enemy.dotTurns = Math.max(enemy.dotTurns || 0, 3);
-      enemy.dotSourceName = "Ultimo Recurso";
-      noteEnemyDotApplication("dotTurns");
+      applyBurning(enemy, Math.max(1, Math.floor(enemy.maxHp * 0.03)), 3, "Ultimo Recurso");
       enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
       enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, 3);
     }
@@ -3468,11 +3535,12 @@ function applyIncomingDamage(baseDamage, options = {}){
       log(`O acessorio salvou sua vida e restaurou ${healed} de vida.`);
     }
   }
+  if(lastResortPrevented > 0 && getPlayerSubclassState().tier60 === "corrompido" && !(player.noShieldTurns>0) && hasUnlockedPassiveType("mage_overflowing")){grantPlayerShield(lastResortPrevented,0,{skipEquipment:true});}
   if(damage > 0){
     const hpLost = Math.min(player.hp, damage);
     player.hp -= damage;
     if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && !(player.noShieldTurns > 0) && getUnlockedPassiveSkills().some(passive => passive.type === "mage_overflowing")){
-      playerEffects.shieldValue += damage;
+      playerEffects.shieldValue += hpLost;
       playerEffects.shieldTurns = 0;
       log(`Transbordando converteu ${damage} de dano recebido em escudo.`);
     }
@@ -3501,11 +3569,14 @@ function applyIncomingDamage(baseDamage, options = {}){
     log("Voce Nao e Digno impediu sua queda fatal.");
   }
   player.hp = Math.max(0, player.hp);
+  CampaignEnemyCombat.heroCheck();
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterIncoming(player, playerEffects, enemy, {damage, absorbed}); }
   return { damage, missed: false, absorbed, manaAbsorbed };
 }
 
 function beginEquipmentAction(kind, skill = null){
+  CampaignEnemyCombat.transferBuffs();
+  CampaignEnemyCombat.snapshot();
   playerEffects.actionBuffSnapshot = Object.fromEntries(Object.entries(playerEffects).filter(([key,value]) => key.endsWith("Turns") && typeof value === "number"));
   playerEffects.freshBuffs = [];
   if(typeof EquipmentSystem === "undefined"){ return; }
@@ -3521,14 +3592,17 @@ function beginEquipmentAction(kind, skill = null){
       heal: amount => healPlayer(amount)
     }
   };
-  playerEffects.equipmentAction = {actionId:context.actionId,kind,resolving:true};
+  playerEffects.equipmentAction = {actionId:context.actionId,kind,resolving:true,glassBonus: ["basic","skill"].includes(kind) && playerEffects.glassCannonActions > 0};
   EquipmentSystem.beginAction(player, playerEffects, context);
 }
 
 function endEquipmentAction(){
   if(typeof EquipmentSystem === "undefined" || !playerEffects.equipmentAction){ return; }
+  if(playerEffects.equipmentAction.glassDamageUsed) playerEffects.glassCannonActions = Math.max(0, playerEffects.glassCannonActions - 1);
   EquipmentSystem.endAction(player, playerEffects, {enemy});
   playerEffects.equipmentAction = null;
+  CampaignEnemyCombat.transferBuffs();
+  CampaignEnemyCombat.finishAction();
 }
 
 function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
@@ -3540,20 +3614,15 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     }
     beginEquipmentAction("basic");
     player.mp -= manaCost;
-    const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.1 * getSkillPowerBonus()) : 0;
+    const elementalistaBonus = getPlayerSubclassState().tier30 === "elementalista" && player.level >= 30 ? Math.floor(0.09 * getSkillPowerBonus()) : 0;
     const flatPerAction = getUniversalDamageFlatBonus();
     const minPerMissile = 5 + Math.floor(getActiveAttack() * 0.2) + elementalistaBonus;
-    const maxPerMissile = 5 + Math.floor(getActiveAttack() * 0.5) + elementalistaBonus;
+    const maxPerMissile = 7 + Math.floor(getActiveAttack() * 0.4) + elementalistaBonus;
     const hitDamages = [];
     let chargeGains = 0;
-    const openingDouble = playerEffects.firstAttackDoubleAvailable;
-    if(openingDouble){
-      playerEffects.firstAttackDoubleAvailable = false;
-    }
     if(applyToTarget){
       for(let missile = 0; missile < missiles; missile++){
         let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1))) + Math.floor(flatPerAction / missiles) + (missile < flatPerAction % missiles ? 1 : 0);
-        if(openingDouble){ rolledDamage *= 2; }
         hitDamages.push(applyDamageToEnemy(rolledDamage));
         if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
           chargeGains += addArcaneCharges(1);
@@ -3562,7 +3631,6 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
     }else{
       for(let missile = 0; missile < missiles; missile++){
         let rolledDamage = minPerMissile + Math.floor(Math.random() * (Math.max(1, maxPerMissile - minPerMissile + 1))) + Math.floor(flatPerAction / missiles) + (missile < flatPerAction % missiles ? 1 : 0);
-        if(openingDouble){ rolledDamage *= 2; }
         hitDamages.push(Math.floor(rolledDamage * (1 + getUniversalDamagePercentBonus())));
         if(getPlayerSubclassState().tier30 === "arcanista" && player.level >= 30 && Math.random() < 0.15){
           chargeGains += addArcaneCharges(1);
@@ -3601,10 +3669,6 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
 }
 
 function applyFirstDamageSkillBonus(damage, isDamageSkill){
-  if(damage > 0 && playerEffects.firstAttackDoubleAvailable){
-    playerEffects.firstAttackDoubleAvailable = false;
-    return Math.floor(damage * 2);
-  }
   return damage;
 }
 
@@ -3658,24 +3722,14 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     if(skillInfo.type === "mage_fireball" && applyToTarget && enemy){
       if(skillInfo.appliesBurn){
-        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
-        enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
-        enemy.dotSourceName = skillInfo.name;
-        noteEnemyDotApplication("dotTurns");
+        applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
         enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O inimigo ficou queimando.";
       }
       if(skillInfo.appliesChill){
-        enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
-        enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+        applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
         message += " O inimigo ficou resfriado.";
-        if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
-          enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
-          enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
-          enemy.dotSourceName = "Gelo Queima";
-          noteEnemyDotApplication("dotTurns");
-        }
       }
     }
     if(skillInfo.type === "mage_freeze" && Math.random() < skillInfo.freezeChance){
@@ -3686,10 +3740,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       message += " O inimigo foi congelado e pode perder o proximo ataque.";
     }else if(skillInfo.type === "mage_freeze" && applyToTarget && enemy){
       if(skillInfo.burnTurns > 0){
-        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
-        enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
-        enemy.dotSourceName = skillInfo.name;
-        noteEnemyDotApplication("dotTurns");
+        applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
         enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O alvo ficou incendiado.";
@@ -3700,35 +3751,18 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
           enemy.frozenDamageBonusPercent = Math.max(enemy.frozenDamageBonusPercent || 0, skillInfo.freezeVulnerabilityPercent);
           message += " O inimigo ficou congelado e sofrera 50% a mais no proximo dano.";
         }else{
-          enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
-          enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
+          applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
           message += " O inimigo ficou resfriado.";
-        }
-        if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
-          enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
-          enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
-          enemy.dotSourceName = "Gelo Queima";
-          noteEnemyDotApplication("dotTurns");
         }
       }
     }
     if(skillInfo.type === "mage_sacred_phoenix" && applyToTarget && enemy){
-      enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, skillInfo.burnDamage || 0);
-      enemy.dotTurns = Math.max(enemy.dotTurns || 0, skillInfo.burnTurns || 0);
-      enemy.dotSourceName = skillInfo.name;
-      noteEnemyDotApplication("dotTurns");
+      applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
       enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
       enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
     }
     if(skillInfo.type === "mage_avalanche" && applyToTarget && enemy){
-      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.chillAttackDownPercent || 0);
-      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.chillTurns || 0);
-      if(getUnlockedPassiveSkills().some(passive => passive.type === "mage_frostburn")){
-        enemy.dotDamagePerTurn = Math.max(enemy.dotDamagePerTurn || 0, Math.max(1, Math.floor(enemy.maxHp * 0.03)));
-        enemy.dotTurns = Math.max(enemy.dotTurns || 0, 1);
-        enemy.dotSourceName = "Gelo Queima";
-        noteEnemyDotApplication("dotTurns");
-      }
+      applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
     }
     if(["warrior_shove", "warrior_stagger"].includes(skillInfo.type) && applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
       enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
@@ -3826,6 +3860,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     if(applyToTarget && enemy){
       enemy.blizzardSkipChance = Math.max(enemy.blizzardSkipChance || 0, skillInfo.enemySkipChance || 0);
       enemy.blizzardTurns = Math.max(enemy.blizzardTurns || 0, skillInfo.turns || 0);
+      applyEnemyChill(skillInfo.chillAttackDownPercent,skillInfo.chillTurns);
     }
     message = `${actorName} usou ${skillInfo.name} e envolveu o inimigo em uma tempestade por ${skillInfo.turns} turnos.`;
   }
@@ -4049,10 +4084,11 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
         enemy.natureMarkDamage = 0;
       }
       if(includeAllDots){
-        extraDotDamage += Math.floor((enemy.naturePoisonDamage || 0) * (enemy.naturePoisonTurns || 0));
+        extraDotDamage += enemy.naturePoisonStacks?.length ? enemy.naturePoisonStacks.reduce((n,x)=>n+x.damage*x.turns,0) : Math.floor((enemy.naturePoisonDamage || 0) * (enemy.naturePoisonTurns || 0));
         extraDotDamage += Math.floor((enemy.natureDecayDamage || 0) * (enemy.natureDecayTurns || 0));
         enemy.naturePoisonTurns = 0;
         enemy.naturePoisonDamage = 0;
+    enemy.naturePoisonStacks = [];
         enemy.natureDecayTurns = 0;
         enemy.natureDecayDamage = 0;
       }
@@ -4138,6 +4174,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       if(enemy[key] > 0 && enemy[key] !== debuffBefore[key]) enemy.debuffSources[key] = skillInfo.name;
     }
   }
+  CampaignEnemyCombat.transferBuffs();
   const refreshed = {
     warrior_second_wind:["finalDamageBuffTurns"], warrior_warcry:["attackBuffTurns","finalDamageBuffTurns","percentReductionTurns","lifeStealTurns"],
     warrior_valhalla:["incomingDamageBonusTurns","enemyMaxHpBonusTurns"],warrior_faith_shield:["invulnerableTurns"],
@@ -4439,6 +4476,10 @@ function renderForgePanel(){
 function getEnemyStatusEffects(targetEnemy){
   if(!targetEnemy){ return []; }
   const effects = [];
+  for(const [kind, name] of [["burn", "Queimadura"], ["poison", "Veneno"]]){
+    const stacks = [...(targetEnemy[kind + "Stacks"]||[]), ...(kind==="poison" ? targetEnemy.naturePoisonStacks||[] : [])];
+    if(stacks.length) effects.push({kind:"debuff", text:name + " (DOT)", details:stacks.map((x,i) => `${i+1}. ${x.source}: ${x.damage} dano/turno | ${x.turns} turno(s)`).join("\n") + (kind==="burn" && targetEnemy.healReductionTurns>0 && stacks.some(x=>x.source===targetEnemy.debuffSources?.healReductionTurns) ? `\nCura -${Math.round(targetEnemy.healReductionPercent*100)}% | ${targetEnemy.healReductionTurns} turno(s)` : "")});
+  }
   if(targetEnemy.bleedTurns > 0 && targetEnemy.bleedDamagePerTurn > 0) effects.push({ field: "bleedTurns", kind:"debuff", text:`Sangramento (DOT) ${targetEnemy.bleedDamagePerTurn}/t | ${targetEnemy.bleedStacks?.length || 0} acumulacoes` });
   if(targetEnemy.bossBuffTurns > 0){
     effects.push({ field: "bossBuffTurns", kind: "buff", text: `Buff do boss | ${targetEnemy.bossBuffTurns} turno(s)` });
@@ -4449,7 +4490,7 @@ function getEnemyStatusEffects(targetEnemy){
   if(targetEnemy.armorDownTurns > 0 && targetEnemy.armorDownPercent > 0){
     effects.push({ field: "armorDownTurns", kind: "debuff", text: `Armadura -${Math.floor(targetEnemy.armorDownPercent * 100)}% | ${targetEnemy.armorDownTurns} turno(s)` });
   }
-  if(targetEnemy.healReductionTurns > 0 && targetEnemy.healReductionPercent > 0){
+  if(targetEnemy.healReductionTurns > 0 && targetEnemy.healReductionPercent > 0 && !targetEnemy.burnStacks?.some(x=>x.source===targetEnemy.debuffSources?.healReductionTurns)){
     effects.push({ field: "healReductionTurns", kind: "debuff", text: `Cura -${Math.floor(targetEnemy.healReductionPercent * 100)}% | ${targetEnemy.healReductionTurns} turno(s)` });
   }
   if(targetEnemy.noShieldTurns > 0){
@@ -4464,7 +4505,7 @@ function getEnemyStatusEffects(targetEnemy){
   if(targetEnemy.natureMarkTurns > 0){
     effects.push({ field: "natureMarkTurns", kind: "debuff", text: `Marca | ${targetEnemy.natureMarkTurns} turno(s)` });
   }
-  if(targetEnemy.naturePoisonTurns > 0 && targetEnemy.naturePoisonDamage > 0){
+  if(!targetEnemy.naturePoisonStacks?.length && targetEnemy.naturePoisonTurns > 0 && targetEnemy.naturePoisonDamage > 0){
     effects.push({ field: "naturePoisonTurns", kind: "debuff", text: `Veneno ${targetEnemy.naturePoisonDamage}/t | ${targetEnemy.naturePoisonTurns} turno(s)` });
   }
   if(targetEnemy.natureDecayTurns > 0 && targetEnemy.natureDecayDamage > 0){
@@ -4489,6 +4530,7 @@ function getEnemyStatusEffects(targetEnemy){
   for(const [name, parts] of grouped){
     result.push(parts.length > 1 ? { kind: "debuff", text: name, details: parts.map(part => part.text).join("\n") } : parts[0]);
   }
+  result.push(...CampaignEnemyCombat.status(targetEnemy));
   return result;
 }
 function renderAlchemistPanel({compact = false} = {}){
@@ -4663,6 +4705,7 @@ function setBestiaryRegion(regionName){
 }
 
 function getBossAbilityDetailText(ability){
+  if(ability.campaign) return ability.description;
   const details = [];
   if(Number.isFinite(ability.power)){ details.push(`Dano base ${ability.power}`); }
   if(ability.maxHpPercent){ details.push(`+${Math.floor(ability.maxHpPercent * 100)}% da vida maxima do alvo`); }
@@ -4694,6 +4737,7 @@ function renderBestiaryStatGrid(stats){
     ${renderBestiaryMetric("Vida", stats.maxHp, "stat-hp")}
     ${renderBestiaryMetric("Ataque", stats.attack, "stat-atk")}
     ${renderBestiaryMetric("Armadura", stats.armor, "stat-armor")}
+    ${stats.maxMp>0 ? renderBestiaryMetric("Mana", stats.maxMp, "stat-mp") : ""}
     ${stats.maxHpStrikePercent > 0 ? renderBestiaryMetric("Impacto", `+${Math.floor(stats.maxHpStrikePercent * 100)}%`, "stat-impact") : ""}
   </div>`;
 }
@@ -4894,6 +4938,14 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
     </div>`;
 }
 
+function renderCampaignEnemyPassive(name){
+  if(IS_DUNGEON_PAGE || IS_ARENA_PAGE)return "";
+  const i=CampaignEnemyCombat.index(name),title=CampaignEnemyCombat.passives[i];
+  return title ? `<p><strong>${escapeHtml(title)}</strong>: ${escapeHtml(CampaignEnemyCombat.passiveDescriptions[i])}</p>` : "";
+}
+function renderCampaignEnemyKit(name, region){
+  return getBossAbilitySet(name,region).filter(a=>a.campaign).map(a=>`<p><strong>${escapeHtml(a.name)}</strong> (${a.cost} MP): ${escapeHtml(a.description)}</p>`).join("")+renderCampaignEnemyPassive(name);
+}
 function renderBestiary(){
   const selectedRegion = getSelectedBestiaryRegion();
   const regionData = regions[selectedRegion];
@@ -4912,6 +4964,7 @@ function renderBestiary(){
         <span class="${rarity.cssClass}">${rarity.label}</span>
         ${renderBestiaryStatGrid(stats)}
         ${renderBestiaryInfoLine("Drop", getEnemyPossibleDrop(template.name, selectedRegion, false), "stat-drop")}
+        ${renderCampaignEnemyKit(template.name, selectedRegion)}
       </div></div></div>`;
   }).join("");
   const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
@@ -4928,6 +4981,7 @@ function renderBestiary(){
       <div class="inventory-item" style="margin-top:12px;">
         <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
         ${renderBestiaryStatGrid(bossStats)}
+        ${renderCampaignEnemyPassive(regionData.boss.name)}
         <div class="bestiary-stat-grid">${renderBestiaryMetric("Mana", bossMana, "stat-mp")}${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
         ${renderBestiaryInfoLine("Recompensa", getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true), "stat-drop")}</div></div>
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
@@ -5276,11 +5330,12 @@ function createEnemyFromTemplate(template, isBoss = false, originOverride = null
   const stats = getEnemyStats(template, origin, isBoss);
   const bossProfile = getBossDifficultyProfile(origin, isBoss);
   const rarity = getEnemyRarity(origin, template.name, isBoss);
-  const bossAbilities = isBoss ? getBossAbilitySet(template.name, origin) : [];
+  const bossAbilities = isBoss || (!IS_DUNGEON_PAGE && !IS_ARENA_PAGE && origin !== "Dungeon") ? getBossAbilitySet(template.name, origin) : [];
   const signatureAbility = bossAbilities[0] || null;
-  const bossMana = isBoss ? Math.floor(template.mp * bossProfile.manaMultiplier) : 0;
+  const explicitMana = !IS_DUNGEON_PAGE && !IS_ARENA_PAGE && origin !== "Dungeon" ? campaignEnemyTotalsByName[template.name]?.mp : undefined;
+  const bossMana = explicitMana ?? (isBoss ? Math.floor(template.mp * bossProfile.manaMultiplier) : 0);
   const bossSkillDamage = isBoss ? Math.floor(template.skillDamage * bossProfile.skillMultiplier) : 0;
-  return {
+  const created = {
     name: template.name + " Lv." + template.level,
     baseName: template.name,
     region: origin,
@@ -5329,6 +5384,8 @@ function createEnemyFromTemplate(template, isBoss = false, originOverride = null
     bossPierceBonus: 0,
     bossRegenPercent: 0
   };
+  CampaignEnemyCombat.initialize(created);
+  return created;
 }
 
 function spawnEnemy(isBoss = false){
@@ -5659,6 +5716,7 @@ function continueCampaign(characterId = ""){
   deadUntil = state.deadUntil;
   isLogHidden = !!state.isLogHidden;
   playerEffects = { ...createDefaultPlayerEffects(), ...(state.playerEffects || {}) };
+  restoreGlassCannonState(state.playerEffects||{});
   if(player?.hp <= 0){
     isDead = true;
     deadUntil = deadUntil || Date.now();
@@ -5701,6 +5759,7 @@ function continueCampaign(characterId = ""){
       rebuiltEnemy.dotDamagePerTurn = enemy.dotDamagePerTurn || 0;
       rebuiltEnemy.dotTurns = enemy.dotTurns || 0;
       rebuiltEnemy.dotSourceName = enemy.dotSourceName || "";
+      for(const kind of ["burn", "poison"]){ rebuiltEnemy[kind + "Stacks"] = enemy[kind + "Stacks"]; syncPeriodicStacks(rebuiltEnemy, kind); }
       rebuiltEnemy.bleedStacks = (Array.isArray(enemy.bleedStacks) ? enemy.bleedStacks : []).filter(stack => Number.isFinite(stack?.damage) && stack.damage > 0 && Number.isFinite(stack.turns) && stack.turns > 0).slice(0, 512).map(stack => ({ damage:Math.floor(stack.damage), turns:Math.floor(stack.turns), extensions:Math.min(2, Math.max(0, Math.floor(stack.extensions || 0))) }));
       syncBleeding(rebuiltEnemy);
       rebuiltEnemy.rootedTurns = enemy.rootedTurns || 0;
@@ -5708,6 +5767,7 @@ function continueCampaign(characterId = ""){
       rebuiltEnemy.natureMarkDamage = enemy.natureMarkDamage || 0;
       rebuiltEnemy.naturePoisonTurns = enemy.naturePoisonTurns || 0;
       rebuiltEnemy.naturePoisonDamage = enemy.naturePoisonDamage || 0;
+      if(Array.isArray(enemy.naturePoisonStacks)){rebuiltEnemy.naturePoisonStacks=enemy.naturePoisonStacks.slice(0,512);syncNaturePoison(rebuiltEnemy);}
       rebuiltEnemy.natureDecayTurns = enemy.natureDecayTurns || 0;
       rebuiltEnemy.natureDecayDamage = enemy.natureDecayDamage || 0;
       rebuiltEnemy.equipmentDotOwners = cloneSavedValue(enemy.equipmentDotOwners, {});
@@ -5724,6 +5784,12 @@ function continueCampaign(characterId = ""){
       rebuiltEnemy.bossFlatDamageBonus = enemy.bossFlatDamageBonus || 0;
       rebuiltEnemy.bossPierceBonus = enemy.bossPierceBonus || 0;
       rebuiltEnemy.bossRegenPercent = enemy.bossRegenPercent || 0;
+      if(CampaignEnemyCombat.enabled(rebuiltEnemy)){
+        rebuiltEnemy.campaignState = CampaignEnemyCombat.restoreState(enemy.campaignState);
+        if(enemy.campaignState && CampaignEnemyCombat.index(rebuiltEnemy.baseName)===46) rebuiltEnemy.maxHp = Math.max(rebuiltEnemy.maxHp, Number(enemy.maxHp)||0);
+        if(enemy.campaignState && CampaignEnemyCombat.index(rebuiltEnemy.baseName)===47) rebuiltEnemy.armor = Math.max(rebuiltEnemy.armor, Number(enemy.armor)||0);
+        rebuiltEnemy.hp = Math.min(rebuiltEnemy.maxHp,Math.max(0,Number(enemy.hp)||0));
+      }
       enemy = rebuiltEnemy;
     }
   }
@@ -5833,6 +5899,7 @@ function getSavedCharacterPreviewStats(state){
     player = prepareSavedPlayerForPreview(state.player);
     allocation = getSavedAllocation(state.allocation);
     playerEffects = { ...createDefaultPlayerEffects(), ...(state.playerEffects || {}) };
+  restoreGlassCannonState(state.playerEffects||{});
     normalizePlayerState();
     const previewStats = getPreviewStats();
     return {
@@ -6781,6 +6848,8 @@ async function passTurn(){
 }
 
 function handleEnemyDefeat(){
+  if(CampaignEnemyCombat.beforeDeath()) { isProcessingTurn=false; updateUI(); return; }
+  if(player?.hp <= 0) { handleDeath(); return; }
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
   log("Inimigo derrotado!");
@@ -6879,7 +6948,7 @@ function estimateBossDamageAgainstHero(rawDamage, options = {}){
   if(!options.ignoreFlatReduction){
     damage = Math.max(0, damage - (passiveModifiers.flatReduction || 0));
   }
-  if(playerEffects.percentReductionTurns > 0 && playerEffects.percentReduction > 0){
+  if(!options.ignorePercentReduction && playerEffects.percentReductionTurns > 0 && playerEffects.percentReduction > 0){
     damage = Math.max(0, damage - Math.floor(damage * playerEffects.percentReduction));
   }
   if(!options.ignoreShield){
@@ -7103,8 +7172,7 @@ function resolveBossAction(ability){
 function applyBossHitEffects(ability){
   if(ability.targetBurnPercent && ability.targetBurnTurns){
     const burnDamage = Math.max(1, Math.floor(getCurrentCaps().maxHp * ability.targetBurnPercent));
-    playerEffects.burnDamagePerTurn = Math.max(playerEffects.burnDamagePerTurn, burnDamage);
-    playerEffects.burnTurns = Math.max(playerEffects.burnTurns, ability.targetBurnTurns);
+    applyBurning(playerEffects, burnDamage, ability.targetBurnTurns, ability.name);
     log(`${enemy.baseName} incendiou voce por ${ability.targetBurnTurns} turnos.`);
   }
   if(ability.targetHealReductionPercent && ability.targetHealReductionTurns){
@@ -7125,10 +7193,14 @@ function applyBossHitEffects(ability){
 
 async function enemyTurn(){
   handleBossBuffUpkeep();
+  for(const kind of ["burn", "poison"]){
+    const amount = tickPeriodicStacks(enemy, kind, damage=>CampaignEnemyCombat.temporalDamage(Math.floor(damage * EquipmentSystem.getDotDamageMultiplier(player))));
+    if(amount > 0){ const lost = Math.min(enemy.hp, amount); enemy.hp -= amount; applyLifeSteal(lost); EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:amount,rawDamage:amount,source:"dot"}); }
+  }
   tickBleeding(enemy);
   if(enemy.hp <= 0){ handleEnemyDefeat(); return; }
   if(enemy.dotTurns > 0 && enemy.dotDamagePerTurn > 0){
-    const dotTick = Math.floor(enemy.dotDamagePerTurn * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0)));
+    const dotTick = CampaignEnemyCombat.temporalDamage(Math.floor(enemy.dotDamagePerTurn * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0))));
     const hpLost = Math.min(Math.max(0, enemy.hp), dotTick);
     enemy.hp -= dotTick;
     applyLifeSteal(hpLost);
@@ -7155,7 +7227,7 @@ async function enemyTurn(){
       enemy.healReductionPercent = 0;
     }
   }
-  if(enemy.blizzardTurns > 0){
+  if(!CampaignEnemyCombat.enabled(enemy) && enemy.blizzardTurns > 0){
     enemy.blizzardTurns--;
     if(enemy.blizzardTurns <= 0){
       enemy.blizzardSkipChance = 0;
@@ -7167,6 +7239,7 @@ async function enemyTurn(){
   if(enemy.rootedTurns > 0){
     enemy.rootedTurns--;
   }
+  if(CampaignEnemyCombat.enabled(enemy)) return await CampaignEnemyCombat.turn();
   log(`${enemy.name} prepara um ataque!`);
   await wait(220);
   let dmg = 0;
