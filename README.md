@@ -39,8 +39,10 @@ node scripts/run-regressions.cjs --analysis
 
 A primeira opção valida regras, interface e habilidades da campanha. `--analysis` também executa as simulações de progressão e a matriz dos níveis 1–40; pode levar alguns minutos. Contextos do navegador são descartáveis.
 
-[Análise da campanha até o nível 40](docs/analise_campanha_nivel40.md). Evidências em `docs/qa/campaign/`. Relatórios antigos retratam versões anteriores e não definem as regras atuais.
+[Habilidades de todas as classes](docs/referencia_habilidades_atual.md): fórmulas matemáticas, incógnitas, custos e condições de cada classe/subclasse.
 
-[Análise ampliada de balanceamento até o nível 70](docs/analise_balanceamento_nivel70.md): quatro classes-base, 16 especializações finais, oito distribuições de atributos, todos os 48 inimigos e avaliação de relevância das habilidades. [Evidências e reprodução](docs/qa/balance70/README.md).
+[Inimigos e chefes atuais](docs/inimigos_e_chefes_atual.md), [regras do Mago](docs/balanceamento/mago_2026-11-04.md) e [regras dos inimigos e DOTs](docs/balanceamento/inimigos_2026-11-04.md).
 
-[Catálogo de habilidades e fórmulas por classe e subclasse](docs/habilidades_classes_subclasses.md): kit completo das 28 formas, incluindo variantes herdadas, passivas e habilidades do 80. [Análise de incentivos e propostas de fórmulas](docs/analise_incentivos_habilidades.md), com sondagens atuais até o 100 e [instruções de reprodução](docs/qa/skills-formulas/README.md).
+Análises com os inimigos reformulados: [Guerreiro e Arqueiro](docs/analise_guerreiro_arqueiro_inimigos_2026-11-04.md) e [Mago](docs/analise_mago_2026-11-04.md). As análises documentam a preparação artificial e as limitações das builds.
+
+[Equipamentos e custos](docs/equipamentos_balanceamento_2026-11-03.md). [Testes e reprodução](docs/qa/README.md).

@@ -1,0 +1,25 @@
+classe,rota,semente,resultado,nivel,mortes,fugas,combates,mortes_preparacao_maxima,ultimo_alvo_na_derrota
+Guerreiro,Paladino,101,11 mortes no nivel 100 com seis lendarios,100,68,10,363,11,Deus da Ruina
+Guerreiro,Paladino,202,11 mortes no nivel 100 com seis lendarios,100,78,11,292,11,Deus da Ruina
+Guerreiro,Paladino,303,11 mortes no nivel 100 com seis lendarios,100,78,9,312,11,Deus da Ruina
+Guerreiro,Berserker,101,11 mortes no nivel 100 com seis lendarios,100,69,10,368,11,Avatar do Zenith
+Guerreiro,Berserker,202,11 mortes no nivel 100 com seis lendarios,100,82,11,291,11,Avatar do Zenith
+Guerreiro,Berserker,303,11 mortes no nivel 100 com seis lendarios,100,82,9,292,11,Avatar do Zenith
+Guerreiro,Samurai,101,11 mortes no nivel 100 com seis lendarios,100,80,10,304,11,Avatar do Zenith
+Guerreiro,Samurai,202,11 mortes no nivel 100 com seis lendarios,100,89,11,258,11,Avatar do Zenith
+Guerreiro,Samurai,303,11 mortes no nivel 100 com seis lendarios,100,85,9,275,11,Avatar do Zenith
+Guerreiro,Ninja,101,Paradoxo derrotado,100,72,10,360,8,Soberano do Paradoxo
+Guerreiro,Ninja,202,11 mortes no nivel 100 com seis lendarios,100,85,11,311,11,Deus da Ruina
+Guerreiro,Ninja,303,Paradoxo derrotado,100,73,9,314,1,Soberano do Paradoxo
+Arqueiro,Sniper,101,Paradoxo derrotado,97,67,3,436,0,Soberano do Paradoxo
+Arqueiro,Sniper,202,Paradoxo derrotado,83,72,1,201,0,Soberano do Paradoxo
+Arqueiro,Sniper,303,Paradoxo derrotado,87,62,4,297,0,Oraculo do Zero
+Arqueiro,Atirador Arcano,101,Paradoxo derrotado,87,63,3,346,0,Soberano do Paradoxo
+Arqueiro,Atirador Arcano,202,Paradoxo derrotado,94,82,1,241,0,Soberano do Paradoxo
+Arqueiro,Atirador Arcano,303,Paradoxo derrotado,94,71,4,302,0,Soberano do Paradoxo
+Arqueiro,Espreitador,101,11 mortes no nivel 100 com seis lendarios,100,87,3,319,11,Soberano do Paradoxo
+Arqueiro,Espreitador,202,11 mortes no nivel 100 com seis lendarios,100,96,1,326,11,Soberano do Paradoxo
+Arqueiro,Espreitador,303,11 mortes no nivel 100 com seis lendarios,100,88,4,354,11,Guardiao Temporal
+Arqueiro,Guarda Florestal,101,Paradoxo derrotado,89,65,3,282,0,Soberano do Paradoxo
+Arqueiro,Guarda Florestal,202,11 mortes no nivel 100 com seis lendarios,100,99,1,270,11,Soberano do Paradoxo
+Arqueiro,Guarda Florestal,303,Paradoxo derrotado,100,71,4,408,0,Soberano do Paradoxo

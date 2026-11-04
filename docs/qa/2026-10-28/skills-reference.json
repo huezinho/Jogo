@@ -52,7 +52,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 74 e 79."
+        "description": "Ataque basico. Dano entre 74 e 79.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -65,7 +66,8 @@
           "turns": 0,
           "damageBuff": 0,
           "description": "Recuperar Folego: consome 40 MP e recupera 47 de vida.",
-          "effectiveCost": 40
+          "effectiveCost": 40,
+          "mathematicalFormula": "C = 30 + W; cura = 0,12H"
         },
         {
           "level": 20,
@@ -78,7 +80,8 @@
           "enemyAttackDownPercent": 0,
           "enemyAttackDownTurns": 0,
           "description": "Esbarrao: consome 48 MP e causa 109 de dano.",
-          "effectiveCost": 48
+          "effectiveCost": 48,
+          "mathematicalFormula": "C = 38 + W; D = 20 + 0,06H + 0,6A + 0,4P"
         }
       ],
       "passive": [
@@ -87,7 +90,8 @@
           "id": "vontade_de_ferro",
           "name": "Vontade de Ferro",
           "type": "warrior_flat_reduction",
-          "description": "Vontade de Ferro: reduz 12 de dano por ataque recebido."
+          "description": "Vontade de Ferro: reduz 12 de dano por ataque recebido.",
+          "mathematicalFormula": "Redução fixa = piso(0,6L)"
         }
       ],
       "modifiers": {
@@ -148,7 +152,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 230 e 235."
+        "description": "Ataque basico. Dano entre 230 e 235.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -161,7 +166,8 @@
           "turns": 0,
           "damageBuff": 0,
           "description": "Recuperar Folego: consome 55 MP e recupera 353 de vida.",
-          "effectiveCost": 55
+          "effectiveCost": 55,
+          "mathematicalFormula": "C = 30 + W; cura = 0,19H"
         },
         {
           "level": 20,
@@ -174,7 +180,8 @@
           "enemyAttackDownPercent": 0.3,
           "enemyAttackDownTurns": 3,
           "description": "Esbarrao: consome 69 MP e causa 435 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
-          "effectiveCost": 69
+          "effectiveCost": 69,
+          "mathematicalFormula": "C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P"
         },
         {
           "level": 30,
@@ -185,7 +192,8 @@
           "damage": 382,
           "skipChance": 0.3,
           "description": "Contundir: consome 65 MP e causa 382 de dano. Tem 30% de chance de fazer o inimigo perder o proximo turno.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P"
         },
         {
           "level": 50,
@@ -197,7 +205,8 @@
           "totalDamagePercent": 0.3,
           "damageReductionPercent": 0,
           "description": "Brado: consome 65 MP e aumenta o dano total final em 30% por 5 turnos.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W; dano final × 1,3"
         }
       ],
       "passive": [
@@ -206,14 +215,16 @@
           "id": "vontade_de_ferro",
           "name": "Vontade de Ferro",
           "type": "warrior_flat_reduction",
-          "description": "Vontade de Ferro: reduz 30 de dano por ataque recebido. Alem disso, recupera 55 de vida por turno."
+          "description": "Vontade de Ferro: reduz 30 de dano por ataque recebido. Alem disso, recupera 55 de vida por turno.",
+          "mathematicalFormula": "Redução fixa = piso(0,6L); cura por turno = 0,03H"
         },
         {
           "level": 40,
           "id": "refletir",
           "name": "Refletir",
           "type": "warrior_reflect",
-          "description": "Refletir: reflete 20% do dano recebido para o inimigo."
+          "description": "Refletir: reflete 20% do dano recebido para o inimigo.",
+          "mathematicalFormula": "Dano refletido = 0,2Vᵣ, mais o bônus do acessório"
         }
       ],
       "modifiers": {
@@ -275,7 +286,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 696 e 701."
+        "description": "Ataque basico. Dano entre 696 e 701.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -288,7 +300,8 @@
           "turns": 0,
           "damageBuff": 0,
           "description": "Recuperar Folego: consome 80 MP e recupera 1430 de vida.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + W; cura = 0,19H"
         },
         {
           "level": 20,
@@ -301,7 +314,8 @@
           "enemyAttackDownPercent": 0.3,
           "enemyAttackDownTurns": 3,
           "description": "Esbarrao: consome 94 MP e causa 1447 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
-          "effectiveCost": 94
+          "effectiveCost": 94,
+          "mathematicalFormula": "C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P"
         },
         {
           "level": 30,
@@ -312,7 +326,8 @@
           "damage": 1244,
           "skipChance": 0.45,
           "description": "Contundir: consome 90 MP e causa 1244 de dano. Tem 45% de chance de fazer o inimigo perder o proximo turno.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P"
         },
         {
           "level": 50,
@@ -324,7 +339,8 @@
           "totalDamagePercent": 0.3,
           "damageReductionPercent": 0.16,
           "description": "Brado: consome 90 MP e aumenta o dano total final em 30% por 5 turnos. Tambem bloqueia 16% do dano sofrido nesse periodo.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; dano final × 1,3"
         },
         {
           "level": 60,
@@ -334,7 +350,8 @@
           "cost": 250,
           "damage": 3980,
           "description": "Julgamento: consome 250 MP e causa 3980 de dano.",
-          "effectiveCost": 250
+          "effectiveCost": 250,
+          "mathematicalFormula": "C = 100 + 3W; D = 80 + 0,4H + 0,5A + 0,8P"
         },
         {
           "level": 80,
@@ -344,7 +361,8 @@
           "cost": 3787,
           "turns": 3,
           "description": "Escudo de Fe: consome 3787 MP e por 3 turnos voce nao recebe dano. Depois, explode causando 50% do dano que teria sido absorvido ao inimigo.",
-          "effectiveCost": 3787
+          "effectiveCost": 3787,
+          "mathematicalFormula": "C = 0,7M + W; explosão = 0,5X"
         }
       ],
       "passive": [
@@ -353,21 +371,24 @@
           "id": "vontade_de_ferro",
           "name": "Vontade de Ferro",
           "type": "warrior_flat_reduction",
-          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 225 de vida por turno."
+          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 225 de vida por turno.",
+          "mathematicalFormula": "Redução fixa = piso(0,6L); cura por turno = 0,03H"
         },
         {
           "level": 40,
           "id": "refletir",
           "name": "Refletir",
           "type": "warrior_reflect",
-          "description": "Refletir: reflete 40% do dano recebido para o inimigo."
+          "description": "Refletir: reflete 40% do dano recebido para o inimigo.",
+          "mathematicalFormula": "Dano refletido = 0,4Vᵣ, mais o bônus do acessório"
         },
         {
           "level": 70,
           "id": "aura_divina",
           "name": "Aura Divina",
           "type": "warrior_aura_shield",
-          "description": "Aura Divina: a cada turno, ganha um escudo persistente de 150."
+          "description": "Aura Divina: a cada turno, ganha um escudo persistente de 150.",
+          "mathematicalFormula": "Escudo adicional por turno = piso(0,02H)"
         }
       ],
       "modifiers": {
@@ -429,7 +450,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 756 e 761."
+        "description": "Ataque basico. Dano entre 756 e 761.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -442,7 +464,8 @@
           "turns": 0,
           "damageBuff": 0,
           "description": "Recuperar Folego: consome 80 MP e recupera 1240 de vida.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + W; cura = 0,19H"
         },
         {
           "level": 20,
@@ -455,7 +478,8 @@
           "enemyAttackDownPercent": 0.3,
           "enemyAttackDownTurns": 3,
           "description": "Esbarrao: consome 94 MP e causa 1405 de dano. Tambem reduz o ataque do inimigo em 30% por 3 turnos.",
-          "effectiveCost": 94
+          "effectiveCost": 94,
+          "mathematicalFormula": "C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P"
         },
         {
           "level": 30,
@@ -466,7 +490,8 @@
           "damage": 1615,
           "skipChance": 0,
           "description": "Contundir: consome 90 MP e causa 1615 de dano.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; D = 60 + 0,07H + 1,1A + 0,4P"
         },
         {
           "level": 50,
@@ -479,7 +504,8 @@
           "totalDamagePercent": 1.2,
           "lifeStealPercent": 0.2,
           "description": "Ira: consome 50 MP e 70% da sua vida maxima, aumentando o dano total final em 120% e concedendo 20% de roubo de vida sobre dano causado a vida do inimigo por 4 turnos.",
-          "effectiveCost": 50
+          "effectiveCost": 50,
+          "mathematicalFormula": "C = W MP + 0,7H de vida; dano final × 2,2; roubo de vida = 0,2V"
         },
         {
           "level": 60,
@@ -491,7 +517,8 @@
           "incomingDamagePercent": 1.5,
           "enemyMaxHpBonusDamagePercent": 0.15,
           "description": "Vallhala: consome 150 MP, faz voce receber 150% de dano adicional e adiciona 15% da vida maxima do inimigo em qualquer dano causado por 5 turnos.",
-          "effectiveCost": 150
+          "effectiveCost": 150,
+          "mathematicalFormula": "C = 100 + W; dano recebido × 2,5; adicional por dano causado = 0,15E"
         },
         {
           "level": 80,
@@ -504,7 +531,8 @@
           "attackBuffAmount": 100,
           "canBreakControl": true,
           "description": "Voce Ira Me Parar?: consome 150 MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque em 100 por 4 turnos. Pode ser usada para impedir a perda do turno atual.",
-          "effectiveCost": 150
+          "effectiveCost": 150,
+          "mathematicalFormula": "C = 100 + W MP + 0,3H de vida; A adicional = 100"
         }
       ],
       "passive": [
@@ -513,21 +541,24 @@
           "id": "vontade_de_ferro",
           "name": "Vontade de Ferro",
           "type": "warrior_flat_reduction",
-          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 195 de vida por turno."
+          "description": "Vontade de Ferro: reduz 60 de dano por ataque recebido. Alem disso, recupera 195 de vida por turno.",
+          "mathematicalFormula": "Redução fixa = piso(0,6L); cura por turno = 0,03H"
         },
         {
           "level": 40,
           "id": "refletir",
           "name": "Refletir",
           "type": "warrior_reflect",
-          "description": "Refletir: ao sofrer dano, tem 50% de chance de responder com um ataque basico."
+          "description": "Refletir: ao sofrer dano, tem 50% de chance de responder com um ataque basico.",
+          "mathematicalFormula": "50% de chance de contra-atacar ao sofrer dano"
         },
         {
           "level": 70,
           "id": "voce_nao_e_digno",
           "name": "Voce Nao e Digno",
           "type": "warrior_last_stand",
-          "description": "Voce Nao e Digno: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer."
+          "description": "Voce Nao e Digno: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer.",
+          "mathematicalFormula": "Voce Nao e Digno: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer."
         }
       ],
       "modifiers": {
@@ -588,7 +619,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 247 e 252."
+        "description": "Ataque basico. Dano entre 247 e 252.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -601,7 +633,8 @@
           "turns": 3,
           "damageBuff": 0.28,
           "description": "Recuperar Folego: consome 55 MP e recupera 206 de vida. Tambem aumenta seu dano total final em 28% por 3 turnos.",
-          "effectiveCost": 55
+          "effectiveCost": 55,
+          "mathematicalFormula": "C = 30 + W; cura = 0,12H"
         },
         {
           "level": 20,
@@ -614,7 +647,8 @@
           "enemyAttackDownPercent": 0,
           "enemyAttackDownTurns": 0,
           "description": "Investida: consome 75 MP e causa 495 de dano. Pode ser usada para impedir a perda do turno atual.",
-          "effectiveCost": 75
+          "effectiveCost": 75,
+          "mathematicalFormula": "C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -625,7 +659,8 @@
           "hits": 2,
           "bleedPercent": 0,
           "description": "Golpes Velozes: consome 69 MP e executa 2 ataques basicos.",
-          "effectiveCost": 69
+          "effectiveCost": 69,
+          "mathematicalFormula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r"
         },
         {
           "level": 50,
@@ -638,7 +673,8 @@
           "bleedPercent": 0.15,
           "bleedTurns": 3,
           "description": "Corte Profundo: consome 77 MP e causa 516 de dano. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.",
-          "effectiveCost": 77
+          "effectiveCost": 77,
+          "mathematicalFormula": "C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3"
         }
       ],
       "passive": [
@@ -647,14 +683,16 @@
           "id": "veloz",
           "name": "Veloz",
           "type": "warrior_enemy_miss",
-          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce.",
+          "mathematicalFormula": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
         },
         {
           "level": 40,
           "id": "contra_ataque",
           "name": "Contra-Ataque",
           "type": "warrior_counter_on_dodge",
-          "description": "Contra-Ataque: ao desviar de um ataque, executa um contra-ataque com seu ataque basico."
+          "description": "Contra-Ataque: ao desviar de um ataque, executa um contra-ataque com seu ataque basico.",
+          "mathematicalFormula": "Contra-Ataque: ao desviar de um ataque, executa um contra-ataque com seu ataque basico."
         }
       ],
       "modifiers": {
@@ -716,7 +754,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 738 e 743."
+        "description": "Ataque basico. Dano entre 738 e 743.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -729,7 +768,8 @@
           "turns": 3,
           "damageBuff": 0.28,
           "description": "Recuperar Folego: consome 80 MP e recupera 826 de vida. Tambem aumenta seu dano total final em 28% por 3 turnos.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + W; cura = 0,12H"
         },
         {
           "level": 20,
@@ -742,7 +782,8 @@
           "enemyAttackDownPercent": 0,
           "enemyAttackDownTurns": 0,
           "description": "Investida: consome 100 MP e causa 1575 de dano. Pode ser usada para impedir a perda do turno atual.",
-          "effectiveCost": 100
+          "effectiveCost": 100,
+          "mathematicalFormula": "C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -753,7 +794,8 @@
           "hits": 2,
           "bleedPercent": 0.15,
           "description": "Golpes Velozes: consome 94 MP e executa 2 ataques basicos. Tambem aplica sangramento por 3 turnos.",
-          "effectiveCost": 94
+          "effectiveCost": 94,
+          "mathematicalFormula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r"
         },
         {
           "level": 50,
@@ -766,7 +808,8 @@
           "bleedPercent": 0.15,
           "bleedTurns": 3,
           "description": "Corte Profundo: consome 102 MP e causa 1433 de dano. Ignora armadura. Aplica sangramento equivalente a 15% do dano causado por 3 turnos.",
-          "effectiveCost": 102
+          "effectiveCost": 102,
+          "mathematicalFormula": "C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3"
         },
         {
           "level": 60,
@@ -776,7 +819,8 @@
           "cost": 132,
           "damage": 1650,
           "description": "Furar Blindagem: consome 132 MP e causa 1650 de dano.",
-          "effectiveCost": 132
+          "effectiveCost": 132,
+          "mathematicalFormula": "C = 82 + W; D = 80 + 1,1A + 1,1P; D × 3 se o alvo tiver escudo"
         },
         {
           "level": 80,
@@ -786,7 +830,8 @@
           "cost": 340,
           "turns": 3,
           "description": "Cortes Ultrasonicos: consome 340 MP. Por 3 turnos, voce so pode usar o ataque basico e nao pode ser atingido. Ao terminar, precisa realizar outra acao antes de reativar.",
-          "effectiveCost": 340
+          "effectiveCost": 340,
+          "mathematicalFormula": "C = 240 + 2W; 3 turnos de ataques básicos e esquiva; intervalo de 1 ação para reativar"
         }
       ],
       "passive": [
@@ -795,21 +840,24 @@
           "id": "veloz",
           "name": "Veloz",
           "type": "warrior_enemy_miss",
-          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce.",
+          "mathematicalFormula": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
         },
         {
           "level": 40,
           "id": "contra_ataque",
           "name": "Contra-Ataque",
           "type": "warrior_counter_on_dodge",
-          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria."
+          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria.",
+          "mathematicalFormula": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria."
         },
         {
           "level": 70,
           "id": "mente_limpa",
           "name": "Mente Limpa",
           "type": "warrior_first_strike_echo",
-          "description": "Mente Limpa: o primeiro ataque do combate acerta duas vezes, com o segundo golpe causando 50% do dano, mas repetindo os efeitos."
+          "description": "Mente Limpa: o primeiro ataque do combate acerta duas vezes, com o segundo golpe causando 50% do dano, mas repetindo os efeitos.",
+          "mathematicalFormula": "Segundo golpe inicial = 0,5 × dano do primeiro"
         }
       ],
       "modifiers": {
@@ -871,7 +919,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 743 e 748."
+        "description": "Ataque basico. Dano entre 743 e 748.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -884,7 +933,8 @@
           "turns": 3,
           "damageBuff": 0.28,
           "description": "Recuperar Folego: consome 80 MP e recupera 766 de vida. Tambem aumenta seu dano total final em 28% por 3 turnos.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + W; cura = 0,12H"
         },
         {
           "level": 20,
@@ -897,7 +947,8 @@
           "enemyAttackDownPercent": 0,
           "enemyAttackDownTurns": 0,
           "description": "Investida: consome 100 MP e causa 1561 de dano. Pode ser usada para impedir a perda do turno atual.",
-          "effectiveCost": 100
+          "effectiveCost": 100,
+          "mathematicalFormula": "C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -908,7 +959,8 @@
           "hits": 3,
           "bleedPercent": 0,
           "description": "Golpes Velozes: consome 94 MP e executa 3 ataques basicos.",
-          "effectiveCost": 94
+          "effectiveCost": 94,
+          "mathematicalFormula": "C = 44 + W; 3 ataques básicos; cada golpe usa A + r"
         },
         {
           "level": 50,
@@ -921,7 +973,8 @@
           "bleedPercent": 0.3,
           "bleedTurns": 3,
           "description": "Corte Profundo: consome 102 MP e causa 1513 de dano. Aplica sangramento equivalente a 30% do dano causado por 3 turnos.",
-          "effectiveCost": 102
+          "effectiveCost": 102,
+          "mathematicalFormula": "C = 52 + W; D = 70 + 0,9A + 1,1P; sangramento por turno = Dₑ × 0,3 ÷ 3"
         },
         {
           "level": 60,
@@ -932,7 +985,8 @@
           "turns": 1,
           "nextDamageBonus": 0.3,
           "description": "Bomba de Fumaca: consome 90 MP, garante esquiva no proximo ataque do inimigo e fortalece em 30% o seu proximo dano.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; próximo dano × 1,3; esquiva garantida no próximo ataque"
         },
         {
           "level": 80,
@@ -942,7 +996,8 @@
           "cost": 250,
           "damage": 6400,
           "description": "Mata-Gigantes: consome 250 MP e causa 6400 de dano com base na vida atual do inimigo.",
-          "effectiveCost": 250
+          "effectiveCost": 250,
+          "mathematicalFormula": "C = 200 + W; D = 0,32h"
         }
       ],
       "passive": [
@@ -951,21 +1006,24 @@
           "id": "veloz",
           "name": "Veloz",
           "type": "warrior_enemy_miss",
-          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
+          "description": "Veloz: concede 20% de chance do inimigo errar ao atacar voce.",
+          "mathematicalFormula": "Veloz: concede 20% de chance do inimigo errar ao atacar voce."
         },
         {
           "level": 40,
           "id": "contra_ataque",
           "name": "Contra-Ataque",
           "type": "warrior_counter_on_dodge",
-          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo."
+          "description": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo.",
+          "mathematicalFormula": "Contra-Ataque: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo."
         },
         {
           "level": 70,
           "id": "eliminar",
           "name": "Eliminar",
           "type": "warrior_execute_bonus",
-          "description": "Eliminar: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida."
+          "description": "Eliminar: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida.",
+          "mathematicalFormula": "Dano × 1,5 quando h ≤ 0,5E"
         }
       ],
       "modifiers": {
@@ -1026,7 +1084,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 15 MP, dispara 5 misseis e cada um causa entre 19 e 35 de dano."
+        "description": "Missel Magico: consome 15 MP, dispara 5 misseis e cada um causa entre 19 e 35 de dano.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1038,7 +1097,8 @@
           "damage": 90,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 30 MP e causa 90 de dano.",
-          "effectiveCost": 30
+          "effectiveCost": 30,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 0,6P + 0,08M + 3,5B + F"
         }
       ],
       "passive": [
@@ -1047,7 +1107,8 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         }
       ],
       "modifiers": {
@@ -1108,7 +1169,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 24 MP, dispara 8 misseis e cada um causa entre 69 e 115 de dano."
+        "description": "Missel Magico: consome 24 MP, dispara 8 misseis e cada um causa entre 69 e 115 de dano.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A + 0,09P em cada limite; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1120,7 +1182,8 @@
           "damage": 384,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 45 MP e causa 384 de dano.",
-          "effectiveCost": 45
+          "effectiveCost": 45,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 1,0P + 0,08M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1137,7 +1200,8 @@
           "appliesBurn": true,
           "appliesChill": false,
           "description": "Bola de Fogo: consome 65 MP e causa 362 de dano de fogo. A queimadura causa 600 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W + S; D = 50 + 0,15A + 1,2P + F"
         },
         {
           "level": 50,
@@ -1153,7 +1217,8 @@
           "chillAttackDownPercent": 0,
           "freezeVulnerabilityPercent": 0,
           "description": "Congelar: consome 65 MP, causa 275 de dano e tem 30% de chance de impedir o proximo ataque do inimigo.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W + S; D = 60 + 0,08A + 0,85P + F"
         }
       ],
       "passive": [
@@ -1162,14 +1227,16 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "mana_e_vida",
           "name": "Mana e Vida",
           "type": "mage_mana_to_life",
-          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima."
+          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima.",
+          "mathematicalFormula": "Vida adicional = 0,45M"
         }
       ],
       "modifiers": {
@@ -1231,7 +1298,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 284 e 421 de dano."
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 284 e 421 de dano.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A + 0,09P em cada limite; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1243,7 +1311,8 @@
           "damage": 2080,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 70 MP e causa 2080 de dano.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 1,0P + 0,08M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1260,7 +1329,8 @@
           "appliesBurn": true,
           "appliesChill": false,
           "description": "Bola de Fogo: consome 90 MP e causa 3192 de dano de fogo. A queimadura causa 1000 por turno durante 3 turnos e reduz a cura recebida pelo inimigo em 30%.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,05h + F"
         },
         {
           "level": 50,
@@ -1276,7 +1346,8 @@
           "chillAttackDownPercent": 0,
           "freezeVulnerabilityPercent": 0,
           "description": "Bafo de Fogo: consome 90 MP, causa 1568 de dano e aplica queimadura por 6 turnos.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W + S; D = 60 + 0,08A + 0,9P + F"
         },
         {
           "level": 60,
@@ -1289,7 +1360,8 @@
           "burnTurns": 1,
           "healReductionPercent": 0.3,
           "description": "Fenix Sagrada: consome 1817 MP e causa 3360 de dano, aplicando queimadura por 1 turno.",
-          "effectiveCost": 1817
+          "effectiveCost": 1817,
+          "mathematicalFormula": "C = 200 + P + S; D = 100 + 0,4A + 1,85P + F"
         },
         {
           "level": 80,
@@ -1300,7 +1372,8 @@
           "hpCostPercent": 0.5,
           "damage": 16696,
           "description": "Explodir: consome 500 MP, 50% da sua vida maxima e causa 16696 de dano.",
-          "effectiveCost": 500
+          "effectiveCost": 500,
+          "mathematicalFormula": "C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,5E + F"
         }
       ],
       "passive": [
@@ -1309,21 +1382,24 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "mana_e_vida",
           "name": "Mana e Vida",
           "type": "mage_mana_to_life",
-          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima. Alem disso, concede 867 de dano de habilidade."
+          "description": "Mana e Vida: converte 45% da mana maxima em vida maxima. Alem disso, concede 867 de dano de habilidade.",
+          "mathematicalFormula": "Vida adicional = 0,45M; P adicional = 0,16M"
         },
         {
           "level": 70,
           "id": "fogo_do_inferno",
           "name": "Fogo do Inferno",
           "type": "mage_hellfire",
-          "description": "Fogo do Inferno: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno."
+          "description": "Fogo do Inferno: aumenta o dano da queimadura de 3% para 5% da vida maxima do inimigo por turno.",
+          "mathematicalFormula": "Queimadura por turno = 0,05E"
         }
       ],
       "modifiers": {
@@ -1385,7 +1461,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 204 e 341 de dano."
+        "description": "Missel Magico: consome 39 MP, dispara 13 misseis e cada um causa entre 204 e 341 de dano.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A + 0,09P em cada limite; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1397,7 +1474,8 @@
           "damage": 1225,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 70 MP e causa 1225 de dano.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 1,0P + 0,08M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1414,7 +1492,8 @@
           "appliesBurn": false,
           "appliesChill": true,
           "description": "Bola de Neve: consome 90 MP e causa 1083 de dano. Aplica resfriamento por 3 turnos, reduzindo em 30% o ataque do inimigo.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W + S; D = 50 + 0,18A + 1,25P + F"
         },
         {
           "level": 50,
@@ -1430,7 +1509,8 @@
           "chillAttackDownPercent": 0.3,
           "freezeVulnerabilityPercent": 0.5,
           "description": "Congelar: consome 90 MP, causa 770 de dano e tem 30% de chance de impedir o proximo ataque do inimigo. Se nao impedir o turno, aplica resfriamento por 2 turnos ou Congelamento se o alvo ja estiver resfriado.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W + S; D = 60 + 0,08A + 0,9P + F"
         },
         {
           "level": 60,
@@ -1443,7 +1523,8 @@
           "chillTurns": 6,
           "chillAttackDownPercent": 0.3,
           "description": "Nevasca: consome 170 MP e faz o inimigo ter 15% de chance de perder o turno e reduz seu ataque em 30% por 6 turnos.",
-          "effectiveCost": 170
+          "effectiveCost": 170,
+          "mathematicalFormula": "C = 120 + W + S; ataque inimigo × 0,7; 15% de chance de impedir a ação por turno"
         },
         {
           "level": 80,
@@ -1455,7 +1536,8 @@
           "chillTurns": 4,
           "chillAttackDownPercent": 0.3,
           "description": "Avalanche: consome 450 MP, causa 8749 de dano e aplica resfriamento por 4 turnos.",
-          "effectiveCost": 450
+          "effectiveCost": 450,
+          "mathematicalFormula": "C = 400 + W + S; D = 200 + 1,3P + 0,38h + F"
         }
       ],
       "passive": [
@@ -1464,21 +1546,24 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "mana_e_vida",
           "name": "Mana e Vida",
           "type": "mage_mana_to_life",
-          "description": "Mana e Vida: converte 65% da mana maxima em vida maxima."
+          "description": "Mana e Vida: converte 65% da mana maxima em vida maxima.",
+          "mathematicalFormula": "Vida adicional = 0,65M"
         },
         {
           "level": 70,
           "id": "gelo_queima",
           "name": "Gelo Queima",
           "type": "mage_frostburn",
-          "description": "Gelo Queima: sempre que aplicar resfriamento, tambem causa queimadura de 3% da vida maxima por 1 turno."
+          "description": "Gelo Queima: sempre que aplicar resfriamento, tambem causa queimadura de 3% da vida maxima por 1 turno.",
+          "mathematicalFormula": "Ao resfriar: queimadura = 0,03E por 1 turno"
         }
       ],
       "modifiers": {
@@ -1539,7 +1624,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 390 por acao, dividido entre os projeteis.  consome 24 MP, dispara 8 misseis e cada um causa entre 50 e 98 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 390 por acao, dividido entre os projeteis.  consome 24 MP, dispara 8 misseis e cada um causa entre 50 e 98 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1551,7 +1637,8 @@
           "damage": 738,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 216 MP e causa 738 de dano.",
-          "effectiveCost": 216
+          "effectiveCost": 216,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 0,6P + 0,12M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1562,7 +1649,8 @@
           "damage": 585,
           "charges": 0,
           "description": "Descarregar: consome 171 MP, gasta todas as cargas arcanas e causa 585 de dano.",
-          "effectiveCost": 171
+          "effectiveCost": 171,
+          "mathematicalFormula": "C = 30Q + S; D = 60 + LQ + 0,3P + 0,045M + F"
         },
         {
           "level": 50,
@@ -1573,7 +1661,8 @@
           "shield": 508,
           "turns": 2,
           "description": "Escudo de Mana: consome 405 MP e concede 508 de escudo por 2 turnos.",
-          "effectiveCost": 405
+          "effectiveCost": 405,
+          "mathematicalFormula": "C = 0,15M + S; escudo = 40 + 0,3M"
         }
       ],
       "passive": [
@@ -1582,14 +1671,16 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 390 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 171."
+          "description": "Transbordando: concede 390 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 171.",
+          "mathematicalFormula": "F = piso(0,25M); S = piso(0,11M)"
         }
       ],
       "modifiers": {
@@ -1651,7 +1742,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 2512 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 143 e 284 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 2512 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 143 e 284 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1663,7 +1755,8 @@
           "damage": 3706,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 1326 MP e causa 3706 de dano.",
-          "effectiveCost": 1326
+          "effectiveCost": 1326,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 0,6P + 0,12M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1674,7 +1767,8 @@
           "damage": 2512,
           "charges": 0,
           "description": "Descarregar: consome 1256 MP, gasta todas as cargas arcanas e causa 2512 de dano.",
-          "effectiveCost": 1256
+          "effectiveCost": 1256,
+          "mathematicalFormula": "C = 30Q + S; D = (L + 0,0065M) × Q + F"
         },
         {
           "level": 50,
@@ -1685,7 +1779,8 @@
           "shield": 2552,
           "turns": 2,
           "description": "Escudo de Mana: consome 2009 MP e concede 2552 de escudo por 2 turnos.",
-          "effectiveCost": 2009
+          "effectiveCost": 2009,
+          "mathematicalFormula": "C = 0,12M + S; escudo = 40 + 0,4M"
         },
         {
           "level": 60,
@@ -1697,7 +1792,8 @@
           "percent": 0.3,
           "manaRegenPercent": 0.1,
           "description": "Concentracao: consome 1456 MP, aumenta o dano total em 30% e a regeneracao de mana em 10% por 4 turnos.",
-          "effectiveCost": 1456
+          "effectiveCost": 1456,
+          "mathematicalFormula": "C = 200 + S; dano final × 1,3; regeneração de mana +10%"
         },
         {
           "level": 80,
@@ -1708,7 +1804,8 @@
           "damage": 8992,
           "charges": 0,
           "description": "Sobrecarregar: consome 5966 MP e causa 8992 de dano usando sua mana maxima e as cargas arcanas.",
-          "effectiveCost": 5966
+          "effectiveCost": 5966,
+          "mathematicalFormula": "C = 0,75M + S; D = 200 + M + LQ + F"
         }
       ],
       "passive": [
@@ -1717,21 +1814,24 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 2512 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 1256."
+          "description": "Transbordando: concede 2512 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 1256.",
+          "mathematicalFormula": "F = piso(0,4M); S = piso(0,2M)"
         },
         {
           "level": 70,
           "id": "carregar",
           "name": "Carregar",
           "type": "mage_charge_damage",
-          "description": "Carregar: cada carga arcana aumenta o dano total em 5%. Atualmente: 0%."
+          "description": "Carregar: cada carga arcana aumenta o dano total em 5%. Atualmente: 0%.",
+          "mathematicalFormula": "Dano total adicional = 5% × Q"
         }
       ],
       "modifiers": {
@@ -1793,7 +1893,8 @@
       },
       "basic": {
         "name": "Misseis Magicos",
-        "description": "Missel Magico: bonus fixo de 1445 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 146 e 290 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga."
+        "description": "Missel Magico: bonus fixo de 1445 por acao, dividido entre os projeteis.  consome 39 MP, dispara 13 misseis e cada um causa entre 146 e 290 de dano. Cada missel tem 15% de chance de gerar 1 Carga Arcana, que dura 3 turnos a partir da primeira carga.",
+        "formula": "N = piso(3 + 0,1L) mísseis; C = 3N; cada míssil entre 5 + 0,2A e 7 + 0,4A; F é dividido entre os N projéteis"
       },
       "active": [
         {
@@ -1805,7 +1906,8 @@
           "damage": 2588,
           "enemyManaBurnAmount": 0,
           "description": "Explosao de Mana: consome 705 MP e causa 2588 de dano.",
-          "effectiveCost": 705
+          "effectiveCost": 705,
+          "mathematicalFormula": "C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 0,6P + 0,12M + 3,5B + F"
         },
         {
           "level": 30,
@@ -1816,7 +1918,8 @@
           "damage": 1975,
           "charges": 0,
           "description": "Descarregar: consome 635 MP, gasta todas as cargas arcanas e causa 1975 de dano.",
-          "effectiveCost": 635
+          "effectiveCost": 635,
+          "mathematicalFormula": "C = 30Q + S; D = 60 + LQ + 0,3P + 0,045M + F"
         },
         {
           "level": 50,
@@ -1827,7 +1930,8 @@
           "shield": 1774,
           "turns": 2,
           "description": "Escudo de Mana: consome 1502 MP e concede 1774 de escudo por 2 turnos.",
-          "effectiveCost": 1502
+          "effectiveCost": 1502,
+          "mathematicalFormula": "C = 0,15M + S; escudo = 40 + 0,3M"
         },
         {
           "level": 60,
@@ -1840,7 +1944,8 @@
           "armorBreakTurns": 5,
           "noShieldTurns": 5,
           "description": "Corrupcao: consome 1734 MP, causa 3620 de dano, remove toda a armadura do inimigo e impede escudos por 5 turnos.",
-          "effectiveCost": 1734
+          "effectiveCost": 1734,
+          "mathematicalFormula": "C = 0,3M; D = 100 + 1,15P + 0,22M + F; armadura do alvo = 0"
         },
         {
           "level": 80,
@@ -1852,7 +1957,8 @@
           "damagePercent": 2,
           "vulnerabilityPercent": 0.4,
           "description": "Incorporar Demonio: consome 1734 MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.",
-          "effectiveCost": 1734
+          "effectiveCost": 1734,
+          "mathematicalFormula": "C = 0,3M; dano final × 3; dano recebido × 1,4"
         }
       ],
       "passive": [
@@ -1861,21 +1967,24 @@
           "id": "ultimo_recurso",
           "name": "Ultimo Recurso",
           "type": "mage_last_resort",
-          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe."
+          "description": "Ultimo Recurso: se um golpe fatal acertaria voce e sua mana atual for pelo menos o dobro desse dano, voce gasta o dobro em mana para anular o golpe.",
+          "mathematicalFormula": "Se o golpe for fatal e m ≥ 2Vᵣ: custo em mana = 2Vᵣ; dano à vida = 0"
         },
         {
           "level": 40,
           "id": "transbordando",
           "name": "Transbordando",
           "type": "mage_overflowing",
-          "description": "Transbordando: concede 1445 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 635. Tambem converte dano perdido na vida, ou impedido por Ultimo Recurso, em escudo."
+          "description": "Transbordando: concede 1445 de dano adicional em ataques e habilidades e aumenta os custos das habilidades em 635. Tambem converte dano perdido na vida, ou impedido por Ultimo Recurso, em escudo.",
+          "mathematicalFormula": "F = piso(0,25M); S = piso(0,11M); escudo adicional = dano perdido na vida ou impedido por Último Recurso"
         },
         {
           "level": 70,
           "id": "canhao_de_vidro",
           "name": "Canhao de Vidro",
           "type": "mage_glass_cannon",
-          "description": "Canhao de Vidro: sofre o dobro de dano no primeiro golpe inimigo que acertar; suas duas primeiras acoes que causarem dano recebem +50% de dano. Buffs, DOTs e projeteis extras nao gastam acoes adicionais."
+          "description": "Canhao de Vidro: sofre o dobro de dano no primeiro golpe inimigo que acertar; suas duas primeiras acoes que causarem dano recebem +50% de dano. Buffs, DOTs e projeteis extras nao gastam acoes adicionais.",
+          "mathematicalFormula": "Primeiro golpe recebido × 2; duas primeiras ações de dano × 1,5"
         }
       ],
       "modifiers": {
@@ -1936,7 +2045,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 72 e 77. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 72 e 77. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -1948,7 +2058,8 @@
           "turns": 5,
           "attackBonus": 25,
           "description": "Mirar: consome 50 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 25.",
-          "effectiveCost": 50
+          "effectiveCost": 50,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -1960,7 +2071,8 @@
           "dodge": 0.2,
           "nextDamageBonus": 0,
           "description": "Camuflagem: consome 50 MP e concede 20% de esquiva adicional por 5 turnos.",
-          "effectiveCost": 50
+          "effectiveCost": 50,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 20%"
         }
       ],
       "passive": [
@@ -1969,7 +2081,8 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_level_scaling",
-          "description": "Passos Leves: concede 15% de chance do inimigo errar o ataque contra voce."
+          "description": "Passos Leves: concede 15% de chance do inimigo errar o ataque contra voce.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L)"
         }
       ],
       "modifiers": {
@@ -2030,7 +2143,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 280 e 285. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 280 e 285. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2042,7 +2156,8 @@
           "turns": 5,
           "attackBonus": 55,
           "description": "Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 55, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2054,7 +2169,8 @@
           "dodge": 0.2,
           "nextDamageBonus": 0.3,
           "description": "Camuflagem: consome 65 MP e concede 20% de esquiva adicional por 5 turnos, deixando o proximo dano causado 30% mais forte.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 20%; próximo dano × 1,3"
         },
         {
           "level": 30,
@@ -2066,7 +2182,8 @@
           "critChance": 0.1,
           "marksOnNonCrit": false,
           "description": "Headshot: consome 85 MP e causa 383 de dano, com 15% de chance total de critico.",
-          "effectiveCost": 85
+          "effectiveCost": 85,
+          "mathematicalFormula": "C = 60 + W; D = 30 + 0,65A + 0,65P; com Mirar, D × 1,1"
         },
         {
           "level": 50,
@@ -2079,7 +2196,8 @@
           "ignoreShield": true,
           "shattersShield": false,
           "description": "Tiro Perfurante: consome 105 MP e causa 485 de dano, ignorando armadura e escudo do inimigo.",
-          "effectiveCost": 105
+          "effectiveCost": 105,
+          "mathematicalFormula": "C = 80 + W; D = 50 + 0,8A + 0,8P"
         }
       ],
       "passive": [
@@ -2088,14 +2206,16 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_double_bonus",
-          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); crítico adicional = 5%"
         },
         {
           "level": 40,
           "id": "pulso_firme",
           "name": "Pulso Firme",
           "type": "archer_attack_level_bonus",
-          "description": "Pulso Firme: concede 45 de dano de ataque basico e 45 de dano de habilidade no nivel atual."
+          "description": "Pulso Firme: concede 45 de dano de ataque basico e 45 de dano de habilidade no nivel atual.",
+          "mathematicalFormula": "A adicional = piso(0,9L); P adicional = piso(0,9L)"
         }
       ],
       "modifiers": {
@@ -2157,7 +2277,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 781 e 786. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 781 e 786. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2169,7 +2290,8 @@
           "turns": 5,
           "attackBonus": 105,
           "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 105, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2181,7 +2303,8 @@
           "dodge": 0.2,
           "nextDamageBonus": 0.3,
           "description": "Camuflagem: consome 90 MP e concede 20% de esquiva adicional por 5 turnos, deixando o proximo dano causado 30% mais forte.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 20%; próximo dano × 1,3"
         },
         {
           "level": 30,
@@ -2193,7 +2316,8 @@
           "critChance": 0.1,
           "marksOnNonCrit": true,
           "description": "Headshot: consome 110 MP e causa 3378 de dano, com 15% de chance total de critico. Se nao critar, marca o alvo para receber 15% a mais no proximo golpe.",
-          "effectiveCost": 110
+          "effectiveCost": 110,
+          "mathematicalFormula": "C = 60 + W; D = 60 + 0,4A + 0,85P + 0,35M; com Mirar, D × 1,1"
         },
         {
           "level": 50,
@@ -2206,7 +2330,8 @@
           "ignoreShield": true,
           "shattersShield": false,
           "description": "Tiro Perfurante: consome 130 MP e causa 2048 de dano, ignorando armadura e escudo do inimigo.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 80 + W; D = 50 + 0,8A + 1,2P"
         },
         {
           "level": 60,
@@ -2216,7 +2341,8 @@
           "cost": 500,
           "damage": 1205,
           "description": "Emergencia Arcana: consome 500 MP e causa 1205 de dano arcano. O dano aumenta conforme sua mana atual estiver abaixo da mana maxima.",
-          "effectiveCost": 500
+          "effectiveCost": 500,
+          "mathematicalFormula": "C = 500; D = 60 + P + 0,75(M − m)"
         },
         {
           "level": 80,
@@ -2226,7 +2352,8 @@
           "cost": 5810,
           "damage": 5398,
           "description": "Sobreaquecer: gasta toda a mana atual (5810) e causa 5398 de dano.",
-          "effectiveCost": 5810
+          "effectiveCost": 5810,
+          "mathematicalFormula": "C = m; D = 80 + 1,6P + 0,6m"
         }
       ],
       "passive": [
@@ -2235,21 +2362,24 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_double_bonus",
-          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); crítico adicional = 5%"
         },
         {
           "level": 40,
           "id": "pulso_firme",
           "name": "Pulso Firme",
           "type": "archer_attack_level_bonus",
-          "description": "Pulso Firme: concede 90 de dano de ataque basico e 130 de dano de habilidade no nivel atual."
+          "description": "Pulso Firme: concede 90 de dano de ataque basico e 130 de dano de habilidade no nivel atual.",
+          "mathematicalFormula": "A adicional = piso(0,9L); P adicional = piso(1,3L)"
         },
         {
           "level": 70,
           "id": "cristalizar_mana",
           "name": "Cristalizar Mana",
           "type": "archer_mana_to_skill_bonus",
-          "description": "Cristalizar Mana: converte 290 de mana maxima em dano de habilidade."
+          "description": "Cristalizar Mana: converte 290 de mana maxima em dano de habilidade.",
+          "mathematicalFormula": "P adicional = piso(0,05M)"
         }
       ],
       "modifiers": {
@@ -2311,7 +2441,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 851 e 856. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 851 e 856. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2323,7 +2454,8 @@
           "turns": 5,
           "attackBonus": 105,
           "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 105, alem de fortalecer o Headshot em 10% e dar +10% de chance de critico.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2335,7 +2467,8 @@
           "dodge": 0.2,
           "nextDamageBonus": 0.3,
           "description": "Camuflagem: consome 90 MP e concede 20% de esquiva adicional por 5 turnos, deixando o proximo dano causado 30% mais forte.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 20%; próximo dano × 1,3"
         },
         {
           "level": 30,
@@ -2347,7 +2480,8 @@
           "critChance": 0.7,
           "marksOnNonCrit": false,
           "description": "Headshot: consome 110 MP e causa 1250 de dano, com 104% de chance total de critico. O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em 104% de dano extra.",
-          "effectiveCost": 110
+          "effectiveCost": 110,
+          "mathematicalFormula": "C = 60 + W; D = 30 + 0,85A + 0,65P; com Mirar, D × 1,1"
         },
         {
           "level": 50,
@@ -2360,7 +2494,8 @@
           "ignoreShield": true,
           "shattersShield": true,
           "description": "Tiro Perfurante: consome 130 MP e causa 1683 de dano, ignorando armadura e escudo do inimigo. Alem disso, remove totalmente o escudo do alvo.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 80 + W; D = 50 + 1,2A + 0,8P"
         },
         {
           "level": 60,
@@ -2372,7 +2507,8 @@
           "executeThreshold": 0.4,
           "executeMultiplier": 3,
           "description": "Executar: consome 120 MP e causa 1684 de dano. Se o inimigo estiver abaixo de 40% da vida, o dano e triplicado.",
-          "effectiveCost": 120
+          "effectiveCost": 120,
+          "mathematicalFormula": "C = 120; D = 60 + 1,1A + 0,9P; D × 3 se h < 0,4E"
         },
         {
           "level": 80,
@@ -2382,7 +2518,8 @@
           "cost": 120,
           "damage": 5959,
           "description": "Ponto Fraco: consome 120 MP e causa 5959 de dano, explorando a vida atual do alvo.",
-          "effectiveCost": 120
+          "effectiveCost": 120,
+          "mathematicalFormula": "C = 120; D = 100 + 0,65A + 0,4P + 0,25h"
         }
       ],
       "passive": [
@@ -2391,21 +2528,24 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_double_bonus",
-          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade."
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e 5% de chance de critico em qualquer ataque ou habilidade.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); crítico adicional = 5%"
         },
         {
           "level": 40,
           "id": "pulso_firme",
           "name": "Pulso Firme",
           "type": "archer_attack_level_bonus",
-          "description": "Pulso Firme: concede 90 de dano de ataque basico e 90 de dano de habilidade no nivel atual. Alem disso, seus ataques e habilidades ganham 15% de chance adicional de critico."
+          "description": "Pulso Firme: concede 90 de dano de ataque basico e 90 de dano de habilidade no nivel atual. Alem disso, seus ataques e habilidades ganham 15% de chance adicional de critico.",
+          "mathematicalFormula": "A adicional = piso(0,9L); P adicional = piso(0,9L)"
         },
         {
           "level": 70,
           "id": "olhos_de_falcao",
           "name": "Olhos de Falcao",
           "type": "archer_sniper_bonus_crit",
-          "description": "Olhos de Falcao: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional."
+          "description": "Olhos de Falcao: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional.",
+          "mathematicalFormula": "Olhos de Falcao: concede 15% de chance de critico e faz qualquer excedente acima de 100% virar dano critico adicional."
         }
       ],
       "modifiers": {
@@ -2466,7 +2606,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 240 e 245. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 240 e 245. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2478,7 +2619,8 @@
           "turns": 5,
           "attackBonus": 55,
           "description": "Mirar: consome 80 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 55, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2490,7 +2632,8 @@
           "dodge": 0.28,
           "nextDamageBonus": 0,
           "description": "Camuflagem: consome 65 MP e concede 28% de esquiva adicional por 5 turnos.",
-          "effectiveCost": 65
+          "effectiveCost": 65,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 28%"
         },
         {
           "level": 30,
@@ -2501,7 +2644,8 @@
           "hits": 2,
           "extraShotChance": 0,
           "description": "Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 60; 2 ataques básicos, cada um com A + r; com Mirar, 10% de chance de 1 disparo extra"
         },
         {
           "level": 50,
@@ -2513,7 +2657,8 @@
           "skipChance": 0.3,
           "nextBarrageBonus": 0,
           "description": "Armadilha: consome 105 MP, causa 254 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno.",
-          "effectiveCost": 105
+          "effectiveCost": 105,
+          "mathematicalFormula": "C = 80 + W; D = 30 + 1,1P"
         }
       ],
       "passive": [
@@ -2522,14 +2667,16 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_coin_bonus",
-          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos."
+          "description": "Passos Leves: concede 30% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); moedas × 1,18; XP × 1,12"
         },
         {
           "level": 40,
           "id": "errou",
           "name": "Errou",
           "type": "archer_dodge_damage_buff",
-          "description": "Errou: ao esquivar de um ataque, voce ganha 12% de dano total final por 2 turnos."
+          "description": "Errou: ao esquivar de um ataque, voce ganha 12% de dano total final por 2 turnos.",
+          "mathematicalFormula": "Dano final × 1,12 por 2 turnos após esquivar"
         }
       ],
       "modifiers": {
@@ -2591,7 +2738,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 726 e 731. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 726 e 731. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2603,7 +2751,8 @@
           "turns": 5,
           "attackBonus": 105,
           "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 105, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2615,7 +2764,8 @@
           "dodge": 0.28,
           "nextDamageBonus": 0,
           "description": "Camuflagem: consome 90 MP e concede 28% de esquiva adicional por 5 turnos.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 28%"
         },
         {
           "level": 30,
@@ -2626,7 +2776,8 @@
           "hits": 2,
           "extraShotChance": 0,
           "description": "Rajada de Flechas: consome 60 MP e realiza 2 ataques basicos no mesmo turno. Errar um disparo fortalece o proximo dano em 16%; errar dois ou mais fortalece em 40%.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 60; 2 ataques básicos, cada um com A + r; com Mirar, 10% de chance de 1 disparo extra"
         },
         {
           "level": 50,
@@ -2638,7 +2789,8 @@
           "skipChance": 0.3,
           "nextBarrageBonus": 0,
           "description": "Armadilha: consome 130 MP, causa 1972 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. O dano inclui 6% da vida atual do inimigo.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 80 + W; D = 30 + 1,1P + 0,06h"
         },
         {
           "level": 60,
@@ -2649,7 +2801,8 @@
           "damage": 1185,
           "empoweredFromCamouflage": false,
           "description": "Surpresa: consome 80 MP e causa 1185 de dano.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 80; D = 60 + 0,9A + 0,7P; logo após Camuflagem: D = 80 + 1,2A + 0,9P"
         },
         {
           "level": 80,
@@ -2664,7 +2817,8 @@
           "enemyArmorDownTurns": 3,
           "skipChance": 0.1,
           "description": "Mirar no Pe: consome 100 MP, causa 848 de dano, reduz em 20% o ataque, corta 50% da armadura e concede 10% de chance de impedir o ataque em cada um dos 3 turnos do debuff.",
-          "effectiveCost": 100
+          "effectiveCost": 100,
+          "mathematicalFormula": "C = 100; D = 80 + 0,6P + 0,5A; ataque inimigo × 0,8; armadura inimiga × 0,5"
         }
       ],
       "passive": [
@@ -2673,21 +2827,24 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_coin_bonus",
-          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos."
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); moedas × 1,18; XP × 1,12"
         },
         {
           "level": 40,
           "id": "errou",
           "name": "Errou",
           "type": "archer_dodge_damage_buff",
-          "description": "Errou: ao esquivar de um ataque, seu proximo dano causado fica 50% mais forte."
+          "description": "Errou: ao esquivar de um ataque, seu proximo dano causado fica 50% mais forte.",
+          "mathematicalFormula": "Próximo dano após esquivar × 1,5"
         },
         {
           "level": 70,
           "id": "passos_silenciosos",
           "name": "Passos Silenciosos",
           "type": "archer_enemy_skip_chance",
-          "description": "Passos Silenciosos: concede 7% de chance do inimigo perder o turno sem atacar."
+          "description": "Passos Silenciosos: concede 7% de chance do inimigo perder o turno sem atacar.",
+          "mathematicalFormula": "Passos Silenciosos: concede 7% de chance do inimigo perder o turno sem atacar."
         }
       ],
       "modifiers": {
@@ -2749,7 +2906,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 721 e 726. Chance de acerto: 84%."
+        "description": "Ataque basico. Dano entre 721 e 726. Chance de acerto: 84%.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2761,7 +2919,8 @@
           "turns": 5,
           "attackBonus": 105,
           "description": "Mirar: consome 130 MP, garante 100% de acerto no ataque basico por 5 turnos e aumenta ataque e poder de habilidade em 105, alem de conceder 10% de chance de um disparo extra na Rajada de Flechas.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 30 + L; A adicional = 5 + L; P adicional = 5 + L"
         },
         {
           "level": 20,
@@ -2773,7 +2932,8 @@
           "dodge": 0.28,
           "nextDamageBonus": 0,
           "description": "Camuflagem: consome 90 MP e concede 28% de esquiva adicional por 5 turnos.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + W; esquiva adicional = 28%"
         },
         {
           "level": 30,
@@ -2784,7 +2944,8 @@
           "hits": 3,
           "extraShotChance": 0,
           "description": "Rajada de Flechas: consome 60 MP e realiza 3 ataques basicos no mesmo turno.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 60; 3 ataques básicos, cada um com A + r; com Mirar, 10% de chance de 1 disparo extra"
         },
         {
           "level": 50,
@@ -2796,7 +2957,8 @@
           "skipChance": 0.3,
           "nextBarrageBonus": 0.23,
           "description": "Armadilha: consome 130 MP, causa 756 de dano e tem 30% de chance de fazer o inimigo perder o proximo turno. Se prender o alvo, sua proxima Rajada de Flechas causara 23% de dano adicional por disparo.",
-          "effectiveCost": 130
+          "effectiveCost": 130,
+          "mathematicalFormula": "C = 80 + W; D = 30 + 1,1P"
         },
         {
           "level": 60,
@@ -2808,7 +2970,8 @@
           "enemyAttackDownPercent": 0.3,
           "enemyAttackDownTurns": 4,
           "description": "Tranquilizante: consome 80 MP, causa 1032 de dano e reduz em 30% o dano do inimigo por 4 turnos.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 80; D = 60 + 0,8A + 0,6P; dano inimigo × 0,7"
         },
         {
           "level": 80,
@@ -2821,7 +2984,8 @@
           "dotDamage": 592,
           "dotTurns": 3,
           "description": "Tiro Cortante: consome 80 MP e faz o alvo sofrer 592 de dano por rodada durante 3 rodadas (1776 no total).",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 80; T = 120 + 1,2A + 1,2P; DOT por turno = piso(T ÷ 3), durante 3 turnos"
         }
       ],
       "passive": [
@@ -2830,21 +2994,24 @@
           "id": "passos_leves",
           "name": "Passos Leves",
           "type": "archer_dodge_coin_bonus",
-          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos."
+          "description": "Passos Leves: concede 55% de chance do inimigo errar o ataque contra voce e aumenta em 18% as moedas e em 12% a XP recebidas dos inimigos.",
+          "mathematicalFormula": "Esquiva = 5% + (0,5% × L); moedas × 1,18; XP × 1,12"
         },
         {
           "level": 40,
           "id": "errou",
           "name": "Errou",
           "type": "archer_dodge_damage_buff",
-          "description": "Errou: ao esquivar de um ataque, voce recupera 906 de vida."
+          "description": "Errou: ao esquivar de um ataque, voce recupera 906 de vida.",
+          "mathematicalFormula": "Cura ao esquivar = piso(0,13H)"
         },
         {
           "level": 70,
           "id": "resistencia_florestal",
           "name": "Resistencia Florestal",
           "type": "archer_flat_reduction_level",
-          "description": "Resistencia Florestal: reduz 46 de dano por ataque recebido."
+          "description": "Resistencia Florestal: reduz 46 de dano por ataque recebido.",
+          "mathematicalFormula": "Redução fixa = piso(0,46L)"
         }
       ],
       "modifiers": {
@@ -2905,7 +3072,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 68 e 73."
+        "description": "Ataque basico. Dano entre 68 e 73.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -2919,7 +3087,8 @@
           "markDamage": 0,
           "enemyDamageDown": 0,
           "description": "Semente Viva: consome 30 MP, causa 73 de dano e marca o alvo por 3 turnos.",
-          "effectiveCost": 30
+          "effectiveCost": 30,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P"
         },
         {
           "level": 20,
@@ -2931,7 +3100,8 @@
           "rootChance": 0.45,
           "armorDownPercent": 0,
           "description": "Raizes: consome 42 MP, causa 118 de dano e tem 45% de chance de enraizar.",
-          "effectiveCost": 42
+          "effectiveCost": 42,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         }
       ],
       "passive": [
@@ -2940,7 +3110,8 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.",
+          "mathematicalFormula": "Dano contra marcado × 1,10; devolução de mana = 0,1C"
         }
       ],
       "modifiers": {
@@ -3001,7 +3172,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 226 e 231."
+        "description": "Ataque basico. Dano entre 226 e 231.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3015,7 +3187,8 @@
           "markDamage": 167,
           "enemyDamageDown": 0,
           "description": "Semente Viva: consome 45 MP, causa 230 de dano e marca o alvo por 4 turnos. A marca tambem causa 167 por turno.",
-          "effectiveCost": 45
+          "effectiveCost": 45,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno"
         },
         {
           "level": 20,
@@ -3027,7 +3200,8 @@
           "rootChance": 0.6,
           "armorDownPercent": 0,
           "description": "Raizes: consome 60 MP, causa 367 de dano e tem 60% de chance de enraizar.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3039,7 +3213,8 @@
           "poisonTurns": 4,
           "poisonDamage": 83,
           "description": "Flor do Pantano: consome 40 MP e causa 357 de dano. Se o alvo estiver enraizado, aplica veneno de 83 por 4 turnos.",
-          "effectiveCost": 40
+          "effectiveCost": 40,
+          "mathematicalFormula": "C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno"
         },
         {
           "level": 50,
@@ -3049,7 +3224,8 @@
           "cost": 55,
           "damage": 301,
           "description": "Colheita: consome 55 MP, causa 301 de dano e consome efeitos naturais ativos para explodir o dano restante.",
-          "effectiveCost": 55
+          "effectiveCost": 55,
+          "mathematicalFormula": "C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais"
         }
       ],
       "passive": [
@@ -3058,14 +3234,16 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.",
+          "mathematicalFormula": "Dano contra marcado × 1,16; devolução de mana = 0,1C"
         },
         {
           "level": 40,
           "id": "seiva",
           "name": "Seiva",
           "type": "nature_sap",
-          "description": "Seiva: dano de marca e veneno cura 8% do dano causado."
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado.",
+          "mathematicalFormula": "Cura = 0,08 × dano dos DOTs elegíveis"
         }
       ],
       "modifiers": {
@@ -3127,7 +3305,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 702 e 707."
+        "description": "Ataque basico. Dano entre 702 e 707.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3141,7 +3320,8 @@
           "markDamage": 556,
           "enemyDamageDown": 0,
           "description": "Semente Viva: consome 70 MP, causa 709 de dano e marca o alvo por 4 turnos. A marca tambem causa 556 por turno.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno"
         },
         {
           "level": 20,
@@ -3153,7 +3333,8 @@
           "rootChance": 0.6,
           "armorDownPercent": 0,
           "description": "Raizes: consome 90 MP, causa 1137 de dano e tem 60% de chance de enraizar.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3165,7 +3346,8 @@
           "poisonTurns": 7,
           "poisonDamage": 278,
           "description": "Flor do Pantano: consome 60 MP e causa 1127 de dano. Se o alvo estiver enraizado, aplica veneno de 278 por 7 turnos.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno"
         },
         {
           "level": 50,
@@ -3175,7 +3357,8 @@
           "cost": 70,
           "damage": 872,
           "description": "Colheita: consome 70 MP, causa 872 de dano e consome efeitos naturais ativos para explodir o dano restante.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 40 + 0,3L; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais"
         },
         {
           "level": 60,
@@ -3187,7 +3370,8 @@
           "decayTurns": 5,
           "decayDamage": 300,
           "description": "Apodrecer: consome 90 MP, causa 892 de dano e aplica apodrecimento por 5 turnos.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 40 + 0,5L; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno"
         },
         {
           "level": 80,
@@ -3197,7 +3381,8 @@
           "cost": 4743,
           "damage": 2514,
           "description": "Colapso do Brejo: consome 4743 MP e causa 2514 de dano. Se o alvo nao tiver DOT natural, aplica marca, veneno e apodrecimento por 4 turnos.",
-          "effectiveCost": 4743
+          "effectiveCost": 4743,
+          "mathematicalFormula": "C = 0,85M; D = piso(1,8A + 1,8P)"
         }
       ],
       "passive": [
@@ -3206,21 +3391,24 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.",
+          "mathematicalFormula": "Dano contra marcado × 1,16; devolução de mana = 0,1C"
         },
         {
           "level": 40,
           "id": "seiva",
           "name": "Seiva",
           "type": "nature_sap",
-          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem considera apodrecimento."
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem considera apodrecimento.",
+          "mathematicalFormula": "Cura = 0,08 × dano dos DOTs elegíveis"
         },
         {
           "level": 70,
           "id": "podridao",
           "name": "Podridao",
           "type": "nature_dot_mastery",
-          "description": "Podridao: aumenta marca, veneno e apodrecimento em 30%."
+          "description": "Podridao: aumenta marca, veneno e apodrecimento em 30%.",
+          "mathematicalFormula": "Dano dos DOTs naturais × 1,3"
         }
       ],
       "modifiers": {
@@ -3282,7 +3470,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 702 e 707."
+        "description": "Ataque basico. Dano entre 702 e 707.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3296,7 +3485,8 @@
           "markDamage": 544,
           "enemyDamageDown": 0,
           "description": "Semente Viva: consome 70 MP, causa 705 de dano e marca o alvo por 4 turnos. A marca tambem causa 544 por turno.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno"
         },
         {
           "level": 20,
@@ -3308,7 +3498,8 @@
           "rootChance": 0.6,
           "armorDownPercent": 0,
           "description": "Raizes: consome 90 MP, causa 1125 de dano e tem 60% de chance de enraizar.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3320,7 +3511,8 @@
           "poisonTurns": 3,
           "poisonDamage": 272,
           "description": "Flor do Pantano: consome 60 MP e causa 1466 de dano. Se o alvo estiver enraizado, aplica veneno de 272 por 3 turnos.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 20 + 0,4L; D = 10 + 1,3A + 0,8P; veneno = 0,4P por turno"
         },
         {
           "level": 50,
@@ -3330,7 +3522,8 @@
           "cost": 70,
           "damage": 872,
           "description": "Colheita: consome 70 MP, causa 872 de dano e consome efeitos naturais ativos para explodir o dano restante.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais"
         },
         {
           "level": 60,
@@ -3342,7 +3535,8 @@
           "attackPercent": 0.26,
           "damageReductionPercent": 0.18,
           "description": "Forma Verdadeira: consome toda a mana maxima, aumenta ataque em 26%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.",
-          "effectiveCost": 5380
+          "effectiveCost": 5380,
+          "mathematicalFormula": "C = M; A × 1,26; dano recebido × 0,82; ataque básico usa 1,7A + r"
         },
         {
           "level": 80,
@@ -3352,7 +3546,8 @@
           "cost": 380,
           "damage": 1404,
           "description": "Esmagar Invasor: consome 380 MP e causa 1404 de dano, com bonus contra alvo enraizado e na Forma Verdadeira.",
-          "effectiveCost": 380
+          "effectiveCost": 380,
+          "mathematicalFormula": "C = 300 + 0,8L; D = 2A; +0,6A se o alvo estiver enraizado; +A durante Forma Verdadeira"
         }
       ],
       "passive": [
@@ -3361,21 +3556,24 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles."
+          "description": "Ciclo Natural: alvos marcados recebem 16% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.",
+          "mathematicalFormula": "Dano contra marcado × 1,16; devolução de mana = 0,1C"
         },
         {
           "level": 40,
           "id": "seiva",
           "name": "Seiva",
           "type": "nature_sap",
-          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem aumenta sua vida maxima em 12%."
+          "description": "Seiva: dano de marca e veneno cura 8% do dano causado. Tambem aumenta sua vida maxima em 12%.",
+          "mathematicalFormula": "Cura = 0,08 × dano dos DOTs elegíveis; vida máxima +12%"
         },
         {
           "level": 70,
           "id": "casca_ancestral",
           "name": "Casca Ancestral",
           "type": "nature_ancestral_bark",
-          "description": "Casca Ancestral: reduz 54 de dano recebido por ataque."
+          "description": "Casca Ancestral: reduz 54 de dano recebido por ataque.",
+          "mathematicalFormula": "Redução fixa = piso(4 + 0,5L); durante Forma Verdadeira = piso(4 + 0,7L)"
         }
       ],
       "modifiers": {
@@ -3436,7 +3634,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 221 e 226."
+        "description": "Ataque basico. Dano entre 221 e 226.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3450,7 +3649,8 @@
           "markDamage": 0,
           "enemyDamageDown": 0.24,
           "description": "Semente Viva: consome 45 MP, causa 249 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
-          "effectiveCost": 45
+          "effectiveCost": 45,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%"
         },
         {
           "level": 20,
@@ -3462,7 +3662,8 @@
           "rootChance": 0.45,
           "armorDownPercent": 0.5,
           "description": "Raizes: consome 60 MP, causa 424 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3475,7 +3676,8 @@
           "rootChance": 0.2,
           "shieldFromDamagePercent": 0,
           "description": "Encanto da Brisa: consome 45 MP, causa 333 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
-          "effectiveCost": 45
+          "effectiveCost": 45,
+          "mathematicalFormula": "C = 30 + 0,3L; D = 20 + 1,1P"
         },
         {
           "level": 50,
@@ -3487,7 +3689,8 @@
           "shield": 0,
           "enemyDamageDownPercent": 0,
           "description": "Cancao Ancestral: consome 60 MP e cura 399.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado"
         }
       ],
       "passive": [
@@ -3496,14 +3699,16 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.",
+          "mathematicalFormula": "Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A"
         },
         {
           "level": 40,
           "id": "aura_feerica",
           "name": "Aura Feerica",
           "type": "nature_fairy_aura",
-          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%."
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%.",
+          "mathematicalFormula": "P adicional por Cadência = 4%; até 3 Cadências; com 3: curas × 1,05"
         }
       ],
       "modifiers": {
@@ -3565,7 +3770,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 677 e 682."
+        "description": "Ataque basico. Dano entre 677 e 682.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3579,7 +3785,8 @@
           "markDamage": 0,
           "enemyDamageDown": 0.24,
           "description": "Semente Viva: consome 70 MP, causa 756 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%"
         },
         {
           "level": 20,
@@ -3591,7 +3798,8 @@
           "rootChance": 0.45,
           "armorDownPercent": 0.5,
           "description": "Raizes: consome 90 MP, causa 1291 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3604,7 +3812,8 @@
           "rootChance": 0.3,
           "shieldFromDamagePercent": 0,
           "description": "Encanto da Brisa: consome 60 MP, causa 1024 de dano e tem 30% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 30 + 0,3L; D = 20 + 1,1P"
         },
         {
           "level": 50,
@@ -3616,7 +3825,8 @@
           "shield": 0,
           "enemyDamageDownPercent": 0.12,
           "description": "Cancao Ancestral: consome 80 MP e cura 1278.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado"
         },
         {
           "level": 60,
@@ -3626,7 +3836,8 @@
           "cost": 90,
           "damage": 1826,
           "description": "Decreto da Rainha: consome 90 MP e causa 1826 de dano. Com 3 Cadencias, o fator sobe para 2.9.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 90; D = 2P; com 3 Cadências: D = 2,9P"
         },
         {
           "level": 80,
@@ -3639,7 +3850,8 @@
           "healPercent": 0.2,
           "chanceBonus": 0.2,
           "description": "Coroar: consome 500 MP e fica coroada por 5 turnos, com +30% poder de habilidade, +20% curas e +20% nas chances de controle.",
-          "effectiveCost": 500
+          "effectiveCost": 500,
+          "mathematicalFormula": "C = 300 + 2L; P × 1,3; curas × 1,2; chances de controle +20 pontos percentuais"
         }
       ],
       "passive": [
@@ -3648,21 +3860,24 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.",
+          "mathematicalFormula": "Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A"
         },
         {
           "level": 40,
           "id": "aura_feerica",
           "name": "Aura Feerica",
           "type": "nature_fairy_aura",
-          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 6% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 10%."
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 6% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 10%.",
+          "mathematicalFormula": "P adicional por Cadência = 6%; até 3 Cadências; com 3: curas × 1,10"
         },
         {
           "level": 70,
           "id": "asas_da_realeza",
           "name": "Asas da Realeza",
           "type": "nature_royal_wings",
-          "description": "Asas da Realeza: concede 20% de chance de esquiva."
+          "description": "Asas da Realeza: concede 20% de chance de esquiva.",
+          "mathematicalFormula": "Esquiva = 20%; enquanto coroada = 60%"
         }
       ],
       "modifiers": {
@@ -3724,7 +3939,8 @@
       },
       "basic": {
         "name": "Atacar",
-        "description": "Ataque basico. Dano entre 692 e 697."
+        "description": "Ataque basico. Dano entre 692 e 697.",
+        "formula": "Dano básico = A + r; na Forma Verdadeira, o Adepto usa 1,7A + r"
       },
       "active": [
         {
@@ -3738,7 +3954,8 @@
           "markDamage": 0,
           "enemyDamageDown": 0.24,
           "description": "Semente Viva: consome 70 MP, causa 764 de dano e marca o alvo por 3 turnos. A marca reduz o dano do inimigo em 24%.",
-          "effectiveCost": 70
+          "effectiveCost": 70,
+          "mathematicalFormula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%"
         },
         {
           "level": 20,
@@ -3750,7 +3967,8 @@
           "rootChance": 0.45,
           "armorDownPercent": 0.5,
           "description": "Raizes: consome 90 MP, causa 1294 de dano e tem 45% de chance de enraizar. Se enraizar, tambem reduz 50% da armadura.",
-          "effectiveCost": 90
+          "effectiveCost": 90,
+          "mathematicalFormula": "C = 30 + 0,6L; D = 20 + 0,8A + 0,8P"
         },
         {
           "level": 30,
@@ -3763,7 +3981,8 @@
           "rootChance": 0.2,
           "shieldFromDamagePercent": 1,
           "description": "Encanto da Brisa: consome 60 MP, causa 1012 de dano e tem 20% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.",
-          "effectiveCost": 60
+          "effectiveCost": 60,
+          "mathematicalFormula": "C = 30 + 0,3L; D = 20 + 1,1P"
         },
         {
           "level": 50,
@@ -3775,7 +3994,8 @@
           "shield": 1443,
           "enemyDamageDownPercent": 0,
           "description": "Cancao Ancestral: consome 80 MP e cura 1262. Tambem concede 1443 de escudo.",
-          "effectiveCost": 80
+          "effectiveCost": 80,
+          "mathematicalFormula": "C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado; escudo = 1,6P, ou 2,2P contra alvo enraizado"
         },
         {
           "level": 60,
@@ -3785,7 +4005,8 @@
           "cost": 120,
           "shield": 2231,
           "description": "Casulo de Vinhas: consome 120 MP e concede 2231 de escudo.",
-          "effectiveCost": 120
+          "effectiveCost": 120,
+          "mathematicalFormula": "C = 60 + 0,6L; escudo = piso(1,4A + 1,4P)"
         },
         {
           "level": 80,
@@ -3799,7 +4020,8 @@
           "ignoreArmor": true,
           "ignoreShield": true,
           "description": "Jogar Espinhos: consome 400 MP, 20% da vida maxima e todo seu escudo atual para causar 0 de dano ignorando armadura e escudo.",
-          "effectiveCost": 400
+          "effectiveCost": 400,
+          "mathematicalFormula": "C = 4L MP + 0,2H de vida + todo Z; D = 2Z"
         }
       ],
       "passive": [
@@ -3808,21 +4030,24 @@
           "id": "ciclo_natural",
           "name": "Ciclo Natural",
           "type": "nature_cycle",
-          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade."
+          "description": "Ciclo Natural: alvos marcados recebem 10% a mais de dano e devolvem 10% do custo da habilidade usada contra eles. Tambem converte 30% do ataque basico em poder de habilidade.",
+          "mathematicalFormula": "Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A"
         },
         {
           "level": 40,
           "id": "aura_feerica",
           "name": "Aura Feerica",
           "type": "nature_fairy_aura",
-          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%."
+          "description": "Aura Feerica: curar ou ganhar escudo concede Cadencia. Cada acumulo da 4% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam 5%.",
+          "mathematicalFormula": "P adicional por Cadência = 4%; até 3 Cadências; com 3: curas × 1,05"
         },
         {
           "level": 70,
           "id": "juramento_do_bosque",
           "name": "Juramento do Bosque",
           "type": "nature_forest_oath",
-          "description": "Juramento do Bosque: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo."
+          "description": "Juramento do Bosque: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo.",
+          "mathematicalFormula": "Escudos × 1,06; reflexão = 0,3 × dano absorvido pelo escudo"
         }
       ],
       "modifiers": {
