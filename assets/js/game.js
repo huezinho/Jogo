@@ -2498,8 +2498,9 @@ function applyEndOfTurnRecovery(){
   endEquipmentAction();
 }
 
-async function handlePlayerTurnStartEffects(chosenSkill = null){
-  if(CampaignEnemyCombat.heroStart()) return true;
+async function applyPlayerEndOfTurnDots(){
+  if(!enemy || enemy.hp<=0 || isDead || player.hp<=0)return false;
+  if(CampaignEnemyCombat.heroEnd())return true;
   if(!playerEffects.burnStacks && playerEffects.burnTurns > 0) applyBurning(playerEffects, playerEffects.burnDamagePerTurn, playerEffects.burnTurns, "Queimadura anterior");
   if(playerEffects.burnTurns > 0 && playerEffects.burnDamagePerTurn > 0){
     const burnReduction = getPassiveModifiers().burnDamageReductionPercent || 0;
@@ -2524,6 +2525,11 @@ async function handlePlayerTurnStartEffects(chosenSkill = null){
       return true;
     }
   }
+  return false;
+}
+
+async function handlePlayerTurnStartEffects(chosenSkill = null){
+  if(CampaignEnemyCombat.heroStart()) return true;
   if(playerEffects.skipNextTurn && chosenSkill?.canBreakControl){
     playerEffects.skipNextTurn = false;
     log(`${chosenSkill.name} rompeu o efeito que faria voce perder o turno.`);
@@ -4676,12 +4682,10 @@ function getAlchemyRecipe(id){
   if(rank<0||!type)return null;
   const multiplier=type.id==="vigor"||type.id==="vampirismo"?2:1;
   const ingredients=new Map();
-  for(const [index,[region,tier,count,fixedEnemy]] of alchemyRecipePlans[rank].entries()){
-    const slot=index%2;
-    const enemyIndex=fixedEnemy??type.pair[slot];
+  for(const [region,count] of alchemyRecipePlans[rank]){
     const data=regions[region];
-    const template=[...data.enemies,data.boss][enemyIndex];
-    const material=EquipmentSystem.getMaterials(template.name,region)[tier];
+    const template=data.enemies.reduce((common,entry)=>entry.weight>common.weight?entry:common);
+    const material=EquipmentSystem.getMaterials(template.name,region)[0];
     const previous=ingredients.get(material.id);
     ingredients.set(material.id,{...material,qty:(previous?.qty||0)+count*multiplier});
   }
@@ -7167,6 +7171,7 @@ async function afterTurn(){
     handleEnemyDefeat();
     return;
   }
+  if(await applyPlayerEndOfTurnDots())return;
   if(player.class === "Guerreiro" && playerEffects.berserkerLastStandPending){
     playerEffects.berserkerLastStandPending = false;
     handleDeath("Voce Nao e Digno lhe deu um ultimo golpe antes da queda.");
@@ -7470,8 +7475,7 @@ function applyBossHitEffects(ability){
   }
 }
 
-async function enemyTurn(){
-  handleBossBuffUpkeep();
+async function tickEnemyEndOfTurnDots(){
   for(const kind of ["burn", "poison"]){
     const amount = tickPeriodicStacks(enemy, kind, damage=>CampaignEnemyCombat.temporalDamage(Math.floor(damage * EquipmentSystem.getDotDamageMultiplier(player))));
     if(amount > 0){ const lost = Math.min(enemy.hp, amount); enemy.hp -= amount; applyLifeSteal(lost); EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:amount,rawDamage:amount,source:"dot"}); }
@@ -7500,6 +7504,18 @@ async function enemyTurn(){
   if(await processNatureDotTicks()){
     return;
   }
+}
+async function enemyTurn(){
+  const target=enemy;if(!target)return;
+  await performEnemyTurn();
+  if(enemy!==target || isDead || player.hp<=0)return;
+  isProcessingTurn=true;
+  await tickEnemyEndOfTurnDots();
+  if(enemy===target && !isDead){isProcessingTurn=false;updateUI();}
+}
+
+async function performEnemyTurn(){
+  handleBossBuffUpkeep();
   if(enemy.healReductionTurns > 0){
     enemy.healReductionTurns--;
     if(enemy.healReductionTurns <= 0){

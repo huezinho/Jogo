@@ -126,10 +126,14 @@ const CampaignEnemyCombat = (() => {
     if(actual>=player.hp&&mods.fatalSaveHealPercent>0&&!playerEffects.accessoryFatalSaveUsed){playerEffects.accessoryFatalSaveUsed=true;actual=0;healPlayer(Math.floor(getCurrentCaps().maxHp*mods.fatalSaveHealPercent));log('O acessorio evitou a morte pelo DOT.');}
     player.hp=Math.max(0,player.hp-actual);log(`${label}: ${actual} de dano.`);
   }
-  function heroStart(){
+  function heroEnd(){
     if(!enabled(enemy))return false;const s=state(),h=s.hero;
     for(const kind of ['poison','bleed'])if(playerEffects[kind+'Stacks']?.length)trueDot(tickPeriodicStacks(playerEffects,kind),kind==='poison'?'Veneno':'Sangramento');
     if(h.doom){trueDot(getCurrentCaps().maxHp*h.doom*.01,'Fim Inadiavel');h.doom++;}
+    heroCheck();if(player.hp<=0){handleDeath('Os efeitos do inimigo derrotaram seu heroi.');return true;}return false;
+  }
+  function heroStart(){
+    if(!enabled(enemy))return false;const s=state(),h=s.hero;
     if(h.deathmark&&--h.deathmark===0){const r=applyIncomingDamage(player.hp,{ignoreFlatReduction:true,ignoreShield:true,ignorePreciousMana:true,ignorePercentReduction:true,ignoreDodge:true});log(`Marca da Morte: ${r.damage} de dano.`);}
     if(h.haunt&&--h.haunt===0){log('Assombrar forcou a fuga.');enemy=null;resetCombatEffects();isProcessingTurn=false;needsNewEnemy=true;updateUI();queueCampaignSave();return true;}
     if(h.glare>0){if(Math.random()<.15)playerEffects.skipNextTurn=true;h.glare--;}
@@ -208,5 +212,5 @@ const CampaignEnemyCombat = (() => {
     if(player.hp<=0){handleDeath();return;}if(enemy.hp<=0){handleEnemyDefeat();return;}isProcessingTurn=false;updateUI();
   }
   function temporalDamage(d){return enabled(enemy)?Math.floor(d*(1-(state().temporal||0))):d;}
-  return{enabled,kit,index,initialize,restoreState,transferBuffs,modifiers,snapshot,beforeDamage,adjustDamage,afterDamage,beforeDeath,heroCheck,heroStart,status,heroStatus,turn,temporalDamage,cast,choose,finishAction,passives,passiveDescriptions};
+  return{enabled,kit,index,initialize,restoreState,transferBuffs,modifiers,snapshot,beforeDamage,adjustDamage,afterDamage,beforeDeath,heroCheck,heroStart,heroEnd,status,heroStatus,turn,temporalDamage,cast,choose,finishAction,passives,passiveDescriptions};
 })();

@@ -126,16 +126,17 @@ const alchemyTypes = [
  {id:"clareza",name:"Poção de Clareza",effect:"buff_mana_regeneration",icon:"mana_potion",pair:[2,2],stat:"manaRegen",turnField:"potionManaTurns",valueField:"potionManaAmount",details:"Recupera {v} MP adicionais por ação durante {t} turnos."},
  {id:"vampirismo",name:"Poção de Vampirismo",effect:"buff_lifesteal",icon:"attack_tonic",pair:[2,2],stat:"drain",turnField:"potionDrainTurns",valueField:"potionDrainAmount",details:"Rouba até {v} HP ao causar dano à vida do alvo, uma vez por ação, durante {t} turnos."}
 ];
-// Region, material tier, quantity. These plans never depend on the selected map.
+// Fixed regional recipes. Always use the primary drop of the most common creature.
+// Region, quantity; stronger qualities retain their original regional progression.
 const alchemyRecipePlans = [
- [["Floresta",0,1],["Floresta",1,1]],
- [["Floresta",1,2],["Caverna",0,1]],
- [["Caverna",1,2],["Ruinas",0,2]],
- [["Ruinas",1,3],["Pantano",0,2]],
- [["Pantano",1,3],["Vulcao",0,3],["Abismo",1,1]],
- [["Fortaleza",1,4],["Necropole",0,3]],
- [["Citadela",1,4],["Panteao",0,4]],
- [["Cataclismo",1,5],["Paradoxo",0,5],["Paradoxo",1,2,3]]
+ [["Floresta",1],["Floresta",1]],
+ [["Floresta",2],["Caverna",1]],
+ [["Caverna",2],["Ruinas",2]],
+ [["Ruinas",3],["Pantano",2]],
+ [["Pantano",3],["Vulcao",3],["Abismo",1]],
+ [["Fortaleza",4],["Necropole",3]],
+ [["Citadela",4],["Panteao",4]],
+ [["Cataclismo",5],["Paradoxo",5],["Paradoxo",2]]
 ];
 function makeFixedAlchemyConsumable(type,quality){
  const temporary=type.effect.startsWith("buff_");

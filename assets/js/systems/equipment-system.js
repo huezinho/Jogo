@@ -348,8 +348,7 @@ const EquipmentSystem = (function(){
     else actor.xp = (actor.xp || 0) + payment.rewardXp;
     actor.stats.mercenaryContracts = state.completed;
     if(actor === actorNow()){
-      notify(`Contrato concluido: ${quest.targetName}. ${reward.name} x${quest.rewardQty}, ${payment.rewardGold} ouro e ${payment.rewardXp} XP base recebidos automaticamente.`);
-      if(typeof showGameNotice === "function") showGameNotice("Contrato concluído!", `${quest.targetName}: ${quest.count} derrotados. Recebido: ${reward.name} ×${quest.rewardQty}, ${payment.rewardGold} ouro e ${payment.rewardXp} XP base.`);
+      if(typeof CampaignHUD !== "undefined")CampaignHUD.notifyContractCompleted(quest,`${reward.name} ×${quest.rewardQty}, ${payment.rewardGold} moedas e ${payment.rewardXp} XP base.`);
       if(typeof queueCampaignSave === "function") queueCampaignSave();
     }
     return reward;

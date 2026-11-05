@@ -2,7 +2,7 @@
 const CampaignHUD = (() => {
   'use strict';
   const art = 'assets/visual/hud/';
-  const state = { chestSummary: '', bag: false, quickItems: false, region: null, slot: 'weapon', upgrade: null, item: null, contractTab: 'active', contract: null, dialog: null, opener: null };
+  const state = { contractNotices: [], chestSummary: '', bag: false, quickItems: false, region: null, slot: 'weapon', upgrade: null, item: null, contractTab: 'active', contract: null, dialog: null, opener: null };
   let mounted = false;
   let characterId = null;
   const esc = value => escapeHtml(String(value ?? ''));
@@ -64,7 +64,7 @@ const CampaignHUD = (() => {
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
     panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal rpg-bestiary"><aside class="rpg-bestiary-map"><h2>Regi&otilde;es</h2>${renderBestiaryRegionMapCard(getSelectedBestiaryRegion(),isBestiaryDevUnlocked())}</aside><div class="rpg-bestiary-entries">${renderBestiary()}</div></section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
-    if(currentMode==='battle'){dockVitals();if(typeof CharacterMotion!=='undefined')CharacterMotion.prepare(getSkillInfo());}
+    if(currentMode==='battle'){refreshContractDock();dockVitals();if(typeof CharacterMotion!=='undefined')CharacterMotion.prepare(getSkillInfo());}
     document.getElementById('regionInfo').innerHTML=renderRegionMapCard().replace(/<p class="map-current-label">[\s\S]*?<\/p>/,`<p class="rpg-map-caption">${esc(currentRegion)}</p>`);
     const rack=root.querySelector('.rpg-upgrade-rack');if(rack)rack.scrollTop=state.rackScroll||0;
     renderActions(); renderLevelUpPanel(); animateBars(); nav(); syncChronicle();
@@ -80,9 +80,30 @@ const CampaignHUD = (() => {
     const title=`${getDisplayedClassName()} · Nv. ${player.level}`;
     return `<section class="rpg-battle ${enemy?.isBoss?'is-boss':''}"><div class="rpg-battle-banner"><span>${isDead?'Derrotado':isCampResting()?'Descansando':levelUpPoints>0?'Evolução pendente':needsSubclassChoice()?'Escolha sua subclasse':isProcessingTurn?'Turno em andamento':enemy?'Sua vez':'Exploração'}</span></div>
       <aside class="rpg-quest" style="--boss-progress:${Math.round(360*Math.min(1,Math.max(0,progress.defeated/Math.max(1,progress.total))))}deg" aria-label="Rastreador da região" data-state="${enemy?.isBoss?'fighting':progress.unlocked?'ready':'tracking'}"><span class="rpg-boss-seal" role="img" aria-label="${text(regions[currentRegion].boss.name)}: ${progress.defeated} de ${progress.total} criaturas vencidas"><img src="assets/visual/bosses/${slugify(regions[currentRegion].boss.name)}.webp?v=20261029" alt="" width="64" height="64"></span>${renderTracker(progress)}</aside>
+      <aside id="rpgContractDock" class="rpg-contract-tracker" aria-label="Contrato do mercenário"></aside>
       ${renderCombatScene(enemy,enemy?.challengeTowerFloor!==undefined?enemy.region:currentRegion)}
-      <div class="rpg-vital-dock"><section class="rpg-hero-plate"><div class="rpg-portrait">${getHeroSpriteMarkup().replace(/id="heroSprite"/g,'id="hudHeroPortrait"')}</div><div><strong>${esc(title)}</strong><div id="rpgHeroVitals"></div></div></section>${enemy?`<section class="rpg-enemy-plate"><div><button class="rpg-target-name" data-hud="target">${esc(enemy.name)}</button><div id="rpgEnemyVitals"></div><div class="enemy-status-list">${getEnemyStatusEffects(enemy).map(effect=>`<span tabindex="0" class="enemy-status-pill ${effect.kind}" data-hud-description="${esc(effect.details||effect.text)}">${text(effect.text)}</span>`).join('')}</div></div><div class="rpg-enemy-portrait">${getEnemySpriteMarkup(enemy).replace(/id="enemySprite"/g,'id="enemyPortrait"')}</div></section>`:`<section class="rpg-expedition-note"><span>${esc(regions[currentRegion].description)}</span></section>`}</div>
+      <div class="rpg-vital-dock"><section class="rpg-hero-plate"><div><strong>${esc(title)}</strong><div id="rpgHeroVitals"></div></div></section>${enemy?`<section class="rpg-enemy-plate"><div><button class="rpg-target-name" data-hud="target">${esc(enemy.name)}</button><div id="rpgEnemyVitals"></div><div class="enemy-status-list">${getEnemyStatusEffects(enemy).map(effect=>`<span tabindex="0" class="enemy-status-pill ${effect.kind}" data-hud-description="${esc(effect.details||effect.text)}">${text(effect.text)}</span>`).join('')}</div></div></section>`:`<section class="rpg-expedition-note"><span>${esc(regions[currentRegion].description)}</span></section>`}</div>
     </section>`;
+  }
+  let contractNoticeTimer=null;
+  function refreshContractDock(){
+    clearTimeout(contractNoticeTimer);
+    if(!player){state.contractNotices=[];return;}
+    state.contractNotices=state.contractNotices.filter(n=>n.characterId===player.characterId&&n.expiresAt>Date.now());
+    const dock=document.getElementById('rpgContractDock'),notice=state.contractNotices[0];
+    if(notice)contractNoticeTimer=setTimeout(refreshContractDock,Math.max(1,notice.expiresAt-Date.now()));
+    if(!dock)return;
+    const quests=[...(player.mercenary?.active||[])].sort((a,b)=>b.progress/b.count-a.progress/a.count||(a.count-a.progress)-(b.count-b.progress));
+    const quest=quests[0];
+    const content=notice?`<strong>Contrato concluído!</strong><span>${text(notice.name)}</span><small>${text(notice.reward)}</small>`:quest?`<strong>Contrato mais próximo</strong><span>${text(quest.targetName)}</span><small>${text(quest.targetRegion)} · ${quest.progress} / ${quest.count}</small><progress value="${quest.progress}" max="${quest.count}" aria-label="Abates do contrato"></progress>`:'<strong>Sem contrato ativo</strong><span>Busque um contrato</span><small>Visitar o mercenário</small>';
+    dock.classList.toggle('is-complete',!!notice);
+    dock.innerHTML=button(content,'mercenary','',`aria-label="${notice?'Contrato concluído':quest?'Ver contratos no mercenário':'Buscar contrato no mercenário'}" ${enemy||isProcessingTurn||(!isDead&&progressionPending())?'disabled':''}`);
+  }
+  function notifyContractCompleted(quest,reward){
+    state.contractNotices=state.contractNotices.filter(n=>n.characterId===player.characterId&&n.expiresAt>Date.now());
+    const last=state.contractNotices.at(-1);
+    state.contractNotices.push({name:quest.targetName,reward,characterId:player.characterId,expiresAt:Math.max(Date.now(),last?.expiresAt||0)+2500});
+    refreshContractDock();
   }
   function showTower(){
     const floors=getChallengeTowerFloors();
@@ -248,6 +269,7 @@ const CampaignHUD = (() => {
     const value=b.dataset.value,action=b.dataset.hud;
     if(action==='tower')return showTower();
     if(action==='tower-start'){closeDialog();return startChallengeTower();}
+    if(action==='mercenary'){if(enemy||isProcessingTurn||(!isDead&&progressionPending()))return;villageTab='mercenary';return setMode('village');}
     if(action==='close-dialog')return closeDialog();
     if(action==='expedition-start')return startExpedition();
     if(action==='expedition-stop')return stopExpedition();
@@ -318,7 +340,7 @@ const CampaignHUD = (() => {
   },true);
   window.addEventListener('resize',closeQuickItems);
   window.addEventListener('scroll',()=>{if(state.quickItems)positionQuickItems();},true);
-  return {enabled,render,renderActions,syncChronicle,handleShortcut};
+  return {notifyContractCompleted,enabled,render,renderActions,syncChronicle,handleShortcut};
 })();
 window.CampaignHUD=CampaignHUD;
 if(CampaignHUD.enabled())updateUI();
