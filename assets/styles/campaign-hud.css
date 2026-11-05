@@ -675,6 +675,22 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 }
 @media(max-width:760px){.rpg-campaign #campaignHud .rpg-village-interior.rpg-alchemy{background-position:left top}}
 /* Keep the bag shell stable; only its inventory and inspection panes scroll. */
+.rpg-campaign .rpg-journal .inventory-list .lock-note{white-space:pre-line}
+.rpg-campaign .rpg-journal .rpg-skill-readout{display:block;font:16px/1.55 'RPG Leitura',Georgia,serif!important;font-variant:normal!important;text-transform:none!important;color:#ddcba9}
+#rpgActionTooltip[data-kind=skill]{width:min(420px,calc(100vw - 16px));max-height:calc(100dvh - 16px);font-size:15px;line-height:1.45;white-space:pre-line;pointer-events:auto;overscroll-behavior:contain}
+.rpg-campaign .bestiary-search{display:block;color:#edd8ae;margin:16px 0;font-size:14px}
+.rpg-campaign .bestiary-search input{display:block;box-sizing:border-box;width:100%;margin-top:7px;padding:11px;border:1px solid #987643;border-radius:5px;background:#17110c;color:#f5e5c7;font:16px Georgia,serif}
+.rpg-campaign .bestiary-materials{margin-top:14px;padding-top:10px;border-top:1px solid #735a37;min-width:0}
+.rpg-campaign .bestiary-materials h4{color:#ddba75;margin:0 0 8px}
+.rpg-campaign .bestiary-material{padding:10px;margin:8px 0;border:1px solid #6d5334;border-radius:5px;background:#16110ca6;overflow-wrap:anywhere}
+.rpg-campaign .bestiary-material>strong{color:#f1dbb0;font-size:15px}
+.rpg-campaign .bestiary-material p,.rpg-campaign .bestiary-material small{color:#cbb78f;font:13px/1.5 'RPG Leitura',Georgia,serif}
+.rpg-campaign .bestiary-material summary{cursor:pointer;color:#91c4be;padding:6px 0;font-size:14px}
+.rpg-campaign .bestiary-material ul{max-height:280px;overflow:auto;overscroll-behavior:contain;padding:0;list-style:none;scrollbar-width:thin}
+.rpg-campaign .bestiary-material li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;border-bottom:1px solid #5c482e;padding:9px 2px;font-size:13px;color:#efdfbe}
+.rpg-campaign .bestiary-material li small{grid-column:1}
+.rpg-campaign .bestiary-material li>strong{grid-column:2;grid-row:1 / 3;align-self:center;white-space:nowrap}
+.rpg-campaign .bestiary-search-entry[hidden]{display:none!important}
 .rpg-campaign #modeTabs .rpg-tower-nav{display:block;width:100%;min-width:0;border:1px solid #a7864d;border-image:none;border-radius:4px;margin-top:8px;padding:9px 4px;background:linear-gradient(#493721,#231a11);color:#f1ddb0;font-size:13px;line-height:1.3}
 .rpg-campaign #modeTabs .rpg-tower-nav:disabled{opacity:.5}
 .rpg-campaign .rpg-tower-lobby>p{color:#e2cda7;line-height:1.5}

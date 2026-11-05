@@ -2107,7 +2107,7 @@ function renderCampContent(campEntries, previewStats, investedSummary, classBase
         <div class="inventory-item">
           <strong>Habilidades ativas</strong>
           <div class="inventory-list">
-            ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><img class="rpg-book-skill-art" src="${getSkillSpritePath(skill)}" alt="" loading="lazy"><strong>${skill.name}</strong><br><span class="lock-note">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
+            ${campEntries.activeEntries.map(skill => `<div class="inventory-item"><img class="rpg-book-skill-art" src="${getSkillSpritePath(skill)}" alt="" loading="lazy"><strong>${skill.name}</strong><br><span class="lock-note rpg-skill-readout">${skill.description}</span><br><span class="${skill.statusClass}">${skill.status}</span></div>`).join("")}
           </div>
         </div>
         <div class="inventory-item">
@@ -2951,9 +2951,9 @@ function getCampEntries(){
       level: skill.level,
       unlocked,
       isNext: !unlocked && skill.level === Math.min(...(classTrees.activeSkills || []).filter(entry => player.level < entry.level).map(entry => entry.level), Infinity),
-      status: unlocked ? "Disponivel" : `Desbloqueia no nivel ${skill.level}`,
+      status: unlocked ? "Desbloqueada" : `Desbloqueia no nivel ${skill.level}`,
       statusClass: unlocked ? "status-on" : "status-off",
-      description: activeDetail?.description || getActiveSkillPreviewDescription(skill)
+      description: activeDetail ? (typeof getSkillReadout === "function" ? getSkillReadout(activeDetail) : activeDetail.description) : getActiveSkillPreviewDescription(skill)
     };
   });
   const passiveEntries = (classTrees.passiveSkills || []).map(skill => {
@@ -5098,6 +5098,7 @@ function renderCampaignEnemyKit(name, region){
 function renderBestiary(){
   const selectedRegion = getSelectedBestiaryRegion();
   const regionData = regions[selectedRegion];
+  const materialIndex=getMaterialRecipeIndex();
   const devBestiary = isBestiaryDevUnlocked();
   const unlockProgress = devBestiary
     ? { defeated: regionData.enemies.length, total: regionData.enemies.length, unlocked: true, missing: [] }
@@ -5106,7 +5107,7 @@ function renderBestiary(){
     const stats = getEnemyStats(template, selectedRegion, false);
     const rarity = getEnemyRarity(selectedRegion, template.name, false);
     const assetKey = toCssToken(template.name);
-    return `<div class="inventory-item bestiary-card"><div class="simple-item-line">
+    return `<div class="inventory-item bestiary-card bestiary-search-entry"><div class="simple-item-line">
       <button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${assetKey}','${escapeJsString(template.name)}','enemy-${assetKey}')" aria-label="Ampliar sprite de ${escapeHtml(template.name)}"><div class="simple-combat-avatar">${renderCombatAvatar("enemies", assetKey, getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div></button>
       <div class="simple-item-copy">
         <strong>${template.name} Lv.${template.level} <small class="bestiary-kills">Abates: ${player.stats.regionKills?.[selectedRegion]?.[template.name] || 0}</small></strong><br>
@@ -5114,7 +5115,7 @@ function renderBestiary(){
         ${renderBestiaryStatGrid(stats)}
         ${renderBestiaryInfoLine("Drop", getEnemyPossibleDrop(template.name, selectedRegion, false), "stat-drop")}
         ${renderCampaignEnemyKit(template.name, selectedRegion)}
-      </div></div></div>`;
+      </div></div>${renderBestiaryMaterials(template.name,selectedRegion,false,materialIndex)}</div>`;
   }).join("");
   const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
   const bossProfile = getBossDifficultyProfile(selectedRegion, true);
@@ -5126,13 +5127,15 @@ function renderBestiary(){
       <strong>${selectedRegion}</strong><br>
       <span class="lock-note">${regionData.description}</span><br>
       <span class="lock-note">${bestiaryUnlockText}</span>
+      <label class="bestiary-search">Buscar nesta regi&atilde;o<input type="search" placeholder="Inimigo, material ou receita" oninput="filterBestiaryEntries(this.value)" aria-label="Buscar inimigo, material ou receita nesta regi&atilde;o"></label>
       <div class="inventory-list">${enemyCards}</div>
-      <div class="inventory-item" style="margin-top:12px;">
+      <div class="inventory-item bestiary-search-entry" style="margin-top:12px;">
         <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao <small class="bestiary-kills">Abates: ${player.stats.regionBossKills?.[selectedRegion] || 0}</small></strong><br>
         ${renderBestiaryStatGrid(bossStats)}
         ${renderCampaignEnemyPassive(regionData.boss.name)}
         <div class="bestiary-stat-grid">${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
         ${renderBestiaryInfoLine("Recompensa", getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true), "stat-drop")}</div></div>
+        ${renderBestiaryMaterials(regionData.boss.name,selectedRegion,true,materialIndex)}
         <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
       </div>
     </div>`;
@@ -6805,7 +6808,8 @@ function renderSkillActionButton(skill, index, onClick, actor = player){
   const state = getSkillActionState(skill, actor);
   const forcedBasicLock = actor === player && playerEffects.forcedBasicTurns > 0;
   const canUse = state.canUse && !forcedBasicLock;
-  const tooltip = forcedBasicLock ? `${skill.description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : `${skill.description}${state.reason ? ` | ${state.reason}` : ""}`;
+  const description=actor===player&&!IS_DUNGEON_PAGE&&!IS_ARENA_PAGE?getSkillReadout(skill):skill.description;
+  const tooltip = forcedBasicLock ? `${description} | Bloqueada enquanto Cortes Ultrasonicos estiver ativo.` : `${description}${state.reason ? ` | ${state.reason}` : ""}`;
   return `<button class="${state.classes}${forcedBasicLock ? " skill-locked" : ""}" data-tooltip="${tooltip}" onclick="${onClick}" ${canUse ? "" : "disabled"}>${skill.name}<span class="skill-cost-tag">${state.manaCost} MP</span></button>`;
 }
 

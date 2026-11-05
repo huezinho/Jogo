@@ -13,16 +13,16 @@
  let owner=null;
  let previousDescription=null;
  function hide(){if(owner){if(previousDescription)owner.setAttribute('aria-describedby',previousDescription);else owner.removeAttribute('aria-describedby');owner=null;}if(tip.matches(':popover-open'))tip.hidePopover();tip.hidden=true;}
- function show(event){const b=event.target.closest?.('[data-hud-description],[data-hud="flee"],.region-map-boss-btn,.region-map-marker,.location-map-marker,[data-trophy-tooltip]');if(!b){hide();return;}if(owner!==b){hide();owner=b;previousDescription=b.getAttribute('aria-describedby');}
+ function show(event){if(tip.contains(event.target))return;const b=event.target.closest?.('[data-hud-description],[data-hud="flee"],.region-map-boss-btn,.region-map-marker,.location-map-marker,[data-trophy-tooltip]');if(!b){hide();return;}if(owner!==b){hide();owner=b;previousDescription=b.getAttribute('aria-describedby');}
   const map=b.matches('.region-map-marker,.location-map-marker,[data-trophy-tooltip]');
-  tip.dataset.kind=b.dataset.hud==='find'?'spawn':b.dataset.hud==='quick-use'?'item':b.matches('.region-map-boss-btn')?'boss':map?'map':b.matches('.rpg-coins')?'balance':'action';tip.textContent=b.dataset.hudDescription||b.dataset.tooltip||b.dataset.trophyTooltip||b.getAttribute('aria-label')||b.textContent;currency(tip);tip.hidden=false;if(!tip.matches(':popover-open'))tip.showPopover();b.setAttribute('aria-describedby',tip.id);
+  tip.dataset.kind=b.matches('.rpg-ability')?'skill':b.dataset.hud==='find'?'spawn':b.dataset.hud==='quick-use'?'item':b.matches('.region-map-boss-btn')?'boss':map?'map':b.matches('.rpg-coins')?'balance':'action';tip.textContent=b.dataset.hudDescription||b.dataset.tooltip||b.dataset.trophyTooltip||b.getAttribute('aria-label')||b.textContent;currency(tip);tip.hidden=false;if(!tip.matches(':popover-open'))tip.showPopover();b.setAttribute('aria-describedby',tip.id);
   const r=b.getBoundingClientRect(),t=tip.getBoundingClientRect(),side=map||b.matches('.region-map-boss-btn,.rpg-coins');
   let left=side?r.left-t.width-12:r.left+r.width/2-t.width/2;if(side&&left<8)left=r.right+12;
   tip.style.left=Math.max(8,Math.min(innerWidth-t.width-8,left))+'px';tip.style.top=Math.max(8,Math.min(innerHeight-t.height-8,side?r.top+(r.height-t.height)/2:r.top-t.height-12))+'px';
  }
  document.addEventListener('pointerover',show);document.addEventListener('focusin',show);
  document.addEventListener('pointermove',event=>{if(tip.hidden)show(event);});
- document.addEventListener('mouseout',e=>{if(owner&&!owner.contains(e.relatedTarget))hide();});
+ document.addEventListener('mouseout',e=>{if(owner&&!owner.contains(e.relatedTarget)&&!tip.contains(e.relatedTarget))hide();});
  document.addEventListener('focusout',()=>{if(!owner?.matches(':hover'))hide();});document.addEventListener('click',hide);
  window.addEventListener('scroll',()=>{const r=owner?.isConnected?owner.getBoundingClientRect():null;if(r&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth)show({target:owner});else hide();},true);window.addEventListener('resize',hide);
  const root=document.getElementById('game');

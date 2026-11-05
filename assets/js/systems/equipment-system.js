@@ -157,6 +157,12 @@ const EquipmentSystem = (function(){
     return list;
   }
   function recipeById(id, actor){ return getRecipes(actor).find(recipe => recipe.id === id) || null; }
+  // Read-only catalog, including locked regions and every upgrade stage.
+  function getRecipeCatalog(actor){
+    actor=actorNow(actor);if(!actor)return [];
+    return regionNames().flatMap(region=>[...EquipmentData.slots,'accessory'].flatMap(slot=>
+      Object.keys(EquipmentData.rarityFactors).map(rarity=>recipeFor(region,slot,actor.class,rarity,actor)).filter(Boolean)));
+  }
   function ownsRecipeItem(recipe, actor){
     actor = actorNow(actor);
     const template = recipe?.result?.templateId;
@@ -581,6 +587,6 @@ const EquipmentSystem = (function(){
     if(typeof triggerForgeFeedback === "function" && equippedSlot) triggerForgeFeedback(equippedSlot, "success");
     changed(); return improved;
   }
-  return { contractRewards, refreshEquipmentStats, canUpgrade, duplicateCount, createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
+  return { getRecipeCatalog, contractRewards, refreshEquipmentStats, canUpgrade, duplicateCount, createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
 })();
 if(typeof window !== "undefined") window.EquipmentSystem = EquipmentSystem;
