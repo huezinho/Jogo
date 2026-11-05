@@ -653,7 +653,7 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-character-caption{pointer-events:none}
 .rpg-campaign .rpg-character-caption button{pointer-events:auto}
 .rpg-campaign .rpg-loadout{position:relative;z-index:3}
-.rpg-campaign .rpg-inn-interior{display:grid;grid-template-columns:minmax(180px,1fr) minmax(300px,460px);align-items:center;min-height:calc(100dvh - 80px);background:radial-gradient(ellipse at 30% 45%,#8a63344a,transparent 55%),linear-gradient(120deg,#281d13,#130e09)}
+.rpg-campaign .rpg-inn-interior{display:grid;grid-template-columns:minmax(180px,1fr) minmax(300px,460px);align-items:center;min-height:calc(100dvh - 80px);background:linear-gradient(90deg,#140d0620,#140d0655),url('../visual/backgrounds/scenes/inn-interior.webp') center/cover no-repeat #281d13}
 .rpg-campaign .rpg-inn-vendor{text-align:center;min-width:0}
 .rpg-campaign .rpg-inn-vendor img{max-width:100%;width:310px;max-height:600px;object-fit:contain;filter:drop-shadow(0 15px 18px #0008)}
 .rpg-campaign #campaignHud .rpg-inn-interior .rpg-inn{border:1px solid #9b7d46;border-image:none;border-radius:6px;padding:20px;background:#1c150fee}
