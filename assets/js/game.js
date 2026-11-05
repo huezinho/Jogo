@@ -4998,9 +4998,9 @@ function renderBestiary(){
         <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
         ${renderBestiaryStatGrid(bossStats)}
         ${renderCampaignEnemyPassive(regionData.boss.name)}
-        <div class="bestiary-stat-grid">${renderBestiaryMetric("Mana", bossMana, "stat-mp")}${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
+        <div class="bestiary-stat-grid">${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
         ${renderBestiaryInfoLine("Recompensa", getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true), "stat-drop")}</div></div>
-        <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${ability.description}</span><br><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
+        <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
       </div>
     </div>`;
 }

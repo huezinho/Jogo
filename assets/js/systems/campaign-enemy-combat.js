@@ -2,7 +2,7 @@
 const CampaignEnemyCombat = (() => {
   const a=(id,name,cost,details,extra={})=>({id,name,cost,description:details,...extra});
   const kits={
-    2:[a('fang','Presa Venenosa',10,'Veneno: 5 por turno, 3 turnos.',{poison:5,turns:3})],
+    2:[a('fang','Presa Venenosa',10,'Causa o dano do ataque e aplica veneno de 5 por turno por 3 turnos.',{basicAttack:true,poison:5,turns:3})],
     3:[a('roots','Raizes',25,'30 de dano + 2% da vida maxima.',{power:30,maxHpPercent:.02})],
     7:[a('stone','Escudo de Pedra',35,'42 de dano; ignora escudo; cria 42 de escudo.',{power:42,shieldFlat:42,ignoreShield:true})],
     10:[a('haunt','Assombrar',30,'50 de dano; fuga forcada apos 2 rodadas.',{power:50,haunt:2})],
@@ -155,7 +155,7 @@ const CampaignEnemyCombat = (() => {
     // Debuffs from non-damaging casts still require a successful hit check.
     const hostile=a.power!==undefined||a.poison||a.poisonMana||a.burn||a.bleed||a.deathmark||a.reap||a.doom||a.damageDown||a.skip||a.drain;
     if(!hostile)return;
-    let damage=(a.power||0)+(a.maxHpPercent?Math.floor(getCurrentCaps().maxHp*a.maxHpPercent):0)+(a.currentHpPercent?Math.floor(player.hp*a.currentHpPercent):0);
+    let damage=(a.basicAttack?enemy.attack:(a.power||0))+(a.maxHpPercent?Math.floor(getCurrentCaps().maxHp*a.maxHpPercent):0)+(a.currentHpPercent?Math.floor(player.hp*a.currentHpPercent):0);
     if(a.doubleShield&&playerEffects.shieldValue>0)damage*=2;
     if(damage>0)damage+=Math.floor(getCurrentCaps().maxHp*(enemy.maxHpStrikePercent||0));
     damage=Math.floor(damage*damageMultiplier());
@@ -196,7 +196,7 @@ const CampaignEnemyCombat = (() => {
     const blocked=s.timers.rest>0||enemy.skipNextAttack||(enemy.aimLegTurns>0&&Math.random()<enemy.aimLegSkipChance)||(enemy.blizzardSkipChance>0&&Math.random()<enemy.blizzardSkipChance)||(getPassiveModifiers().enemySkipChance>0&&Math.random()<getPassiveModifiers().enemySkipChance);
     if(blocked){enemy.skipNextAttack=false;log(`${enemy.baseName} perdeu o turno.`);march();}
     else if(s.charge){if(--s.charge.left===0){const a=s.charge.ability;s.charge=null;cast(a,true);await playSpriteAttackAnimation('enemy','cast',!s.lastMissed,1,null,null,{...a,visualPhase:'release'});}else{log(`${s.charge.ability.name} continua em preparacao.`);await playSpriteAttackAnimation('enemy','cast',false,1,null,null,{...s.charge.ability,visualPhase:'charge'});}}
-    else{const action=choose();if(action){cast(action);await playSpriteAttackAnimation('enemy',action.power!==undefined?'cast':'buff',!!action.power&&!action.charge&&!s.lastMissed,1,null,null,{...action,visualPhase:action.charge?'charge':'release'});}else{const count=s.timers.double>0?2:1;for(let n=0;n<count&&player.hp>0&&enemy.hp>0;n++){basic();await playSpriteAttackAnimation('enemy','attack',true);}}}
+    else{const action=choose();if(action){cast(action);await playSpriteAttackAnimation('enemy',action.power!==undefined||action.basicAttack?'cast':'buff',!!(action.power||action.basicAttack)&&!action.charge&&!s.lastMissed,1,null,null,{...action,visualPhase:action.charge?'charge':'release'});}else{const count=s.timers.double>0?2:1;for(let n=0;n<count&&player.hp>0&&enemy.hp>0;n++){basic();await playSpriteAttackAnimation('enemy','attack',true);}}}
     for(const[k,v]of Object.entries(old))if(v>0&&s.timers[k]===v)s.timers[k]--;
     if(old.dominion>0){for(const[k,v]of Object.entries(s.stolen.buffs||{}))if(k.endsWith('Turns')&&v>0)s.stolen.buffs[k]--;refreshStolen(s);}
     for(const key of ['aimLegTurns','attackDownTurns','armorDownTurns','blizzardTurns'])if(enemy[key]>0)enemy[key]--;

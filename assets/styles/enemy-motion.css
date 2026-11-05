@@ -3,7 +3,6 @@
 .rpg-campaign .sheet-sprite.enemy-painted-boss{width:360px;height:450px}
 .rpg-campaign .enemy-painted-avatar{background-size:400% var(--enemy-sheet-height,100%)!important;background-position:0 0!important}
 .rpg-campaign .rpg-enemy-portrait .enemy-painted{width:256px;height:320px;top:-29px;transform:translateX(-50%) scale(.46)}
-.rpg-campaign .rpg-battle .battle-scene:has(.enemy-painted-boss),.rpg-campaign .rpg-battle .battle-scene:has(.zenith-painted){height:580px;min-height:580px}
 .rpg-campaign .rpg-battle .battle-scene .enemy-entity:has(.enemy-painted){left:74%;bottom:70px;--entity-scale:.96}
 .rpg-campaign .rpg-battle .battle-scene .enemy-boss:has(.enemy-painted-boss){left:72%;bottom:65px;--entity-scale:1.1}
 .rpg-campaign .enemy-boss:has(.enemy-painted) .entity-shadow{width:185px;height:28px}
@@ -14,7 +13,6 @@
 .rpg-campaign .bestiary-preview-stage .enemy-painted,.rpg-campaign .bestiary-preview-stage .zenith-painted{transform:translateX(-50%) scale(1.05)}
 @media(min-width:761px){.rpg-campaign .rpg-battle .battle-scene .enemy-avatar-do-zenith{--entity-scale:1.2}}
 @media(max-width:760px){
- .rpg-campaign .rpg-battle .battle-scene:has(.enemy-painted-boss),.rpg-campaign .rpg-battle .battle-scene:has(.zenith-painted){height:430px;min-height:430px}
  .rpg-campaign .rpg-battle .battle-scene .enemy-entity:has(.enemy-painted){left:73%;bottom:75px;--entity-scale:.61}
  .rpg-campaign .rpg-battle .battle-scene .enemy-boss:has(.enemy-painted-boss){left:62%;bottom:66px;--entity-scale:.76}
  .rpg-campaign .enemy-painted-fx{width:210px;height:210px;margin:-105px 0 0 -105px}
