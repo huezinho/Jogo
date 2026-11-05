@@ -579,3 +579,29 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign #campaignHud .rpg-command-belt .rpg-turn-actions button{border:1px solid #9c7d47;border-image:none;padding:5px 2px;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:11px}
 .rpg-campaign #campaignHud #rpgBagButton button{border:0;padding:0;background:#28180d}
 .rpg-campaign #campaignHud #rpgBagButton img{width:100%;height:100%;max-width:none;object-fit:fill;border-radius:5px}
+.rpg-campaign #campaignHud .rpg-upgrade-rack{display:flex;flex-direction:column;gap:8px;padding:8px 2px;box-sizing:border-box;max-height:488px;overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#ad8950 #21160e;cursor:grab;touch-action:pan-y;user-select:none;align-self:start}
+.rpg-campaign #campaignHud .rpg-upgrade-rack .rpg-rack-slot{height:88px;min-height:88px;flex:0 0 88px;margin:0}
+.rpg-campaign .rpg-upgrade-rack img{-webkit-user-drag:none}
+.rpg-campaign #campaignHud .bestiary-skill,.rpg-campaign #campaignHud .rpg-bestiary .boss-ability-item{margin-top:10px;border:1px solid #766194;border-left:4px solid #ad81d6;border-image:none;border-radius:5px;padding:12px;background:linear-gradient(120deg,#302139,#1a151e);color:#e4d5ec}
+.rpg-campaign #campaignHud .bestiary-skill>strong,.rpg-campaign #campaignHud .rpg-bestiary .boss-ability-item>strong{color:#e6c5ff;font-size:16px}
+.rpg-campaign #campaignHud .bestiary-skill p,.rpg-campaign #campaignHud .rpg-bestiary .boss-ability-item .lock-note{margin:8px 0 0;color:#e4d5ec;font:15px/1.5 'RPG Leitura',Georgia,serif}
+.rpg-campaign #campaignHud .bestiary-passive{border-color:#627d4b;border-left-color:#96c16f;background:linear-gradient(120deg,#213222,#151d17)}
+.rpg-campaign #campaignHud .bestiary-passive>strong{color:#c3e9a2}
+.rpg-campaign .bestiary-skill-cost{display:inline-block;float:right;margin-left:8px;border:1px solid #557e95;background:#142736;color:#b7e5ff;border-radius:4px;padding:2px 6px;font-size:13px}
+.rpg-campaign #campaignHud .bestiary-kills{display:inline-block;color:#b9d69e;border:1px solid #607446;border-radius:4px;padding:3px 7px;margin-left:6px;font-size:12px;white-space:nowrap}
+.rpg-campaign .rpg-inn-drink{margin-top:16px;padding-top:12px;border-top:1px solid #a48753}
+.rpg-campaign .rpg-inn-drink p{font-size:16px}
+.rpg-campaign .alchemy-workbench{padding:12px;min-width:0}
+.rpg-campaign .alchemy-workbench select{margin:8px;padding:8px;background:#251a12;color:#f1dbad;border:1px solid #aa894f;font:inherit}
+.rpg-campaign .alchemy-recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.rpg-campaign .alchemy-recipe{border:1px solid #88704e;border-radius:6px;padding:14px;background:#20170fed;color:#ecdab8}
+.rpg-campaign .alchemy-recipe h3{color:#d6c0ef}
+.rpg-campaign .alchemy-recipe p,.rpg-campaign .alchemy-recipe li{font:16px/1.4 'RPG Leitura',Georgia,serif}
+.rpg-campaign .alchemy-recipe ul{padding-left:18px}
+.rpg-campaign .alchemy-recipe button{border:1px solid #aa894f;border-image:none;border-radius:4px;padding:8px;background:#35422a}
+.rpg-campaign .alchemy-recipe .alchemy-potion-art{display:block;width:100px;height:100px;object-fit:contain;margin:0 auto 10px;filter:drop-shadow(0 4px 5px #0008)}
+.rpg-campaign .alchemy-recipe h3{font-size:19px;line-height:1.3;text-align:center}
+.rpg-campaign .rpg-village-interior.rpg-alchemy{align-items:flex-start;flex-direction:column;gap:14px;padding:20px}
+.rpg-campaign .rpg-alchemy .rpg-service-copy{width:auto;max-width:100%;margin:0;padding:12px 18px}
+.rpg-campaign .rpg-alchemy .rpg-shop{width:100%;min-width:0;box-sizing:border-box}
+@media(max-width:760px){.rpg-campaign .rpg-village-interior.rpg-alchemy{padding:12px}}

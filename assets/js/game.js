@@ -111,6 +111,11 @@ function setArtisanRegion(regionName){
 
 function createDefaultPlayerEffects(){
   return {
+    potionDodgeTurns: 0, potionDodgeCharges: 0,
+    potionArmorTurns: 0, potionArmor: 0,
+    potionRegenTurns: 0, potionRegenAmount: 0,
+    potionManaTurns: 0, potionManaAmount: 0,
+    potionDrainTurns: 0, potionDrainAmount: 0, potionDrainUsed: false,
     attackBuffTurns: 0,
     attackBuffAmount: 0,
     attackBuffPercent: 0,
@@ -493,7 +498,7 @@ function showNextGameNotice(){
   const entry=gameNoticeQueue.shift(),title=document.createElement("strong"),detail=document.createElement("span");
   title.textContent=entry.title;detail.textContent=entry.message;notice.replaceChildren(title,detail);notice.hidden=false;
   if(!notice.matches(':popover-open'))notice.showPopover();
-  gameNoticeTimer=setTimeout(()=>{if(notice.matches(':popover-open'))notice.hidePopover();notice.hidden=true;showNextGameNotice();},6000);
+  gameNoticeTimer=setTimeout(()=>{if(notice.matches(':popover-open'))notice.hidePopover();notice.hidden=true;showNextGameNotice();},2500);
 }
 
 function raiseGameNotice(){
@@ -1789,6 +1794,13 @@ function getCurrentCaps(){
   };
 }
 
+function getEnemyXpReward(target, heroLevel = player.level, dungeon = false){
+  const difference = Math.abs(heroLevel - target.level);
+  const proximity = 1 / (1 + Math.pow(difference / 10, 2));
+  const base = dungeon ? target.level * (target.isBoss ? 6 : 4) : (target.isBoss ? 40 + target.level * 10 : 22 + target.level * 8);
+  return Math.max(1, Math.floor(base * proximity));
+}
+
 function getXpToNextLevel(){
   return 100 + Math.max(0, player.level - 1) * 25 + Math.floor(player.level * player.level * 1.5);
 }
@@ -2193,11 +2205,14 @@ function getEnemyMissChance(){
 function decayPlayerBuffs(){
   const previousInvulnerableTurns = playerEffects.invulnerableTurns;
   const previousUltrasonicTurns = playerEffects.basicOnlyUntouchableTurns;
-  for(const buffName of ["attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "visualDemonTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
+  for(const buffName of ["potionDodgeTurns", "potionArmorTurns", "potionRegenTurns", "potionManaTurns", "potionDrainTurns", "attackBuffTurns", "skillBuffTurns", "manaRegenBuffTurns", "guaranteedHitTurns", "enemyMissBonusTurns", "regenTurns", "finalDamageBuffTurns", "incomingDamageBonusTurns", "visualDemonTurns", "arcaneChargeTurns", "percentReductionTurns", "enemyMaxHpBonusTurns", "invulnerableTurns", "forcedBasicTurns", "basicOnlyUntouchableTurns", "healReductionTurns", "damageDownTurns", "natureCrownedTurns", "natureTrueFormTurns", "natureShieldBonusTurns", "controlImmuneTurns", "lifeStealTurns", "ultrasonicRecoveryTurns"]){
     if(playerEffects[buffName] > 0){
       const newlyApplied = playerEffects.actionBuffSnapshot && playerEffects[buffName] > (playerEffects.actionBuffSnapshot[buffName] || 0);
       if(!newlyApplied && !playerEffects.freshBuffs?.includes(buffName)){ playerEffects[buffName]--; }
     }
+  }
+  for(const [turnField,valueField] of [["potionDodgeTurns","potionDodgeCharges"],["potionArmorTurns","potionArmor"],["potionRegenTurns","potionRegenAmount"],["potionManaTurns","potionManaAmount"],["potionDrainTurns","potionDrainAmount"]]){
+    if(playerEffects[turnField]<=0)playerEffects[valueField]=0;
   }
   if(previousUltrasonicTurns > 0 && playerEffects.basicOnlyUntouchableTurns <= 0) playerEffects.ultrasonicRecoveryTurns = 1;
   if(playerEffects.lifeStealTurns <= 0) playerEffects.lifeStealPercent = 0;
@@ -2235,8 +2250,8 @@ function decayPlayerBuffs(){
 
 function getTurnHealing(){
   const passiveRegen = Math.floor(getCurrentCaps().maxHp * (getPassiveModifiers().turnHealPercent || 0));
-  const activeRegen = playerEffects.regenTurns > 0 ? Math.floor(getCurrentCaps().maxHp * playerEffects.regenPercent) : 0;
-  return passiveRegen + activeRegen;
+  const activeRegen = playerEffects.regenTurns > 0 && playerEffects.regenPercent > 0 ? Math.max(1, Math.floor(getCurrentCaps().maxHp * playerEffects.regenPercent)) : 0;
+  return passiveRegen + activeRegen + (playerEffects.potionRegenTurns>0?playerEffects.potionRegenAmount:0);
 }
 
 function getPlayerHealReductionPercent(){
@@ -3168,6 +3183,13 @@ function getActiveBuffs(){
   if(playerEffects.enemyMaxHpBonusTurns > 0 && playerEffects.enemyMaxHpBonusDamagePercent > 0){
     buffs.push(`Dano extra por vida do alvo | ${playerEffects.enemyMaxHpBonusTurns} turno(s)`);
   }
+  for(const [turns,amount,label] of [
+    ["potionDodgeTurns","potionDodgeCharges","Esquivas restantes"],
+    ["potionArmorTurns","potionArmor","Protecao fixa"],
+    ["potionRegenTurns","potionRegenAmount","Regeneracao HP"],
+    ["potionManaTurns","potionManaAmount","Clareza MP"],
+    ["potionDrainTurns","potionDrainAmount","Vampirismo HP"]
+  ])if(playerEffects[turns]>0)buffs.push(label+": "+playerEffects[amount]+" | "+playerEffects[turns]+" turno(s)");
   if(playerEffects.lifeStealTurns > 0) buffs.push(`Roubo de vida ${Math.floor(playerEffects.lifeStealPercent * 100)}% | ${playerEffects.lifeStealTurns} turno(s)`);
   if(playerEffects.ultrasonicRecoveryTurns > 0) buffs.push("Cortes Ultrasonicos: aguarde uma acao");
   if(playerEffects.forcedBasicTurns > 0){
@@ -3196,13 +3218,13 @@ function getActiveBuffs(){
     buffs.push(`Esquiva +${Math.floor(playerEffects.enemyMissBonus * 100)}% | ${playerEffects.enemyMissBonusTurns} turno(s)`);
   }
   if(playerEffects.regenTurns > 0 && playerEffects.regenPercent > 0){
-    buffs.push(`Regeneracao ${Math.floor(playerEffects.regenPercent * 100)}% | ${playerEffects.regenTurns} turno(s)`);
+    buffs.push(`Regeneracao ${Number((playerEffects.regenPercent * 100).toFixed(2))}% | ${playerEffects.regenTurns} turno(s)`);
   }
   if(playerEffects.finalDamageBuffTurns > 0 && playerEffects.finalDamageBuffPercent > 0){
     buffs.push(`Dano total +${Math.floor(playerEffects.finalDamageBuffPercent * 100)}% | ${playerEffects.finalDamageBuffTurns} turno(s)`);
   }
   if(playerEffects.manaRegenBuffTurns > 0 && playerEffects.manaRegenBuffPercent > 0){
-    buffs.push(`Regen de mana +${Math.floor(playerEffects.manaRegenBuffPercent * 100)}% | ${playerEffects.manaRegenBuffTurns} turno(s)`);
+    buffs.push(`Regen de mana +${Number((playerEffects.manaRegenBuffPercent * 100).toFixed(2))}% | ${playerEffects.manaRegenBuffTurns} turno(s)`);
   }
   if(playerEffects.arcaneCharges > 0){
     buffs.push(`Cargas arcanas ${playerEffects.arcaneCharges} | ${playerEffects.arcaneChargeTurns} turno(s)`);
@@ -3308,6 +3330,11 @@ function applyEnemyArmor(rawDamage, ignoreArmor = false){
 }
 
 function applyLifeSteal(hpLost){
+  if(hpLost>0 && playerEffects.potionDrainTurns>0 && playerEffects.equipmentAction && !playerEffects.potionDrainUsed){
+    playerEffects.potionDrainUsed=true;
+    const healed=healPlayer(Math.min(hpLost,playerEffects.potionDrainAmount),{skipEquipment:true,skipEquipmentTracking:true});
+    if(healed>0)log("Vampirismo recuperou "+healed+" HP.");
+  }
   if(playerEffects.lifeStealTurns > 0 && hpLost > 0){
     const healed = healPlayer(Math.floor(hpLost * playerEffects.lifeStealPercent), { skipEquipment: true, skipEquipmentTracking: true });
     if(healed > 0) log(`Ira roubou ${healed} de vida.`);
@@ -3470,8 +3497,10 @@ function applyIncomingDamage(baseDamage, options = {}){
     damage = Math.max(0, damage - Math.floor(damage * playerEffects.percentReduction));
   }
   const missChance = getEnemyMissChance();
-  const autoMiss = playerEffects.nextIncomingAutoMiss;
+  const potionDodge=playerEffects.potionDodgeTurns>0 && playerEffects.potionDodgeCharges>0;
+  const autoMiss = playerEffects.nextIncomingAutoMiss || potionDodge;
   if(!options.ignoreDodge && (autoMiss || (missChance > 0 && Math.random() < missChance))){
+    if(!playerEffects.nextIncomingAutoMiss && potionDodge)playerEffects.potionDodgeCharges--;
     playerEffects.nextIncomingAutoMiss = false;
     if(getUnlockedPassiveSkills().some(skill => skill.type === "archer_dodge_damage_buff")){
       const subclassState = getPlayerSubclassState();
@@ -3504,7 +3533,7 @@ function applyIncomingDamage(baseDamage, options = {}){
     return { damage: 0, missed: true, absorbed: 0, manaAbsorbed: 0 };
   }
   if(baseDamage > 0 && playerEffects.glassCannonFirstHit){damage *= 2;playerEffects.glassCannonFirstHit=false;}
-  const flatReduction = getPassiveModifiers().flatReduction;
+  const flatReduction = getPassiveModifiers().flatReduction + (playerEffects.potionArmorTurns>0?playerEffects.potionArmor:0);
   if(flatReduction > 0 && !options.ignoreFlatReduction){
     damage = Math.max(0, damage - flatReduction);
   }
@@ -3589,6 +3618,7 @@ function applyIncomingDamage(baseDamage, options = {}){
 }
 
 function beginEquipmentAction(kind, skill = null){
+  playerEffects.potionDrainUsed=false;
   CampaignEnemyCombat.transferBuffs();
   CampaignEnemyCombat.snapshot();
   playerEffects.actionBuffSnapshot = Object.fromEntries(Object.entries(playerEffects).filter(([key,value]) => key.endsWith("Turns") && typeof value === "number"));
@@ -4246,6 +4276,12 @@ function getSkillSpritePath(skill, className = player?.class){
 }
 
 function getItemSpritePath(item){
+  const potion=consumableCatalog[item?.id];
+  if(potion?.typeId && alchemyQualities.some(quality=>quality.id===potion.quality)){
+    return "assets/visual/potions/"+potion.typeId+"_"+potion.quality+".webp?v=20261105-potion-art";
+  }
+  if(consumableCatalog[item?.id]?.baseItemId)return "assets/visual/items/"+consumableCatalog[item.id].baseItemId+".png?v="+ITEM_ASSET_VERSION;
+  if(item?.id === "invigorating_drink")return "assets/visual/hud/icon-potion.webp";
   if(item?.type === "equipment" && ["head","chest","legs","feet","weapon"].includes(item.slot)){
     if(item.regionName && EquipmentData.sets[item.regionName]){
       const weaponClass = item.classRestriction || player?.class || "Guerreiro";
@@ -4548,8 +4584,52 @@ function getEnemyStatusEffects(targetEnemy){
   result.push(...CampaignEnemyCombat.status(targetEnemy));
   return result;
 }
-function renderAlchemistPanel({compact = false} = {}){
-  return `<div class="inventory-item"><div class="panel-header"><strong>Alquimista</strong>${compact?'':`<span class="coin-badge">${player.coins} moedas</span>`}</div><span class="lock-note">Misturas raras e reforcos temporarios para a aventura.</span><div class="inventory-list">${Object.entries(consumableCatalog).map(([id, item]) => getInventoryItemCardMarkup({ id, type: "consumable", name: item.name }, item.description, `<div class="button-row"><button onclick="buyConsumable('${id}')">Comprar (${item.price}${compact?' <img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt="moedas">':' moedas'})</button></div>`, true)).join("")}</div></div>`;
+let alchemyQuality = "instavel";
+function setAlchemyQuality(value){
+  if(!alchemyQualities.some(q=>q.id===value))return;
+  alchemyQuality=value;updateUI();
+}
+function getAlchemyRecipe(id){
+  if(typeof id!=="string")return null;
+  const config=consumableCatalog[id];
+  if(!id.startsWith("alquimia_")||!config?.quality)return null;
+  const rank=alchemyQualities.findIndex(q=>q.id===config.quality);
+  const type=alchemyTypes.find(t=>t.id===config.typeId);
+  if(rank<0||!type)return null;
+  const multiplier=type.id==="vigor"||type.id==="vampirismo"?2:1;
+  const ingredients=new Map();
+  for(const [index,[region,tier,count,fixedEnemy]] of alchemyRecipePlans[rank].entries()){
+    const slot=index%2;
+    const enemyIndex=fixedEnemy??type.pair[slot];
+    const data=regions[region];
+    const template=[...data.enemies,data.boss][enemyIndex];
+    const material=EquipmentSystem.getMaterials(template.name,region)[tier];
+    const previous=ingredients.get(material.id);
+    ingredients.set(material.id,{...material,qty:(previous?.qty||0)+count*multiplier});
+  }
+  return {region:[...new Set(alchemyRecipePlans[rank].map(row=>row[0]))].join(" / "),ingredients:[...ingredients.values()]};
+}
+function craftAlchemyPotion(id){
+  if(currentMode!=="village"||villageTab!=="alchemist"||isDead||isProcessingTurn)return false;
+  const recipe=getAlchemyRecipe(id);
+  if(!recipe||recipe.ingredients.some(item=>getInventoryCountById(item.id)<item.qty))return false;
+  for(const ingredient of recipe.ingredients){
+    for(let n=0;n<ingredient.qty;n++)removeInventoryUnit(player.inventory.findIndex(item=>item.id===ingredient.id&&item.qty>0));
+  }
+  const item=addInventoryItem(createConsumableItem(id));
+  triggerInventoryFlash(item,"success");
+  log("Voce preparou "+item.name+".");
+  updateUI();queueCampaignSave();return true;
+}
+function renderAlchemistPanel(){
+  const choices=alchemyQualities.map(q=>'<option value="'+q.id+'" '+(q.id===alchemyQuality?'selected':'')+'>'+q.name+'</option>').join("");
+  const cards=alchemyTypes.map(type=>{
+    const id="alquimia_"+type.id+"_"+alchemyQuality,config=consumableCatalog[id],recipe=getAlchemyRecipe(id);
+    const ready=recipe.ingredients.every(item=>getInventoryCountById(item.id)>=item.qty);
+    const ingredients=recipe.ingredients.map(item=>'<li>'+escapeHtml(item.name)+' <strong>'+getInventoryCountById(item.id)+' / '+item.qty+'</strong></li>').join("");
+    return '<article class="alchemy-recipe"><img class="alchemy-potion-art" src="'+escapeHtml(getItemSpritePath({id}))+'" alt="'+escapeHtml(config.name)+'"><h3>'+escapeHtml(config.name)+'</h3><p>'+escapeHtml(config.description)+'</p><p>Materiais de '+escapeHtml(recipe.region)+'</p><ul>'+ingredients+'</ul><button onclick="craftAlchemyPotion(&quot;'+id+'&quot;)" '+(!ready?'disabled':'')+'>Preparar uma unidade</button></article>';
+  }).join("");
+  return '<div class="alchemy-workbench"><p>Receitas fixas: cada preparo exige os materiais das regi&otilde;es indicadas.</p><label>Qualidade <select onchange="setAlchemyQuality(this.value)">'+choices+'</select></label><div class="alchemy-recipes">'+cards+'</div></div>';
 }
 
 function renderArtisanPanel(){ return EquipmentSystem.renderArtisan(); }
@@ -4957,10 +5037,10 @@ function renderEnemyCombatCard(targetEnemy, shownEnemyHp = targetEnemy.hp){
 function renderCampaignEnemyPassive(name){
   if(IS_DUNGEON_PAGE || IS_ARENA_PAGE)return "";
   const i=CampaignEnemyCombat.index(name),title=CampaignEnemyCombat.passives[i];
-  return title ? `<p><strong>${escapeHtml(title)}</strong>: ${escapeHtml(CampaignEnemyCombat.passiveDescriptions[i])}</p>` : "";
+  return title ? `<article class="bestiary-skill bestiary-passive"><strong>${escapeHtml(title)}</strong><span class="bestiary-skill-cost">Passiva</span><p>${escapeHtml(CampaignEnemyCombat.passiveDescriptions[i])}</p></article>` : "";
 }
 function renderCampaignEnemyKit(name, region){
-  return getBossAbilitySet(name,region).filter(a=>a.campaign).map(a=>`<p><strong>${escapeHtml(a.name)}</strong> (${a.cost} MP): ${escapeHtml(a.description)}</p>`).join("")+renderCampaignEnemyPassive(name);
+  return getBossAbilitySet(name,region).filter(a=>a.campaign).map(a=>`<article class="bestiary-skill"><strong>${escapeHtml(a.name)}</strong><span class="bestiary-skill-cost">${a.cost} MP</span><p>${escapeHtml(a.description)}</p></article>`).join("")+renderCampaignEnemyPassive(name);
 }
 function renderBestiary(){
   const selectedRegion = getSelectedBestiaryRegion();
@@ -4976,7 +5056,7 @@ function renderBestiary(){
     return `<div class="inventory-item bestiary-card"><div class="simple-item-line">
       <button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${assetKey}','${escapeJsString(template.name)}','enemy-${assetKey}')" aria-label="Ampliar sprite de ${escapeHtml(template.name)}"><div class="simple-combat-avatar">${renderCombatAvatar("enemies", assetKey, getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div></button>
       <div class="simple-item-copy">
-        <strong>${template.name} Lv.${template.level}</strong><br>
+        <strong>${template.name} Lv.${template.level} <small class="bestiary-kills">Abates: ${player.stats.regionKills?.[selectedRegion]?.[template.name] || 0}</small></strong><br>
         <span class="${rarity.cssClass}">${rarity.label}</span>
         ${renderBestiaryStatGrid(stats)}
         ${renderBestiaryInfoLine("Drop", getEnemyPossibleDrop(template.name, selectedRegion, false), "stat-drop")}
@@ -4995,7 +5075,7 @@ function renderBestiary(){
       <span class="lock-note">${bestiaryUnlockText}</span>
       <div class="inventory-list">${enemyCards}</div>
       <div class="inventory-item" style="margin-top:12px;">
-        <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao</strong><br>
+        <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao <small class="bestiary-kills">Abates: ${player.stats.regionBossKills?.[selectedRegion] || 0}</small></strong><br>
         ${renderBestiaryStatGrid(bossStats)}
         ${renderCampaignEnemyPassive(regionData.boss.name)}
         <div class="bestiary-stat-grid">${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
@@ -5147,6 +5227,16 @@ async function useManaPotion(){
   return useConsumable("mana_potion");
 }
 
+function applyAlchemyPotionBuff(config){
+  if(!config.turnField||!config.valueField)return false;
+  playerEffects[config.turnField]=Math.max(playerEffects[config.turnField]||0,config.turns);
+  playerEffects[config.valueField]=Math.max(playerEffects[config.valueField]||0,config.value);
+  playerEffects.freshBuffs=playerEffects.freshBuffs||[];
+  playerEffects.freshBuffs.push(config.turnField);
+  log(config.name+": "+config.description);
+  return true;
+}
+
 async function useConsumable(itemId){
   if(isDead || currentMode === "trophies" || isProcessingTurn){ return; }
   const item = player.inventory.find(entry => entry.id === itemId && entry.qty > 0);
@@ -5163,6 +5253,27 @@ async function useConsumable(itemId){
   const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
   removeInventoryUnit(itemIndex);
 
+  applyAlchemyPotionBuff(config);
+  if(config.effectType === "buff_regeneration")healPlayer(config.value);
+  if(config.effectType === "buff_mana_regeneration"){
+    player.mp=Math.min(getCurrentCaps().maxMp,player.mp+config.value);
+    displayState.playerMp=player.mp;
+  }
+  if(config.effectType === "restore_mana" || config.effectType === "restore_both"){
+    const before=player.mp;
+    player.mp=Math.min(getCurrentCaps().maxMp,player.mp+(config.manaValue??config.value));
+    displayState.playerMp=player.mp;
+    if(config.effectType==="restore_both")healPlayer(config.value);
+    log(config.name+": "+(player.mp-before)+" MP recuperados.");
+  }
+  if(config.effectType === "restore_both_percent"){
+    const caps = getCurrentCaps();
+    const healed = healPlayer(Math.max(1, Math.floor(caps.maxHp * config.value)));
+    const before = player.mp;
+    player.mp = Math.min(caps.maxMp, player.mp + Math.max(1, Math.floor(caps.maxMp * config.value)));
+    displayState.playerMp = player.mp;
+    log(`Voce bebeu ${config.name} e recuperou ${healed} de vida e ${player.mp - before} de mana.`);
+  }
   if(config.effectType === "restore_hp"){
     const healed = healPlayer(config.value);
     log(`Voce usou ${config.name} e recuperou ${healed} de vida.`);
@@ -5203,7 +5314,7 @@ async function useConsumable(itemId){
   }
 
   updateUI();
-  if(["buff_skill", "buff_attack"].includes(config.effectType)) {
+  if(config.effectType.startsWith("buff_")) {
     await playSpriteAttackAnimation("hero", "buff", false);
   }
   if(currentMode === "dungeon" && isDungeonConnected()){
@@ -5557,11 +5668,16 @@ function restoreBothAtVillage(){
   updateUI(); return true;
 }
 
+function getInvigoratingDrinkCost(){
+  const caps=getCurrentCaps();
+  return Math.max(1,Math.ceil((caps.maxHp+caps.maxMp)*.25));
+}
+
 function buyConsumable(itemId){
-  if(currentMode !== "village"){ return; }
+  if(currentMode !== "village" || villageTab !== "inn" || itemId !== "invigorating_drink" || isDead || isProcessingTurn){ return; }
   const data = consumableCatalog[itemId];
   if(!data){ return; }
-  const cost = data.price;
+  const cost = itemId === "invigorating_drink" ? getInvigoratingDrinkCost() : data.price;
   if(player.coins < cost){
     log(`Voce nao tem moedas suficientes para comprar ${data.name}.`);
     return;
@@ -6632,8 +6748,10 @@ function renderLevelUpPanel(){
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
   const bonusPercent = playerEffects.manaRegenBuffTurns > 0 ? playerEffects.manaRegenBuffPercent : 0;
-  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent + bonusPercent);
-  return Math.max(1, Math.floor(getPreviewStats().maxMp * totalPercent) + modifiers.manaRegen);
+  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent);
+  const maxMp = getPreviewStats().maxMp;
+  const activeRegen = bonusPercent > 0 ? Math.max(1, Math.floor(maxMp * bonusPercent)) : 0;
+  return Math.max(1, Math.floor(maxMp * totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
 }
 
 function regenMana(){
@@ -6874,7 +6992,7 @@ function handleEnemyDefeat(){
   const coinMultiplier = 1 + getPassiveModifiers().coinBonus;
   const randomCoinMultiplier = 1 + Math.random() * 0.4;
   const coinsEarned = Math.floor(((enemy.isBoss ? 18 : 5) + enemy.level * 3) * randomCoinMultiplier * coinMultiplier);
-  const baseXpEarned = (enemy.isBoss ? 40 : 22) + enemy.level * 8;
+  const baseXpEarned = getEnemyXpReward(enemy);
   const xpEarned = baseXpEarned + Math.floor(baseXpEarned * getPassiveModifiers().xpBonus);
   player.coins += coinsEarned;
   player.stats.coinsEarned += coinsEarned;

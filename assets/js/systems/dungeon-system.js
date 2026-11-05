@@ -895,6 +895,15 @@
     const config = consumableCatalog[item.id];
     if(item.type !== "consumable" || !config){ return; }
     withDungeonHeroContext(hero, getDungeonSelectedEnemy(), () => {
+      applyAlchemyPotionBuff(config);
+      if(config.effectType === "restore_mana" || config.effectType === "restore_both"){
+        player.mp=Math.min(getCurrentCaps().maxMp,player.mp+(config.manaValue??config.value));
+        if(config.effectType==="restore_both")healPlayer(config.value);
+      }
+      if(config.effectType === "restore_both_percent"){
+        healPlayer(Math.max(1,Math.floor(getCurrentCaps().maxHp*config.value)));
+        player.mp=Math.min(getCurrentCaps().maxMp,player.mp+Math.max(1,Math.floor(getCurrentCaps().maxMp*config.value)));
+      }
       if(config.effectType === "restore_hp"){
         const healed = healPlayer(config.value);
         log(`Voce usou ${config.name} e recuperou ${healed} de vida.`);
@@ -910,6 +919,7 @@
       }
       if(config.effectType === "buff_skill"){
         playerEffects.skillBuffTurns = Math.max(playerEffects.skillBuffTurns, config.turns);
+        if(!config.isPercent)playerEffects.skillBuffAmount=Math.max(playerEffects.skillBuffAmount||0,config.value);
         if(config.isPercent){
           playerEffects.skillBuffPercent = Math.max(playerEffects.skillBuffPercent, config.value);
           log(`Voce usou ${config.name} e ganhou +${Math.floor(config.value * 100)}% de dano de habilidade por ${config.turns} turnos.`);
@@ -917,6 +927,7 @@
       }
       if(config.effectType === "buff_attack"){
         playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, config.turns);
+        if(!config.isPercent)playerEffects.attackBuffAmount=Math.max(playerEffects.attackBuffAmount||0,config.value);
         if(config.isPercent){
           playerEffects.attackBuffPercent = Math.max(playerEffects.attackBuffPercent, config.value);
           log(`Voce usou ${config.name} e ganhou +${Math.floor(config.value * 100)}% de dano de ataque por ${config.turns} turnos.`);
@@ -2015,7 +2026,11 @@
       }
     }
     withDungeonHeroContext(hero, null, () => {
-      gainXP(rewards.xp);
+      const targets = getDungeonRun().enemies || [];
+      const weighted = targets.reduce((sum,target)=>sum+getEnemyXpReward(target, hero.level, true),0);
+      const raw = targets.reduce((sum,target)=>sum+target.level*(target.isBoss?6:4),0);
+      const proximity = raw > 0 ? Math.min(1, weighted / raw) : 1;
+      gainXP(Math.max(1, Math.floor(rewards.xp * proximity)));
       displayState.playerXp = player.xp;
     });
     bumpDungeonHeroStateVersion(hero);
@@ -2049,8 +2064,8 @@
     grantDungeonEncounterRewards(rewards);
     const clearedRegion = getDungeonRegionName(run.regionIndex);
     const message = defeatedWasBoss
-      ? `O chefao de ${clearedRegion} caiu. Cada aventureiro ganhou ${rewards.xp} XP e ${rewards.coins} moedas da dungeon.`
-      : `A patrulha foi derrotada. Cada aventureiro ganhou ${rewards.xp} XP e ${rewards.coins} moedas da dungeon.`;
+      ? `O chefao de ${clearedRegion} caiu. Cada aventureiro recebeu XP conforme a proximidade de nivel e ${rewards.coins} moedas da dungeon.`
+      : `A patrulha foi derrotada. Cada aventureiro recebeu XP conforme a proximidade de nivel e ${rewards.coins} moedas da dungeon.`;
     log(message);
     broadcastToDungeonPeers({
       type: "encounter_reward",

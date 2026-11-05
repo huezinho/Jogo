@@ -259,11 +259,11 @@ const EquipmentSystem = (function(){
   function contractRewards(quest, actor){
     actor = actorNow(actor);
     const unlocked = unlockedRegions(actor);
-    const region = unlocked.includes(quest.payoutRegion) ? quest.payoutRegion : unlocked.includes(typeof currentRegion !== "undefined" ? currentRegion : "") ? currentRegion : quest.targetRegion;
+    const region = unlocked.includes(quest.payoutRegion) ? quest.payoutRegion : unlocked[unlocked.length - 1] || quest.targetRegion;
     const rank = Math.max(1, regionNames().indexOf(region) + 1);
     const difficulty = quest.count >= 16 ? "Dificil" : quest.count >= 10 ? "Media" : "Simples";
     const factor = { Simples: 1, Media: 2, Dificil: 3 }[difficulty];
-    return { payoutRegion: region, difficulty, rewardGold: Math.floor(120 * Math.pow(1.5, rank - 1) * factor), rewardXp: Math.floor(60 * Math.pow(1.5, rank - 1) * factor) };
+    return { payoutRegion: region, difficulty, rewardGold: Math.floor(120 * Math.pow(1.5, rank - 1) * factor), rewardXp: Math.floor(65 * Math.pow(2, rank - 1) * factor) };
   }
   function normalizeMercenary(actor){
     const saved = actor.mercenary && typeof actor.mercenary === "object" ? actor.mercenary : {};
@@ -285,11 +285,11 @@ const EquipmentSystem = (function(){
   function refreshContracts(actor, now = Date.now()){
     actor = actorNow(actor); if(!actor) return null;
     const state = normalizeMercenary(actor), cycle = Math.floor(now / EquipmentData.boardIntervalMs), unlocked = unlockedRegions(actor);
-    const signature = unlocked.join("|");
+    const signature = "frontier-v2:" + unlocked.join("|");
     if(state.boardCycle === cycle && state.unlockSignature === signature && state.offers.length) return state;
     state.boardCycle = cycle; state.unlockSignature = signature;
     const names = regionNames(), highest = Math.max(...unlocked.map(region => names.indexOf(region)));
-    const targets = unlocked.flatMap(region => regions[region].enemies.map(enemy => ({ region, name: enemy.name })));
+    const targets = unlocked.filter(region => names.indexOf(region) >= highest - 1).flatMap(region => regions[region].enemies.map(enemy => ({ region, name: enemy.name })));
     const rewardRegions = [...new Set([names[highest + 1], names[highest + 2], ...unlocked.slice().reverse()].filter(Boolean))];
     const targetOffset = hash(`${actor.characterId || actor.class}:${cycle}:${signature}`) % targets.length;
     state.offers = Array.from({ length: 6 }, (_, index) => {
