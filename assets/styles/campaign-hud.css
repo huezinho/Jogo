@@ -605,3 +605,46 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-alchemy .rpg-service-copy{width:auto;max-width:100%;margin:0;padding:12px 18px}
 .rpg-campaign .rpg-alchemy .rpg-shop{width:100%;min-width:0;box-sizing:border-box}
 @media(max-width:760px){.rpg-campaign .rpg-village-interior.rpg-alchemy{padding:12px}}
+/* Cauldron workshop with one selected recipe. */
+.rpg-campaign .rpg-village-interior.rpg-alchemy{min-height:660px;background:linear-gradient(90deg,#11190d15,#100f0ad4),url('../visual/backgrounds/scenes/alchemist-cauldron.webp') left center/cover no-repeat}
+.rpg-campaign .rpg-alchemy .rpg-service-copy{max-width:400px;background:#15150cd9;border-left:3px solid #9fb55a}
+.rpg-campaign .rpg-alchemy .rpg-shop{width:min(470px,100%);margin-left:auto;background:#171a10ed;border:1px solid #9b8b50;border-radius:8px}
+.rpg-campaign .alchemy-selectors{display:grid;grid-template-columns:1fr 1.5fr;gap:10px}
+.rpg-campaign .alchemy-selectors label{display:flex;flex-direction:column;gap:5px;min-width:0;color:#d9d8aa;font-size:15px}
+.rpg-campaign .alchemy-selectors select{width:100%;margin:0 0 10px;padding:9px 6px;min-width:0;box-sizing:border-box}
+.rpg-campaign .alchemy-recipe .ready{color:#b9d7a0}
+.rpg-campaign .alchemy-recipe .missing{color:#dbab91}
+.rpg-campaign .alchemy-recipe li{margin:6px 0}
+.rpg-campaign .alchemy-recipe button{width:100%}
+.rpg-campaign .alchemy-origin{color:#d9c187}
+.rpg-campaign #campaignHud #rpgAccount .rpg-death-return{border:1px solid #b3955b;border-image:none;padding:8px 4px;margin-top:7px;font-size:12px;white-space:normal}
+/* Inn recovery services and take-away drink. */
+.rpg-campaign .rpg-inn-interior{align-items:flex-start;flex-direction:column;gap:14px}
+.rpg-campaign .rpg-inn-interior .rpg-service-copy{width:auto;max-width:100%;padding:12px 18px}
+.rpg-campaign .rpg-inn-interior .rpg-inn{width:100%;max-width:none;box-sizing:border-box}
+.rpg-campaign .rpg-inn-vitals{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rpg-campaign .rpg-inn-services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.rpg-campaign .rpg-inn-service{padding:14px 10px;background:linear-gradient(#473723,#24190e);border:1px solid #a68b52;border-radius:7px;text-align:center;color:#f1dfb7;box-shadow:inset 0 0 0 3px #1a130c66}
+.rpg-campaign .inn-service-icon{font-size:30px;color:#ead18c}
+.rpg-campaign .inn-service-icon.hp{color:#efb7a3}
+.rpg-campaign .inn-service-icon.mp{color:#9ecce5}
+.rpg-campaign .rpg-inn-service h3{font-size:17px;margin:8px 0}
+.rpg-campaign .rpg-inn-service p{font:15px/1.3 'RPG Leitura',Georgia,serif}
+.rpg-campaign #campaignHud .rpg-inn-service button,.rpg-campaign #campaignHud .rpg-inn-drink button{border:1px solid #b89b61;border-image:none;border-radius:4px;background:linear-gradient(#6d532c,#362614);color:#f9e6b9;padding:10px 5px;min-width:0;font-size:14px;width:100%}
+.rpg-campaign .rpg-inn-drink{display:flex;align-items:center;gap:16px;padding:16px;margin-top:18px;border:1px solid #b59a64;border-radius:7px;background:#211911ed;color:#ecd7ac}
+.rpg-campaign .rpg-inn-drink>img{width:75px;height:90px;object-fit:contain}
+.rpg-campaign .rpg-inn-drink>div{flex:1;min-width:0}
+@media(max-width:760px){
+ .rpg-campaign .rpg-village-interior.rpg-alchemy{padding-top:240px;background-position:left top;background-size:auto 560px;background-color:#191a0f}
+ .rpg-campaign .rpg-alchemy .rpg-service-copy{display:none}
+ .rpg-campaign .rpg-alchemy .rpg-shop{margin-left:0}
+ .rpg-campaign .rpg-inn-vitals{grid-template-columns:1fr;gap:8px}
+ .rpg-campaign .rpg-inn-services{grid-template-columns:1fr}
+ .rpg-campaign .rpg-inn-service{display:grid;grid-template-columns:34px 1fr;gap:4px 8px;text-align:left}
+ .rpg-campaign .rpg-inn-service h3,.rpg-campaign .rpg-inn-service p{margin:3px 0}
+ .rpg-campaign .rpg-inn-service p,.rpg-campaign .rpg-inn-service button{grid-column:2}
+ .rpg-campaign .rpg-inn-drink{gap:8px;padding:10px}
+ .rpg-campaign .rpg-inn-drink>img{width:44px;height:64px}
+}
+.rpg-campaign .rpg-inn-interior .rpg-inn-service p,.rpg-campaign .rpg-inn-interior .rpg-inn-drink p{color:#e2d0aa}
+.rpg-campaign .rpg-inn-interior .inn-service-icon.hp,.rpg-campaign .rpg-inn-interior .inn-service-icon.mp{background:none}

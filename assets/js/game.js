@@ -1797,7 +1797,7 @@ function getCurrentCaps(){
 function getEnemyXpReward(target, heroLevel = player.level, dungeon = false){
   const difference = Math.abs(heroLevel - target.level);
   const proximity = 1 / (1 + Math.pow(difference / 10, 2));
-  const base = dungeon ? target.level * (target.isBoss ? 6 : 4) : (target.isBoss ? 40 + target.level * 10 : 22 + target.level * 8);
+  const base = dungeon ? target.level * (target.isBoss ? 6 : 4) : (target.isBoss ? 40 + target.level * 12 : 22 + target.level * 10);
   return Math.max(1, Math.floor(base * proximity));
 }
 
@@ -4585,6 +4585,11 @@ function getEnemyStatusEffects(targetEnemy){
   return result;
 }
 let alchemyQuality = "instavel";
+let alchemyType = "vida";
+function setAlchemyType(value){
+  if(!alchemyTypes.some(type=>type.id===value))return;
+  alchemyType=value;updateUI();
+}
 function setAlchemyQuality(value){
   if(!alchemyQualities.some(q=>q.id===value))return;
   alchemyQuality=value;updateUI();
@@ -4623,13 +4628,11 @@ function craftAlchemyPotion(id){
 }
 function renderAlchemistPanel(){
   const choices=alchemyQualities.map(q=>'<option value="'+q.id+'" '+(q.id===alchemyQuality?'selected':'')+'>'+q.name+'</option>').join("");
-  const cards=alchemyTypes.map(type=>{
-    const id="alquimia_"+type.id+"_"+alchemyQuality,config=consumableCatalog[id],recipe=getAlchemyRecipe(id);
-    const ready=recipe.ingredients.every(item=>getInventoryCountById(item.id)>=item.qty);
-    const ingredients=recipe.ingredients.map(item=>'<li>'+escapeHtml(item.name)+' <strong>'+getInventoryCountById(item.id)+' / '+item.qty+'</strong></li>').join("");
-    return '<article class="alchemy-recipe"><img class="alchemy-potion-art" src="'+escapeHtml(getItemSpritePath({id}))+'" alt="'+escapeHtml(config.name)+'"><h3>'+escapeHtml(config.name)+'</h3><p>'+escapeHtml(config.description)+'</p><p>Materiais de '+escapeHtml(recipe.region)+'</p><ul>'+ingredients+'</ul><button onclick="craftAlchemyPotion(&quot;'+id+'&quot;)" '+(!ready?'disabled':'')+'>Preparar uma unidade</button></article>';
-  }).join("");
-  return '<div class="alchemy-workbench"><p>Receitas fixas: cada preparo exige os materiais das regi&otilde;es indicadas.</p><label>Qualidade <select onchange="setAlchemyQuality(this.value)">'+choices+'</select></label><div class="alchemy-recipes">'+cards+'</div></div>';
+  const types=alchemyTypes.map(t=>'<option value="'+t.id+'" '+(t.id===alchemyType?'selected':'')+'>'+escapeHtml(t.name)+'</option>').join("");
+  const id="alquimia_"+alchemyType+"_"+alchemyQuality,config=consumableCatalog[id],recipe=getAlchemyRecipe(id);
+  const ready=!isDead&&!isProcessingTurn&&recipe.ingredients.every(item=>getInventoryCountById(item.id)>=item.qty);
+  const ingredients=recipe.ingredients.map(item=>'<li class="'+(getInventoryCountById(item.id)>=item.qty?'ready':'missing')+'">'+escapeHtml(item.name)+' <strong>'+getInventoryCountById(item.id)+' / '+item.qty+'</strong></li>').join("");
+  return '<div class="alchemy-workbench"><div class="alchemy-selectors"><label>Qualidade<select aria-label="Qualidade da po&ccedil;&atilde;o" onchange="setAlchemyQuality(this.value)">'+choices+'</select></label><label>Tipo<select aria-label="Tipo da po&ccedil;&atilde;o" onchange="setAlchemyType(this.value)">'+types+'</select></label></div><article class="alchemy-recipe"><img class="alchemy-potion-art" src="'+escapeHtml(getItemSpritePath({id}))+'" alt="'+escapeHtml(config.name)+'"><h3>'+escapeHtml(config.name)+'</h3><p>'+escapeHtml(config.description)+'</p><p class="alchemy-origin">Materiais de '+escapeHtml(recipe.region)+'</p><ul>'+ingredients+'</ul><button onclick="craftAlchemyPotion(&quot;'+id+'&quot;)" '+(!ready?'disabled':'')+'>Preparar po&ccedil;&atilde;o</button></article></div>';
 }
 
 function renderArtisanPanel(){ return EquipmentSystem.renderArtisan(); }
@@ -5516,6 +5519,7 @@ function createEnemyFromTemplate(template, isBoss = false, originOverride = null
 }
 
 function spawnEnemy(isBoss = false){
+  if(isDead || player.hp<=0)return false;
   if(blockCombatWhileResting()){ return false; }
   const regionData = isDungeonMode() ? dungeonData : regions[currentRegion];
   const template = isBoss
@@ -5572,17 +5576,17 @@ function challengeBoss(){
 
 function setMode(mode){
   if(IS_DUNGEON_PAGE && mode !== "dungeon"){
-    if(isProcessingTurn || isDead || player.hp <= 0){ return; }
+    if(isProcessingTurn){ return; }
     returnToMainPage(mode);
     return;
   }
   if(IS_ARENA_PAGE && mode !== "arena"){
-    if(isProcessingTurn || isDead || player.hp <= 0){ return; }
+    if(isProcessingTurn){ return; }
     returnToMainPage(mode);
     return;
   }
-  if(isProcessingTurn || isDead || player.hp <= 0 || !["battle", "village", "trophies", "camp", "dungeon", "bestiary", "arena"].includes(mode)){ return; }
-  if((levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
+  if(isProcessingTurn || !["battle", "village", "trophies", "camp", "dungeon", "bestiary", "arena"].includes(mode)){ return; }
+  if(!isDead && (levelUpPoints > 0 || needsSubclassChoice()) && mode !== "battle"){
     log("Finalize sua evolucao antes de sair da batalha.");
     updateUI();
     return;
@@ -5619,6 +5623,7 @@ function getManaHealCost(){
 }
 
 function healAtVillage(){
+  if(isDead)return;
   if(currentMode !== "village"){ return; }
   const { maxHp } = getCurrentCaps();
   if(player.hp >= maxHp){
@@ -5638,6 +5643,7 @@ function healAtVillage(){
 }
 
 function restoreManaAtVillage(){
+  if(isDead)return;
   if(currentMode !== "village"){ return; }
   const { maxMp } = getCurrentCaps();
   if(player.mp >= maxMp){
@@ -6244,10 +6250,8 @@ function getLocationActiveMode(){
 }
 
 function isLocationModeDisabled(mode){
-  if(mode === "battle"){
-    return isProcessingTurn || isDead || player.hp <= 0;
-  }
-  return isProcessingTurn || isDead || player.hp <= 0 || !!enemy || levelUpPoints > 0 || needsSubclassChoice();
+  if(mode==="battle")return isProcessingTurn;
+  return isProcessingTurn || !!enemy || (!isDead && (levelUpPoints>0||needsSubclassChoice()));
 }
 
 function renderLocationMapNavigation(){
@@ -7811,7 +7815,13 @@ setInterval(() => {
     }
   }
   if(isDead){
-    updateUI();
+    if(typeof CampaignHUD!=="undefined" && CampaignHUD.enabled()){
+      const remaining=Math.max(0,Math.ceil((deadUntil-Date.now())/1000));
+      for(const button of document.querySelectorAll('[data-hud="respawn"]')){
+        button.textContent=remaining?"Renascer em "+remaining+"s":"Renascer";
+        button.disabled=remaining>0;
+      }
+    }else updateUI();
   }
 }, 1000);
 

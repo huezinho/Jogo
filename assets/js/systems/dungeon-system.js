@@ -2522,7 +2522,7 @@
 
   setMode = window.setMode = function(mode){
     const validModes = ["battle", "village", "trophies", "camp", "dungeon", "bestiary", "arena", DUNGEON_RUN_MODE];
-    if(isProcessingTurn || isDead || player.hp <= 0 || !validModes.includes(mode)){ return; }
+    if(isProcessingTurn || !validModes.includes(mode) || (mode === DUNGEON_RUN_MODE && (isDead || player.hp<=0))){ return; }
     if(hasActiveDungeonRun() && mode !== DUNGEON_RUN_MODE){
       log("Enquanto a expedicao estiver ativa, voce so sai da dungeon abandonando a run ou se alguem do grupo cair.");
       updateUI();

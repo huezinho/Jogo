@@ -96,7 +96,7 @@ const regionCombatProfiles = {
   Paradoxo: { armorScale: 1.68, armorFlat: 112, maxHpStrikePercent: 0.15, hpMultiplier: 4.94, attackMultiplier: 3.55, bossHpMultiplier: 3.14, bossAttackMultiplier: 2.88, bossSkillMultiplier: 3.02, bossManaMultiplier: 1.52, bossArmorBonus: 48 }
 };
 const consumableCatalog = {
- invigorating_drink:{name:"Bebida Revigorante",price:45,description:"Recupera 15 HP e 10 MP.",useLabel:"Beber",effectType:"restore_both",value:15,manaValue:10},
+ invigorating_drink:{name:"Bebida Revigorante",price:45,description:"Recupera 5% da vida e da mana maximas.",useLabel:"Beber",effectType:"restore_both_percent",value:0.05},
  health_potion:{name:"Pocao de Vida",price:42,description:"Recupera 40 HP.",useLabel:"Usar",effectType:"restore_hp",value:40},
  mana_potion:{name:"Pocao de Mana",price:60,description:"Recupera 30 MP.",useLabel:"Usar",effectType:"restore_mana",value:30},
  attack_tonic:{name:"Tonico de Guerra",price:75,description:"Acrescenta 6 pontos de ataque por 3 turnos.",useLabel:"Usar",effectType:"buff_attack",value:6,turns:3,isPercent:false},
