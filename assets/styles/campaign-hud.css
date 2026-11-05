@@ -674,3 +674,38 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign #campaignHud .rpg-inn-interior .rpg-inn{padding:14px}
 }
 @media(max-width:760px){.rpg-campaign #campaignHud .rpg-village-interior.rpg-alchemy{background-position:left top}}
+/* Keep the bag shell stable; only its inventory and inspection panes scroll. */
+.rpg-campaign #rpgDialog[data-kind=bag]{box-sizing:border-box;width:min(1100px,calc(100vw - 24px));height:min(780px,calc(100dvh - 24px));max-height:none;padding:20px;overflow:hidden;border:3px double #b89961;border-radius:10px;background:radial-gradient(ellipse at top left,#59412b55,transparent 60%),#1c150f;box-shadow:0 24px 100px #000d,inset 0 0 0 5px #0f0b0766}
+.rpg-campaign #rpgDialog[data-kind=bag][open]{display:grid;grid-template-rows:auto minmax(0,1fr)}
+.rpg-campaign #rpgDialog[data-kind=bag]>header{margin:0 0 14px;padding:0 0 12px;grid-template-columns:minmax(0,1fr) auto}
+.rpg-campaign #rpgDialog[data-kind=bag] #rpgDialogContent{min-height:0;overflow:hidden}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;height:100%;min-height:0;padding:0;background:none}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content{display:flex;flex-direction:column;min-width:0;min-height:0;padding:14px;border:1px solid #6f5435;border-radius:7px;background:#120e0bbb}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content header{flex-shrink:0;margin-bottom:12px}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content h2{font-size:21px;margin:0}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-filters{flex-shrink:0;gap:6px;margin-bottom:12px}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-filters button{width:auto;min-width:0;border:1px solid #705638;border-image:none;border-radius:4px;padding:7px 10px;min-height:32px;font-size:12px;background:#2b2118;color:#d4bf98}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-filters button[aria-pressed=true]{border-color:#d6ae64;background:#584126;color:#fff0c9;box-shadow:inset 0 -2px #bc9148}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-grid{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;padding:4px}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-slot{height:80px;border-radius:5px;background:radial-gradient(ellipse,#4a372966,#130e09);transition:border-color .15s,box-shadow .15s}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-slot:hover{box-shadow:inset 0 0 12px #000,0 0 7px #bd955866}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail{box-sizing:border-box;min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:16px;border:1px solid #947143;border-image:none;border-radius:7px;background:linear-gradient(#38291e,#21180f);color:#ecdbb8}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail p{color:#d5c39f;font:15px/1.5 'RPG Leitura',Georgia,serif}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail>small{color:#c1ac85}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail>button{border:1px solid #a0804b;border-image:none;border-radius:4px;padding:10px 8px;min-height:40px;background:linear-gradient(#584027,#342418);color:#f1dfb7;font-size:14px;overflow-wrap:normal;word-break:normal;line-height:1.4}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-inspected-art{height:110px;margin-bottom:12px;padding:8px;border-bottom:1px solid #7c603b;background:radial-gradient(ellipse,#bf944722,transparent 70%)}
+.rpg-campaign #rpgDialog[data-kind=bag] .rpg-compare{padding:10px;border-color:#715a39;border-radius:4px;background:#100d0a66;color:#dcc79e}
+.rpg-campaign #rpgDialog[data-kind=bag] :is(.rpg-bag-grid,.rpg-item-detail){scrollbar-width:thin;scrollbar-color:#947143 #19120d}
+@media(max-width:760px){
+ .rpg-campaign #rpgDialog[data-kind=bag]{padding:12px;width:calc(100vw - 16px);height:calc(100dvh - 16px)}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:10px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content{padding:10px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content header{margin-bottom:6px;gap:4px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-content header>span{font-size:11px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-filters{flex-wrap:nowrap;overflow-x:auto;margin-bottom:6px;padding-bottom:4px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-filters button{flex-shrink:0;padding:6px 8px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-bag-slot{height:64px;padding:5px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail{padding:12px}
+ .rpg-campaign #rpgDialog[data-kind=bag] .rpg-inspected-art{height:68px;float:right;width:68px;margin:0 0 8px 8px}
+}
