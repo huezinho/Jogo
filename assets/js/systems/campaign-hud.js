@@ -129,7 +129,14 @@ const CampaignHUD = (() => {
       if(source&&dock) dock.append(source);
       if(dock)for(const label of dock.querySelectorAll('.scene-vital-text'))label.textContent=label.textContent.replace(/\//g,' / ');
     }
+    const dock=document.querySelector('.rpg-vital-dock');if(!dock)return;
+    const bounds=dock.getBoundingClientRect();
+    for(const kind of ['hero','enemy']){
+      const entity=document.getElementById(kind+'SpriteBox'),plate=document.querySelector('.rpg-'+kind+'-plate');
+      if(entity&&plate){const r=entity.getBoundingClientRect();plate.style.left=(r.left+r.width/2-bounds.left)+'px';}
+    }
   }
+  window.addEventListener('resize',()=>{if(enabled()&&currentMode==='battle')dockVitals();});
   const skillArt = skill => `<img src="${esc(getSkillSpritePath(skill))}" alt="" draggable="false">`;
   function renderActions(){
     if(!enabled()||!mounted) return false;
@@ -216,9 +223,13 @@ const CampaignHUD = (() => {
   function renderMercenary(){
     const board=EquipmentSystem.refreshContracts(player),remaining=Math.max(0,Math.ceil(((board.boardCycle+1)*EquipmentData.boardIntervalMs-Date.now())/60000));
     const offers=state.contractTab==='active'?board.active:board.offers.filter(q=>!board.active.some(active=>active.id===q.id)&&!board.claimed.includes(q.id));
-    const selected=offers.find(q=>q.id===state.contract)||offers[0];state.contract=selected?.id||null;
-    return `<section class="rpg-contract-board"><header class="rpg-board-intro"><h2>Contratos da fronteira</h2><p>Caçadas em regiões desbloqueadas. Pagamento em materiais, ouro e XP conforme dificuldade e região ao aceitar.</p><span>Novas ofertas em <strong>${remaining} min</strong> · ${board.active.length} / ${EquipmentData.maxActiveContracts} ativos</span><small>A renovação troca as ofertas. Seus contratos aceitos continuam ativos.</small></header><div class="rpg-contract-tabs">${button('Em andamento','contract-tab','active',`aria-pressed="${state.contractTab==='active'}"`)}${button('Disponíveis','contract-tab','offers',`aria-pressed="${state.contractTab==='offers'}"`)}</div><div class="rpg-contract-layout"><div class="rpg-contract-list">${offers.length?offers.map(q=>button(`<strong>Cace ${q.count} ${esc(q.targetName)}</strong><span>${esc(q.targetRegion)} · ${state.contractTab==='active'?`${q.progress} / ${q.count}`:esc(q.difficulty)}</span><small>${esc(EquipmentSystem.materialById(q.rewardId)?.name)} × ${q.rewardQty} · ${q.rewardGold} ouro · ${q.rewardXp} XP</small>`,'contract-select',q.id,`class="rpg-contract" aria-pressed="${q.id===selected.id}"`)).join(''):`<p class="rpg-paper">${state.contractTab==='active'?'Você ainda não aceitou contratos. Consulte as ofertas disponíveis.':'Nenhuma oferta restante nesta rotação. Aguarde a renovação do quadro.'}</p>`}</div><aside class="rpg-paper rpg-contract-detail">${selected?`<h2>${esc(selected.targetName)}</h2><p>Derrote ${selected.count} em ${esc(selected.targetRegion)}.</p><h3>Recompensa</h3><p>${selected.rewardGold} ouro · ${selected.rewardXp} XP base · ${esc(selected.payoutRegion)}</p><div class="rpg-reward">${getInventoryItemSymbol(EquipmentSystem.materialById(selected.rewardId))}<strong>${esc(EquipmentSystem.materialById(selected.rewardId)?.name)} × ${selected.rewardQty}</strong></div><p>Origem: ${esc(EquipmentSystem.materialById(selected.rewardId)?.regionName)}</p>${state.contractTab==='active'?`<p>Progresso: ${selected.progress} / ${selected.count}</p><p class="rpg-rule-note">A recompensa entra na bolsa automaticamente ao concluir.</p>${button('Abandonar contrato','abandon-confirm',selected.id)}`:button(board.claimed.includes(selected.id)||board.active.some(q=>q.id===selected.id)?'Contrato já retirado':'Aceitar contrato','accept',selected.id,`class="rpg-primary" ${board.claimed.includes(selected.id)||board.active.some(q=>q.id===selected.id)||board.active.length>=EquipmentData.maxActiveContracts?'disabled':''}`)}`:'<h2>Seu próximo contrato</h2><p>Escolha uma oferta para ver o objetivo e a recompensa antes de aceitar.</p>'}</aside></div></section>`;
+    return `<section class="rpg-village-interior rpg-mercenary-interior"><div class="rpg-mercenary-vendor"><img src="assets/visual/hud/mercenary-vendor.webp" alt="Mercenário responsável pelos contratos"></div><div class="rpg-mercenary-board"><header><h2>Mercenário</h2><p>Novas ofertas em ${remaining} min · ${board.active.length} / ${EquipmentData.maxActiveContracts} ativos</p></header><div class="rpg-contract-tabs">${button('Em andamento','contract-tab','active',`aria-pressed="${state.contractTab==='active'}"`)}${button('Disponíveis','contract-tab','offers',`aria-pressed="${state.contractTab==='offers'}"`)}</div><div class="rpg-mercenary-list">${offers.map(q=>{
+      const reward=EquipmentSystem.materialById(q.rewardId);
+      const tip=`Recompensa: ${reward?.name||q.rewardId} ×${q.rewardQty}\n${q.rewardGold} moedas · ${q.rewardXp} XP base\nOrigem do material: ${reward?.regionName||''}`;
+      return `<article class="rpg-mercenary-entry">${button(`<strong>Cace ${q.count} ${text(q.targetName)}</strong><span>${text(q.targetRegion)}${state.contractTab==='active'?' · '+q.progress+' / '+q.count:''}</span>`,'contract-reward',q.id,`class="rpg-contract-objective" data-hud-description="${esc(tip)}" aria-label="Cace ${q.count} ${esc(q.targetName)}. Consultar recompensa."`)}${state.contractTab==='active'?button('Abandonar','abandon-confirm',q.id):button('Assinar','accept',q.id,board.active.length>=EquipmentData.maxActiveContracts||locked()?'disabled':'')}</article>`;
+    }).join('')||`<p>${state.contractTab==='active'?'Nenhum contrato ativo. Consulte as ofertas disponíveis.':'Sem ofertas nesta rotação.'}</p>`}</div></div></section>`;
   }
+
   function renderCharacter(){
     if(campTab==='status')campTab='equipamentos';
     const tabs=`<nav class="rpg-character-tabs">${[['equipamentos','Equipamentos'],['habilidades','Habilidades']].map(([id,label])=>button(label,'camp-tab',id,`aria-pressed="${campTab===id}"`)).join('')}</nav>`;
@@ -273,6 +284,7 @@ const CampaignHUD = (() => {
     if(action==='tower-start'){closeDialog();return startChallengeTower();}
     if(action==='mercenary'){if(enemy||isProcessingTurn||(!isDead&&progressionPending()))return;villageTab='mercenary';return setMode('village');}
     if(action==='skill-info')return openDialog('skill-info',b.dataset.skillName,`<p class="rpg-skill-description">${esc(b.dataset.hudDescription)}</p>`);
+    if(action==='contract-reward')return openDialog('contract-reward','Recompensa do contrato',`<p class="rpg-skill-description">${esc(b.dataset.hudDescription)}</p>`);
     if(action==='close-dialog')return closeDialog();
     if(action==='expedition-start')return startExpedition();
     if(action==='expedition-stop')return stopExpedition();

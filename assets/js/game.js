@@ -2573,7 +2573,7 @@ function getSkillInfo(){
   return getUnlockedActiveSkills().map(skill => {
     if(skill.type === "warrior_second_wind"){
       const healFactor = subclassState.tier30 === "cavaleiro" && player.level >= 30 ? 0.19 : 0.12;
-      const heal = Math.floor(maxHp * healFactor);
+      const heal = 5 + Math.floor(maxHp * healFactor);
       const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.28 : 0;
       const cost = 30 + warriorExtraCost;
       const cleansesDot=subclassState.tier30 === "cavaleiro" && player.level >= 30;
@@ -5014,6 +5014,8 @@ function getEnemyCombatFxMarkup(){
 
 function renderCombatScene(activeEnemy = null, regionName = currentRegion){
   const sceneEnemy = activeEnemy || null;
+  // Preserve downward hit animations; upward changes must immediately reflect healing.
+  if(sceneEnemy===enemy && sceneEnemy && sceneEnemy.hp>(displayState.enemyHp??sceneEnemy.hp))displayState.enemyHp=sceneEnemy.hp;
   const heroClass = getHeroSpriteClass();
   const sceneClass = getRegionSpriteClass(regionName);
   const previewStats = getPreviewStats();
@@ -5040,7 +5042,7 @@ function renderCombatScene(activeEnemy = null, regionName = currentRegion){
     })
     : "";
   const enemySide = sceneEnemy
-    ? `<div class="${getEnemyRigWrapperClass(sceneEnemy)}" id="enemySpriteBox">
+    ? `<div class="${getEnemyRigWrapperClass(sceneEnemy)}" id="enemySpriteBox" style="--art-fit:${typeof COMBAT_ART_FIT!=='undefined'?COMBAT_ART_FIT['enemy-'+toCssToken(sceneEnemy.baseName)]||1:1}">
         ${enemyVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
@@ -5052,7 +5054,7 @@ function renderCombatScene(activeEnemy = null, regionName = currentRegion){
     <div class="battle-scene ${sceneClass}${activeEnemy ? " has-enemy" : " preview-scene"}">
       <div id="combatProjectileLayer" class="combat-projectile-layer"></div>
       ${enemySide}
-      <div id="heroSpriteBox" class="combat-entity hero-entity ${heroClass}">
+      <div id="heroSpriteBox" class="combat-entity hero-entity ${heroClass}" style="--art-fit:${typeof COMBAT_ART_FIT!=='undefined'?COMBAT_ART_FIT['hero-'+getHeroCombatAssetKey()]||1:1}">
         ${heroVitals}
         <div class="entity-aura"></div>
         <div class="entity-shadow"></div>
@@ -6907,7 +6909,7 @@ function getManaRegen(){
   const totalPercent = modifiers.manaRegenPercentSet ?? (0.05 + modifiers.manaRegenPercent);
   const maxMp = getPreviewStats().maxMp;
   const activeRegen = bonusPercent > 0 ? Math.max(1, Math.floor(maxMp * bonusPercent)) : 0;
-  return Math.max(1, Math.floor(maxMp * totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
+  return Math.max(1, 8 + Math.floor(maxMp * totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
 }
 
 function regenMana(){

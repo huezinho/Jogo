@@ -8,7 +8,7 @@ const {server,chromium}=require('../docs/qa/2026-10-27/smoke.cjs');
  for(const [id,level]of [['Guerreiro',20],['cavaleiro',50],['espadachim',50],['paladino',100],['berserker',100],['samurai',100],['ninja',100]]){
   make(id,level);const H=getCurrentCaps().maxHp,A=getActiveAttack(),S=getSkillPowerBonus(),W=Math.floor(.5*level),wind=skill('warrior_second_wind'),shove=skill('warrior_shove');
   const knight=['cavaleiro','paladino','berserker'].includes(id),swords=['espadachim','samurai','ninja'].includes(id);
-  check(wind.heal===Math.floor(H*(knight?.19:.12)),id+' healing');check(wind.cost===30+W,id+' W');
+  check(wind.heal===5+Math.floor(H*(knight?.19:.12)),id+' healing');check(wind.cost===30+W,id+' W');
   check((wind.damageBuff||0)===(swords?.28:0),id+' second wind final buff');
   const expected=20+Math.floor(H*(knight?.08:.06))+Math.floor(A*(knight?.7:swords?.8:.6))+Math.floor(S*(knight?.5:swords?.8:.4));
   check(shove.damage===expected,id+' shove formula');check(!!shove.canBreakControl===swords,id+' control break');

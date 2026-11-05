@@ -2,7 +2,7 @@
 module.exports=function(form,skill){
 const t=form.tier30,u=form.tier60,k=skill.type;
 const formulas={
-warrior_second_wind:`C = 30 + W; cura = ${t==='cavaleiro'?'0,19':'0,12'}H`,
+warrior_second_wind:`C = 30 + W; cura = 5 + ${t==='cavaleiro'?'0,19':'0,12'}H`,
 warrior_shove:t==='espadachim'?'C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P':t==='cavaleiro'?'C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P':'C = 38 + W; D = 20 + 0,06H + 0,6A + 0,4P',
 warrior_stagger:`C = 40 + W; D = ${u==='berserker'?'60 + 0,07H + 1,1A + 0,4P':'30 + 0,07H + 0,6A + 0,4P'}`,
 warrior_swift_strikes:`C = 44 + W; ${u==='ninja'?3:2} ataques básicos; cada golpe usa A + r`,

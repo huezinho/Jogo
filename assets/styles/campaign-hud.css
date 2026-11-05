@@ -675,6 +675,29 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 }
 @media(max-width:760px){.rpg-campaign #campaignHud .rpg-village-interior.rpg-alchemy{background-position:left top}}
 /* Keep the bag shell stable; only its inventory and inspection panes scroll. */
+.rpg-campaign #campaignHud .rpg-mercenary-interior{display:grid;grid-template-columns:minmax(160px,1fr) minmax(300px,500px);align-items:center;gap:24px;min-height:calc(100dvh - 80px);background:linear-gradient(90deg,#160e0710,#160e0750),url('../visual/backgrounds/scenes/mercenary-lodge.webp') center/cover no-repeat}
+.rpg-campaign .rpg-mercenary-vendor{text-align:center;min-width:0}.rpg-campaign .rpg-mercenary-vendor img{width:310px;max-width:100%;max-height:650px;object-fit:contain;filter:drop-shadow(0 15px 20px #0009)}
+.rpg-campaign .rpg-mercenary-board{padding:20px;border:1px solid #947547;border-radius:6px;background:#1d160fee;color:#ecd9b5;min-width:0}
+.rpg-campaign .rpg-mercenary-board h2{margin:0 0 8px}.rpg-campaign .rpg-mercenary-board header p{font:14px/1.4 'RPG Leitura',Georgia,serif;color:#c7b18b}
+.rpg-campaign .rpg-mercenary-list{display:grid;gap:8px;max-height:520px;overflow:auto;scrollbar-width:thin}
+.rpg-campaign .rpg-mercenary-entry{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;border-bottom:1px solid #725a38;padding:8px 0}
+.rpg-campaign #campaignHud .rpg-mercenary-entry>button{border:1px solid #8b7047;border-image:none;border-radius:4px;background:#3a2c1a;color:#ead6ad;min-width:0;padding:8px;font-size:13px;line-height:1.3}
+.rpg-campaign #campaignHud .rpg-mercenary-entry .rpg-contract-objective{display:flex;flex-direction:column;align-items:flex-start;gap:5px;border:0;background:none;text-align:left;font-size:15px}
+.rpg-campaign .rpg-contract-objective span{font:13px/1.3 'RPG Leitura',Georgia,serif;color:#c4ae86}
+.rpg-campaign #campaignHud .rpg-battle .battle-scene :is(.hero-entity,.enemy-entity:not(.enemy-boss)){--entity-scale:.96;bottom:78px}
+.rpg-campaign #campaignHud .rpg-battle .battle-scene :is(.hero-entity,.enemy-entity:not(.enemy-boss)) .sheet-sprite{transform:translateX(-50%) scale(calc(var(--entity-scale) * var(--art-fit,1)))}
+.rpg-campaign #campaignHud .rpg-vital-dock{left:0;right:0;bottom:12px;display:block;height:74px}
+.rpg-campaign #campaignHud .rpg-vital-dock :is(.rpg-hero-plate,.rpg-enemy-plate){position:absolute;bottom:0;transform:translateX(-50%);width:clamp(140px,24%,255px);text-align:center}
+.rpg-campaign #campaignHud .rpg-vital-dock .rpg-target-name{width:100%;text-align:center}
+.rpg-campaign #campaignHud .rpg-vital-dock .scene-vital-bar{height:18px;min-height:18px}.rpg-campaign #campaignHud .rpg-vital-dock .scene-vital-xp{height:4px;min-height:4px}
+@media(max-width:760px){
+ .rpg-campaign #campaignHud .rpg-mercenary-interior{grid-template-columns:1fr;gap:10px;padding:14px}
+ .rpg-campaign .rpg-mercenary-vendor img{height:200px;width:auto;max-width:100%}.rpg-campaign .rpg-mercenary-board{padding:12px}
+ .rpg-campaign #campaignHud .rpg-battle .battle-scene :is(.hero-entity,.enemy-entity:not(.enemy-boss)){--entity-scale:.62;bottom:85px}
+ .rpg-campaign #campaignHud .rpg-vital-dock :is(.rpg-hero-plate,.rpg-enemy-plate){width:clamp(100px,36%,155px)}
+ .rpg-campaign #campaignHud .rpg-vital-dock .scene-vital-bar{height:16px;min-height:16px}.rpg-campaign #campaignHud .rpg-vital-dock .scene-vital-xp{height:3px;min-height:3px}
+ .rpg-campaign #campaignHud .rpg-vital-dock .rpg-hero-plate strong{justify-content:center}
+}
 .rpg-campaign .region-map-lock{position:absolute;z-index:4;transform:translate(-50%,-50%);width:12%;max-width:22px;min-width:9px;pointer-events:none;color:#d9b76e;filter:drop-shadow(0 1px 2px #000)}
 .rpg-campaign .region-map-lock svg{display:block;width:100%;height:auto}
 .rpg-campaign .rpg-world-map .region-map-boss-hud{gap:5px;flex-wrap:wrap}

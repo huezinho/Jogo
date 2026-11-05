@@ -262,12 +262,17 @@ const EquipmentSystem = (function(){
   }
   function hash(value){ let result = 2166136261; for(const c of String(value)) result = Math.imul(result ^ c.charCodeAt(0), 16777619); return result >>> 0; }
   const validContractId = value => typeof value === "string" && /^contract_\d{1,12}_\d{1,10}_[0-5]$/.test(value);
+  function getContractKillLimit(region,name){
+    const ordered=[...(regions[region]?.enemies||[])].sort((a,b)=>b.weight-a.weight);
+    const rank=ordered.findIndex(enemy=>enemy.name===name);
+    return [20,10,5][rank]||5;
+  }
   function contractRewards(quest, actor){
     actor = actorNow(actor);
     const unlocked = unlockedRegions(actor);
     const region = unlocked.includes(quest.payoutRegion) ? quest.payoutRegion : unlocked[unlocked.length - 1] || quest.targetRegion;
     const rank = Math.max(1, regionNames().indexOf(region) + 1);
-    const difficulty = quest.count >= 16 ? "Dificil" : quest.count >= 10 ? "Media" : "Simples";
+    const difficulty = ["Simples","Media","Dificil"].includes(quest.difficulty)?quest.difficulty:quest.count >= 16 ? "Dificil" : quest.count >= 10 ? "Media" : "Simples";
     const factor = { Simples: 1, Media: 2, Dificil: 3 }[difficulty];
     return { payoutRegion: region, difficulty, rewardGold: Math.floor(120 * Math.pow(1.5, rank - 1) * factor), rewardXp: Math.floor(65 * Math.pow(2, rank - 1) * factor) };
   }
@@ -279,7 +284,7 @@ const EquipmentSystem = (function(){
       if(!quest || !validContractId(quest.id) || seen.has(quest.id) || claimed.includes(quest.id) || !isRegionUnlocked(quest.targetRegion, actor) || !regions[quest.targetRegion]?.enemies?.some(enemy => enemy.name === quest.targetName)) continue;
       const reward = materialById(quest.rewardId);
       if(!reward || reward.regionName === quest.targetRegion) continue;
-      const count = clampInt(quest.count, 1, 100);
+      const count = clampInt(quest.count, 1, getContractKillLimit(quest.targetRegion,quest.targetName));
       active.push({ ...contractRewards(quest, actor), id: quest.id, targetRegion: quest.targetRegion, targetName: quest.targetName, count, progress: clampInt(quest.progress, 0, count), rewardId: reward.id, rewardQty: clampInt(quest.rewardQty, 1, reward.isBossMaterial ? 1 : 5), acceptedAt: clampInt(quest.acceptedAt, 0, Number.MAX_SAFE_INTEGER) });
       seen.add(quest.id);
       if(active.length >= EquipmentData.maxActiveContracts) break;
@@ -291,7 +296,7 @@ const EquipmentSystem = (function(){
   function refreshContracts(actor, now = Date.now()){
     actor = actorNow(actor); if(!actor) return null;
     const state = normalizeMercenary(actor), cycle = Math.floor(now / EquipmentData.boardIntervalMs), unlocked = unlockedRegions(actor);
-    const signature = "frontier-v2:" + unlocked.join("|");
+    const signature = "frontier-v3-rarity-caps:" + unlocked.join("|");
     if(state.boardCycle === cycle && state.unlockSignature === signature && state.offers.length) return state;
     state.boardCycle = cycle; state.unlockSignature = signature;
     const names = regionNames(), highest = Math.max(...unlocked.map(region => names.indexOf(region)));
@@ -306,9 +311,11 @@ const EquipmentSystem = (function(){
       const reward = pool[seed % pool.length], targetDef=regions[target.region].enemies.find(e=>e.name===target.name);
       const gap=Math.max(0,names.indexOf(rewardRegion)-names.indexOf(target.region));
       const targetRank=regions[target.region].enemies.indexOf(targetDef);
-      const count=4+targetRank*2+gap*3+(reward.isBossMaterial?8:reward.materialTier==='secondary'?3:0);
-      const rewardQty=reward.isBossMaterial?1:Math.min(5,1+Math.floor((count*(1+targetRank*.35))/(6+gap*4)));
-      return { ...contractRewards({ count, targetRegion: target.region }, actor), id: `contract_${cycle}_${hash(signature)}_${index}`, targetRegion: target.region, targetName: target.name, count, rewardRegion, rewardId:reward.id,rewardQty,difficulty:count>=16?'Dificil':count>=10?'Media':'Simples', offeredAt: cycle * EquipmentData.boardIntervalMs, expiresAt: (cycle + 1) * EquipmentData.boardIntervalMs };
+      const rawCount=4+targetRank*2+gap*3+(reward.isBossMaterial?8:reward.materialTier==='secondary'?3:0);
+      const count=Math.min(rawCount,getContractKillLimit(target.region,target.name));
+      const difficulty=rawCount>=16?'Dificil':rawCount>=10?'Media':'Simples';
+      const rewardQty=reward.isBossMaterial?1:Math.min(5,1+Math.floor((rawCount*(1+targetRank*.35))/(6+gap*4)));
+      return { ...contractRewards({ count, difficulty, targetRegion: target.region }, actor), id: `contract_${cycle}_${hash(signature)}_${index}`, targetRegion: target.region, targetName: target.name, count, rewardRegion, rewardId:reward.id,rewardQty,difficulty, offeredAt: cycle * EquipmentData.boardIntervalMs, expiresAt: (cycle + 1) * EquipmentData.boardIntervalMs };
     });
     return state;
   }
@@ -586,6 +593,6 @@ const EquipmentSystem = (function(){
     if(typeof triggerForgeFeedback === "function" && equippedSlot) triggerForgeFeedback(equippedSlot, "success");
     changed(); return improved;
   }
-  return { getRecipeCatalog, contractRewards, refreshEquipmentStats, canUpgrade, duplicateCount, createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
+  return { getContractKillLimit, getRecipeCatalog, contractRewards, refreshEquipmentStats, canUpgrade, duplicateCount, createItem, createBossAccessory, normalizeItem, sanitizeNetworkItem, getDefinition, getMaterials, materialById, allMaterials, rollDrops, getRecipes, recipeById, ownsRecipeItem, canCraft, craft, normalizePlayer, unlockedRegions, isRegionUnlocked, getSetBonuses, describe, setArtisanFilter, renderArtisan, refreshContracts, normalizeMercenary, acceptContract, recordKill, collectCompletedContracts, claimContract, abandonContract, renderMercenary, beginAction, afterDamage, afterIncoming, endAction, modifyHealing, modifyShield, modifySkillCost, getArmorPenetration, getDotDamageMultiplier, markCritical, noteHealing, noteShield, noteHpCost, noteDotApplication, getUpgradeRequirements, getUpgradeCost, upgradeItem, tryUpgrade };
 })();
 if(typeof window !== "undefined") window.EquipmentSystem = EquipmentSystem;

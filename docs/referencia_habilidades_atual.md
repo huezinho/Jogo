@@ -32,7 +32,7 @@ Classe: **Guerreiro**. Rota: base.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,12H | Ver efeito | Cura limitada à vida que falta. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Ver efeito | Cura limitada à vida que falta. |
 | Esbarrao | 20 | C = 38 + W; D = 20 + 0,06H + 0,6A + 0,4P | Ver efeito | Dano direto. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -47,7 +47,7 @@ Classe: **Guerreiro**. Rota: cavaleiro.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P | Ver efeito | 30% de chance de impedir a próxima ação inimiga. |
 | Brado | 50 | C = 40 + W; dano final × 1,3 | Duração: 5 turno(s) | +30% de dano final. |
@@ -65,7 +65,7 @@ Classe: **Guerreiro**. Rota: cavaleiro → paladino.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P | Ver efeito | 45% de chance de impedir a próxima ação inimiga. |
 | Brado | 50 | C = 40 + W; dano final × 1,3 | Duração: 5 turno(s) | +30% de dano final e redução de 16% do dano recebido. |
@@ -86,7 +86,7 @@ Classe: **Guerreiro**. Rota: cavaleiro → berserker.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 60 + 0,07H + 1,1A + 0,4P | Ver efeito | Dano direto. |
 | Ira | 50 | C = W MP + 0,5H de vida; dano final × 2,2; roubo de vida = 0,2V | Duração: 4 turno(s) | Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo. |
@@ -107,7 +107,7 @@ Classe: **Guerreiro**. Rota: espadachim.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
 | Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r | Ver efeito | Cada golpe aplica sua própria mitigação. |
 | Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
@@ -125,7 +125,7 @@ Classe: **Guerreiro**. Rota: espadachim → samurai.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
 | Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r | Ver efeito | Os golpes aplicam sangramentos independentes por 3 turnos. |
 | Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
@@ -146,7 +146,7 @@ Classe: **Guerreiro**. Rota: espadachim → ninja.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
 | Golpes Velozes | 30 | C = 44 + W; 3 ataques básicos; cada golpe usa A + r | Ver efeito | Cada golpe aplica sua própria mitigação. |
 | Corte Profundo | 50 | C = 52 + W; D = 70 + 0,9A + 1,1P; sangramento por turno = Dₑ × 0,3 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |

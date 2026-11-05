@@ -30,7 +30,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,12H",
+          "formula": "C = 30 + W; cura = 5 + 0,12H",
           "conditions": "Cura limitada à vida que falta."
         },
         {
@@ -65,7 +65,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,19H",
+          "formula": "C = 30 + W; cura = 5 + 0,19H",
           "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
@@ -120,7 +120,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,19H",
+          "formula": "C = 30 + W; cura = 5 + 0,19H",
           "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
@@ -195,7 +195,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,19H",
+          "formula": "C = 30 + W; cura = 5 + 0,19H",
           "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
@@ -270,7 +270,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,12H",
+          "formula": "C = 30 + W; cura = 5 + 0,12H",
           "conditions": "+28% de dano final por 3 turnos."
         },
         {
@@ -325,7 +325,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,12H",
+          "formula": "C = 30 + W; cura = 5 + 0,12H",
           "conditions": "+28% de dano final por 3 turnos."
         },
         {
@@ -400,7 +400,7 @@
           "name": "Recuperar Folego",
           "type": "warrior_second_wind",
           "unlockLevel": 1,
-          "formula": "C = 30 + W; cura = 0,12H",
+          "formula": "C = 30 + W; cura = 5 + 0,12H",
           "conditions": "+28% de dano final por 3 turnos."
         },
         {
