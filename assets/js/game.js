@@ -744,6 +744,13 @@ const REGION_MAP_MARKERS = {
   Cataclismo: {x:31,y:16,area:'14% 10%,31% 7%,47% 11%,49% 17%,44% 23%,27% 23%,14% 20%'},
   Paradoxo: {x:82,y:12,area:'66% 8%,80% 5%,94% 8%,95% 16%,83% 22%,69% 20%,65% 15%'}
 };
+function renderRegionMapLocks(devUnlocked=false){
+  if(devUnlocked)return '';
+  return Object.keys(regions).filter(region=>!EquipmentSystem.isRegionUnlocked(region,player)).map(region=>{
+    const p=REGION_MAP_MARKERS[region];
+    return `<span class="region-map-lock" style="left:${p.x}%;top:${p.y-4}%" aria-hidden="true"><svg viewBox="0 0 20 24"><path d="M5 10V6a5 5 0 0 1 10 0v4" fill="none" stroke="currentColor" stroke-width="3"/><rect x="2" y="10" width="16" height="12" rx="2" fill="currentColor"/><circle cx="10" cy="15" r="2" fill="#261c10"/></svg></span>`;
+  }).join('');
+}
 function getRegionMapAreaStyle(region){
   const area=REGION_MAP_MARKERS[region];
   return `--x:${area.x}%;--y:${area.y}%;clip-path:polygon(${area.area})`;
@@ -5212,7 +5219,7 @@ function renderBestiaryRegionMapCard(selectedRegion, devBestiary = false){
     <div class="region-map-card bestiary-region-map-card">
       <div class="region-map-frame">
         <img class="region-map-image" src="assets/visual/maps/region-map-v2.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
-        ${markers}
+        ${markers}${renderRegionMapLocks(devBestiary)}
       </div>
     </div>`;
 }
@@ -6377,11 +6384,12 @@ function renderRegionMapCard(){
       <p class="map-current-label">${escapeHtml(currentRegion)} · ${escapeHtml(getBossUnlockText(currentRegion))}</p>
       <div class="region-map-frame">
         <img class="region-map-image" src="assets/visual/maps/region-map-v2.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
-        ${markers}
+        ${markers}${renderRegionMapLocks()}
       </div>
       <div class="region-map-boss-hud">
-          <span class="region-map-boss-progress">${bossUnlockProgress.defeated}/${bossUnlockProgress.total}</span>
+
           <button class="region-map-boss-btn boss-btn action-btn" data-tooltip="${escapeHtml(isCampResting() ? 'Volte ao acampamento e levante antes de combater.' : bossProgressTooltip)}" onclick="challengeBoss()" aria-label="Enfrentar chefao" ${controlsDisabled || isCampResting() || !bossUnlockProgress.unlocked ? "disabled" : ""}>Chefao</button>
+          <button class="region-map-expedition-btn" onclick="startExpedition()" data-tooltip="Expedição: exige mais de 20 níveis acima da média da região. Recebe drops e metade das moedas." ${canStartExpedition()?"":"disabled"}>Expedição</button>
       </div>
     </div>`;
 }

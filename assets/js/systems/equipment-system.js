@@ -146,7 +146,7 @@ const EquipmentSystem = (function(){
     actor = actorNow(actor);
     if(!actor) return [];
     const list = [];
-    for(const region of unlockedRegions(actor)){
+    for(const region of options.includeLocked?regionNames():unlockedRegions(actor)){
       if(options.region && options.region !== region) continue;
       for(const slot of EquipmentData.slots){
         if(options.slot && options.slot !== slot) continue;

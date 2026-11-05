@@ -14,7 +14,7 @@ const CampaignHUD = (() => {
   const locked = () => isProcessingTurn || isDead || player.hp <= 0;
   const progressionPending = () => levelUpPoints>0||Object.values(allocation).some(value=>Number(value)>0)||needsSubclassChoice();
   const pageTitle = () => currentMode === 'battle' ? currentRegion : currentMode === 'camp' ? 'Personagem' : currentMode === 'village' ? ({artisan:'Oficina',forge:'Oficina',inn:'Pousada',alchemist:'Alquimista',mercenary:'Mercenário'}[villageTab]) : ({bestiary:'Bestiário',trophies:'Sala de troféus',arena:'Portal da arena',dungeon:'Portal da dungeon'}[currentMode] || 'Aventura');
-  const money = () => `<span class="rpg-coins" tabindex="0" aria-label="${player.coins.toLocaleString('pt-BR')} moedas" data-hud-description="${player.coins.toLocaleString('pt-BR')} moedas"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""><span>${player.coins.toLocaleString('pt-BR')}</span></span>`;
+  const money = () => `<span class="rpg-coins" tabindex="0" aria-label="${player.coins.toLocaleString('pt-BR')} moedas" data-hud-description="${player.coins.toLocaleString('pt-BR')} moedas"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""><span>${formatCoinAmount(player.coins)}</span></span>`;
   const itemArt = item => {
     if(item?.type !== 'equipment') return getInventoryItemSymbol(item);
     if(item.slot==='accessory')return getInventoryItemSymbol(item);
@@ -31,7 +31,7 @@ const CampaignHUD = (() => {
       <header class="rpg-top"><div class="rpg-location"><h1 id="rpgTitle"></h1></div></header>
       <div class="rpg-world-layout">
         <aside class="rpg-locations-rail"><nav id="modeTabs" aria-label="Locais da campanha"></nav><footer id="rpgOptions"></footer></aside>
-        <main id="rpgMain"><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="actions"></div></main>
+        <main id="rpgMain"><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="rpgPassives" class="rpg-combat-passives" aria-label="Passivas do personagem"></div><div id="actions"></div></main>
         <aside class="rpg-regions-rail"><section id="regionInfo" class="rpg-world-map" aria-label="Mapa de regiões"></section><div id="rpgBagButton"></div><div id="rpgAccount"></div></aside>
       </div>
       <div id="playerInfo" hidden></div><div id="heroPortraitPanel" hidden></div>
@@ -136,12 +136,13 @@ const CampaignHUD = (() => {
     const area=document.getElementById('actions');
     if(currentMode!=='battle'||!enemy||locked()||progressionPending())state.quickItems=false;
     area.className='rpg-actions';
+    const passiveDock=document.getElementById('rpgPassives');if(passiveDock)passiveDock.innerHTML=currentMode==='battle'?renderCombatPassives():'';
     if(currentMode!=='battle'){area.innerHTML='';return true;}
     if(player.expedition){area.innerHTML='<div class="rpg-recovery"><p>Em expedi&ccedil;&atilde;o: '+text(player.expedition.region)+' - '+player.expedition.encounters+' encontros, '+player.expedition.coins+' moedas, '+player.expedition.drops+' materiais.</p>'+button('Recolher personagem','expedition-stop')+'</div>';return true;}
     if(isDead){const seconds=Math.max(0,Math.ceil((deadUntil-Date.now())/1000));area.innerHTML=`<div class="rpg-recovery">${button(seconds?`Renascer em ${seconds}s`:'Renascer','respawn','',seconds?'disabled':'')}${button('Reiniciar aventura','restart')}</div>`;return true;}
     if(!enemy){
       const chances=getRegionSpawnPreview(currentRegion).map(e=>`${e.name}: ${e.chance.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`).join('\n');
-      area.innerHTML=isCampResting()?`<div class="rpg-recovery">${button('Descansando','rest-camp')}</div>`:`<div class="rpg-recovery">${button(`${image('icon-find-enemy')}<span>Procurar inimigo</span><span class="rpg-hotkey" aria-hidden="true">1</span>`,'find','',`class="rpg-find" data-hud-hotkey="1" aria-keyshortcuts="1" data-hud-description="${esc(`Encontros em ${currentRegion}\n${chances}`)}" ${locked()||progressionPending()?'disabled':''}`)}</div>`;if(canStartExpedition())area.insertAdjacentHTML('beforeend','<div class="rpg-expedition-offer">'+button('Sair em expedi&ccedil;&atilde;o','expedition-start')+'<small>1 encontro / 30s. Drops e 50% das moedas. At&eacute; 24h acumuladas ao retornar.</small></div>');return true;
+      area.innerHTML=isCampResting()?`<div class="rpg-recovery">${button('Descansando','rest-camp')}</div>`:`<div class="rpg-recovery">${button(`${image('icon-find-enemy')}<span>Procurar inimigo</span><span class="rpg-hotkey" aria-hidden="true">1</span>`,'find','',`class="rpg-find" data-hud-hotkey="1" aria-keyshortcuts="1" data-hud-description="${esc(`Encontros em ${currentRegion}\n${chances}`)}" ${locked()||progressionPending()?'disabled':''}`)}</div>`;return true;
     }
     const skills=getSkillInfo(),busy=locked()||progressionPending();
     const basicCost=player.class==='Mago'?Math.floor(3+.1*player.level)*3:0;
@@ -189,8 +190,8 @@ const CampaignHUD = (() => {
   }
   function currentCraft(){
     const unlocked=EquipmentSystem.unlockedRegions(player);
-    if(!unlocked.includes(state.region))state.region=unlocked.includes(currentRegion)?currentRegion:unlocked[0];
-    return EquipmentSystem.getRecipes(player,{region:state.region}).find(recipe=>recipe.slot===state.slot);
+    if(!regions[state.region])state.region=currentRegion;
+    return EquipmentSystem.getRecipes(player,{region:state.region,includeLocked:true}).find(recipe=>recipe.slot===state.slot);
   }
   function requirementList(requirements, cost){
     return `<ul class="rpg-materials">${Object.entries(requirements||{}).map(([id,qty])=>{const material=EquipmentSystem.materialById(id),owned=getInventoryCountById(id);return `<li class="${owned>=qty?'material-ready':'material-missing'}"><span class="rpg-material-icon">${getInventoryItemSymbol(material)}</span><span>${esc(material?.name||id)}${material?.regionName?`<small>${esc(material.regionName)}</small>`:''}</span><strong>${owned} / ${qty}</strong></li>`;}).join('')}<li class="${player.coins>=cost?'material-ready':'material-missing'}"><span class="rpg-material-coin" aria-hidden="true"><img class="rpg-coin-icon" src="assets/visual/hud/icon-coin.webp" alt=""></span><span>Moedas</span><strong>${player.coins} / ${cost}</strong></li></ul>`;
@@ -221,7 +222,8 @@ const CampaignHUD = (() => {
   function renderCharacter(){
     if(campTab==='status')campTab='equipamentos';
     const tabs=`<nav class="rpg-character-tabs">${[['equipamentos','Equipamentos'],['habilidades','Habilidades']].map(([id,label])=>button(label,'camp-tab',id,`aria-pressed="${campTab===id}"`)).join('')}</nav>`;
-    if(campTab==='habilidades')return tabs+`<section class="rpg-journal">${renderCampContent(getCampEntries(),getPreviewStats(),getInvestedSummary(),player.baseStats||classes[player.class],getTotalSubclassBonuses(),getActiveSetBonuses(),getXpToNextLevel()).replace(/<div class="inner-tabs">.*?<\/div>/s,'')}</section>`;
+    if(campTab==='habilidades')return tabs+renderSkillBook();
+
     const investment=getInvestedSummary(),stats=getPreviewStats();
     return tabs+`<section class="rpg-character-sheet"><div class="rpg-paperdoll"><div class="rpg-character-figure">${getHeroSpriteMarkup()}</div><div class="rpg-character-caption"><h2>${esc(getDisplayedClassName())}</h2><span>Nível ${player.level}</span><div class="rpg-camp-rest">${button(isCampResting()?'Levantar':'Descansar','rest','',locked()||enemy?'disabled':'')}<p><span class="rpg-rest-hp">${Math.ceil(player.hp)} / ${stats.maxHp} HP · +${(getCampRestHealing() / (CAMP_REST_INTERVAL_MS / 1000)).toLocaleString('pt-BR',{maximumFractionDigits:2})} HP/s · ${Math.ceil(player.mp)} / ${stats.maxMp} MP · +${(getCampRestManaRecovery() / (CAMP_REST_INTERVAL_MS / 1000)).toLocaleString('pt-BR',{maximumFractionDigits:2})} MP/s</span></p></div></div><div class="rpg-loadout">${equipmentSlots.map(slot=>{const item=player.equipment[slot];return button(`${item?itemArt(item):slotArt(slot)}<span>${text(slotLabels[slot])}<small>${item?esc(getRarityInfo(item.rarity).label):'Vazio'}</small></span>`,'equipped',slot,`class="rpg-equipment-slot ${item?'filled':''}" ${item?`data-hud-description="${esc(item.name + '\n' + formatStatBonusList(item))}"`: ''} aria-label="${esc(item?.name||slotLabels[slot]+' vazio')}"`);}).join('')}</div></div><aside class="rpg-paper rpg-character-stats"><h2>${esc(getDisplayedClassName())}</h2><p>${esc(player.class)} · Nível ${player.level}</p><div class="rpg-investments" role="list" aria-label="Pontos investidos">${[['strength','Força',investment.strengthPoints,`+${investment.attackGain} ATQ / poder`],['vitality','Vitalidade',investment.vitalityPoints,`+${investment.hpGain} HP`],['wisdom','Sabedoria',investment.wisdomPoints,`+${investment.mpGain} MP`]].map(([key,label,points,bonus])=>`<div class="rpg-investment rpg-investment-${key}" role="listitem" tabindex="0" data-hud-description="${esc(`${label}: ${points} ponto(s). ${bonus}. Cada ponto vale ${getAttributePointGain(key)} no nível ${player.level}.`)}"><span>${label}</span><strong>${points}</strong><small>pontos</small></div>`).join('')}</div><dl>${[['Vida máxima',stats.maxHp],['Mana máxima',stats.maxMp],['Ataque',getActiveAttack()],['Poder de habilidade',getSkillPowerBonus()],['Redução fixa',getPassiveModifiers().flatReduction]].map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${EquipmentSystem.getSetBonuses(player).sets.map(set=>setSummary(set.region,set.count)).join('')||'<p>Nenhum conjunto equipado.</p>'}</aside><section class="rpg-trainer"><h3>Treinador</h3><p>Redistribuir atributos: ${getTrainerRespecCost()} moedas.</p>${button('Pagar e redistribuir atributos','respec','',player.level<=1||levelUpPoints>0||needsSubclassChoice()?'disabled':'')}</section></section>`;
   }
@@ -253,7 +255,7 @@ const CampaignHUD = (() => {
   }
   function closeDialog(){state.bag=false;document.getElementById('rpgDialog')?.close();}
   function showMap(crafting=false){
-    if(crafting){const unlocked=EquipmentSystem.unlockedRegions(player);openDialog('craft-map','Região dos equipamentos',`<div class="region-map-frame crafting-region-map"><img class="region-map-image" src="assets/visual/maps/region-map-v2.webp" alt="Regiões do mundo">${Object.keys(regions).map(region=>{return button(`<span class="map-marker-label">${esc(region)}</span>`,'craft-region',region,`class="region-map-marker region-map-area ${state.region===region?'active':''}" style="${getRegionMapAreaStyle(region)}" data-region="${esc(region)}" data-hud-description="${esc(region)} · ${unlocked.includes(region)?'Equipamentos da região':'Região bloqueada'}" aria-pressed="${state.region===region}" aria-label="Equipamentos de ${esc(region)}${unlocked.includes(region)?'':' — região bloqueada'}" ${unlocked.includes(region)?'':'disabled'}`);}).join('')}</div><p>As receitas acompanham as regiões que você desbloqueou.</p>`);}
+    if(crafting){const unlocked=EquipmentSystem.unlockedRegions(player);openDialog('craft-map','Região dos equipamentos',`<div class="region-map-frame crafting-region-map"><img class="region-map-image" src="assets/visual/maps/region-map-v2.webp" alt="Regiões do mundo">${Object.keys(regions).map(region=>{return button(`<span class="map-marker-label">${esc(region)}</span>`,'craft-region',region,`class="region-map-marker region-map-area ${state.region===region?'active':''}" style="${getRegionMapAreaStyle(region)}" data-region="${esc(region)}" data-hud-description="${esc(region)} · Prévia do conjunto" aria-pressed="${state.region===region}" aria-label="Equipamentos de ${esc(region)}"`);}).join('')}</div><p>Todos os conjuntos podem ser consultados. Fabricar exige região liberada, materiais e moedas.</p>`);}
     else{openDialog('map','Mapa da campanha',renderRegionMapCard()+`<p>${enemy?'Termine o combate para viajar.':esc(regions[currentRegion].description)}</p>`);}
   }
   function navigate(target){
@@ -270,6 +272,7 @@ const CampaignHUD = (() => {
     if(action==='tower')return showTower();
     if(action==='tower-start'){closeDialog();return startChallengeTower();}
     if(action==='mercenary'){if(enemy||isProcessingTurn||(!isDead&&progressionPending()))return;villageTab='mercenary';return setMode('village');}
+    if(action==='skill-info')return openDialog('skill-info',b.dataset.skillName,`<p class="rpg-skill-description">${esc(b.dataset.hudDescription)}</p>`);
     if(action==='close-dialog')return closeDialog();
     if(action==='expedition-start')return startExpedition();
     if(action==='expedition-stop')return stopExpedition();
@@ -278,7 +281,7 @@ const CampaignHUD = (() => {
     if(action==='rest')return toggleCampRest();
     if(action==='rest-camp'){closeDialog();state.bag=false;campTab='equipamentos';return setMode('camp');}
     if(action==='map')return showMap();if(action==='craft-map')return showMap(true);
-    if(action==='craft-region'){if(!EquipmentSystem.isRegionUnlocked(value,player))return;state.region=value;closeDialog();updateUI();return;}
+    if(action==='craft-region'){if(!regions[value])return;state.region=value;closeDialog();updateUI();return;}
     if(action==='history'){openDialog('history','Histórico de batalha','');document.getElementById('logPanel').hidden=false;document.getElementById('log').style.display='block';return;}
     if(action==='target')return openDialog('target',enemy?.name||'Inimigo',enemy?`<p>Vida: ${Math.ceil(enemy.hp)} / ${enemy.maxHp}</p><p>Armadura: ${getEnemyDisplayedArmor(enemy)}</p><h3>Efeitos</h3><p>${esc(getEnemyStatusEffects(enemy).map(effect=>effect.details?effect.text+': '+effect.details:effect.text).join(' · ')||'Sem efeitos ativos.')}</p><h3>Possíveis drops</h3><p>${esc(enemy.possibleDrop||'Consulte o bestiário.')}</p>`:'');
     if(action==='consumables'){state.quickItems=!state.quickItems;renderActions();if(event.detail===0)document.querySelector('#rpgQuickItems button')?.focus({preventScroll:true});return;}

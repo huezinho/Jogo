@@ -1,4 +1,41 @@
 /* Read-only campaign descriptions. Values come from the same skill/recipe data as play. */
+function formatCoinAmount(value){
+  const n=Math.max(0,Number(value)||0);
+  const units=[[1e12,'tri'],[1e9,'bi'],[1e6,'mi'],[1e3,'mil']];
+  const unit=units.find(([size])=>n>=size);
+  return unit?(Math.floor(n/unit[0]*10)/10).toLocaleString('pt-BR',{maximumFractionDigits:1})+' '+unit[1]:Math.floor(n).toLocaleString('pt-BR');
+}
+function renderSkillNode(skill,description,status,passive=false){
+  return `<button type="button" class="rpg-skill-node ${passive?'is-passive':''}" data-hud="skill-info" data-skill-name="${escapeHtml(skill.name)}" data-hud-description="${escapeHtml(description)}" aria-label="${escapeHtml(skill.name+' · '+status)}"><img src="${getSkillSpritePath(skill)}" alt="" loading="lazy"><strong>${escapeHtml(skill.name)}</strong><small>${escapeHtml(status)}</small></button>`;
+}
+function renderCombatPassives(){
+  return getUnlockedPassiveSkills().map(skill=>`<button type="button" class="rpg-passive-node" data-hud="skill-info" data-skill-name="${escapeHtml(skill.name)}" data-hud-description="${escapeHtml(getPassiveStatusDescription(skill))}" aria-label="Passiva: ${escapeHtml(skill.name)}"><img src="${getSkillSpritePath(skill)}" alt=""><span>${escapeHtml(skill.name)}</span></button>`).join('');
+}
+function renderSkillBook(){
+  const state=getPlayerSubclassState(),planned=getPlannedClassTrees(player.class,state.tier30,state.tier60);
+  const active=new Map(getSkillInfo().map(s=>[s.type,s]));
+  const passive=new Set(getUnlockedPassiveSkills().map(s=>s.type));
+  const nodes=(tree,future=false)=>{
+    return ['activeSkills','passiveSkills'].map(key=>`<section class="rpg-skill-category"><h3>${key==='activeSkills'?'Ativas':'Passivas'}</h3><div class="rpg-skill-grid">${tree[key].map(s=>{
+      const isPassive=key==='passiveSkills',learned=!future&&(isPassive?passive.has(s.type):active.has(s.type));
+      const detail=learned?(isPassive?getPassiveStatusDescription(s):getSkillReadout(active.get(s.type))):(isPassive?getPassivePreviewDescription(s):getActiveSkillPreviewDescription(s));
+      return renderSkillNode(s,detail+(future?'\nDepende da escolha desta rota.':''),learned?'Desbloqueada · Nv. '+s.level:'Nv. '+Math.max(s.level,future?(state.tier30?60:30):0)+(future?' · nesta rota':' · futura'),isPassive);
+    }).join('')}</div></section>`).join('');
+  };
+  let branches='';
+  if(!state.tier60){
+    const choices=subclassChoicesByClass[player.class];
+    branches=choices.tier30.filter(t=>!state.tier30||t.id===state.tier30).map(t=>(choices.tier60[t.id]||[]).map(final=>{
+      const tree=getPlannedClassTrees(player.class,t.id,final.id);
+      // Show added or transformed skills, not unchanged inherited entries.
+      const parent=getPlannedClassTrees(player.class,t.id,null);
+      const changed={};for(const key of ['activeSkills','passiveSkills'])changed[key]=tree[key].filter(s=>!planned[key].some(old=>old.id===s.id&&old.name===s.name)).map(s=>parent[key].some(old=>old.type===s.type&&old.id!==s.id)?{...s,level:Math.max(60,s.level)}:s);
+      return `<details class="rpg-future-route"><summary>${escapeHtml(t.name+' → '+final.name)} <small>Escolhas nos níveis 30 e 60</small></summary><div class="rpg-book-current">${nodes(changed,true)}</div></details>`;
+    }).join('')).join('');
+  }
+  return `<section class="rpg-skill-book"><header><h2>${escapeHtml(getDisplayedClassName())} · Habilidades</h2><p>Passe o mouse, foque ou toque em uma habilidade para consultar seus efeitos.</p></header><div class="rpg-book-current">${nodes(planned)}</div>${branches?'<h3>Rotas futuras</h3>'+branches:''}</section>`;
+}
+
 function getSkillReadout(skill){
   const action=getSkillActionState(skill),caps=getCurrentCaps(),lines=[];
   const route=getPlayerSubclassState();
