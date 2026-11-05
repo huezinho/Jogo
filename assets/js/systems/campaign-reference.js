@@ -14,7 +14,7 @@ function getSkillReadout(skill){
   if(skill.markDamage)lines.push('Marca: '+skill.markDamage+' de dano base por turno.');
   if(skill.decayDamage)lines.push('Apodrecimento: '+skill.decayDamage+' de dano base por turno, por '+skill.decayTurns+' turnos.');
   const changes={
-    cavaleiro:{warrior_second_wind:'Recuperar Fôlego passa de 12% para 19% da vida máxima.',warrior_shove:'Esbarrão ganha escalamento maior e reduz o ataque inimigo em 30% por 3 turnos.'},
+    cavaleiro:{warrior_second_wind:'Recuperar Fôlego passa de 12% para 19% da vida máxima e remove uma aplicação de dano periódico.',warrior_shove:'Esbarrão ganha escalamento maior e reduz o ataque inimigo em 30% por 3 turnos.'},
     espadachim:{warrior_second_wind:'Recuperar Fôlego também aumenta o dano final em 28% por 3 turnos.',warrior_shove:'Esbarrão vira Investida: muda a fórmula e pode romper perda de turno.'},
     paladino:{warrior_stagger:'Contundir passa de 30% para 45% de chance de impedir a próxima ação.',warrior_warcry:'Brado também reduz o dano recebido em 16%.'},
     berserker:{warrior_stagger:'Contundir troca o controle por uma fórmula de dano mais forte.',warrior_warcry:'Brado vira Ira: sacrifica vida para aumentar dano e conceder roubo de vida.'},
@@ -24,7 +24,7 @@ function getSkillReadout(skill){
     mago_incendiario:{mage_freeze:'Congelar vira Bafo de Fogo.'},
     atirador:{archer_focus:'Mirar também fortalece Headshot em 10% e concede 10% de chance de crítico.',archer_camouflage:'Camuflagem também fortalece o próximo dano em 30%.'},
     cacador:{archer_focus:'Mirar concede chance de disparo extra na Rajada.',archer_camouflage:'A esquiva de Camuflagem passa de 20% para 28%.'},
-    sniper:{archer_headshot:'Headshot ganha uma fórmula mais forte e 70% de chance base de crítico.',archer_piercing_shot:'O disparo também destrói o escudo do alvo.'},
+    sniper:{archer_headshot:'Headshot ganha uma fórmula mais forte e 60% de chance base de crítico.',archer_piercing_shot:'O disparo também destrói o escudo do alvo.'},
     atirador_arcano:{archer_headshot:'Headshot passa a escalar com mana máxima e marca o alvo se não critar.',archer_piercing_shot:'O coeficiente de poder de habilidade aumenta.'},
     guarda_florestal:{archer_barrage:'Rajada passa de 2 para 3 ataques básicos.',archer_trap:'Prender o alvo fortalece a próxima Rajada em 23% por disparo.'},
     espreitador:{archer_barrage:'Disparos que erram fortalecem o próximo dano.',archer_trap:'A armadilha também usa 6% da vida atual do alvo.'},

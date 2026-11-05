@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {server,chromium}=require('../docs/qa/2026-10-27/smoke.cjs');
-(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium'});try{const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:'+server.address().port);await page.evaluate(()=>{window.warriorNative={updateUI,saveCampaign};});await page.addScriptTag({content:fs.readFileSync(path.resolve(__dirname,'../docs/qa/2026-10-27/class-lab-engine.js'),'utf8')});const report=await page.evaluate(async()=>{
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(process.platform==='win32'?'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe':'/usr/bin/chromium')});try{const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:'+server.address().port);await page.evaluate(()=>{window.warriorNative={updateUI,saveCampaign};});await page.addScriptTag({content:fs.readFileSync(path.resolve(__dirname,'../docs/qa/2026-10-27/class-lab-engine.js'),'utf8')});const report=await page.evaluate(async()=>{
  let checks=0;const check=(ok,label)=>{if(!ok)throw Error(label);checks++;};
  CharacterMotion.ready=async()=>{};CharacterMotion.hurt=async()=>{};
  const make=(id,level=100)=>{ClassLab.make(ClassLab.forms.find(f=>f.id===id),level,'equilibrada','dummy',123);enemy.hp=enemy.maxHp=100000;enemy.armor=0;player.mp=100000;};
@@ -14,9 +14,20 @@ const {server,chromium}=require('../docs/qa/2026-10-27/smoke.cjs');
   check(shove.damage===expected,id+' shove formula');check(!!shove.canBreakControl===swords,id+' control break');
   if(knight){const stagger=skill('warrior_stagger');check(stagger.damage===(id==='berserker'?60:30)+Math.floor(.07*H)+Math.floor((id==='berserker'?1.1:.6)*A)+Math.floor(.4*S),id+' stagger formula');check(stagger.skipChance===(id==='paladino'?.45:id==='berserker'?0:.3),id+' stagger control');}
  }
+ for(const [id,level,cleanses] of [['Guerreiro',20,false],['cavaleiro',30,true],['paladino',100,true],['berserker',100,true],['espadachim',50,false],['samurai',100,false],['ninja',100,false]]){
+  make(id,level);player.hp=Math.floor(getCurrentCaps().maxHp*.5);
+  addPeriodicStack(playerEffects,'burn',10,3,'fogo');addPeriodicStack(playerEffects,'poison',30,4,'veneno forte');addPeriodicStack(playerEffects,'poison',5,2,'veneno fraco');addPeriodicStack(playerEffects,'bleed',20,3,'corte');
+  playerEffects.damageDownTurns=3;playerEffects.damageDownPercent=.2;
+  const wind=skill('warrior_second_wind');check(!!wind.cleansesDot===cleanses,id+' cleanse access');applySkillLocally(wind);
+  check(playerEffects.poisonStacks.length===(cleanses?1:2)&&playerEffects.poisonDamagePerTurn===(cleanses?5:35),id+' strongest one stack only');
+  check(playerEffects.burnDamagePerTurn===10&&playerEffects.bleedDamagePerTurn===20&&playerEffects.damageDownTurns===3,id+' other effects retained');
+ }
+ make('cavaleiro',30);playerEffects.burnStacks=undefined;playerEffects.burnDamagePerTurn=17;playerEffects.burnTurns=3;
+ apply('warrior_second_wind');check(playerEffects.burnTurns===0&&playerEffects.burnDamagePerTurn===0,'legacy burn cleansed');
+ make('cavaleiro',30);check(cleanseStrongestPlayerDot()===null,'no DOT is a safe no-op');
  make('cavaleiro',50);const beforeAttack=getActiveAttack();apply('warrior_warcry');check(getActiveAttack()===beforeAttack&&playerEffects.finalDamageBuffPercent===.3,'warcry total final instead of attack');check(getPassiveModifiers().reflectPercent===.2,'knight reflection');
  make('paladino');check(skill('warrior_judgment').cost===250,'judgment 100+3W');check(getPassiveModifiers().reflectPercent===.4,'paladin reflection');
- make('berserker');const rage=skill('warrior_warcry');check(rage.hpCostPercent===.7&&rage.totalDamagePercent===1.2&&rage.lifeStealPercent===.2,'rage values');check(skill('warrior_valhalla').incomingDamagePercent===1.5,'valhalla vulnerability');check(skill('warrior_unstoppable').attackBuffAmount===100,'unstoppable +100');
+ make('berserker');const rage=skill('warrior_warcry');check(rage.hpCostPercent===.5&&rage.totalDamagePercent===1.2&&rage.lifeStealPercent===.2,'rage values');check(skill('warrior_valhalla').incomingDamagePercent===1.5,'valhalla vulnerability');check(skill('warrior_unstoppable').attackBuffAmount===100,'unstoppable +100');
  apply('warrior_warcry');player.hp=100;enemy.hp=100000;enemy.shieldValue=100000;applyDamageToEnemy(1000);check(player.hp===100,'shield damage grants no lifesteal');enemy.shieldValue=0;enemy.hp=100;applyDamageToEnemy(10000);check(player.hp===120,'lifesteal actual HP excludes overkill');
  make('ninja');check(skill('warrior_deep_cut').damage===70+Math.floor(.9*getActiveAttack())+Math.floor(1.1*getSkillPowerBonus()),'ninja deep cut');check(skill('warrior_giant_slayer').damage===32000,'giant slayer 32% current HP');
  make('samurai');check(skill('warrior_ultrasonic_cuts').cost===340,'ultrasonic 240+2W');apply('warrior_ultrasonic_cuts');decayPlayerBuffs();for(let i=0;i<3;i++){beginEquipmentAction('basic');decayPlayerBuffs();}check(playerEffects.basicOnlyUntouchableTurns===0&&playerEffects.ultrasonicRecoveryTurns===1,'ultrasonic post-expiry gap');check(!getSkillActionState(skill('warrior_ultrasonic_cuts')).canUse,'cooldown UI blocks');check(apply('warrior_ultrasonic_cuts').blocked,'cooldown resolver blocks');beginEquipmentAction('basic');decayPlayerBuffs();check(getSkillActionState(skill('warrior_ultrasonic_cuts')).canUse,'cooldown clears after one action');

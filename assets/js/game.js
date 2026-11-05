@@ -727,23 +727,27 @@ function getHeroCombatAssetKey(targetPlayer = player){
 const VISUAL_ASSET_VERSION = "hd-v8-20260505";
 const PROJECTILE_ASSET_VERSION = "hd-v4-20260503";
 const ITEM_ASSET_VERSION = "items-v2-20260511";
-const REGION_MAP_ASSET_VERSION = "region-map-v1-20260519";
+const REGION_MAP_ASSET_VERSION = "region-map-v2-20261105";
 const LOCATION_MAP_ASSET_VERSION = "locations-map-v1-20260520";
 const RARITY_GEM_ASSET_VERSION = "rarity-gems-v1-20260519";
 const REGION_MAP_MARKERS = {
-  Floresta: { x: 32, y: 89 },
-  Caverna: { x: 53, y: 75 },
-  Ruinas: { x: 30, y: 61 },
-  Pantano: { x: 70, y: 63 },
-  Vulcao: { x: 51, y: 50 },
-  Abismo: { x: 58, y: 36 },
-  Fortaleza: { x: 24, y: 44 },
-  Necropole: { x: 77, y: 49 },
-  Citadela: { x: 58, y: 27 },
-  Panteao: { x: 64, y: 22 },
-  Cataclismo: { x: 31, y: 12 },
-  Paradoxo: { x: 79, y: 10 }
+  Floresta: {x:23,y:85,area:'6% 83%,16% 78%,28% 78%,41% 82%,42% 88%,28% 94%,10% 94%,5% 89%'},
+  Caverna: {x:47,y:74,area:'30% 72%,43% 67%,59% 70%,65% 75%,57% 80%,39% 82%,28% 78%'},
+  Ruinas: {x:26,y:64,area:'11% 61%,21% 58%,34% 59%,44% 64%,41% 69%,26% 72%,11% 69%'},
+  Pantano: {x:70,y:62,area:'54% 57%,70% 54%,85% 57%,89% 63%,78% 67%,59% 66%,50% 63%'},
+  Vulcao: {x:43,y:55,area:'27% 52%,39% 48%,50% 49%,60% 54%,57% 59%,46% 61%,29% 59%'},
+  Abismo: {x:72,y:46,area:'49% 40%,64% 37%,83% 40%,91% 46%,81% 51%,62% 53%,50% 49%'},
+  Fortaleza: {x:27,y:44,area:'12% 39%,22% 36%,34% 37%,43% 42%,40% 47%,31% 50%,12% 48%'},
+  Necropole: {x:43,y:31,area:'26% 28%,40% 24%,55% 27%,61% 32%,55% 36%,36% 37%,24% 34%'},
+  Citadela: {x:76,y:29,area:'62% 25%,75% 22%,88% 24%,92% 31%,80% 36%,63% 34%'},
+  Panteao: {x:59,y:21,area:'47% 18%,55% 16%,67% 17%,71% 23%,61% 26%,50% 24%'},
+  Cataclismo: {x:31,y:16,area:'14% 10%,31% 7%,47% 11%,49% 17%,44% 23%,27% 23%,14% 20%'},
+  Paradoxo: {x:82,y:12,area:'66% 8%,80% 5%,94% 8%,95% 16%,83% 22%,69% 20%,65% 15%'}
 };
+function getRegionMapAreaStyle(region){
+  const area=REGION_MAP_MARKERS[region];
+  return `--x:${area.x}%;--y:${area.y}%;clip-path:polygon(${area.area})`;
+}
 const LOCATION_MODE_OPTIONS = [
   { id: "battle", label: "Batalha", shortcut: "C", marker: "1", x: 29, y: 19 },
   { id: "village", label: "Vilarejo", shortcut: "B", marker: "2", x: 73, y: 20 },
@@ -2559,7 +2563,8 @@ function getSkillInfo(){
       const heal = Math.floor(maxHp * healFactor);
       const damageBuff = subclassState.tier30 === "espadachim" && player.level >= 30 ? 0.28 : 0;
       const cost = 30 + warriorExtraCost;
-      return { ...skill, cost, heal, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.${damageBuff ? " Tambem aumenta seu dano total final em 28% por 3 turnos." : ""}` };
+      const cleansesDot=subclassState.tier30 === "cavaleiro" && player.level >= 30;
+      return { ...skill, cost, heal, cleansesDot, turns: damageBuff ? 3 : 0, damageBuff, description: `${skill.name}: consome ${cost} MP e recupera ${heal} de vida.${cleansesDot ? " Remove uma aplicacao de queimadura, veneno ou sangramento, priorizando a de maior dano por turno." : ""}${damageBuff ? " Tambem aumenta seu dano total final em 28% por 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_shove"){
       const isEspadachim = subclassState.tier30 === "espadachim" && player.level >= 30;
@@ -2596,7 +2601,7 @@ function getSkillInfo(){
     if(skill.type === "warrior_warcry"){
       if(subclassState.tier60 === "berserker" && player.level >= 60){
         const cost = warriorExtraCost;
-        return { ...skill, name: "Ira", cost, hpCostPercent: 0.7, turns: 4, totalDamagePercent: 1.2, lifeStealPercent: .2, description: `Ira: consome ${cost} MP e 70% da sua vida maxima, aumentando o dano total final em 120% e concedendo 20% de roubo de vida sobre dano causado a vida do inimigo por 4 turnos.` };
+        return { ...skill, name: "Ira", cost, hpCostPercent: 0.5, turns: 4, totalDamagePercent: 1.2, lifeStealPercent: .2, description: `Ira: consome ${cost} MP e 50% da sua vida maxima, aumentando o dano total final em 120% e concedendo 20% de roubo de vida sobre dano causado a vida do inimigo por 4 turnos.` };
       }
       const totalDamagePercent = .3;
       const cost = 40 + warriorExtraCost;
@@ -2656,7 +2661,7 @@ function getSkillInfo(){
     if(skill.type === "mage_fireball"){
       const isFrigido = subclassState.tier60 === "mago_frigido" && player.level >= 60;
       const isIncendiario = subclassState.tier60 === "mago_incendiario" && player.level >= 60;
-      const currentHpBonus = isIncendiario && enemy ? Math.floor(enemy.hp * 0.05) : 0;
+      const currentHpBonus = isIncendiario && enemy ? Math.floor(enemy.hp * 0.03) : 0;
       const damage = 50 + Math.floor((isFrigido || isIncendiario ? .18 : .15) * attack) + Math.floor((isFrigido || isIncendiario ? 1.25 : 1.2) * skillPower) + currentHpBonus + getUniversalDamageFlatBonus();
       const burnPercent = getUnlockedPassiveSkills().some(passive => passive.type === "mage_hellfire") ? 0.05 : 0.03;
       const burnDamage = enemy ? Math.max(1, Math.floor(enemy.maxHp * burnPercent)) : 0;
@@ -2745,7 +2750,7 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_demon_form"){
       const cost = clampMageSkillCost(Math.floor(maxMp * 0.3));
-      return { ...skill, cost, turns: 3, damagePercent: 2, vulnerabilityPercent: 0.4, description: `${skill.name}: consome ${cost} MP, concede 200% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.` };
+      return { ...skill, cost, turns: 3, damagePercent: 1.6, vulnerabilityPercent: 0.4, description: `${skill.name}: consome ${cost} MP, concede 160% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.` };
     }
     if(skill.type === "mage_explode"){
       const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
@@ -2778,7 +2783,7 @@ function getSkillInfo(){
         : 30 + Math.floor((subclassState.tier60 === "sniper" ? 0.85 : 0.65) * attack) + Math.floor(0.65 * skillPower);
       const damage = Math.floor(baseDamage * (1 + focusDamageBonus));
       const cost = 60 + Math.floor(0.5 * player.level);
-      const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.7 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
+      const critChance = (subclassState.tier60 === "sniper" && player.level >= 60 ? 0.6 : 0.1) + (subclassState.tier30 === "atirador" && focusActive ? 0.1 : 0);
       const marksOnNonCrit = subclassState.tier60 === "atirador_arcano" && player.level >= 60;
       const critProfile = getArcherCriticalProfile(critChance);
       const overflowText = critProfile.totalChance > 1 ? ` O excedente acima de 100% de chance de critico vira dano critico adicional, deixando o critico em ${Math.floor(critProfile.critDamageBonus * 100)}% de dano extra.` : "";
@@ -2839,7 +2844,7 @@ function getSkillInfo(){
     }
     if(skill.type === "archer_weak_spot"){
       const enemyCurrentHp = enemy ? enemy.hp : 0;
-      const damage = 100 + Math.floor(0.65 * attack) + Math.floor(0.4 * skillPower) + Math.floor(0.25 * enemyCurrentHp);
+      const damage = 100 + Math.floor(0.65 * attack) + Math.floor(0.4 * skillPower) + Math.floor(0.2 * enemyCurrentHp);
       return { ...skill, cost: 120, damage, description: `${skill.name}: consome 120 MP e causa ${damage} de dano, explorando a vida atual do alvo.` };
     }
     if(skill.type === "archer_aim_leg"){
@@ -3420,6 +3425,23 @@ function applyEnemyChill(percent, turns){
 }
 function applyBurning(target, damage, turns, source, options = {}){ addPeriodicStack(target, "burn", damage, turns, source, options); }
 
+function cleanseStrongestPlayerDot(){
+  let selected=null;
+  for(const kind of ['burn','poison','bleed']){
+    const stacks=playerEffects[kind+'Stacks'];
+    if(!Array.isArray(stacks)&&playerEffects[kind+'Turns']>0&&playerEffects[kind+'DamagePerTurn']>0){
+      addPeriodicStack(playerEffects,kind,playerEffects[kind+'DamagePerTurn'],playerEffects[kind+'Turns'],'Efeito anterior');
+    }
+    for(const [index,stack] of (playerEffects[kind+'Stacks']||[]).entries()){
+      if(stack.turns>0&&stack.damage>0&&(!selected||stack.damage>selected.damage))selected={kind,index,damage:stack.damage};
+    }
+  }
+  if(!selected)return null;
+  const [removed]=playerEffects[selected.kind+'Stacks'].splice(selected.index,1);
+  syncPeriodicStacks(playerEffects,selected.kind);
+  return {...removed,kind:selected.kind};
+}
+
 function syncBleeding(target){
   target.bleedDamagePerTurn = (target.bleedStacks || []).reduce((sum, stack) => sum + stack.damage, 0);
   target.bleedTurns = Math.max(0, ...(target.bleedStacks || []).map(stack => stack.turns));
@@ -3872,12 +3894,13 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
   }
   if(skillInfo.type === "warrior_second_wind"){
+    const removedDot=skillInfo.cleansesDot?cleanseStrongestPlayerDot():null;
     const healed = healPlayer(skillInfo.heal);
     if(skillInfo.damageBuff > 0){
       playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, skillInfo.turns);
       playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, skillInfo.damageBuff);
     }
-    message = `${actorName} usou ${skillInfo.name} e recuperou ${healed} de vida.${skillInfo.damageBuff > 0 ? " O dano total aumentou por 3 turnos." : ""}`;
+    message = `${actorName} usou ${skillInfo.name} e recuperou ${healed} de vida.${removedDot ? ` Removeu uma aplicacao de ${{burn:'queimadura',poison:'veneno',bleed:'sangramento'}[removedDot.kind]} (${removedDot.damage} por turno).` : ""}${skillInfo.damageBuff > 0 ? " O dano total aumentou por 3 turnos." : ""}`;
   }
   if(skillInfo.type === "warrior_swift_strikes"){
     let totalDamage = 0;
@@ -5166,26 +5189,25 @@ function addInventoryItem(item){
 }
 
 function renderBestiaryRegionMapCard(selectedRegion, devBestiary = false){
-  const markers = Object.keys(regions).map((regionName, index) => {
-    const marker = REGION_MAP_MARKERS[regionName] || { x: 50, y: 50 };
+  const markers = Object.keys(regions).map(regionName => {
     const unlocked = devBestiary || isRegionUnlockedForBattle(regionName);
     const tooltip = unlocked
       ? `${regionName} | Nivel medio: ${getRegionAverageLevel(regionName)}`
       : `${regionName} bloqueada | Requer ${getRegionRequirement(regionName)}`;
     return `
       <button
-        class="region-map-marker action-btn ${selectedRegion === regionName ? "active" : ""}"
-        style="--x:${marker.x}%;--y:${marker.y}%"
+        class="region-map-marker region-map-area action-btn ${selectedRegion === regionName ? "active" : ""}"
+        style="${getRegionMapAreaStyle(regionName)}" data-region="${regionName}" aria-pressed="${selectedRegion === regionName}"
         data-tooltip="${escapeHtml(tooltip)}"
         onclick="setBestiaryRegion('${regionName}')"
         aria-label="Ver criaturas de ${regionName}"
         ${unlocked ? "" : "disabled"}
-      >${index + 1}<span class="map-marker-label">${escapeHtml(regionName)}</span></button>`;
+      ><span class="map-marker-label">${escapeHtml(regionName)}</span></button>`;
   }).join("");
   return `
     <div class="region-map-card bestiary-region-map-card">
       <div class="region-map-frame">
-        <img class="region-map-image" src="assets/visual/maps/region-map.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
+        <img class="region-map-image" src="assets/visual/maps/region-map-v2.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do bestiario" />
         ${markers}
       </div>
     </div>`;
@@ -6334,24 +6356,23 @@ function renderRegionMapCard(){
   const bossProgressTooltip = bossUnlockProgress.unlocked
     ? `Chefe liberado. Enfrente o chefe da região.`
     : `Complete o rastro do chefe para enfrentá-lo.`;
-  const markers = Object.keys(regions).map((region, index) => {
-    const marker = REGION_MAP_MARKERS[region] || { x: 50, y: 50 };
+  const markers = Object.keys(regions).map(region => {
     const locked = !isRegionUnlockedForBattle(region);
     return `
       <button
-        class="region-map-marker action-btn ${region === currentRegion ? "active" : ""}"
-        style="--x:${marker.x}%;--y:${marker.y}%"
+        class="region-map-marker region-map-area action-btn ${region === currentRegion ? "active" : ""}"
+        style="${getRegionMapAreaStyle(region)}" data-region="${region}" aria-pressed="${region === currentRegion}"
         data-tooltip="${region} | Nivel medio: ${getRegionAverageLevel(region)} | Requer ${getRegionRequirement(region)}"
         onclick="changeRegion('${region}')"
         aria-label="Viajar para ${region}"
         ${controlsDisabled || locked ? "disabled" : ""}
-      >${index + 1}<span class="map-marker-label">${escapeHtml(region)}</span></button>`;
+      ><span class="map-marker-label">${escapeHtml(region)}</span></button>`;
   }).join("");
   return `
     <div class="region-map-card">
       <p class="map-current-label">${escapeHtml(currentRegion)} · ${escapeHtml(getBossUnlockText(currentRegion))}</p>
       <div class="region-map-frame">
-        <img class="region-map-image" src="assets/visual/maps/region-map.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
+        <img class="region-map-image" src="assets/visual/maps/region-map-v2.webp?v=${REGION_MAP_ASSET_VERSION}" alt="Mapa das regioes do jogo" />
         ${markers}
       </div>
       <div class="region-map-boss-hud">

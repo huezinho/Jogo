@@ -66,7 +66,7 @@
           "type": "warrior_second_wind",
           "unlockLevel": 1,
           "formula": "C = 30 + W; cura = 0,19H",
-          "conditions": "Cura limitada à vida que falta."
+          "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
           "name": "Esbarrao",
@@ -121,7 +121,7 @@
           "type": "warrior_second_wind",
           "unlockLevel": 1,
           "formula": "C = 30 + W; cura = 0,19H",
-          "conditions": "Cura limitada à vida que falta."
+          "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
           "name": "Esbarrao",
@@ -196,7 +196,7 @@
           "type": "warrior_second_wind",
           "unlockLevel": 1,
           "formula": "C = 30 + W; cura = 0,19H",
-          "conditions": "Cura limitada à vida que falta."
+          "conditions": "Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno."
         },
         {
           "name": "Esbarrao",
@@ -216,7 +216,7 @@
           "name": "Ira",
           "type": "warrior_warcry",
           "unlockLevel": 50,
-          "formula": "C = W MP + 0,7H de vida; dano final × 2,2; roubo de vida = 0,2V",
+          "formula": "C = W MP + 0,5H de vida; dano final × 2,2; roubo de vida = 0,2V",
           "conditions": "Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo."
         },
         {
@@ -558,7 +558,7 @@
           "name": "Bola de Fogo",
           "type": "mage_fireball",
           "unlockLevel": 30,
-          "formula": "C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,05h + F",
+          "formula": "C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,03h + F",
           "conditions": "Queimadura = 5% de E após desbloquear Fogo do Inferno; antes disso, 3% de E por turno, durante 3 turnos; cura recebida −30%."
         },
         {
@@ -831,8 +831,8 @@
           "name": "Incorporar Demonio",
           "type": "mage_demon_form",
           "unlockLevel": 80,
-          "formula": "C = 0,3M; dano final × 3; dano recebido × 1,4",
-          "conditions": "+200% de dano total e +40% de dano recebido por 3 turnos."
+          "formula": "C = 0,3M; dano final × 2,6; dano recebido × 1,4",
+          "conditions": "+160% de dano total e +40% de dano recebido por 3 turnos."
         }
       ],
       "passive": [
@@ -1051,7 +1051,7 @@
           "type": "archer_headshot",
           "unlockLevel": 30,
           "formula": "C = 60 + W; D = 30 + 0,85A + 0,65P; com Mirar, D × 1,1",
-          "conditions": "Crítico base de 70%; Mirar e passivas somam seus bônus."
+          "conditions": "Crítico base de 60%; Mirar e passivas somam seus bônus."
         },
         {
           "name": "Tiro Perfurante",
@@ -1071,7 +1071,7 @@
           "name": "Ponto Fraco",
           "type": "archer_weak_spot",
           "unlockLevel": 80,
-          "formula": "C = 120; D = 100 + 0,65A + 0,4P + 0,25h",
+          "formula": "C = 120; D = 100 + 0,65A + 0,4P + 0,2h",
           "conditions": "Usa a vida atual do alvo."
         }
       ],

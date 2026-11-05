@@ -9,7 +9,7 @@ async function main(){
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   let browser;
   try{
-    browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium' });
+    browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || (process.platform==='win32'?'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe':'/usr/bin/chromium') });
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -42,7 +42,7 @@ async function main(){
     const conditions = require('./skill-conditions.cjs');
     const lines = [
       '# Referência atual de habilidades', '',
-      'Catálogo gerado a partir do código executável atual em 04/11/2026. Não utiliza o documento antigo de balanceamento.', '',
+      'Catálogo gerado a partir do código executável atual em 05/11/2026. Não utiliza o documento antigo de balanceamento.', '',
       `São ${forms.length} formas de classe/subclasse e ${activeIds.size} nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.`, '',
       'Relatório geral: nenhuma vida, mana, ataque ou nível de herói é fixado nas fórmulas. L permanece uma incógnita. Os níveis indicados nas tabelas são somente requisitos de desbloqueio; cada regra vale após desbloquear a habilidade e escolher a classe correspondente.', '',
       'Cada classe tem sua fórmula própria. Custos, dano, cura e escudo são expressões matemáticas; condições de combate aparecem em linguagem natural. Não há colunas com resultados numéricos de uma build de exemplo.', '',
@@ -50,6 +50,7 @@ async function main(){
       'W = piso(0,5L). F = dano fixo adicional de Transbordando; S = acréscimo de custo de Transbordando. Para Arcanista e Corrompido: F = piso(0,25M) e S = piso(0,11M). Para Arquimago: F = piso(0,4M) e S = piso(0,2M). Sem a passiva desbloqueada, F = S = 0.', '',
       'Como ler: 0,06H significa 6% da vida máxima; 0,8A significa 80% do ataque. Exemplo: na linha do Espadachim, Investida tem D = 20 + 0,06H + 0,8A + 0,8P e C = 50 + W. As variações de classe já estão resolvidas em cada tabela. Piso significa arredondar para baixo. Nas somas, cada parcela fracionária é arredondada separadamente, exceto quando piso envolve a soma inteira. O custo final do Mago é limitado à sua mana máxima. As fórmulas representam a base: buffs, crítico, conjuntos, mitigação e demais efeitos descritos podem modificar o resultado.', '',
       'Condições gerais: esquiva impede novos efeitos ligados ao golpe evitado, mas não remove DOTs já ativos. Queimaduras, venenos e sangramentos acumulam com dano e prazo próprios. Canhão de Vidro conta duas ações de dano, não dois projéteis ou turnos; seu primeiro golpe recebido é um contador separado. Nevasca aplica seis turnos completos de resfriamento; aplicar resfriamento ativa Gelo Queima. Custos do Mago mantêm o teto de mana máxima. Investida e Você Irá Me Parar? podem romper perda de turno; Cortes Ultrassônicos exige uma ação de intervalo após terminar.', '',
+      'Revisão de 05/11/2026: Recuperar Fôlego remove uma aplicação de dano periódico desde Cavaleiro; Ira sacrifica 50% de H; Sniper tem 60% de crítico base e Ponto Fraco usa 20% de h; Bola de Fogo do Incendiário usa 3% de h; Incorporar Demônio concede +160% de dano. Demais fórmulas preservadas.', '',
       'Revisão de 04/11/2026: Mago e subclasses rebalanceados; Canhão de Vidro usa dois contadores de eventos, resfriamento ativa Gelo Queima e rastreio usa (50 + 4 × nível²) × raridade. Detalhes: docs/balanceamento/mago_2026-11-04.md.', '',
       'Para regenerar: `node scripts/generate-skill-reference.cjs`. Dados completos: [skills-reference.json](qa/2026-10-28/skills-reference.json).', '',
       'Revisão de 03/11/2026: fórmulas e custos do Guerreiro e subclasses rebalanceados; esquiva bloqueia novos efeitos hostis; sangramentos acumulam com duração própria; Investida e Você Irá Me Parar? rompem perda de turno; Cortes Ultrassônicos exige intervalo após expirar. Arqueiro e subclasses também rebalanceados; rastreio passa a seis minutos com custo quadrático por nível e raridade. Análise atual: docs/analise_guerreiro_arqueiro_inimigos_2026-11-04.md.', ''

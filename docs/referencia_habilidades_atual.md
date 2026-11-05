@@ -1,6 +1,6 @@
 # Referência atual de habilidades
 
-Catálogo gerado a partir do código executável atual em 04/11/2026. Não utiliza o documento antigo de balanceamento.
+Catálogo gerado a partir do código executável atual em 05/11/2026. Não utiliza o documento antigo de balanceamento.
 
 São 28 formas de classe/subclasse e 59 nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.
 
@@ -15,6 +15,8 @@ W = piso(0,5L). F = dano fixo adicional de Transbordando; S = acréscimo de cust
 Como ler: 0,06H significa 6% da vida máxima; 0,8A significa 80% do ataque. Exemplo: na linha do Espadachim, Investida tem D = 20 + 0,06H + 0,8A + 0,8P e C = 50 + W. As variações de classe já estão resolvidas em cada tabela. Piso significa arredondar para baixo. Nas somas, cada parcela fracionária é arredondada separadamente, exceto quando piso envolve a soma inteira. O custo final do Mago é limitado à sua mana máxima. As fórmulas representam a base: buffs, crítico, conjuntos, mitigação e demais efeitos descritos podem modificar o resultado.
 
 Condições gerais: esquiva impede novos efeitos ligados ao golpe evitado, mas não remove DOTs já ativos. Queimaduras, venenos e sangramentos acumulam com dano e prazo próprios. Canhão de Vidro conta duas ações de dano, não dois projéteis ou turnos; seu primeiro golpe recebido é um contador separado. Nevasca aplica seis turnos completos de resfriamento; aplicar resfriamento ativa Gelo Queima. Custos do Mago mantêm o teto de mana máxima. Investida e Você Irá Me Parar? podem romper perda de turno; Cortes Ultrassônicos exige uma ação de intervalo após terminar.
+
+Revisão de 05/11/2026: Recuperar Fôlego remove uma aplicação de dano periódico desde Cavaleiro; Ira sacrifica 50% de H; Sniper tem 60% de crítico base e Ponto Fraco usa 20% de h; Bola de Fogo do Incendiário usa 3% de h; Incorporar Demônio concede +160% de dano. Demais fórmulas preservadas.
 
 Revisão de 04/11/2026: Mago e subclasses rebalanceados; Canhão de Vidro usa dois contadores de eventos, resfriamento ativa Gelo Queima e rastreio usa (50 + 4 × nível²) × raridade. Detalhes: docs/balanceamento/mago_2026-11-04.md.
 
@@ -45,7 +47,7 @@ Classe: **Guerreiro**. Rota: cavaleiro.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P | Ver efeito | 30% de chance de impedir a próxima ação inimiga. |
 | Brado | 50 | C = 40 + W; dano final × 1,3 | Duração: 5 turno(s) | +30% de dano final. |
@@ -63,7 +65,7 @@ Classe: **Guerreiro**. Rota: cavaleiro → paladino.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 30 + 0,07H + 0,6A + 0,4P | Ver efeito | 45% de chance de impedir a próxima ação inimiga. |
 | Brado | 50 | C = 40 + W; dano final × 1,3 | Duração: 5 turno(s) | +30% de dano final e redução de 16% do dano recebido. |
@@ -84,10 +86,10 @@ Classe: **Guerreiro**. Rota: cavaleiro → berserker.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta. |
+| Recuperar Folego | 1 | C = 30 + W; cura = 0,19H | Ver efeito | Cura limitada à vida que falta; remove uma aplicação de queimadura, veneno ou sangramento, priorizando o maior dano por turno. |
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 60 + 0,07H + 1,1A + 0,4P | Ver efeito | Dano direto. |
-| Ira | 50 | C = W MP + 0,7H de vida; dano final × 2,2; roubo de vida = 0,2V | Duração: 4 turno(s) | Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo. |
+| Ira | 50 | C = W MP + 0,5H de vida; dano final × 2,2; roubo de vida = 0,2V | Duração: 4 turno(s) | Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo. |
 | Vallhala | 60 | C = 100 + W; dano recebido × 2,5; adicional por dano causado = 0,15E | Duração: 5 turno(s) | O bônus usa a vida máxima do inimigo; também aumenta o dano recebido. |
 | Voce Ira Me Parar? | 80 | C = 100 + W MP + 0,3H de vida; A adicional = 100 | Duração: 4 turno(s) | Pode impedir a perda do turno atual e concede imunidade a esse controle durante o efeito. |
 
@@ -197,7 +199,7 @@ Classe: **Mago**. Rota: elementalista → mago_incendiario.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Explosao de Mana | 20 | C = 20 + W + S; B = piso(0,4mₑ); D = 30 + 1,0P + 0,08M + 3,5B + F | Ver efeito | Retira B da mana do alvo e converte esse valor em dano. Se o alvo não tiver mana, B = 0. |
-| Bola de Fogo | 30 | C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,05h + F | Queimadura: 3 turno(s) | Queimadura = 5% de E após desbloquear Fogo do Inferno; antes disso, 3% de E por turno, durante 3 turnos; cura recebida −30%. |
+| Bola de Fogo | 30 | C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,03h + F | Queimadura: 3 turno(s) | Queimadura = 5% de E após desbloquear Fogo do Inferno; antes disso, 3% de E por turno, durante 3 turnos; cura recebida −30%. |
 | Bafo de Fogo | 50 | C = 40 + W + S; D = 60 + 0,08A + 0,9P + F | Queimadura: 6 turno(s) | Bafo de Fogo aplica queimadura por 6 turnos. |
 | Fenix Sagrada | 60 | C = 200 + P + S; D = 100 + 0,4A + 1,85P + F | Queimadura: 1 turno(s) | Aplica queimadura por 1 turno e reduz cura recebida em 30%. |
 | Explodir | 80 | C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,5E + F | Ver efeito | Também paga 50% da vida máxima; exige vida suficiente. |
@@ -277,7 +279,7 @@ Classe: **Mago**. Rota: arcanista → corrompido.
 | Descarregar | 30 | C = 30Q + S; D = 60 + LQ + 0,3P + 0,045M + F | Ver efeito | Consome todas as cargas arcanas. |
 | Escudo de Mana | 50 | C = 0,15M + S; escudo = 40 + 0,3M | Duração: 2 turno(s) | Escudo por 2 turnos; não pode ser concedido se houver bloqueio de escudos. |
 | Corrupcao | 60 | C = 0,3M; D = 100 + 1,15P + 0,22M + F; armadura do alvo = 0 | Armadura removida: 5 turno(s); Sem escudo: 5 turno(s) | Remove toda a armadura do alvo e impede novos escudos por 5 turnos. |
-| Incorporar Demonio | 80 | C = 0,3M; dano final × 3; dano recebido × 1,4 | Duração: 3 turno(s) | +200% de dano total e +40% de dano recebido por 3 turnos. |
+| Incorporar Demonio | 80 | C = 0,3M; dano final × 2,6; dano recebido × 1,4 | Duração: 3 turno(s) | +160% de dano total e +40% de dano recebido por 3 turnos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
@@ -349,10 +351,10 @@ Classe: **Arqueiro**. Rota: atirador → sniper.
 | --- | ---: | --- | --- | --- |
 | Mirar | 1 | C = 30 + L; A adicional = 5 + L; P adicional = 5 + L | Duração: 5 turno(s) | Acerto básico garantido por 5 turnos; Headshot ganha 10% de dano e 10 pontos percentuais de crítico. |
 | Camuflagem | 20 | C = 40 + W; esquiva adicional = 20%; próximo dano × 1,3 | Duração: 5 turno(s) | Esquiva adicional por 5 turnos. |
-| Headshot | 30 | C = 60 + W; D = 30 + 0,85A + 0,65P; com Mirar, D × 1,1 | Ver efeito | Crítico base de 70%; Mirar e passivas somam seus bônus. |
+| Headshot | 30 | C = 60 + W; D = 30 + 0,85A + 0,65P; com Mirar, D × 1,1 | Ver efeito | Crítico base de 60%; Mirar e passivas somam seus bônus. |
 | Tiro Perfurante | 50 | C = 80 + W; D = 50 + 1,2A + 0,8P | Ver efeito | Ignora armadura e escudo; também remove o escudo. |
 | Executar | 60 | C = 120; D = 60 + 1,1A + 0,9P; D × 3 se h < 0,4E | Ver efeito | Triplica o dano se o alvo estiver abaixo de 40% de sua vida máxima. |
-| Ponto Fraco | 80 | C = 120; D = 100 + 0,65A + 0,4P + 0,25h | Ver efeito | Usa a vida atual do alvo. |
+| Ponto Fraco | 80 | C = 120; D = 100 + 0,65A + 0,4P + 0,2h | Ver efeito | Usa a vida atual do alvo. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
