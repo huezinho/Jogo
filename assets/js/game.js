@@ -5497,6 +5497,7 @@ function fleeBattle(){
     return;
   }
   player.coins -= cost;
+  if(enemy.challengeTowerFloor!==undefined)log('Tentativa da torre encerrada. A próxima começa no primeiro andar.');
   enemy = null;
   needsNewEnemy = true;
   displayState.enemyHp = null;
@@ -5568,7 +5569,69 @@ function createEnemyFromTemplate(template, isBoss = false, originOverride = null
   return created;
 }
 
+// The tower uses the campaign combat engine, isolated from campaign kill rewards.
+function getChallengeTowerFloors(){ return Object.keys(regions).filter(region=>regions[region].boss); }
+function isChallengeTowerUnlocked(){
+  const floors=getChallengeTowerFloors();
+  return !!player && !IS_DUNGEON_PAGE && !IS_ARENA_PAGE && (player.stats.regionBossKills?.[floors[floors.length-1]] || 0)>0;
+}
+function createChallengeTowerEnemy(floor){
+  const floors=getChallengeTowerFloors(),region=floors[floor];
+  if(!Number.isInteger(floor)||!region)return null;
+  const template=regions[region].boss;
+  const target=createEnemyFromTemplate(template,true,region);
+  const lastRegion=floors[floors.length-1];
+  const reference=createEnemyFromTemplate(regions[lastRegion].boss,true,lastRegion);
+  const damageScale=reference.attack/Math.max(1,target.attack);
+  const manaScale=reference.maxMp/Math.max(1,target.maxMp);
+  for(const key of ['maxHp','attack','armor','maxMp'])target[key]=reference[key];
+  target.hp=target.maxHp;target.mp=target.maxMp;
+  target.maxHpStrikePercent=reference.maxHpStrikePercent;
+  target.level=120;target.name=template.name+' Lv.120';target.challengeTowerFloor=floor;
+  target.possibleDrop='Recompensa somente ao concluir os 12 andares: moedas e um baú do Paradoxo.';
+  target.skillDamage=Math.round(target.skillDamage*damageScale);
+  target.skillCost=Math.round(target.skillCost*manaScale);
+  target.bossAbilities=target.bossAbilities.map(ability=>{
+    const scaled={...ability};
+    for(const key of ['power','poison','shieldFlat','flatDamageBonus','bonusIfShield','bonusIfNoShield','variance']){
+      if(Number.isFinite(scaled[key]))scaled[key]=Math.round(scaled[key]*damageScale);
+    }
+    if(Number.isFinite(scaled.cost))scaled.cost=Math.min(target.maxMp,Math.round(scaled.cost*manaScale));
+    // The campaign prose quotes the original numbers; the tower lists its scaled values instead.
+    scaled.description='Torre Nv.120'+(scaled.power!==undefined?' · Dano base: '+scaled.power:'')+(scaled.poison?' · Veneno: '+scaled.poison+'/turno':'')+'. Mantém os efeitos e durações do chefe original.';
+    return scaled;
+  });
+  target.campaignState=undefined;
+  CampaignEnemyCombat.initialize(target);
+  return target;
+}
+function startChallengeTower(){
+  if(!isChallengeTowerUnlocked()||enemy||isProcessingTurn||isDead||player.hp<=0||levelUpPoints>0||needsSubclassChoice()||blockCombatWhileResting())return false;
+  currentMode='battle';enemy=createChallengeTowerEnemy(0);needsNewEnemy=false;
+  resetCombatEffects();displayState.enemyHp=enemy.hp;
+  log('Torre de Desafios: andar 1 / '+getChallengeTowerFloors().length+'. Sem recuperação entre chefes.');
+  updateUI();queueCampaignSave();playEnemyEntranceAnimation();return true;
+}
+function advanceChallengeTower(){
+  const floor=enemy.challengeTowerFloor,floors=getChallengeTowerFloors();
+  player.stats.towerBest=Math.max(Number(player.stats.towerBest)||0,floor+1);
+  enemy=null;isProcessingTurn=false;
+  if(floor+1<floors.length){
+    enemy=createChallengeTowerEnemy(floor+1);needsNewEnemy=false;resetCombatEffects();displayState.enemyHp=enemy.hp;
+    log('Torre de Desafios: andar '+(floor+2)+' / '+floors.length+'. '+enemy.baseName+' aguarda.');
+  }else{
+    const reward=floors.length*(18+120*3);
+    player.coins+=reward;player.stats.coinsEarned+=reward;
+    player.stats.towerCompletions=(Number(player.stats.towerCompletions)||0)+1;
+    grantBossChest(floors[floors.length-1]);
+    needsNewEnemy=true;displayState.enemyHp=null;resetCombatEffects();
+    log('Torre concluída! Você venceu todos os chefes e recebeu '+reward+' moedas e um baú do Paradoxo.');
+  }
+  updateUI();queueCampaignSave();
+}
+
 function spawnEnemy(isBoss = false){
+  if(enemy?.challengeTowerFloor!==undefined)return false;
   if(isDead || player.hp<=0)return false;
   if(blockCombatWhileResting()){ return false; }
   const regionData = isDungeonMode() ? dungeonData : regions[currentRegion];
@@ -5931,7 +5994,9 @@ function continueCampaign(characterId = ""){
   if(enemy){
     const enemyTemplate = getEnemyTemplateByName(enemy.baseName || getBaseEnemyName(enemy.name));
     if(enemyTemplate){
-      const rebuiltEnemy = createEnemyFromTemplate(enemyTemplate, !!enemyTemplate.isBoss);
+      const towerFloor=enemy.challengeTowerFloor;
+      const towerValid=Number.isInteger(towerFloor)&&isChallengeTowerUnlocked()&&getChallengeTowerFloors()[towerFloor]===enemyTemplate.region&&enemyTemplate.isBoss;
+      const rebuiltEnemy = towerValid ? createChallengeTowerEnemy(towerFloor) : createEnemyFromTemplate(enemyTemplate, !!enemyTemplate.isBoss);
       rebuiltEnemy.hp = Number.isFinite(enemy.hp) ? Math.min(rebuiltEnemy.maxHp, Math.max(0, enemy.hp)) : rebuiltEnemy.maxHp;
       rebuiltEnemy.mp = rebuiltEnemy.maxMp ? Number.isFinite(enemy.mp) ? Math.min(rebuiltEnemy.maxMp, Math.max(0, enemy.mp)) : rebuiltEnemy.maxMp : 0;
       rebuiltEnemy.debuffSources = Object.fromEntries(enemyDebuffFields.filter(key => typeof enemy.debuffSources?.[key] === "string").map(key => [key, enemy.debuffSources[key].slice(0, 80)]));
@@ -7040,6 +7105,7 @@ function handleEnemyDefeat(){
   if(player?.hp <= 0) { handleDeath(); return; }
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
+  if(enemy?.challengeTowerFloor!==undefined){advanceChallengeTower();return;}
   log("Inimigo derrotado!");
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.recordKill(enemy, player); }
   tryEnemyMaterialDrop(enemy);

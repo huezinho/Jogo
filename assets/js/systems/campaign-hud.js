@@ -48,6 +48,7 @@ const CampaignHUD = (() => {
   }
   function nav(){
     document.getElementById('modeTabs').innerHTML = renderLocationMapNavigation().replace(/onclick="setMode\('([^']+)'\)"/g, 'data-hud="navigate" data-value="$1"');
+    document.getElementById('modeTabs').insertAdjacentHTML('beforeend',button('Torre de Desafios','tower','',`class="rpg-tower-nav" ${isChallengeTowerUnlocked()?'':'disabled'} data-hud-description="${isChallengeTowerUnlocked()?'12 chefes em sequência · Nv.120':'Vença o último chefe do Paradoxo para liberar.'}"`));
     document.getElementById('rpgOptions').innerHTML=button('Opções','settings');
     document.getElementById('rpgBagButton').innerHTML=button(image('icon-bag-button'),'navigate','bag','aria-label="Abrir bolsa" data-hud-description="Bolsa"');
   }
@@ -79,11 +80,16 @@ const CampaignHUD = (() => {
     const title=`${getDisplayedClassName()} · Nv. ${player.level}`;
     return `<section class="rpg-battle ${enemy?.isBoss?'is-boss':''}"><div class="rpg-battle-banner"><span>${isDead?'Derrotado':isCampResting()?'Descansando':levelUpPoints>0?'Evolução pendente':needsSubclassChoice()?'Escolha sua subclasse':isProcessingTurn?'Turno em andamento':enemy?'Sua vez':'Exploração'}</span></div>
       <aside class="rpg-quest" style="--boss-progress:${Math.round(360*Math.min(1,Math.max(0,progress.defeated/Math.max(1,progress.total))))}deg" aria-label="Rastreador da região" data-state="${enemy?.isBoss?'fighting':progress.unlocked?'ready':'tracking'}"><span class="rpg-boss-seal" role="img" aria-label="${text(regions[currentRegion].boss.name)}: ${progress.defeated} de ${progress.total} criaturas vencidas"><img src="assets/visual/bosses/${slugify(regions[currentRegion].boss.name)}.webp?v=20261029" alt="" width="64" height="64"></span>${renderTracker(progress)}</aside>
-      ${renderCombatScene(enemy,currentRegion)}
+      ${renderCombatScene(enemy,enemy?.challengeTowerFloor!==undefined?enemy.region:currentRegion)}
       <div class="rpg-vital-dock"><section class="rpg-hero-plate"><div class="rpg-portrait">${getHeroSpriteMarkup().replace(/id="heroSprite"/g,'id="hudHeroPortrait"')}</div><div><strong>${esc(title)}</strong><div id="rpgHeroVitals"></div></div></section>${enemy?`<section class="rpg-enemy-plate"><div><button class="rpg-target-name" data-hud="target">${esc(enemy.name)}</button><div id="rpgEnemyVitals"></div><div class="enemy-status-list">${getEnemyStatusEffects(enemy).map(effect=>`<span tabindex="0" class="enemy-status-pill ${effect.kind}" data-hud-description="${esc(effect.details||effect.text)}">${text(effect.text)}</span>`).join('')}</div></div><div class="rpg-enemy-portrait">${getEnemySpriteMarkup(enemy).replace(/id="enemySprite"/g,'id="enemyPortrait"')}</div></section>`:`<section class="rpg-expedition-note"><span>${esc(regions[currentRegion].description)}</span></section>`}</div>
     </section>`;
   }
+  function showTower(){
+    const floors=getChallengeTowerFloors();
+    openDialog('tower','Torre de Desafios',`<section class="rpg-tower-lobby"><p>Todos os ${floors.length} chefes no nível 120. Vida e mana não são recuperadas entre andares. Derrota ou fuga encerram a tentativa.</p><p>Melhor resultado: ${Math.min(floors.length,Number(player.stats.towerBest)||0)} / ${floors.length} · Conclusões: ${Number(player.stats.towerCompletions)||0}</p><ol>${floors.map(region=>`<li><strong>${text(regions[region].boss.name)}</strong><span>${text(region)} · Nv.120</span></li>`).join('')}</ol><p>Recompensa final: ${floors.length*(18+120*3)} moedas e um baú do Paradoxo. Os andares não concedem XP ou recompensas da campanha.</p>${button('Iniciar desafio','tower-start','',!isChallengeTowerUnlocked()||enemy||locked()||progressionPending()||isCampResting()||player.expedition?'disabled':'')}</section>`);
+  }
   function renderTracker(progress){
+    if(enemy?.challengeTowerFloor!==undefined)return `<strong>Torre de Desafios</strong><span>Andar ${enemy.challengeTowerFloor+1} / ${getChallengeTowerFloors().length} · Nv.120</span>${button('Analisar chefe','target')}`;
     if(enemy?.isBoss) return `<strong>Confronto com o chefe</strong><span>${esc(enemy.name)}</span>${button('Analisar chefe','target')}`;
     if(player.stats.regionBossKills?.[currentRegion] > 0){
       const hunt=CreatureTracking.active(),here=hunt?.region===currentRegion;
@@ -240,6 +246,8 @@ const CampaignHUD = (() => {
   function onClick(event){
     const b=event.target.closest('[data-hud]');if(!b||b.disabled)return;
     const value=b.dataset.value,action=b.dataset.hud;
+    if(action==='tower')return showTower();
+    if(action==='tower-start'){closeDialog();return startChallengeTower();}
     if(action==='close-dialog')return closeDialog();
     if(action==='expedition-start')return startExpedition();
     if(action==='expedition-stop')return stopExpedition();
