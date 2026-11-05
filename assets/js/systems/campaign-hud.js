@@ -59,7 +59,7 @@ const CampaignHUD = (() => {
     const root=document.getElementById('campaignHud');
     root.dataset.mode=currentMode;root.dataset.service=villageTab;
     document.getElementById('rpgTitle').textContent=pageTitle();
-    document.getElementById('rpgAccount').innerHTML=money()+(isDead?button(Math.max(0,Math.ceil((deadUntil-Date.now())/1000))?'Renascer em '+Math.max(0,Math.ceil((deadUntil-Date.now())/1000))+'s':'Renascer','respawn','',`class="rpg-death-return" ${Date.now()<deadUntil?'disabled':''}`):'')+(isCampResting()?button(`Descansando · ${Math.ceil(player.hp)} / ${getCurrentCaps().maxHp} vida`,'rest-camp','',`class="rpg-rest-indicator" data-hud-description="Volte ao acampamento e clique em Levantar antes de combater."`):'');
+    document.getElementById('rpgAccount').innerHTML=money()+(player.expedition?button('Expedição: '+player.expedition.region+' - recolher','expedition-stop','', 'class="rpg-expedition-status"'):'')+(isDead?button(Math.max(0,Math.ceil((deadUntil-Date.now())/1000))?'Renascer em '+Math.max(0,Math.ceil((deadUntil-Date.now())/1000))+'s':'Renascer','respawn','',`class="rpg-death-return" ${Date.now()<deadUntil?'disabled':''}`):'')+(isCampResting()?button(`Descansando · ${Math.ceil(player.hp)} / ${getCurrentCaps().maxHp} vida`,'rest-camp','',`class="rpg-rest-indicator" data-hud-description="Volte ao acampamento e clique em Levantar antes de combater."`):'');
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
     panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal rpg-bestiary"><aside class="rpg-bestiary-map"><h2>Regi&otilde;es</h2>${renderBestiaryRegionMapCard(getSelectedBestiaryRegion(),isBestiaryDevUnlocked())}</aside><div class="rpg-bestiary-entries">${renderBestiary()}</div></section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
@@ -110,10 +110,11 @@ const CampaignHUD = (() => {
     if(currentMode!=='battle'||!enemy||locked()||progressionPending())state.quickItems=false;
     area.className='rpg-actions';
     if(currentMode!=='battle'){area.innerHTML='';return true;}
+    if(player.expedition){area.innerHTML='<div class="rpg-recovery"><p>Em expedi&ccedil;&atilde;o: '+text(player.expedition.region)+' - '+player.expedition.encounters+' encontros, '+player.expedition.coins+' moedas, '+player.expedition.drops+' materiais.</p>'+button('Recolher personagem','expedition-stop')+'</div>';return true;}
     if(isDead){const seconds=Math.max(0,Math.ceil((deadUntil-Date.now())/1000));area.innerHTML=`<div class="rpg-recovery">${button(seconds?`Renascer em ${seconds}s`:'Renascer','respawn','',seconds?'disabled':'')}${button('Reiniciar aventura','restart')}</div>`;return true;}
     if(!enemy){
       const chances=getRegionSpawnPreview(currentRegion).map(e=>`${e.name}: ${e.chance.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`).join('\n');
-      area.innerHTML=isCampResting()?`<div class="rpg-recovery">${button('Descansando','rest-camp')}</div>`:`<div class="rpg-recovery">${button(`${image('icon-strike')}<span>Procurar inimigo</span>`,'find','',`class="rpg-find" data-hud-description="${esc(`Encontros em ${currentRegion}\n${chances}`)}" ${locked()||progressionPending()?'disabled':''}`)}</div>`;return true;
+      area.innerHTML=isCampResting()?`<div class="rpg-recovery">${button('Descansando','rest-camp')}</div>`:`<div class="rpg-recovery">${button(`${image('icon-strike')}<span>Procurar inimigo</span>`,'find','',`class="rpg-find" data-hud-description="${esc(`Encontros em ${currentRegion}\n${chances}`)}" ${locked()||progressionPending()?'disabled':''}`)}</div>`;if(canStartExpedition())area.insertAdjacentHTML('beforeend','<div class="rpg-expedition-offer">'+button('Sair em expedi&ccedil;&atilde;o','expedition-start')+'<small>1 encontro / 30s. Drops e 50% das moedas. At&eacute; 24h acumuladas ao retornar.</small></div>');return true;
     }
     const skills=getSkillInfo(),busy=locked()||progressionPending();
     const basicCost=player.class==='Mago'?Math.floor(3+.1*player.level)*3:0;
@@ -156,8 +157,8 @@ const CampaignHUD = (() => {
     if(villageTab==='alchemist') return serviceNav()+`<section class="rpg-village-interior rpg-alchemy"><div class="rpg-service-copy"><h2>Poções e preparados</h2><p>Prepare seus consumíveis antes de voltar à trilha.</p></div><div class="rpg-shop">${renderActionFeedback('village')}${renderAlchemistPanel({compact:true})}</div></section>`;
     const bothCost=getHealCost()+getManaHealCost();
     const caps=getCurrentCaps(),busy=locked();
-    const healCard=(label,kind,cost,action)=>'<article class="rpg-inn-service"><span class="inn-service-icon '+kind+'">'+(kind==="hp"?"&#10084;":"&#10022;")+'</span><h3>'+label+'</h3><p>Recupere todo o recurso.</p>'+button('Recuperar - '+cost+' moedas',action,'',busy||!cost||player.coins<cost?'disabled':'')+'</article>';
-    return serviceNav()+`<section class="rpg-village-interior rpg-inn-interior"><div class="rpg-service-copy"><h2>Um descanso na jornada</h2><p>Reponha suas for&ccedil;as e prepare-se para partir.</p></div><div class="rpg-inn rpg-paper"><h2><img class="rpg-inn-title" src="assets/visual/hud/inn-title-rustic.webp" alt="Pousada"></h2><div class="rpg-inn-vitals">${innMeter("Vida",player.hp,caps.maxHp,"hp")}${innMeter("Mana",player.mp,caps.maxMp,"mp")}</div><div class="rpg-inn-services">${healCard('Descanso reparador','hp',getHealCost(),'heal')}${healCard('Recuperar energias','mp',getManaHealCost(),'mana')}<article class="rpg-inn-service inn-service-both"><span class="inn-service-icon">&#9788;</span><h3>Recupera&ccedil;&atilde;o completa</h3><p>Restaure vida e mana.</p>${button('Recuperar os dois - '+bothCost+' moedas','heal-both','',busy||!bothCost||player.coins<bothCost?'disabled':'')}</article></div><section class="rpg-inn-drink"><img src="assets/visual/hud/icon-potion.webp" alt=""><div><h3>Bebida Revigorante</h3><p>Recupera 5% de vida e mana. Agora: ${Math.max(1,Math.floor(caps.maxHp*.05))} HP e ${Math.max(1,Math.floor(caps.maxMp*.05))} MP.</p>${button('Levar uma bebida - '+getInvigoratingDrinkCost()+' moedas','buy-drink','',player.coins<getInvigoratingDrinkCost()||busy?'disabled':'')}</div></section></div></section>`;
+    const healCard=(label,kind,cost,action)=>button(label+' - '+cost+' moedas',action,'',busy||!cost||player.coins<cost?'disabled':'');
+    return serviceNav()+`<section class="rpg-village-interior rpg-inn-interior"><div class="rpg-inn-vendor"><img src="assets/visual/hud/inn-vendor.webp" alt="Vendedor da pousada"></div><div class="rpg-inn rpg-paper"><h2><img class="rpg-inn-title" src="assets/visual/hud/inn-title-rustic.webp" alt="Pousada"></h2><div class="rpg-inn-vitals">${innMeter("Vida",player.hp,caps.maxHp,"hp")}${innMeter("Mana",player.mp,caps.maxMp,"mp")}</div><div class="rpg-inn-services">${healCard('Descanso reparador','hp',getHealCost(),'heal')}${healCard('Recuperar energias','mp',getManaHealCost(),'mana')}${button('Recuperar os dois - '+bothCost+' moedas','heal-both','',busy||!bothCost||player.coins<bothCost?'disabled':'')}</div><section class="rpg-inn-drink"><img src="assets/visual/hud/inn-drink.webp" alt="Bebida Revigorante"><div><h3>Bebida Revigorante</h3><p>Recupera 5% de vida e mana. Agora: ${Math.max(1,Math.floor(caps.maxHp*.05))} HP e ${Math.max(1,Math.floor(caps.maxMp*.05))} MP.</p>${button('Levar uma bebida - '+getInvigoratingDrinkCost()+' moedas','buy-drink','',player.coins<getInvigoratingDrinkCost()||busy?'disabled':'')}</div></section></div></section>`;
   }
   function currentCraft(){
     const unlocked=EquipmentSystem.unlockedRegions(player);
@@ -240,6 +241,8 @@ const CampaignHUD = (() => {
     const b=event.target.closest('[data-hud]');if(!b||b.disabled)return;
     const value=b.dataset.value,action=b.dataset.hud;
     if(action==='close-dialog')return closeDialog();
+    if(action==='expedition-start')return startExpedition();
+    if(action==='expedition-stop')return stopExpedition();
     if(action==='navigate')return navigate(value);
     if(action==='settings'){closeDialog();return toggleSettingsPanel();}
     if(action==='rest')return toggleCampRest();

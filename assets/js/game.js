@@ -36,6 +36,8 @@ let startScreenTab = "continue";
 let inventoryFilter = "all";
 let enemiesSpawned = 0;
 let isDead = false;
+const EXPEDITION_INTERVAL_MS = 30000;
+const EXPEDITION_MAX_OFFLINE_TICKS = 2880;
 let deadUntil = null;
 let isLogHidden = false;
 let isSettingsOpen = false;
@@ -1703,6 +1705,53 @@ function normalizePlayerState(){
   }else{
     player.campRest = { lastTickAt: Math.min(player.campRest.lastTickAt, Date.now()) };
   }
+  normalizeExpedition();
+  if(player.expedition)player.campRest=null;
+}
+
+function normalizeExpedition(){
+  const e=player.expedition,now=Date.now();
+  if(!e||typeof e!=="object"||!regions[e.region]||!EquipmentSystem.isRegionUnlocked(e.region,player)||player.level<=getRegionAverageLevel(e.region)+20||enemy||isDead||player.hp<=0||!Number.isSafeInteger(e.lastTickAt)||e.lastTickAt<=0){
+    player.expedition=null;return;
+  }
+  player.expedition={region:e.region,lastTickAt:Math.min(now,e.lastTickAt),encounters:Math.max(0,Math.floor(Number(e.encounters)||0)),coins:Math.max(0,Math.floor(Number(e.coins)||0)),drops:Math.max(0,Math.floor(Number(e.drops)||0))};
+}
+function canStartExpedition(region=currentRegion){
+  return !!player&&!enemy&&!isDead&&!isProcessingTurn&&player.hp>0&&!player.expedition&&!isCampResting()&&!IS_ARENA_PAGE&&!IS_DUNGEON_PAGE&&!!regions[region]&&EquipmentSystem.isRegionUnlocked(region,player)&&player.level>getRegionAverageLevel(region)+20;
+}
+function startExpedition(){
+  if(!canStartExpedition())return false;
+  player.expedition={region:currentRegion,lastTickAt:Date.now(),encounters:0,coins:0,drops:0};
+  log("Expedicao iniciada em "+currentRegion+". Um encontro a cada 30 segundos; drops e metade das moedas.");
+  updateUI();queueCampaignSave();return true;
+}
+function advanceExpedition(now=Date.now()){
+  const e=player?.expedition;
+  if(!e||IS_ARENA_PAGE||IS_DUNGEON_PAGE)return false;
+  if(isDead||player.hp<=0||enemy){player.expedition=null;return true;}
+  if(now<e.lastTickAt){e.lastTickAt=now;return false;}
+  const elapsed=now-e.lastTickAt;
+  const ticks=Math.min(EXPEDITION_MAX_OFFLINE_TICKS,Math.floor(elapsed/EXPEDITION_INTERVAL_MS));
+  if(!ticks)return false;
+  e.lastTickAt=now-elapsed%EXPEDITION_INTERVAL_MS;
+  const coinBonus=1+getPassiveModifiers().coinBonus;
+  for(let i=0;i<ticks;i++){
+    const template=chooseWeightedEnemy(regions[e.region].enemies,{regionName:e.region,applyLevelAdjustment:false});
+    const target={...template,baseName:template.name,region:e.region,isBoss:false};
+    const regular=Math.floor((5+target.level*3)*(1+Math.random()*.4)*coinBonus);
+    const coins=Math.floor(regular*.5);
+    player.coins+=coins;player.stats.coinsEarned+=coins;e.coins+=coins;e.encounters++;
+    for(const drop of EquipmentSystem.rollDrops(target)){addInventoryItem(drop);e.drops+=drop.qty;}
+  }
+  return true;
+}
+function stopExpedition(){
+  if(!player?.expedition)return false;
+  advanceExpedition();
+  const e=player.expedition;
+  player.expedition=null;
+  if(e)log("Expedicao encerrada: "+e.encounters+" encontros, "+e.coins+" moedas e "+e.drops+" materiais.");
+  updateUI();queueCampaignSave();return true;
 }
 
 function isCampResting(){ return !!player?.campRest; }
@@ -1726,7 +1775,7 @@ function recoverCampRest(now = Date.now()){
 }
 
 function toggleCampRest(){
-  if(currentMode !== "camp" || enemy || isProcessingTurn || isDead || player.hp <= 0 || IS_ARENA_PAGE || IS_DUNGEON_PAGE){ return false; }
+  if(currentMode !== "camp" || player.expedition || enemy || isProcessingTurn || isDead || player.hp <= 0 || IS_ARENA_PAGE || IS_DUNGEON_PAGE){ return false; }
   if(isCampResting()){
     recoverCampRest(); player.campRest = null;
     log("Voce se levantou e esta pronto para combater.");
@@ -1738,6 +1787,7 @@ function toggleCampRest(){
 }
 
 function blockCombatWhileResting(){
+  if(player?.expedition){log("Recolha o personagem da expedicao antes de combater.");return true;}
   if(!isCampResting()){ return false; }
   log("Voce esta descansando. Volte ao acampamento e clique em Levantar antes de combater.");
   return true;
@@ -4281,7 +4331,7 @@ function getItemSpritePath(item){
     return "assets/visual/potions/"+potion.typeId+"_"+potion.quality+".webp?v=20261105-potion-art";
   }
   if(consumableCatalog[item?.id]?.baseItemId)return "assets/visual/items/"+consumableCatalog[item.id].baseItemId+".png?v="+ITEM_ASSET_VERSION;
-  if(item?.id === "invigorating_drink")return "assets/visual/hud/icon-potion.webp";
+  if(item?.id === "invigorating_drink")return "assets/visual/hud/inn-drink.webp";
   if(item?.type === "equipment" && ["head","chest","legs","feet","weapon"].includes(item.slot)){
     if(item.regionName && EquipmentData.sets[item.regionName]){
       const weaponClass = item.classRestriction || player?.class || "Guerreiro";
@@ -6278,7 +6328,7 @@ function renderLocationMapNavigation(){
 }
 
 function updateUI(){
-  if(player){ recoverCampRest(); }
+  if(player){ recoverCampRest(); advanceExpedition(); }
   if(typeof CampaignHUD !== "undefined" && CampaignHUD.render()){
     queueCampaignSave();
     return;
@@ -6752,7 +6802,7 @@ function renderLevelUpPanel(){
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
   const bonusPercent = playerEffects.manaRegenBuffTurns > 0 ? playerEffects.manaRegenBuffPercent : 0;
-  const totalPercent = modifiers.manaRegenPercentSet ?? (0.1 + modifiers.manaRegenPercent);
+  const totalPercent = modifiers.manaRegenPercentSet ?? (0.05 + modifiers.manaRegenPercent);
   const maxMp = getPreviewStats().maxMp;
   const activeRegen = bonusPercent > 0 ? Math.max(1, Math.floor(maxMp * bonusPercent)) : 0;
   return Math.max(1, Math.floor(maxMp * totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
@@ -7802,7 +7852,7 @@ if(shouldShowCharacterSelectOnly){
 renderSettingsPanel();
 let lastMercenaryUiMinute = Math.floor(Date.now() / 60000);
 setInterval(() => {
-  if(player && !isStartScreenVisible() && recoverCampRest()){ updateUI(); }
+  if(player && !isStartScreenVisible() && (recoverCampRest() || advanceExpedition())){ updateUI(); }
   const mercenaryMinute = Math.floor(Date.now() / 60000);
   if(player && currentMode === "village" && villageTab === "mercenary" && mercenaryMinute !== lastMercenaryUiMinute){
     lastMercenaryUiMinute = mercenaryMinute; EquipmentSystem.refreshContracts(player); updateUI();
