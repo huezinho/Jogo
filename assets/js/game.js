@@ -4699,12 +4699,14 @@ function getAlchemyRecipe(id){
     const previous=ingredients.get(material.id);
     ingredients.set(material.id,{...material,qty:(previous?.qty||0)+count*multiplier});
   }
-  return {region:[...new Set(alchemyRecipePlans[rank].map(row=>row[0]))].join(" / "),ingredients:[...ingredients.values()]};
+  const gold=[25,75,200,500,1200,2800,6000,12000][rank];
+  return {region:[...new Set(alchemyRecipePlans[rank].map(row=>row[0]))].join(" / "),ingredients:[...ingredients.values()],gold};
 }
 function craftAlchemyPotion(id){
   if(currentMode!=="village"||villageTab!=="alchemist"||isDead||isProcessingTurn)return false;
   const recipe=getAlchemyRecipe(id);
-  if(!recipe||recipe.ingredients.some(item=>getInventoryCountById(item.id)<item.qty))return false;
+  if(!recipe||player.coins<recipe.gold||recipe.ingredients.some(item=>getInventoryCountById(item.id)<item.qty))return false;
+  player.coins-=recipe.gold;
   for(const ingredient of recipe.ingredients){
     for(let n=0;n<ingredient.qty;n++)removeInventoryUnit(player.inventory.findIndex(item=>item.id===ingredient.id&&item.qty>0));
   }
@@ -4717,9 +4719,9 @@ function renderAlchemistPanel(){
   const choices=alchemyQualities.map(q=>'<option value="'+q.id+'" '+(q.id===alchemyQuality?'selected':'')+'>'+q.name+'</option>').join("");
   const types=alchemyTypes.map(t=>'<option value="'+t.id+'" '+(t.id===alchemyType?'selected':'')+'>'+escapeHtml(t.name)+'</option>').join("");
   const id="alquimia_"+alchemyType+"_"+alchemyQuality,config=consumableCatalog[id],recipe=getAlchemyRecipe(id);
-  const ready=!isDead&&!isProcessingTurn&&recipe.ingredients.every(item=>getInventoryCountById(item.id)>=item.qty);
+  const ready=!isDead&&!isProcessingTurn&&player.coins>=recipe.gold&&recipe.ingredients.every(item=>getInventoryCountById(item.id)>=item.qty);
   const ingredients=recipe.ingredients.map(item=>'<li class="'+(getInventoryCountById(item.id)>=item.qty?'ready':'missing')+'">'+escapeHtml(item.name)+' <strong>'+getInventoryCountById(item.id)+' / '+item.qty+'</strong></li>').join("");
-  return '<div class="alchemy-workbench"><div class="alchemy-selectors"><label>Qualidade<select aria-label="Qualidade da po&ccedil;&atilde;o" onchange="setAlchemyQuality(this.value)">'+choices+'</select></label><label>Tipo<select aria-label="Tipo da po&ccedil;&atilde;o" onchange="setAlchemyType(this.value)">'+types+'</select></label></div><article class="alchemy-recipe"><img class="alchemy-potion-art" src="'+escapeHtml(getItemSpritePath({id}))+'" alt="'+escapeHtml(config.name)+'"><h3>'+escapeHtml(config.name)+'</h3><p>'+escapeHtml(config.description)+'</p><p class="alchemy-origin">Materiais de '+escapeHtml(recipe.region)+'</p><ul>'+ingredients+'</ul><button onclick="craftAlchemyPotion(&quot;'+id+'&quot;)" '+(!ready?'disabled':'')+'>Preparar po&ccedil;&atilde;o</button></article></div>';
+  return '<div class="alchemy-workbench"><div class="alchemy-selectors"><label>Qualidade<select aria-label="Qualidade da po&ccedil;&atilde;o" onchange="setAlchemyQuality(this.value)">'+choices+'</select></label><label>Tipo<select aria-label="Tipo da po&ccedil;&atilde;o" onchange="setAlchemyType(this.value)">'+types+'</select></label></div><article class="alchemy-recipe"><img class="alchemy-potion-art" src="'+escapeHtml(getItemSpritePath({id}))+'" alt="'+escapeHtml(config.name)+'"><h3>'+escapeHtml(config.name)+'</h3><p>'+escapeHtml(config.description)+'</p><p class="alchemy-origin">Materiais de '+escapeHtml(recipe.region)+'</p><ul>'+ingredients+'<li class="'+(player.coins>=recipe.gold?'ready':'missing')+'">Custo <strong>'+recipe.gold+' moedas</strong></li></ul><button onclick="craftAlchemyPotion(&quot;'+id+'&quot;)" '+(!ready?'disabled':'')+'>Preparar po&ccedil;&atilde;o</button></article></div>';
 }
 
 function renderArtisanPanel(){ return EquipmentSystem.renderArtisan(); }
@@ -6252,17 +6254,13 @@ function renderClassCreationCard(className, disabled = false){
   const targetPlayer = { class: className, subclassChoices: { tier30: null, tier60: null } };
   const token = toCssToken(className);
   return `
-    <button type="button" class="character-class-card class-${token}" data-start-class="${escapeHtml(className)}" ${disabled ? "disabled" : ""}>
+    <button type="button" class="character-class-card class-${token}" data-start-class="${escapeHtml(className)}" data-hud-description="Vida: ${base.hp} | Mana: ${base.mp} | Dano: ${base.attack}" ${disabled ? "disabled" : ""}>
       ${renderStartHeroFigure(targetPlayer, `new-${token}`)}
       <span class="start-card-kicker">Novo personagem</span>
       <strong class="start-card-title">${escapeHtml(className)}</strong>
       <span class="start-card-copy">${escapeHtml(START_CLASS_COPY[className] || "")}</span>
       ${disabled ? `<span class="start-limit-message">Limite de personagens atingido.</span>` : ""}
-      <span class="start-stat-row">
-        ${renderStartStat("Vida", base.hp, "stat-hp")}
-        ${renderStartStat("Mana", base.mp, "stat-mp")}
-        ${renderStartStat("Dano", base.attack, "stat-atk")}
-      </span>
+      <span class="start-stats-hint">Passe o mouse para ver os atributos</span>
     </button>`;
 }
 
@@ -6274,7 +6272,7 @@ function renderSavedCharacterCard(state){
   const displayName = getSavedCharacterTitle(savedPlayer, stats.level);
   const updated = formatStartDate(state.updatedAt);
   return `
-    <div class="saved-character-card class-${token}">
+    <div class="saved-character-card class-${token}" tabindex="0" data-hud-description="Vida: ${stats.hp}/${stats.maxHp} | Mana: ${stats.mp}/${stats.maxMp} | Dano: ${stats.attack}">
       ${renderStartHeroFigure(savedPlayer, `saved-${toCssToken(state.characterId || displayName)}`)}
       <div class="saved-character-copy">
         <span class="start-card-kicker">Personagem salvo</span>
@@ -6283,11 +6281,7 @@ function renderSavedCharacterCard(state){
           ${renderStartLevelBadge(stats.level)}
         </div>
         <span class="start-card-copy">${escapeHtml(className)}${updated ? ` - Atualizado ${updated}` : ""}</span>
-        <span class="start-stat-row">
-          ${renderStartStat("Vida", `${stats.hp}/${stats.maxHp}`, "stat-hp")}
-          ${renderStartStat("Mana", `${stats.mp}/${stats.maxMp}`, "stat-mp")}
-          ${renderStartStat("Dano", stats.attack, "stat-atk")}
-        </span>
+        <span class="start-stats-hint">Passe o mouse para ver os atributos</span>
         <div class="saved-character-actions">
           <button type="button" data-continue-character="${escapeHtml(state.characterId)}">Continuar</button>
           <button type="button" class="danger-btn" data-delete-character="${escapeHtml(state.characterId)}">Apagar</button>
@@ -6923,13 +6917,17 @@ function consumeLuckBattle(target=enemy){
   player.luckBattles=Math.max(0,getLuckBattles()-1);
 }
 
+function getBaseManaRegen(maxMp, percent=.05){
+  return 8 + Math.floor(Math.max(0, Number(maxMp)||0) * percent);
+}
+
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
   const bonusPercent = playerEffects.manaRegenBuffTurns > 0 ? playerEffects.manaRegenBuffPercent : 0;
   const totalPercent = modifiers.manaRegenPercentSet ?? (0.05 + modifiers.manaRegenPercent);
   const maxMp = getPreviewStats().maxMp;
   const activeRegen = bonusPercent > 0 ? Math.max(1, Math.floor(maxMp * bonusPercent)) : 0;
-  return Math.max(1, 8 + Math.floor(maxMp * totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
+  return Math.max(1, getBaseManaRegen(maxMp,totalPercent) + modifiers.manaRegen + activeRegen + (playerEffects.potionManaTurns>0?playerEffects.potionManaAmount:0));
 }
 
 function regenMana(){
@@ -7539,6 +7537,7 @@ async function tickEnemyEndOfTurnDots(){
 async function enemyTurn(){
   const target=enemy;if(!target)return;
   await performEnemyTurn();
+  if(enemy===target && enemy.hp>0 && !isDead)enemy.mp=Math.min(enemy.maxMp||0,(enemy.mp||0)+getBaseManaRegen(enemy.maxMp));
   if(enemy!==target || isDead || player.hp<=0)return;
   isProcessingTurn=true;
   await tickEnemyEndOfTurnDots();
@@ -7590,9 +7589,6 @@ async function performEnemyTurn(){
     dmg = resolvedAction.damage;
     incomingOptions = resolvedAction.options;
     if(resolvedAction.type === "buff"){
-      if(enemy.isBoss && enemy.maxMp > 0 && enemy.mp < enemy.maxMp){
-        enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
-      }
       await playSpriteAttackAnimation("enemy", "buff", false);
       if(playerEffects.shieldTurns > 0){
         playerEffects.shieldTurns--;
@@ -7638,9 +7634,6 @@ async function performEnemyTurn(){
         log(`O inimigo atacou.`);
       }
     }
-  }
-  if(enemy.isBoss && enemy.maxMp > 0 && enemy.mp < enemy.maxMp){
-    enemy.mp = Math.min(enemy.maxMp, enemy.mp + Math.max(4, Math.floor(enemy.maxMp / 8)));
   }
   const passiveEnemySkipChance = getPassiveModifiers().enemySkipChance || 0;
   if(enemy.skipNextAttack){

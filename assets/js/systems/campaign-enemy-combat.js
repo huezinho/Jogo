@@ -206,8 +206,6 @@ const CampaignEnemyCombat = (() => {
     for(const key of ['aimLegTurns','attackDownTurns','armorDownTurns','blizzardTurns'])if(enemy[key]>0)enemy[key]--;
     if(!(enemy.blizzardTurns>0))enemy.blizzardSkipChance=0;
     if(playerEffects.shieldTurns>0&&--playerEffects.shieldTurns===0)playerEffects.shieldValue=0;
-    // Keep the existing mana recovery policy for bosses; ordinary enemies have finite mana.
-    if(enemy.isBoss)enemy.mp=Math.min(enemy.maxMp,enemy.mp+Math.max(4,Math.floor(enemy.maxMp/8)));
     transferBuffs();heroCheck();if(typeof EnemyMotion!=='undefined')await EnemyMotion.sync();updateUI();await wait(320);
     if(player.hp<=0){handleDeath();return;}if(enemy.hp<=0){handleEnemyDefeat();return;}isProcessingTurn=false;updateUI();
   }
