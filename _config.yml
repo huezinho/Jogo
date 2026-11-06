@@ -1,0 +1,5 @@
+# Publish the game without development reports, test captures and tooling.
+# These files remain versioned in the repository.
+exclude:
+  - docs
+  - scripts
