@@ -2,7 +2,7 @@
 const EquipmentSystem = (function(){
   const callbacks = new WeakMap();
   const ui = { region: "" };
-  const statKeys = ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "flatReduction", "shieldPowerPercent", "healPowerPercent"];
+  const statKeys = ["bonusHp", "bonusMp", "bonusAttack", "skillPower", "flatReduction", "shieldPowerPercent", "healPowerPercent", "critChanceBonus"];
   const zeroBonuses = () => ({ bonusHp: 0, bonusMp: 0, bonusAttack: 0, skillPower: 0, bonusHpPercent: 0, bonusMpPercent: 0, totalDamagePercent: 0, bonusAttackPercent: 0, skillPowerPercent: 0, flatReductionPercent: 0, dotDamagePercent: 0, shieldPowerPercent: 0, healPowerPercent: 0, critChanceBonus: 0, critDamageBonus: 0, armorPenetrationPercent: 0 });
   const slug = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -35,7 +35,7 @@ const EquipmentSystem = (function(){
     if(slot !== "weapon") return profile;
     const damage = Object.fromEntries(Object.entries(profile).filter(([key]) => ["bonusAttack", "skillPower"].includes(key)));
     const total = Object.values(damage).reduce((sum, value) => sum + value, 0);
-    return total ? Object.fromEntries(Object.entries(damage).map(([key, value]) => [key, value / total])) : EquipmentData.weaponFallback[className];
+    return total ? { ...Object.fromEntries(Object.entries(damage).map(([key, value]) => [key, value / total * (1-(profile.critChanceBonus||0))])), ...(profile.critChanceBonus?{critChanceBonus:profile.critChanceBonus}:{}) } : EquipmentData.weaponFallback[className];
   }
   function createItem(region, slot, className, rarity = "comum", actor){
     if(slot === "accessory") return createBossAccessory(region, rarity, actor);
@@ -45,7 +45,7 @@ const EquipmentSystem = (function(){
     const stats = {};
     for(const [key, share] of Object.entries(statProfile(region, slot, className))){
       const value = budget * share * EquipmentData.statValues[key];
-      if(value > 0) stats[key] = key.endsWith("Percent") ? Math.floor(value * 10000) / 10000 : Math.floor(value);
+      if(value > 0) stats[key] = (key.endsWith("Percent") || key==="critChanceBonus") ? Math.floor(value * 10000) / 10000 : Math.floor(value);
     }
     const label = typeof rarityData !== "undefined" ? rarityData[rarity]?.label : rarity;
     return { ...definition, id: `${definition.templateId}_${rarity}`, baseItemId: definition.templateId, type: "equipment", schemaVersion: 2, rarity, rarityLabel: label || rarity, name: `${definition.name} ${label || rarity}`, scaledHeroLevel: heroLevel(actor), stats: copy(stats), ...stats, budget: Math.floor(budget * 100) / 100 };
@@ -235,8 +235,8 @@ const EquipmentSystem = (function(){
   function describe(item, actor){
     item = normalizeItem(item, actor);
     if(!item) return "Equipamento invalido.";
-    const labels = { bonusHp: "vida", bonusMp: "mana", bonusAttack: "ataque", skillPower: "poder de habilidade", flatReduction: "reducao fixa de dano", shieldPowerPercent: "potencia de escudo", healPowerPercent: "potencia de cura" };
-    const parts = statKeys.filter(key => item[key] > 0).map(key => `+${key.endsWith("Percent") ? `${Number((item[key] * 100).toFixed(2))}%` : item[key]} ${labels[key]}`);
+    const labels = { bonusHp: "vida", bonusMp: "mana", bonusAttack: "ataque", skillPower: "poder de habilidade", flatReduction: "reducao fixa de dano", shieldPowerPercent: "potencia de escudo", healPowerPercent: "potencia de cura", critChanceBonus: "critico" };
+    const parts = statKeys.filter(key => item[key] > 0).map(key => `+${(key.endsWith("Percent") || key==="critChanceBonus") ? `${Number((item[key] * 100).toFixed(2))}%` : item[key]} ${labels[key]}`);
     const set = EquipmentData.sets[item.regionName];
     if(item.slot === "accessory"){
       const effects = { reflectPercent: "reflexao", coinBonus: "moedas", xpBonus: "XP", turnHealPercent: "cura por turno", burnDamageReductionPercent: "resistencia a queimadura", flatReduction: "reducao fixa", bonusMpPercent: "mana maxima", bonusHpPercent: "vida maxima", totalDamagePercent: "dano total", fatalSaveHealPercent: "cura ao evitar um golpe fatal (1x por combate)", critChanceBonus: "critico" };
@@ -428,22 +428,22 @@ const EquipmentSystem = (function(){
     if(state.current){ state.current.damage += amount; if(meta.critical) state.current.critical = true; }
   }
   function afterIncoming(actor, effects, enemy, meta = {}){
-    if(meta.equipmentProc || meta.periodic || meta.kind === "dot") return;
+    if(meta.equipmentProc) return;
     const state = runtime(effects), values = caps(actor);
     if((meta.damage || 0) + (meta.absorbed || 0) <= 0) return;
     if(setCount(actor, "Caverna") >= 5){
       state.stoneHits = (state.stoneHits || 0) + 1;
-      if(state.stoneHits >= 3 && !state.cooldowns.stone){ state.stoneHits = 0; state.cooldowns.stone = 3; invoke(actor, effects, enemy, "shield", Math.min(values.maxHp * .08, values.power)); }
+      if(state.stoneHits >= 3){ state.stoneHits = 0; invoke(actor, effects, enemy, "shield", values.maxHp * .08); }
     }
     const shieldAbsorbed = meta.shieldAbsorbed ?? (effects.invulnerableTurns > 0 ? 0 : meta.absorbed);
-    if(setCount(actor, "Fortaleza") >= 5 && shieldAbsorbed > 0) state.retaliation = Math.min(values.power * .6, (state.retaliation || 0) + shieldAbsorbed * .25);
+    if(setCount(actor, "Fortaleza") >= 5 && shieldAbsorbed > 0) state.retaliation = (state.retaliation || 0) + shieldAbsorbed * .25;
   }
   function modifyHealing(actor, effects, amount, options = {}){
     const state = runtime(effects), active = getSetBonuses(actor).bonuses;
     let bonus = active.healPowerPercent || 0;
     for(const slot of EquipmentData.slots) bonus += normalizeItem(actor?.equipment?.[slot], actor)?.healPowerPercent || 0;
     const canHeal = typeof options.canHeal === "boolean" ? options.canHeal : actor.hp < caps(actor).maxHp && !(effects.healReductionTurns > 0 && effects.healReductionPercent >= 1);
-    if(state.forestReady && amount > 0 && canHeal){ bonus += .2; state.forestReady = false; }
+    if(state.forestReady && amount > 0 && canHeal){ bonus += .1; state.forestReady = false; }
     const result = Math.floor(amount * (1 + bonus)); if(state.current) state.current.healingRequested = result;
     return result;
   }
@@ -451,7 +451,7 @@ const EquipmentSystem = (function(){
     const state = runtime(effects), active = getSetBonuses(actor).bonuses;
     let bonus = active.shieldPowerPercent || 0;
     for(const slot of EquipmentData.slots) bonus += normalizeItem(actor?.equipment?.[slot], actor)?.shieldPowerPercent || 0;
-    if(state.forestReady && amount > 0){ bonus += .2; state.forestReady = false; }
+    if(state.forestReady && amount > 0){ bonus += .1; state.forestReady = false; }
     const result = Math.floor(amount * (1 + bonus));
     if(options.track !== false) noteShield(actor, effects, result);
     return result;
@@ -502,14 +502,14 @@ const EquipmentSystem = (function(){
       if(has("Ruinas", 4) && current.buffs.ruin){ bonus += damage * .08; state.ruinReady = 0; }
       if(has("Paradoxo", 4) && current.buffs.paradox){ bonus += damage * .08; state.paradoxReady = 0; }
       if(has("Vulcao", 4) && current.targetHadDot) bonus += damage * .08;
-      if(has("Cataclismo", 4) && current.hpBefore < current.maxHp * .5) bonus += damage * .1;
+      if(has("Cataclismo", 4) && current.hpBefore < current.maxHp * .55) bonus += damage * .1;
       if(has("Abismo", 5) && current.buffs.abyss){ bonus += Math.min(damage * .15, current.power); state.abyssReady = 0; }
-      if(has("Panteao", 5) && current.buffs.support){ bonus += current.power * .2; state.supportReady = 0; }
+
       if(has("Paradoxo", 5) && current.costReady){ bonus += Math.min(damage * .12, current.power); state.cycleReady = false; state.cooldowns.cycle = 4; }
       if(bonus > 0) proc(bonus);
-      if(has("Ruinas", 5) && current.buffs.ruin && !state.cooldowns.echo){ proc(Math.min(damage * .25, current.power * .6)); state.cooldowns.echo = 3; }
-      if(has("Fortaleza", 5) && state.retaliation > 0 && !state.cooldowns.retaliation){ proc(Math.min(state.retaliation, current.power * .6)); state.retaliation = 0; state.cooldowns.retaliation = 3; }
-      if(has("Pantano", 5) && current.targetHadDot && !state.cooldowns.poison && target?.hp > 0){ applyNaturePoison(Math.floor(current.power * .12), 2, {equipmentProc:true}); noteDotApplication(actor, effects, target, ["naturePoisonTurns"], { equipmentProc: true }); state.cooldowns.poison = 3; }
+      if(has("Ruinas", 5) && current.buffs.ruin && !state.cooldowns.echo){ proc(Math.min(damage * .25, current.power * 1.1)); state.cooldowns.echo = 3; }
+      if(has("Fortaleza", 5) && state.retaliation > 0 && !state.cooldowns.retaliation){ proc(state.retaliation); state.retaliation = 0; state.cooldowns.retaliation = 3; }
+      if(has("Pantano", 5) && current.targetHadDot && !state.cooldowns.poison && target?.hp > 0){ applyNaturePoison(Math.floor(current.power * .20), 2, {equipmentProc:true}); noteDotApplication(actor, effects, target, ["naturePoisonTurns"], { equipmentProc: true }); state.cooldowns.poison = 3; }
       if(current.penetrationReady) state.critPenReady = false;
     }
     if(skill){
@@ -525,13 +525,15 @@ const EquipmentSystem = (function(){
     }
     if(has("Abismo", 5) && target && !state.cooldowns.abyss && ((current.enemyShieldBefore > 0 && !(target.shieldValue > 0)) || (target.armorDownPercent || 0) > current.enemyArmorDownBefore)){ state.abyssReady = 1; state.cooldowns.abyss = 3; }
     if(has("Citadela", 5) && current.critical && !state.cooldowns.critical){ state.critPenReady = true; state.cooldowns.critical = 2; }
-    if(has("Panteao", 5) && skill && damage === 0 && current.healed + current.shielded > 0){ state.supportActions = (state.supportActions || 0) + 1; if(state.supportActions >= 3 && !state.cooldowns.support){ state.supportReady = 1; state.supportActions = 0; state.cooldowns.support = 2; } }
+    if(current.buffs.support)state.supportReady=0;
+    if(has("Panteao", 5) && damage === 0){ state.supportActions = (state.supportActions || 0) + 1; if(state.supportActions >= 3){ state.supportReady = 1; state.supportActions = 0; } }
     if(has("Cataclismo", 5) && current.hpCost > 0 && !state.cooldowns.sacrifice){ invoke(actor, effects, target, "shield", Math.min(current.hpCost * .5, current.maxHp * .12, current.power * 1.2)); state.cooldowns.sacrifice = 3; }
-    if(skill && current.dotApplied && has("Floresta", 5)){ state.dotActions = (state.dotActions || 0) + 1; if(state.dotActions >= 3){ state.forestReady = true; state.dotActions = 0; } }
-    if(has("Vulcao", 5) && skill && damage > 0){ state.offensiveActions = (state.offensiveActions || 0) + 1; if(state.offensiveActions >= 3 && !state.cooldowns.burn && target?.hp > 0){ applyBurning(target, Math.floor(current.power * .15), 2, "Brasas Vivas", {equipmentProc:true}); state.offensiveActions = 0; state.cooldowns.burn = 3; } }
+    if(skill && current.dotApplied && has("Floresta", 5)){ state.dotActions = (state.dotActions || 0) + 1; if(state.dotActions >= 1){ state.forestReady = true; state.dotActions = 0; } }
+    if(has("Vulcao", 5) && skill && damage > 0){ state.offensiveActions = (state.offensiveActions || 0) + 1; if(state.offensiveActions >= 3 && !state.cooldowns.burn && target?.hp > 0){ applyBurning(target, Math.floor(target.maxHp * .03), 3, "Brasas Vivas", {equipmentProc:true}); state.offensiveActions = 0; state.cooldowns.burn = 3; } }
     if(has("Necropole", 5) && target && !state.cooldowns.extend){
       const owner = String(actor.characterId || actor.id || actor.class), own = [["burnTurns", "burnDamagePerTurn"], ["poisonTurns", "poisonDamagePerTurn"], ["bleedTurns", "bleedDamagePerTurn"], ["dotTurns", "dotDamagePerTurn"], ["natureMarkTurns", "natureMarkDamage"], ["naturePoisonTurns", "naturePoisonDamage"], ["natureDecayTurns", "natureDecayDamage"]].filter(([turnKey, damageKey]) => target[turnKey] > 0 && target[damageKey] > 0 && target.equipmentDotOwners?.[turnKey] === owner);
-      if(own.length >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ if(turnKey === "bleedTurns"){ for(const stack of target.bleedStacks || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } if(typeof syncBleeding === "function") syncBleeding(target); } else if(turnKey==="naturePoisonTurns" && target.naturePoisonStacks?.length){for(const stack of target.naturePoisonStacks)if(stack.extensions<2){stack.turns++;stack.extensions++;}syncNaturePoison(target);} else if(["burnTurns", "poisonTurns"].includes(turnKey)){ const kind = turnKey.replace("Turns", ""); for(const stack of target[kind + "Stacks"] || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } syncPeriodicStacks(target, kind); } else target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
+      const applications=own.reduce((n,[key])=>n+(key==="burnTurns"?target.burnStacks?.length:key==="poisonTurns"?target.poisonStacks?.length:key==="bleedTurns"?target.bleedStacks?.length:key==="naturePoisonTurns"?target.naturePoisonStacks?.length:1),0);
+      if(applications >= 3){ for(const [turnKey] of own) if((target.equipmentDotExtensions?.[turnKey] || 0) < 2){ if(turnKey === "bleedTurns"){ for(const stack of target.bleedStacks || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } if(typeof syncBleeding === "function") syncBleeding(target); } else if(turnKey==="naturePoisonTurns" && target.naturePoisonStacks?.length){for(const stack of target.naturePoisonStacks)if(stack.extensions<2){stack.turns++;stack.extensions++;}syncNaturePoison(target);} else if(["burnTurns", "poisonTurns"].includes(turnKey)){ const kind = turnKey.replace("Turns", ""); for(const stack of target[kind + "Stacks"] || []) if(stack.extensions < 2){ stack.turns++; stack.extensions++; } syncPeriodicStacks(target, kind); } else target[turnKey]++; target.equipmentDotExtensions[turnKey] = (target.equipmentDotExtensions[turnKey] || 0) + 1; } state.cooldowns.extend = 3; }
     }
     if(skill && current.costReady && state.cycleReady){ state.cycleReady = false; state.cooldowns.cycle = 4; }
     state.current = null;

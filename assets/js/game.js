@@ -917,7 +917,7 @@ function renderSceneVitalPlate(kind, stats){
       </div>`
     : "";
   const energyRow = stats.maxMp > 0
-    ? `<div class="scene-vital-bar scene-vital-energy" tabindex="0" data-hud-description="Regenera ${isEnemy ? getBaseManaRegen(stats.maxMp) : getManaRegen()} de mana por turno." aria-label="Energia ${mpText}">
+    ? `<div class="scene-vital-bar scene-vital-energy" data-vital="mana" tabindex="0" data-hud-description="Regenera ${isEnemy ? getBaseManaRegen(stats.maxMp) : getManaRegen()} de mana por turno." aria-label="Energia ${mpText}">
         <div id="${mpId}" class="scene-vital-fill scene-mp-fill" style="width:${getBarPercent(stats.mp, stats.maxMp)}%"></div>
         <span class="scene-vital-text">${mpText}</span>
       </div>`
@@ -933,7 +933,7 @@ function renderSceneVitalPlate(kind, stats){
             <span class="scene-vital-text">${hpText}</span>
           </div>
           ${energyRow}
-          <div class="scene-vital-bar scene-vital-xp" tabindex="0" data-hud-description="${stats.level >= MAX_LEVEL ? 'Nível máximo atingido.' : 'Faltam '+Math.max(0,(stats.xpToNext||1)-(stats.xp||0))+' XP para subir de nível.'}" aria-label="XP ${xpText}">
+          <div class="scene-vital-bar scene-vital-xp" data-vital="xp" tabindex="0" data-hud-description="${stats.level >= MAX_LEVEL ? 'Nível máximo atingido.' : 'Faltam '+Math.max(0,(stats.xpToNext||1)-(stats.xp||0))+' XP para subir de nível.'}" aria-label="XP ${xpText}">
             <div id="${xpId}" class="scene-vital-fill scene-xp-fill" style="width:${stats.level >= MAX_LEVEL ? 100 : getBarPercent(stats.xp || 0, stats.xpToNext || 1)}%"></div>
             <span class="scene-vital-text">${xpText}</span>
           </div>
@@ -2169,7 +2169,7 @@ window.comandoProximoNivel = grantNextLevelForTest;
 function getActiveAttack(){
   const baseAttack = getPreviewStats().attack + (playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffAmount : 0);
   const percent = playerEffects.attackBuffTurns > 0 ? playerEffects.attackBuffPercent : 0;
-  return Math.floor(baseAttack * (1 + percent));
+  return Math.floor(baseAttack * (1 + percent) * (EquipmentSystem.getSetBonuses(player).sets.some(x=>x.region==='Panteao'&&x.count>=5)&&playerEffects.equipmentRuntime?.supportReady?1.2:1));
 }
 
 function getAttackSkillBonus(){
@@ -2181,7 +2181,7 @@ function getAttackSkillBonus(){
 function getSkillPowerBonus(){
   const baseSkill = getPassiveModifiers().skillPower + getAttackSkillBonus() + (playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffAmount : 0);
   const percent = playerEffects.skillBuffTurns > 0 ? playerEffects.skillBuffPercent : 0;
-  return Math.floor(baseSkill * (1 + percent));
+  return Math.floor(baseSkill * (1 + percent) * (EquipmentSystem.getSetBonuses(player).sets.some(x=>x.region==='Panteao'&&x.count>=5)&&playerEffects.equipmentRuntime?.supportReady?1.2:1));
 }
 
 function getUniversalDamageFlatBonus(){
@@ -2237,7 +2237,7 @@ function getArcherCritChanceBonus(){
 }
 
 function getArcherCriticalProfile(baseChance = 0){
-  const totalChance = Math.max(0, baseChance + (player.class === "Arqueiro" ? getArcherCritChanceBonus() : 0));
+  const totalChance = Math.max(0, .01 + baseChance + (player.class === "Arqueiro" ? getArcherCritChanceBonus() : getPassiveModifiers().critChanceBonus));
   const critChance = Math.min(1, totalChance);
   const critDamageBonus = 1 + Math.max(0, totalChance - 1) + (getActiveSetBonuses().bonuses.critDamageBonus || 0);
   return {
@@ -2251,6 +2251,8 @@ function getArcherCriticalProfile(baseChance = 0){
 function rollArcherCriticalOutcome(baseChance = 0){
   const profile = getArcherCriticalProfile(baseChance);
   const didCrit = Math.random() < profile.critChance;
+  if(playerEffects.equipmentAction)playerEffects.equipmentAction.manualCritical=true;
+  if(didCrit)log("Critico!");
   if(didCrit && typeof EquipmentSystem !== "undefined"){ EquipmentSystem.markCritical(player, playerEffects); }
   return {
     ...profile,
@@ -2524,6 +2526,7 @@ async function applyPlayerEndOfTurnDots(){
       return false;
     }
     player.hp = Math.max(0, player.hp - burnDamage);
+    EquipmentSystem.afterIncoming(player,playerEffects,enemy,{damage:burnDamage,periodic:true,shieldAbsorbed:0});
     displayState.playerHp = player.hp;
     log(`Voce sofreu ${burnDamage} de dano por queimadura.`);
     updateUI();
@@ -3487,6 +3490,9 @@ function tickBleeding(target){
 function applyDamageToEnemy(rawDamage, options = {}){
   if(!enemy){ return 0; }
   if(CampaignEnemyCombat.beforeDamage()) return 0;
+  if(rawDamage>0&&!options.equipmentProc&&playerEffects.equipmentAction?.resolving&&["basic","skill"].includes(playerEffects.equipmentAction.kind)&&!playerEffects.equipmentAction.manualCritical){
+    const critical=rollArcherCriticalOutcome(0);playerEffects.equipmentAction.manualCritical=false;rawDamage=Math.floor(rawDamage*critical.multiplier);
+  }
   rawDamage = CampaignEnemyCombat.temporalDamage(rawDamage);
   const arenaTarget = currentMode === "arena_run" && enemy.arenaCombatant && typeof window.resolveArenaIncomingDamage === "function";
   let damage = arenaTarget ? Math.max(0, Math.floor(rawDamage)) : applyEnemyArmor(rawDamage, !!options.ignoreArmor);
@@ -3836,7 +3842,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   if(skillInfo.hpCostPercent){
     const paidHp = Math.floor(getCurrentCaps().maxHp * skillInfo.hpCostPercent);
     player.hp -= paidHp;
-    if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.noteHpCost(player, playerEffects, paidHp); }
+    if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.noteHpCost(player, playerEffects, paidHp); EquipmentSystem.afterIncoming(player,playerEffects,enemy,{damage:paidHp,periodic:true,shieldAbsorbed:0}); }
   }
   let damage = 0;
   let message = `${actorName} usou ${skillInfo.name}.`;
@@ -4927,7 +4933,7 @@ function renderBestiaryStatGrid(stats){
     ${renderBestiaryMetric("Vida", stats.maxHp, "stat-hp")}
     ${renderBestiaryMetric("Ataque", stats.attack, "stat-atk")}
     ${renderBestiaryMetric("Armadura", stats.armor, "stat-armor")}
-    ${stats.maxMp>0 ? renderBestiaryMetric("Mana", stats.maxMp, "stat-mp") : ""}
+    ${stats.maxMp==='?'||stats.maxMp>0 ? renderBestiaryMetric("Mana", stats.maxMp, "stat-mp") : ""}
     ${stats.maxHpStrikePercent > 0 ? renderBestiaryMetric("Impacto", `+${Math.floor(stats.maxHpStrikePercent * 100)}%`, "stat-impact") : ""}
   </div>`;
 }
@@ -5139,50 +5145,31 @@ function renderCampaignEnemyPassive(name){
 function renderCampaignEnemyKit(name, region){
   return getBossAbilitySet(name,region).filter(a=>a.campaign).map(a=>`<article class="bestiary-skill"><strong>${escapeHtml(a.name)}</strong><span class="bestiary-skill-cost">${a.cost} MP</span><p>${escapeHtml(a.description)}</p></article>`).join("")+renderCampaignEnemyPassive(name);
 }
+let bestiaryMaterialQuery = "";
+function renderBestiaryDrops(name,region,isBoss,locked=false){
+  return '<div class="bestiary-drops"><strong>Drops</strong>'+EquipmentSystem.getMaterials(name,region).map((item,i)=>`<span class="bestiary-drop" tabindex="0" data-hud-description="${escapeHtml(item.name+' · '+item.description)}" data-tooltip-image="${escapeHtml(getItemSpritePath(item))}">${escapeHtml(item.name)}${locked?'':` <small>${isBoss?(i?55:65):(i?24:40)}%</small>`}</span>`).join('')+'</div>';
+}
+function renderBestiaryEntry(template,region,isBoss){
+  const locked=!isBestiaryDevUnlocked()&&!isRegionUnlockedForBattle(region),name=escapeHtml(template.name);
+  if(locked)return `<article class="inventory-item bestiary-card bestiary-search-entry bestiary-unknown" data-enemy-name="${name}"><div class="simple-item-line"><div class="bestiary-unknown-art" role="img" aria-label="Criatura desconhecida">?</div><div class="simple-item-copy"><strong>${name}</strong><p>${escapeHtml(region)} · Região bloqueada</p>${renderBestiaryStatGrid({maxHp:'?',attack:'?',armor:'?',maxMp:'?'})}<article class="bestiary-skill"><strong>Habilidades: ?</strong><p>Efeitos e valores desconhecidos.</p></article></div></div>${renderBestiaryDrops(template.name,region,isBoss,true)}</article>`;
+  const key=toCssToken(template.name),stats=getEnemyStats(template,region,isBoss),rarity=getEnemyRarity(region,template.name,isBoss);
+  const kills=isBoss?player.stats.regionBossKills?.[region]:player.stats.regionKills?.[region]?.[template.name];
+  return `<article class="inventory-item bestiary-card bestiary-search-entry" data-enemy-name="${name}"><div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${key}','${escapeJsString(template.name)}','enemy-${key}${isBoss?' enemy-boss':''}')" aria-label="Ampliar sprite de ${name}"><div class="simple-combat-avatar ${isBoss?'boss-avatar':''}">${renderCombatAvatar('enemies',key,getEnemySpriteIcon({name:template.name,baseName:template.name,isBoss}),template.name)}</div></button><div class="simple-item-copy"><strong>${name} Lv.${template.level}${isBoss?' · Chefão':''} <small class="bestiary-kills">Abates: ${kills||0}</small></strong><p>${escapeHtml(region)} · <span class="${rarity.cssClass}">${rarity.label}</span></p>${renderBestiaryStatGrid(stats)}${isBoss?getBossAbilitySet(template.name,region).map(a=>`<article class="bestiary-skill"><strong>${escapeHtml(a.name)}</strong><span class="bestiary-skill-cost">${a.cost} MP</span><p>${escapeHtml(getBossAbilityDetailText(a))}</p></article>`).join('')+renderCampaignEnemyPassive(template.name):renderCampaignEnemyKit(template.name,region)}</div></div>${renderBestiaryDrops(template.name,region,isBoss)}</article>`;
+}
+function renderBestiaryResults(){
+  const normalize=x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const query=normalize(bestiaryMaterialQuery).trim(),selected=getSelectedBestiaryRegion(),cards=[];
+  for(const region of query?Object.keys(regions):[selected]){
+    const data=regions[region];for(const template of [...data.enemies,data.boss]){
+      if(query&&!EquipmentSystem.getMaterials(template.name,region).some(item=>normalize(item.name).includes(query)))continue;
+      cards.push(renderBestiaryEntry(template,region,template===data.boss));
+    }
+  }
+  return (query?'<p class="bestiary-search-summary">'+cards.length+' criatura(s) com materiais correspondentes em todas as regiões.</p>':'')+(cards.join('')||'<p>Nenhum material encontrado.</p>');
+}
 function renderBestiary(){
-  const selectedRegion = getSelectedBestiaryRegion();
-  const regionData = regions[selectedRegion];
-  const materialIndex=getMaterialRecipeIndex();
-  const devBestiary = isBestiaryDevUnlocked();
-  const unlockProgress = devBestiary
-    ? { defeated: regionData.enemies.length, total: regionData.enemies.length, unlocked: true, missing: [] }
-    : getBossUnlockProgress(selectedRegion);
-  const enemyCards = regionData.enemies.map(template => {
-    const stats = getEnemyStats(template, selectedRegion, false);
-    const rarity = getEnemyRarity(selectedRegion, template.name, false);
-    const assetKey = toCssToken(template.name);
-    return `<div class="inventory-item bestiary-card bestiary-search-entry"><div class="simple-item-line">
-      <button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${assetKey}','${escapeJsString(template.name)}','enemy-${assetKey}')" aria-label="Ampliar sprite de ${escapeHtml(template.name)}"><div class="simple-combat-avatar">${renderCombatAvatar("enemies", assetKey, getEnemySpriteIcon({ name: template.name, baseName: template.name }), template.name)}</div></button>
-      <div class="simple-item-copy">
-        <strong>${template.name} Lv.${template.level} <small class="bestiary-kills">Abates: ${player.stats.regionKills?.[selectedRegion]?.[template.name] || 0}</small></strong><br>
-        <span class="${rarity.cssClass}">${rarity.label}</span>
-        ${renderBestiaryStatGrid(stats)}
-        ${renderBestiaryInfoLine("Drop", getEnemyPossibleDrop(template.name, selectedRegion, false), "stat-drop")}
-        ${renderCampaignEnemyKit(template.name, selectedRegion)}
-      </div></div>${renderBestiaryMaterials(template.name,selectedRegion,false,materialIndex)}</div>`;
-  }).join("");
-  const bossStats = getEnemyStats(regionData.boss, selectedRegion, true);
-  const bossProfile = getBossDifficultyProfile(selectedRegion, true);
-  const bossMana = Math.floor(regionData.boss.mp * bossProfile.manaMultiplier);
-  const bossKit = getBossAbilitySet(regionData.boss.name, selectedRegion);
-  const bestiaryUnlockText = devBestiary ? "Modo dev: todas as entradas do bestiario estao liberadas para analise." : getBossUnlockText(selectedRegion);
-  return `
-    <div class="inventory-item">
-      <strong>${selectedRegion}</strong><br>
-      <span class="lock-note">${regionData.description}</span><br>
-      <span class="lock-note">${bestiaryUnlockText}</span>
-      <label class="bestiary-search">Buscar nesta regi&atilde;o<input type="search" placeholder="Inimigo, material ou receita" oninput="filterBestiaryEntries(this.value)" aria-label="Buscar inimigo, material ou receita nesta regi&atilde;o"></label>
-      <div class="inventory-list">${enemyCards}</div>
-      <div class="inventory-item bestiary-search-entry" style="margin-top:12px;">
-        <div class="simple-item-line"><button class="bestiary-sprite-button" onclick="openBestiarySprite('enemies','${toCssToken(regionData.boss.name)}','${escapeJsString(regionData.boss.name)}','enemy-${toCssToken(regionData.boss.name)} enemy-boss')" aria-label="Ampliar sprite de ${escapeHtml(regionData.boss.name)}"><div class="simple-combat-avatar boss-avatar">${renderCombatAvatar("enemies", toCssToken(regionData.boss.name), getEnemySpriteIcon({ name: regionData.boss.name, baseName: regionData.boss.name, isBoss: true }), regionData.boss.name)}</div></button><div class="simple-item-copy"><strong>${regionData.boss.name} Lv.${regionData.boss.level} | Chefao <small class="bestiary-kills">Abates: ${player.stats.regionBossKills?.[selectedRegion] || 0}</small></strong><br>
-        ${renderBestiaryStatGrid(bossStats)}
-        ${renderCampaignEnemyPassive(regionData.boss.name)}
-        <div class="bestiary-stat-grid">${renderBestiaryMetric("Progresso", `${unlockProgress.defeated}/${unlockProgress.total}`, "stat-progress")}</div>
-        ${renderBestiaryInfoLine("Recompensa", getEnemyPossibleDrop(regionData.boss.name, selectedRegion, true), "stat-drop")}</div></div>
-        ${renderBestiaryMaterials(regionData.boss.name,selectedRegion,true,materialIndex)}
-        <div class="boss-ability-list">${bossKit.map(ability => `<div class="boss-ability-item"><strong>${ability.name}</strong><span class="lock-note">${getBossAbilityDetailText(ability)}</span></div>`).join("")}</div>
-      </div>
-    </div>`;
+  const region=getSelectedBestiaryRegion();
+  return `<section class="bestiary-browser"><h2>${escapeHtml(region)}</h2><p>${escapeHtml(regions[region].description)}</p><label class="bestiary-search">Buscar material em todas as regiões<input type="search" value="${escapeHtml(bestiaryMaterialQuery)}" placeholder="Nome do material" oninput="filterBestiaryEntries(this.value)" aria-label="Buscar material em todas as regiões"></label><div id="bestiaryResults" class="inventory-list">${renderBestiaryResults()}</div></section>`;
 }
 
 

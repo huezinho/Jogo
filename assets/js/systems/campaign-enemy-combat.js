@@ -124,7 +124,7 @@ const CampaignEnemyCombat = (() => {
     let actual=Math.max(0,Math.floor(amount));
     const mods=getPassiveModifiers();
     if(actual>=player.hp&&mods.fatalSaveHealPercent>0&&!playerEffects.accessoryFatalSaveUsed){playerEffects.accessoryFatalSaveUsed=true;actual=0;healPlayer(Math.floor(getCurrentCaps().maxHp*mods.fatalSaveHealPercent));log('O acessorio evitou a morte pelo DOT.');}
-    player.hp=Math.max(0,player.hp-actual);log(`${label}: ${actual} de dano.`);
+    player.hp=Math.max(0,player.hp-actual);EquipmentSystem.afterIncoming(player,playerEffects,enemy,{damage:actual,periodic:true,shieldAbsorbed:0});log(`${label}: ${actual} de dano.`);
   }
   function heroEnd(){
     if(!enabled(enemy))return false;const s=state(),h=s.hero;

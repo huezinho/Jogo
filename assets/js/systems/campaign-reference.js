@@ -108,7 +108,7 @@ function renderBestiaryMaterials(name,region,isBoss,index){
 }
 
 function filterBestiaryEntries(value){
-  const normalize=text=>String(text).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const query=normalize(value).trim();
-  for(const card of document.querySelectorAll('.bestiary-search-entry'))card.hidden=!!query&&!normalize(card.textContent).includes(query);
+  bestiaryMaterialQuery=String(value).slice(0,160);
+  const results=document.getElementById('bestiaryResults');
+  if(results)results.innerHTML=renderBestiaryResults();
 }

@@ -1,0 +1,193 @@
+scenario,route,version,seed,region,level,fights,deaths,reason
+Referência,paladino,before,101,Cataclismo,100,287,87,11 mortes no nivel 100 com seis lendarios
+Referência,paladino,before,202,Cataclismo,100,268,89,11 mortes no nivel 100 com seis lendarios
+Referência,paladino,before,303,Cataclismo,100,300,82,11 mortes no nivel 100 com seis lendarios
+Referência,paladino,after,101,Cataclismo,100,329,82,11 mortes no nivel 100 com seis lendarios
+Referência,paladino,after,202,Cataclismo,100,261,85,11 mortes no nivel 100 com seis lendarios
+Referência,paladino,after,303,Cataclismo,100,304,80,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,before,101,Cataclismo,100,315,88,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,before,202,Cataclismo,100,279,89,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,before,303,Cataclismo,100,239,84,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,after,101,Cataclismo,100,332,82,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,after,202,Cataclismo,100,281,85,11 mortes no nivel 100 com seis lendarios
+Referência,berserker,after,303,Cataclismo,100,282,81,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,before,101,Panteao,100,268,91,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,before,202,Panteao,100,254,88,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,before,303,Panteao,100,311,84,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,after,101,Panteao,100,301,80,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,after,202,Panteao,100,279,85,11 mortes no nivel 100 com seis lendarios
+Referência,samurai,after,303,Panteao,100,244,87,11 mortes no nivel 100 com seis lendarios
+Referência,ninja,before,101,Paradoxo,100,265,85,Paradoxo derrotado
+Referência,ninja,before,202,Panteao,100,240,88,11 mortes no nivel 100 com seis lendarios
+Referência,ninja,before,303,Cataclismo,100,370,85,11 mortes no nivel 100 com seis lendarios
+Referência,ninja,after,101,Cataclismo,100,314,80,11 mortes no nivel 100 com seis lendarios
+Referência,ninja,after,202,Paradoxo,100,340,83,11 mortes no nivel 100 com seis lendarios
+Referência,ninja,after,303,Paradoxo,100,306,86,11 mortes no nivel 100 com seis lendarios
+Referência,sniper,before,101,Paradoxo,87,262,70,Paradoxo derrotado
+Referência,sniper,before,202,Paradoxo,92,430,64,Paradoxo derrotado
+Referência,sniper,before,303,Paradoxo,98,282,78,Paradoxo derrotado
+Referência,sniper,after,101,Paradoxo,92,347,69,Paradoxo derrotado
+Referência,sniper,after,202,Paradoxo,84,300,58,Paradoxo derrotado
+Referência,sniper,after,303,Paradoxo,85,245,71,Paradoxo derrotado
+Referência,atirador_arcano,before,101,Paradoxo,89,249,73,Paradoxo derrotado
+Referência,atirador_arcano,before,202,Paradoxo,98,347,70,Paradoxo derrotado
+Referência,atirador_arcano,before,303,Paradoxo,91,297,71,Paradoxo derrotado
+Referência,atirador_arcano,after,101,Paradoxo,90,282,69,Paradoxo derrotado
+Referência,atirador_arcano,after,202,Paradoxo,84,280,58,Paradoxo derrotado
+Referência,atirador_arcano,after,303,Paradoxo,84,269,69,Paradoxo derrotado
+Referência,espreitador,before,101,Paradoxo,100,322,90,11 mortes no nivel 100 com seis lendarios
+Referência,espreitador,before,202,Paradoxo,100,288,87,11 mortes no nivel 100 com seis lendarios
+Referência,espreitador,before,303,Paradoxo,100,337,84,11 mortes no nivel 100 com seis lendarios
+Referência,espreitador,after,101,Paradoxo,100,231,89,11 mortes no nivel 100 com seis lendarios
+Referência,espreitador,after,202,Paradoxo,100,354,79,11 mortes no nivel 100 com seis lendarios
+Referência,espreitador,after,303,Paradoxo,100,269,94,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,before,101,Paradoxo,100,298,89,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,before,202,Paradoxo,100,322,84,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,before,303,Paradoxo,100,328,84,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,after,101,Paradoxo,100,256,89,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,after,202,Paradoxo,100,310,80,11 mortes no nivel 100 com seis lendarios
+Referência,guarda_florestal,after,303,Paradoxo,100,302,90,11 mortes no nivel 100 com seis lendarios
+Referência,mago_incendiario,before,101,Paradoxo,100,290,94,11 mortes no nivel 100 com seis lendarios
+Referência,mago_incendiario,before,202,Paradoxo,100,382,82,11 mortes no nivel 100 com seis lendarios
+Referência,mago_incendiario,before,303,Paradoxo,100,309,100,11 mortes no nivel 100 com seis lendarios
+Referência,mago_incendiario,after,101,Paradoxo,100,286,90,11 mortes no nivel 100 com seis lendarios
+Referência,mago_incendiario,after,202,Paradoxo,100,398,90,Paradoxo derrotado
+Referência,mago_incendiario,after,303,Paradoxo,100,267,101,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,before,101,Cataclismo,100,236,95,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,before,202,Paradoxo,100,346,82,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,before,303,Cataclismo,100,264,100,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,after,101,Cataclismo,100,286,90,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,after,202,Cataclismo,100,309,90,11 mortes no nivel 100 com seis lendarios
+Referência,mago_frigido,after,303,Cataclismo,100,255,100,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,before,101,Cataclismo,100,329,92,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,before,202,Cataclismo,100,316,86,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,before,303,Cataclismo,100,249,102,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,after,101,Cataclismo,100,292,89,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,after,202,Cataclismo,100,288,94,11 mortes no nivel 100 com seis lendarios
+Referência,arquimago,after,303,Cataclismo,100,301,98,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,before,101,Paradoxo,100,355,93,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,before,202,Paradoxo,100,401,84,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,before,303,Paradoxo,100,252,102,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,after,101,Paradoxo,100,341,88,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,after,202,Paradoxo,100,325,95,11 mortes no nivel 100 com seis lendarios
+Referência,corrompido,after,303,Paradoxo,100,318,98,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,before,101,Panteao,100,300,93,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,before,202,Panteao,100,264,88,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,before,303,Panteao,100,257,89,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,after,101,Panteao,100,282,97,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,after,202,Panteao,100,300,89,11 mortes no nivel 100 com seis lendarios
+Referência,druida_sombrio,after,303,Cataclismo,100,248,98,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,before,101,Panteao,100,306,93,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,before,202,Panteao,100,279,88,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,before,303,Panteao,100,285,87,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,after,101,Panteao,100,261,97,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,after,202,Panteao,100,244,92,11 mortes no nivel 100 com seis lendarios
+Referência,avatar_da_natureza,after,303,Panteao,100,213,98,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,before,101,Paradoxo,100,369,88,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,before,202,Paradoxo,100,308,86,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,before,303,Paradoxo,100,273,90,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,after,101,Paradoxo,100,228,99,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,after,202,Paradoxo,100,282,88,11 mortes no nivel 100 com seis lendarios
+Referência,fada_monarca,after,303,Paradoxo,100,295,93,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,before,101,Cataclismo,100,366,86,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,before,202,Cataclismo,100,274,86,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,before,303,Cataclismo,100,262,90,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,after,101,Cataclismo,100,251,97,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,after,202,Cataclismo,100,307,87,11 mortes no nivel 100 com seis lendarios
+Referência,protetor_da_floresta,after,303,Cataclismo,100,275,93,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,before,101,Cataclismo,100,364,76,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,before,202,Cataclismo,100,268,85,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,before,303,Cataclismo,100,286,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,after,101,Cataclismo,100,317,83,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,after,202,Cataclismo,100,295,83,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,paladino,after,303,Cataclismo,100,341,81,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,before,101,Cataclismo,100,289,78,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,before,202,Cataclismo,100,252,85,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,before,303,Cataclismo,100,270,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,after,101,Cataclismo,100,283,84,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,after,202,Cataclismo,100,293,84,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,berserker,after,303,Cataclismo,100,381,79,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,before,101,Panteao,100,263,85,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,before,202,Panteao,100,259,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,before,303,Panteao,100,250,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,after,101,Panteao,100,298,88,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,after,202,Cataclismo,100,295,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,samurai,after,303,Panteao,100,286,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,before,101,Panteao,100,259,85,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,before,202,Paradoxo,100,291,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,before,303,Cataclismo,100,357,79,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,after,101,Paradoxo,100,354,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,after,202,Panteao,100,245,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,ninja,after,303,Paradoxo,100,296,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,sniper,before,101,Paradoxo,88,292,69,Paradoxo derrotado
+Conjuntos por rota,sniper,before,202,Paradoxo,83,270,59,Paradoxo derrotado
+Conjuntos por rota,sniper,before,303,Paradoxo,88,259,68,Paradoxo derrotado
+Conjuntos por rota,sniper,after,101,Paradoxo,84,285,64,Paradoxo derrotado
+Conjuntos por rota,sniper,after,202,Paradoxo,91,324,67,Paradoxo derrotado
+Conjuntos por rota,sniper,after,303,Paradoxo,95,358,78,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,before,101,Paradoxo,94,262,78,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,before,202,Paradoxo,93,327,69,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,before,303,Paradoxo,93,303,72,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,after,101,Paradoxo,98,303,78,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,after,202,Paradoxo,84,277,60,Paradoxo derrotado
+Conjuntos por rota,atirador_arcano,after,303,Paradoxo,84,246,69,Paradoxo derrotado
+Conjuntos por rota,espreitador,before,101,Paradoxo,100,312,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,espreitador,before,202,Paradoxo,100,258,93,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,espreitador,before,303,Paradoxo,100,279,91,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,espreitador,after,101,Paradoxo,100,285,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,espreitador,after,202,Paradoxo,100,360,91,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,espreitador,after,303,Paradoxo,100,256,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,before,101,Paradoxo,100,355,88,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,before,202,Paradoxo,100,284,93,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,before,303,Paradoxo,100,309,90,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,after,101,Paradoxo,100,354,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,after,202,Paradoxo,100,307,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,guarda_florestal,after,303,Paradoxo,100,286,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,before,101,Paradoxo,100,365,96,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,before,202,Paradoxo,100,385,79,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,before,303,Paradoxo,100,295,104,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,after,101,Paradoxo,100,301,101,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,after,202,Paradoxo,100,315,95,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_incendiario,after,303,Paradoxo,100,280,99,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,before,101,Paradoxo,100,386,92,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,before,202,Cataclismo,100,377,79,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,before,303,Cataclismo,100,231,102,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,after,101,Cataclismo,100,305,90,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,after,202,Cataclismo,100,294,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,mago_frigido,after,303,Cataclismo,100,249,101,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,before,101,Panteao,100,265,95,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,before,202,Panteao,100,369,80,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,before,303,Panteao,100,222,102,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,after,101,Panteao,100,312,89,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,after,202,Panteao,100,325,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,arquimago,after,303,Panteao,100,342,98,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,before,101,Cataclismo,100,288,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,before,202,Cataclismo,100,402,79,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,before,303,Cataclismo,100,256,102,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,after,101,Cataclismo,100,345,89,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,after,202,Cataclismo,100,374,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,corrompido,after,303,Cataclismo,100,302,99,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,before,101,Panteao,100,302,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,before,202,Panteao,100,252,91,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,before,303,Panteao,100,313,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,after,101,Panteao,100,279,97,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,after,202,Panteao,100,332,88,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,druida_sombrio,after,303,Cataclismo,100,248,96,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,before,101,Panteao,100,265,94,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,before,202,Panteao,100,270,90,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,before,303,Panteao,100,284,86,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,after,101,Panteao,100,285,95,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,after,202,Panteao,100,314,87,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,avatar_da_natureza,after,303,Panteao,100,221,97,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,before,101,Paradoxo,100,338,95,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,before,202,Paradoxo,100,368,88,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,before,303,Paradoxo,100,333,89,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,after,101,Paradoxo,100,339,93,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,after,202,Paradoxo,100,297,89,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,fada_monarca,after,303,Paradoxo,100,263,98,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,before,101,Paradoxo,100,328,88,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,before,202,Cataclismo,100,305,85,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,before,303,Paradoxo,100,273,91,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,after,101,Cataclismo,100,402,77,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,after,202,Paradoxo,100,328,84,11 mortes no nivel 100 com seis lendarios
+Conjuntos por rota,protetor_da_floresta,after,303,Paradoxo,100,305,85,11 mortes no nivel 100 com seis lendarios

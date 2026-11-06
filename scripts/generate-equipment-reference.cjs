@@ -16,7 +16,8 @@ const {server,chromium}=require('../docs/qa/2026-10-27/smoke.cjs');
      if(slot==='weapon'){
       profile=Object.fromEntries(Object.entries(profile).filter(([k])=>['bonusAttack','skillPower'].includes(k)));
       const total=Object.values(profile).reduce((a,b)=>a+b,0);
-      profile=total?Object.fromEntries(Object.entries(profile).map(([k,v])=>[k,v/total])):EquipmentData.weaponFallback[cls];
+      const crit=EquipmentData.regionStats[region].critChanceBonus||0;
+      profile=total?{...Object.fromEntries(Object.entries(profile).map(([k,v])=>[k,v/total*(1-crit)])),...(crit?{critChanceBonus:crit}:{})}:EquipmentData.weaponFallback[cls];
      }
      rows.push({region,slot,cls:slot==='weapon'?cls:'Todas',name:item.name,rarity,profile,stats:item.stats,description:E.describe(item,actor),cost:recipe?.cost,materials:materials(recipe?.requirements),upgrade:upgrade?{cost:upgrade.cost,materials:materials(upgrade.requirements),duplicate:!!upgrade.duplicate,to:upgrade.toRarity}:null});
     }
@@ -45,7 +46,7 @@ const {server,chromium}=require('../docs/qa/2026-10-27/smoke.cjs');
       lines.push(`${labels[key]||key} = mínimo(${number(base)} × R × 3; ${number(cap)})${key==='flatReduction'?' pontos, arredondados para baixo.':' na forma de fração; multiplicar por 100 para obter %. Truncar a fração em quatro casas decimais.'}`,'');
      }
     }else{
-     lines.push(...Object.entries(first.profile).map(([key,share])=>`${labels[key]||key} = ${key.endsWith('Percent')?'100 × truncar4':'piso'}(B × ${number(share*data.config.statValues[key])})${key.endsWith('Percent')?'%.':'.'}`),'');
+     lines.push(...Object.entries(first.profile).map(([key,share])=>`${labels[key]||key} = ${(key.endsWith('Percent')||key==='critChanceBonus')?'100 × truncar4':'piso'}(B × ${number(share*data.config.statValues[key])})${(key.endsWith('Percent')||key==='critChanceBonus')?'%.':'.'}`),'');
      lines.push(`Fabricação comum: ${first.cost} gold; ${first.materials}.`,'');
     }
     lines.push('| Raridade | Próxima raridade | Gold do aprimoramento | Materiais | Cópia comum adicional |','|---|---|---:|---|---|');

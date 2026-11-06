@@ -16,7 +16,7 @@ Os bônus de 2, 4 e 5 peças acumulam. Poder combinado = ataque + poder de habil
 
 4 peças: +8% de dano periodico
 
-5 peças: Aplicar DOT em 3 acoes prepara +20% na proxima cura ou escudo.
+5 peças: Aplicar um DOT prepara +10% na proxima cura ou escudo.
 
 ### Capuz - Raizes Vivas — Todas
 
@@ -158,7 +158,7 @@ Reflexão = mínimo(0,02 × R × 3; 0,3) na forma de fração; multiplicar por 1
 
 4 peças: +8% na reducao fixa de dano geral
 
-5 peças: Apos 3 golpes diretos, recebe escudo limitado a 8% da vida ou 1x poder combinado. Recarga: 3 turnos.
+5 peças: Apos 3 eventos de dano direto, DOT ou custo de vida, recebe escudo de 8% da vida maxima. Os eventos nao precisam ser consecutivos.
 
 ### Capuz - Pedra Guardia — Todas
 
@@ -300,7 +300,7 @@ Moedas = mínimo(0,02 × R × 3; 0,3) na forma de fração; multiplicar por 100 
 
 4 peças: Duas habilidades diferentes preparam +8% no proximo dano direto
 
-5 peças: O golpe preparado ecoa 25% do dano, limitado a 0,6x poder combinado. Recarga: 3 turnos.
+5 peças: O golpe preparado ecoa 25% do dano, limitado a 1,1x poder combinado. Recarga: 3 turnos.
 
 ### Capuz - Eco Antigo — Todas
 
@@ -442,7 +442,7 @@ XP = mínimo(0,02 × R × 3; 0,3) na forma de fração; multiplicar por 100 para
 
 4 peças: +10% de dano periodico
 
-5 peças: Acertar alvo com DOT aplica veneno de 12% do poder combinado por 2 turnos. Recarga: 3 turnos.
+5 peças: Acertar alvo com DOT aplica veneno de 20% do poder combinado por 2 turnos. Recarga: 3 turnos.
 
 ### Capuz - Seiva Toxica — Todas
 
@@ -584,7 +584,7 @@ Cura por turno = mínimo(0,003 × R × 3; 0,05) na forma de fração; multiplica
 
 4 peças: +8% de dano direto contra alvos com DOT
 
-5 peças: A terceira habilidade ofensiva aplica queimadura de 15% do poder combinado por 2 turnos. Recarga: 3 turnos.
+5 peças: A terceira habilidade ofensiva aplica queimadura de 3% da vida maxima do alvo por 3 turnos. Recarga: 3 turnos.
 
 ### Capuz - Brasas Vivas — Todas
 
@@ -728,7 +728,7 @@ Resistência à queimadura = mínimo(0,084 × R × 3; 0,95) na forma de fração
 
 2 peças: +3% de ataque e poder de habilidade
 
-4 peças: Ignora 15% da armadura
+4 peças: Ignora 26% da armadura
 
 5 peças: Quebrar escudo ou reduzir armadura prepara +15% no proximo dano, limitado ao poder combinado. Recarga: 3 turnos.
 
@@ -876,7 +876,7 @@ Redução fixa = mínimo(5 × R × 3; 75) pontos, arredondados para baixo.
 
 4 peças: +10% de potencia de escudo
 
-5 peças: 25% do dano absorvido prepara retaliacao no proximo ataque escolhido, limitada a 0,6x poder combinado. Recarga: 3 turnos.
+5 peças: 25% do dano absorvido prepara retaliacao no proximo ataque escolhido, sem limite de dano. Recarga: 3 turnos.
 
 ### Capuz - Bastiao — Todas
 
@@ -1018,7 +1018,7 @@ Mana máxima = mínimo(0,01 × R × 3; 0,15) na forma de fração; multiplicar p
 
 4 peças: Cura 2% do dano periodico causado, ate 2% da vida maxima por turno
 
-5 peças: Com 3 DOTs proprios, prolonga cada um em 1 turno, no maximo 2 vezes por aplicacao. Recarga: 3 turnos.
+5 peças: Com 3 aplicacoes proprias de DOT (inclusive do mesmo tipo), prolonga cada um em 1 turno, no maximo 2 vezes por aplicacao. Recarga: 3 turnos.
 
 ### Capuz - Ceifa Lenta — Todas
 
@@ -1156,7 +1156,7 @@ Vida máxima = mínimo(0,01 × R × 3; 0,15) na forma de fração; multiplicar p
 
 ## Citadela — Eclipse Preciso
 
-2 peças: +4 pontos percentuais de critico
+2 peças: +6% de critico
 
 4 peças: +10% ao bonus de dano critico
 
@@ -1164,9 +1164,10 @@ Vida máxima = mínimo(0,01 × R × 3; 0,15) na forma de fração; multiplicar p
 
 ### Capuz - Eclipse Preciso — Todas
 
-Ataque = piso(B × 1,1).
-Poder de habilidade = piso(B × 0,5).
+Ataque = piso(B × 1).
+Poder de habilidade = piso(B × 0,4).
 Mana máxima = piso(B × 2,4).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1180,9 +1181,10 @@ Fabricação comum: undefined gold; .
 
 ### Armadura - Eclipse Preciso — Todas
 
-Ataque = piso(B × 1,1).
-Poder de habilidade = piso(B × 0,5).
+Ataque = piso(B × 1).
+Poder de habilidade = piso(B × 0,4).
 Mana máxima = piso(B × 2,4).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1196,8 +1198,9 @@ Fabricação comum: undefined gold; .
 
 ### Espada - Eclipse Preciso — Guerreiro
 
-Ataque = piso(B × 1,375).
-Poder de habilidade = piso(B × 0,625).
+Ataque = piso(B × 1,28571429).
+Poder de habilidade = piso(B × 0,51428571).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1211,8 +1214,9 @@ Fabricação comum: undefined gold; .
 
 ### Arco - Eclipse Preciso — Arqueiro
 
-Ataque = piso(B × 1,375).
-Poder de habilidade = piso(B × 0,625).
+Ataque = piso(B × 1,28571429).
+Poder de habilidade = piso(B × 0,51428571).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1226,8 +1230,9 @@ Fabricação comum: undefined gold; .
 
 ### Cajado - Eclipse Preciso — Mago
 
-Ataque = piso(B × 1,375).
-Poder de habilidade = piso(B × 0,625).
+Ataque = piso(B × 1,28571429).
+Poder de habilidade = piso(B × 0,51428571).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1241,8 +1246,9 @@ Fabricação comum: undefined gold; .
 
 ### Ramo Vivo - Eclipse Preciso — Adepto da Natureza
 
-Ataque = piso(B × 1,375).
-Poder de habilidade = piso(B × 0,625).
+Ataque = piso(B × 1,28571429).
+Poder de habilidade = piso(B × 0,51428571).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1256,9 +1262,10 @@ Fabricação comum: undefined gold; .
 
 ### Perneiras - Eclipse Preciso — Todas
 
-Ataque = piso(B × 1,1).
-Poder de habilidade = piso(B × 0,5).
+Ataque = piso(B × 1).
+Poder de habilidade = piso(B × 0,4).
 Mana máxima = piso(B × 2,4).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1272,9 +1279,10 @@ Fabricação comum: undefined gold; .
 
 ### Botas - Eclipse Preciso — Todas
 
-Ataque = piso(B × 1,1).
-Poder de habilidade = piso(B × 0,5).
+Ataque = piso(B × 1).
+Poder de habilidade = piso(B × 0,4).
 Mana máxima = piso(B × 2,4).
+Chance de crítico = 100 × truncar4(B × 0,0001)%.
 
 Fabricação comum: undefined gold; .
 
@@ -1306,7 +1314,7 @@ Dano total = mínimo(0,01 × R × 3; 0,15) na forma de fração; multiplicar por
 
 4 peças: +10% de cura e escudo
 
-5 peças: Tres acoes de suporte efetivo preparam dano extra de 20% do poder combinado na proxima ofensiva. Recarga: 2 turnos.
+5 peças: Tres acoes sem dano direto, nao necessariamente consecutivas, preparam +20% de ataque e poder de habilidade na proxima acao.
 
 ### Capuz - Farol do Grupo — Todas
 
@@ -1450,7 +1458,7 @@ Cura ao evitar morte = mínimo(0,05 × R × 3; 0,75) na forma de fração; multi
 
 2 peças: +6% de ataque
 
-4 peças: +10% de dano direto abaixo de 50% da vida
+4 peças: +10% de dano direto abaixo de 55% da vida
 
 5 peças: Pagar vida por uma habilidade gera escudo de 50% do custo, ate 12% da vida ou 1,2x poder combinado. Recarga: 3 turnos.
 

@@ -840,3 +840,11 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign #rpgDialog[data-kind=bag] .rpg-item-detail{padding:12px}
  .rpg-campaign #rpgDialog[data-kind=bag] .rpg-inspected-art{height:68px;float:right;width:68px;margin:0 0 8px 8px}
 }
+
+.rpg-campaign #campaignHud .scene-vital-energy,.rpg-campaign #campaignHud .scene-vital-xp{pointer-events:auto;cursor:help;position:relative;z-index:2}
+.rpg-campaign #campaignHud .scene-vital-xp::after{content:"";position:absolute;inset:0 0 -7px;pointer-events:auto}
+.rpg-campaign .bestiary-drops{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:12px}
+.rpg-campaign .bestiary-drop{padding:5px 8px;border:1px solid #80673f;border-radius:4px;background:#20180f;color:#edd5a3;cursor:help;font:14px/1.4 Georgia,serif}
+.rpg-campaign .bestiary-drop small{color:#bbd6a7}
+.rpg-campaign .bestiary-unknown-art{display:grid;place-items:center;flex:0 0 96px;width:96px;height:120px;border:1px solid #7f6a46;background:radial-gradient(#403527,#17110d);color:#d9c18c;font:64px Georgia,serif;border-radius:6px}
+#rpgActionTooltip .rpg-tooltip-item-art{display:block;width:80px;height:80px;object-fit:contain;margin:0 auto 10px}

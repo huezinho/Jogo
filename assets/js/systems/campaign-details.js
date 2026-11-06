@@ -10,12 +10,12 @@
   }
  }
  const tip=document.createElement('div');tip.id='rpgActionTooltip';tip.role='tooltip';tip.popover='manual';tip.hidden=true;document.body.append(tip);
- let owner=null;
+ let owner=null,lastPointer=null;
  let previousDescription=null;
  function hide(){if(owner){if(previousDescription)owner.setAttribute('aria-describedby',previousDescription);else owner.removeAttribute('aria-describedby');owner=null;}if(tip.matches(':popover-open'))tip.hidePopover();tip.hidden=true;}
- function show(event){if(tip.contains(event.target))return;const b=event.target.closest?.('[data-hud-description],[data-hud="flee"],.region-map-boss-btn,.region-map-expedition-btn,.region-map-marker,.location-map-marker,[data-trophy-tooltip]');if(!b){hide();return;}if(owner!==b){hide();owner=b;previousDescription=b.getAttribute('aria-describedby');}
+ function show(event){if(Number.isFinite(event.clientX))lastPointer={x:event.clientX,y:event.clientY};if(tip.contains(event.target))return;const b=event.target.closest?.('[data-hud-description],[data-hud="flee"],.region-map-boss-btn,.region-map-expedition-btn,.region-map-marker,.location-map-marker,[data-trophy-tooltip]');if(!b){hide();return;}if(owner!==b){hide();owner=b;previousDescription=b.getAttribute('aria-describedby');}
   const map=b.matches('.region-map-marker,.location-map-marker,[data-trophy-tooltip]');
-  tip.dataset.kind=b.matches('.rpg-ability,.rpg-skill-node,.rpg-passive-node')?'skill':b.dataset.hud==='find'?'spawn':b.dataset.hud==='quick-use'?'item':b.matches('.region-map-boss-btn,.region-map-expedition-btn')?'boss':map?'map':b.matches('.rpg-coins')?'balance':'action';tip.textContent=b.dataset.hudDescription||b.dataset.tooltip||b.dataset.trophyTooltip||b.getAttribute('aria-label')||b.textContent;currency(tip);tip.hidden=false;if(!tip.matches(':popover-open'))tip.showPopover();b.setAttribute('aria-describedby',tip.id);
+  tip.dataset.kind=b.matches('.rpg-ability,.rpg-skill-node,.rpg-passive-node')?'skill':b.dataset.hud==='find'?'spawn':b.dataset.hud==='quick-use'?'item':b.matches('.region-map-boss-btn,.region-map-expedition-btn')?'boss':map?'map':b.matches('.rpg-coins')?'balance':'action';tip.textContent=b.dataset.hudDescription||b.dataset.tooltip||b.dataset.trophyTooltip||b.getAttribute('aria-label')||b.textContent;if(b.dataset.tooltipImage){const art=document.createElement('img');art.src=b.dataset.tooltipImage;art.alt='';art.className='rpg-tooltip-item-art';tip.prepend(art);}currency(tip);tip.hidden=false;if(!tip.matches(':popover-open'))tip.showPopover();b.setAttribute('aria-describedby',tip.id);
   const raw=b.getBoundingClientRect(),anchor=(b.classList.contains('region-map-area')||b.classList.contains('location-map-area'))?{x:parseFloat(b.style.getPropertyValue('--x'))/100,y:parseFloat(b.style.getPropertyValue('--y'))/100}:null;
   const r=anchor?{left:raw.left+raw.width*anchor.x,right:raw.left+raw.width*anchor.x,top:raw.top+raw.height*anchor.y,height:0,width:0}:raw,t=tip.getBoundingClientRect(),side=map||b.matches('.region-map-boss-btn,.region-map-expedition-btn,.rpg-coins');
   let left=side?r.left-t.width-12:r.left+r.width/2-t.width/2;if(side&&left<8)left=r.right+12;
@@ -27,5 +27,5 @@
  document.addEventListener('focusout',()=>{if(!owner?.matches(':hover'))hide();});document.addEventListener('click',hide);
  window.addEventListener('scroll',()=>{const r=owner?.isConnected?owner.getBoundingClientRect():null;if(r&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth)show({target:owner});else hide();},true);window.addEventListener('resize',hide);
  const root=document.getElementById('game');
- if(root){const observer=new MutationObserver(()=>{observer.disconnect();if(owner&&!owner.isConnected)hide();currency(root);observer.observe(root,{subtree:true,childList:true,characterData:true});});currency(root);observer.observe(root,{subtree:true,childList:true,characterData:true});}
+ if(root){const observer=new MutationObserver(()=>{observer.disconnect();if(owner&&!owner.isConnected){hide();if(lastPointer){const target=document.elementFromPoint(lastPointer.x,lastPointer.y);if(target?.closest('[data-vital]'))show({target});}}currency(root);observer.observe(root,{subtree:true,childList:true,characterData:true});});currency(root);observer.observe(root,{subtree:true,childList:true,characterData:true});}
 })();
