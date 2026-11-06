@@ -1,0 +1,47 @@
+{
+  "mode": "Built-in image_gen",
+  "prompt": "Hand-painted medieval fantasy luck potion: emerald green liquid with gold flecks, four-leaf clover emblem, isolated centered flask on transparent background. Eight vessel qualities, from rough glass and string to ornate crystal with gold filigree and emeralds. No text or frame.",
+  "bonus": "40% relative increase in drop chance, no stacking",
+  "assets": [
+    {
+      "quality": "instavel",
+      "battles": 1,
+      "source": "exec-33c4cf43-119e-4388-a540-e05274d4413d.png"
+    },
+    {
+      "quality": "diluida",
+      "battles": 2,
+      "source": "exec-133814a4-1e35-4f1e-84bc-365db28a086c.png"
+    },
+    {
+      "quality": "estavel",
+      "battles": 3,
+      "source": "exec-8df1ee45-d49b-445b-90ab-2c30befbeff6.png"
+    },
+    {
+      "quality": "concentrada",
+      "battles": 4,
+      "source": "exec-94d77f31-fbab-4186-97d6-77e02a30ed87.png"
+    },
+    {
+      "quality": "refinada",
+      "battles": 5,
+      "source": "exec-086c8b91-2c00-450b-8bff-54c32813f989.png"
+    },
+    {
+      "quality": "potente",
+      "battles": 6,
+      "source": "exec-f84d0456-cec8-481d-ab93-09694c9dfb93.png"
+    },
+    {
+      "quality": "magistral",
+      "battles": 7,
+      "source": "exec-cfea0c6a-0544-483c-855c-4778dc3c3d96.png"
+    },
+    {
+      "quality": "transcendente",
+      "battles": 8,
+      "source": "exec-d1a4f93d-9d0b-4a9f-93e9-89f88d8ce82b.png"
+    }
+  ]
+}

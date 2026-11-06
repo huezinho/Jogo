@@ -124,6 +124,7 @@ const alchemyTypes = [
  {id:"protecao",name:"Poção de Proteção",effect:"buff_defense",icon:"skill_tonic",pair:[0,0],stat:"armor",turnField:"potionArmorTurns",valueField:"potionArmor",details:"Bloqueia {v} pontos de dano por golpe durante {t} turnos."},
  {id:"regeneracao",name:"Poção de Regeneração",effect:"buff_regeneration",icon:"health_potion",pair:[1,1],stat:"regen",turnField:"potionRegenTurns",valueField:"potionRegenAmount",details:"Recupera {v} HP por ação durante {t} turnos."},
  {id:"clareza",name:"Poção de Clareza",effect:"buff_mana_regeneration",icon:"mana_potion",pair:[2,2],stat:"manaRegen",turnField:"potionManaTurns",valueField:"potionManaAmount",details:"Recupera {v} MP adicionais por ação durante {t} turnos."},
+ {id:"sorte",name:"Poção de Sorte",effect:"luck",icon:"skill_tonic",stat:"luck",details:"Aumenta em 40% a chance de drop por {b} batalha(s). O bônus não acumula."},
  {id:"vampirismo",name:"Poção de Vampirismo",effect:"buff_lifesteal",icon:"attack_tonic",pair:[2,2],stat:"drain",turnField:"potionDrainTurns",valueField:"potionDrainAmount",details:"Rouba até {v} HP ao causar dano à vida do alvo, uma vez por ação, durante {t} turnos."}
 ];
 // Fixed regional recipes. Always use the primary drop of the most common creature.
@@ -139,6 +140,10 @@ const alchemyRecipePlans = [
  [["Cataclismo",5],["Paradoxo",5],["Paradoxo",2]]
 ];
 function makeFixedAlchemyConsumable(type,quality){
+ if(type.id==="sorte"){
+   const battles=alchemyQualities.findIndex(q=>q.id===quality.id)+1;
+   return {name:type.name+" - "+quality.name,quality:quality.id,typeId:type.id,baseItemId:type.icon,effectType:"luck",value:.4,battles,isPercent:true,useLabel:"Usar",description:type.details.replace("{b}",battles)};
+ }
  const temporary=type.effect.startsWith("buff_");
  const value=type.id==="vigor"?Math.floor(quality.hp/2):quality[type.stat];
  const manaValue=type.id==="vigor"?Math.floor(quality.mp/2):undefined;

@@ -31,8 +31,8 @@ const CampaignHUD = (() => {
       <header class="rpg-top"><div class="rpg-location"><h1 id="rpgTitle"></h1></div></header>
       <div class="rpg-world-layout">
         <aside class="rpg-locations-rail"><nav id="modeTabs" aria-label="Locais da campanha"></nav><footer id="rpgOptions"></footer></aside>
-        <main id="rpgMain"><section id="enemyInfo"></section><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="rpgPassives" class="rpg-combat-passives" aria-label="Passivas do personagem"></div><div id="actions"></div></main>
-        <aside class="rpg-regions-rail"><section id="regionInfo" class="rpg-world-map" aria-label="Mapa de regiões"></section><div id="rpgBagButton"></div><div id="rpgAccount"></div></aside>
+        <main id="rpgMain"><section id="enemyInfo"></section><div id="rpgPassives" class="rpg-combat-passives" aria-label="Passivas do personagem"></div><div id="rpgChronicle" class="rpg-chronicle" aria-live="polite"></div><div id="actions"></div></main>
+        <aside class="rpg-regions-rail"><section id="regionInfo" class="rpg-world-map" aria-label="Mapa de regiões"></section><div id="rpgTowerButton"></div><div id="rpgBagButton"></div><div id="rpgAccount"></div></aside>
       </div>
       <div id="playerInfo" hidden></div><div id="heroPortraitPanel" hidden></div>
       <dialog id="rpgLevelDialog" aria-label="Evolução do personagem"><div id="rpgLevelMount"></div></dialog><dialog id="rpgDialog" aria-labelledby="rpgDialogTitle"><header><h2 id="rpgDialogTitle"></h2><button type="button" data-hud="close-dialog" aria-label="Fechar janela">Fechar ×</button></header><div id="rpgDialogContent"></div><section id="logPanel" hidden><div id="rpgLogMount"></div></section><section id="inventoryInfo" hidden></section></dialog>
@@ -48,7 +48,7 @@ const CampaignHUD = (() => {
   }
   function nav(){
     document.getElementById('modeTabs').innerHTML = renderLocationMapNavigation().replace(/onclick="setMode\('([^']+)'\)"/g, 'data-hud="navigate" data-value="$1"');
-    document.getElementById('modeTabs').insertAdjacentHTML('beforeend',button('Torre de Desafios','tower','',`class="rpg-tower-nav" ${isChallengeTowerUnlocked()?'':'disabled'} data-hud-description="${isChallengeTowerUnlocked()?'12 chefes em sequência · Nv.120':'Vença o último chefe do Paradoxo para liberar.'}"`));
+    document.getElementById('rpgTowerButton').innerHTML=button('Torre de Desafios','tower','',`class="rpg-tower-button" ${isChallengeTowerUnlocked()?'':'disabled'} data-hud-description="${isChallengeTowerUnlocked()?'12 chefes em sequência · Nv.120':'Vença o último chefe do Paradoxo para liberar.'}"`);
     document.getElementById('rpgOptions').innerHTML=button('Opções','settings');
     document.getElementById('rpgBagButton').innerHTML=button(image('icon-bag-button'),'navigate','bag','aria-label="Abrir bolsa" data-hud-description="Bolsa"');
   }
@@ -60,7 +60,7 @@ const CampaignHUD = (() => {
     const root=document.getElementById('campaignHud');
     root.dataset.mode=currentMode;root.dataset.service=villageTab;
     document.getElementById('rpgTitle').textContent=pageTitle();
-    document.getElementById('rpgAccount').innerHTML=money()+(player.expedition?button('Expedição: '+player.expedition.region+' - recolher','expedition-stop','', 'class="rpg-expedition-status"'):'')+(isDead?button(Math.max(0,Math.ceil((deadUntil-Date.now())/1000))?'Renascer em '+Math.max(0,Math.ceil((deadUntil-Date.now())/1000))+'s':'Renascer','respawn','',`class="rpg-death-return" ${Date.now()<deadUntil?'disabled':''}`):'')+(isCampResting()?button(`Descansando · ${Math.ceil(player.hp)} / ${getCurrentCaps().maxHp} vida`,'rest-camp','',`class="rpg-rest-indicator" data-hud-description="Volte ao acampamento e clique em Levantar antes de combater."`):'');
+    document.getElementById('rpgAccount').innerHTML=money()+(getLuckBattles()>0?`<span class="rpg-luck-status" tabindex="0" data-hud-description="Sorte: +40% de chance de drop. ${getLuckBattles()} batalha(s) restantes.">Sorte · ${getLuckBattles()} batalha(s)</span>`:'')+(player.expedition?button('Expedição: '+player.expedition.region+' - recolher','expedition-stop','', 'class="rpg-expedition-status"'):'')+(isDead?button(Math.max(0,Math.ceil((deadUntil-Date.now())/1000))?'Renascer em '+Math.max(0,Math.ceil((deadUntil-Date.now())/1000))+'s':'Renascer','respawn','',`class="rpg-death-return" ${Date.now()<deadUntil?'disabled':''}`):'')+(isCampResting()?button(`Descansando · ${Math.ceil(player.hp)} / ${getCurrentCaps().maxHp} vida`,'rest-camp','',`class="rpg-rest-indicator" data-hud-description="Volte ao acampamento e clique em Levantar antes de combater."`):'');
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
     panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal rpg-bestiary"><aside class="rpg-bestiary-map"><h2>Regi&otilde;es</h2>${renderBestiaryRegionMapCard(getSelectedBestiaryRegion(),isBestiaryDevUnlocked())}</aside><div class="rpg-bestiary-entries">${renderBestiary()}</div></section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
@@ -143,7 +143,7 @@ const CampaignHUD = (() => {
     const area=document.getElementById('actions');
     if(currentMode!=='battle'||!enemy||locked()||progressionPending())state.quickItems=false;
     area.className='rpg-actions';
-    const passiveDock=document.getElementById('rpgPassives');if(passiveDock)passiveDock.innerHTML=currentMode==='battle'?renderCombatPassives():'';
+    const passiveDock=document.getElementById('rpgPassives');if(passiveDock)passiveDock.innerHTML=currentMode==='battle'&&enemy?renderCombatPassives():'';
     if(currentMode!=='battle'){area.innerHTML='';return true;}
     if(player.expedition){area.innerHTML='<div class="rpg-recovery"><p>Em expedi&ccedil;&atilde;o: '+text(player.expedition.region)+' - '+player.expedition.encounters+' encontros, '+player.expedition.coins+' moedas, '+player.expedition.drops+' materiais.</p>'+button('Recolher personagem','expedition-stop')+'</div>';return true;}
     if(isDead){const seconds=Math.max(0,Math.ceil((deadUntil-Date.now())/1000));area.innerHTML=`<div class="rpg-recovery">${button(seconds?`Renascer em ${seconds}s`:'Renascer','respawn','',seconds?'disabled':'')}${button('Reiniciar aventura','restart')}</div>`;return true;}

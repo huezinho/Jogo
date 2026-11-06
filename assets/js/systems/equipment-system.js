@@ -99,7 +99,8 @@ const EquipmentSystem = (function(){
     const materials = getMaterials(name, enemy.region);
     const result = [];
     for(let index = 0; index < materials.length; index++){
-      const chance = enemy.isBoss ? (index ? .55 : .65) : (index ? .24 : .4);
+      const baseChance = enemy.isBoss ? (index ? .55 : .65) : (index ? .24 : .4);
+      const chance = Math.min(1,baseChance*(enemy.region!=="Dungeon"&&typeof getLuckDropMultiplier==="function"?getLuckDropMultiplier():1));
       if(Math.random() < chance){
         const roll = Math.random();
         result.push({ ...materials[index], qty: enemy.isBoss || index ? 1 : roll < .05 ? 3 : roll < .2 ? 2 : 1 });

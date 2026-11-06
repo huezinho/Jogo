@@ -1701,6 +1701,7 @@ function normalizePlayerState(){
   player.stats.arenaWins = player.stats.arenaWins || 0;
   for(const key of ["enemiesDefeated","bossesDefeated","coinsEarned","deaths","dungeonClears","dungeonBestStep","craftedEquipment","itemsSold","arenaDuels","arenaWins"]){ player.stats[key] = Math.max(0, Number(player.stats[key]) || 0); }
   const classDefaults = classes[player.class] || { hp: player.maxHp || 0, mp: player.maxMp || 0, attack: player.attack || 0 };
+  player.luckBattles=getLuckBattles(player);
   player.baseStats = player.baseStats || { hp: classDefaults.hp, mp: classDefaults.mp, attack: classDefaults.attack };
   player.stats.invested = createDefaultInvestedStats(player.stats.invested);
   delete player.subclass;
@@ -1753,6 +1754,7 @@ function advanceExpedition(now=Date.now()){
     const coins=Math.floor(regular*.5);
     player.coins+=coins;player.stats.coinsEarned+=coins;e.coins+=coins;e.encounters++;
     for(const drop of EquipmentSystem.rollDrops(target)){addInventoryItem(drop);e.drops+=drop.qty;}
+    consumeLuckBattle(target);
   }
   return true;
 }
@@ -3239,6 +3241,7 @@ function getPassiveStatusDescription(skill){
 
 function getActiveBuffs(){
   const buffs = [];
+  if(getLuckBattles()>0)buffs.push(`Sorte: +40% de drop | ${getLuckBattles()} batalha(s)`);
   if(playerEffects.shieldValue > 0){
     buffs.push(`Escudo ${playerEffects.shieldValue}${playerEffects.shieldTurns > 0 ? ` | ${playerEffects.shieldTurns} turno(s)` : ""}`);
   }
@@ -5267,7 +5270,7 @@ function grantBossChest(region){
 function tryBossAccessoryDrop(region){
   const accessory = getBossAccessoryItem(region);
   if(!accessory){ return; }
-  if(Math.random() > 0.03){ return; }
+  if(Math.random() > Math.min(1,0.03*getLuckDropMultiplier())){ return; }
   addInventoryItem(accessory);
   log(`O chefao deixou ${accessory.name}!`);
 }
@@ -5333,6 +5336,8 @@ async function useConsumable(itemId){
   const item = player.inventory.find(entry => entry.id === itemId && entry.qty > 0);
   const config = consumableCatalog[itemId];
   if(!item || !config){ log("Esse consumivel nao esta disponivel."); return; }
+  if(config.effectType==='luck' && (IS_DUNGEON_PAGE||IS_ARENA_PAGE)){return;}
+  if(config.effectType==='luck' && getLuckBattles()>=config.battles){log('Você já tem sorte ativa por essa duração ou maior.');return;}
   const battleTurn = currentMode === "battle" && !!enemy;
   if(battleTurn){
     isProcessingTurn = true;
@@ -5344,6 +5349,10 @@ async function useConsumable(itemId){
   const itemIndex = player.inventory.findIndex(entry => entry.uid === item.uid);
   removeInventoryUnit(itemIndex);
 
+  if(config.effectType==='luck'){
+    player.luckBattles=config.battles;
+    log(`Poção de Sorte: +40% de chance de drop por ${config.battles} batalha(s).`);
+  }
   applyAlchemyPotionBuff(config);
   if(config.effectType === "buff_regeneration")healPlayer(config.value);
   if(config.effectType === "buff_mana_regeneration"){
@@ -5535,6 +5544,7 @@ function fleeBattle(){
     return;
   }
   player.coins -= cost;
+  consumeLuckBattle(enemy);
   if(enemy.challengeTowerFloor!==undefined)log('Tentativa da torre encerrada. A próxima começa no primeiro andar.');
   enemy = null;
   needsNewEnemy = true;
@@ -5874,6 +5884,7 @@ function handleDeath(message = "Voce caiu em batalha."){
     updateUI();
     return;
   }
+  consumeLuckBattle(enemy);
   isDead = true;
   deadUntil = Date.now() + getRespawnSeconds() * 1000;
   player.stats.deaths++;
@@ -6407,19 +6418,20 @@ function isLocationModeDisabled(mode){
   return isProcessingTurn || !!enemy || (!isDead && (levelUpPoints>0||needsSubclassChoice()));
 }
 
+const LOCATION_HIT_AREAS = {"battle": "5% 7%,45% 7%,52% 23%,43% 30%,15% 30%,5% 22%", "village": "52% 7%,93% 5%,98% 28%,87% 32%,60% 28%,51% 21%", "camp": "3% 32%,39% 30%,45% 42%,38% 52%,10% 54%,3% 45%", "trophies": "51% 33%,90% 32%,96% 49%,86% 56%,58% 53%,51% 46%", "bestiary": "3% 56%,35% 53%,44% 63%,38% 75%,9% 79%,2% 71%", "dungeon": "65% 56%,92% 55%,98% 72%,90% 80%,66% 79%,58% 68%", "arena": "38% 75%,62% 74%,77% 81%,74% 93%,50% 97%,28% 92%,25% 83%"};
 function renderLocationMapNavigation(){
   const activeMode = getLocationActiveMode();
   const markers = LOCATION_MODE_OPTIONS.map(option => {
     const disabled = isLocationModeDisabled(option.id);
     return `
       <button
-        class="location-map-marker action-btn ${option.id === activeMode ? "active" : ""}"
-        style="--x:${option.x}%;--y:${option.y}%"
+        class="location-map-marker location-map-area action-btn ${option.id === activeMode ? "active" : ""}"
+        style="--x:${option.x}%;--y:${option.y}%;clip-path:polygon(${LOCATION_HIT_AREAS[option.id]})" data-location="${option.id}"
         data-tooltip="${option.label} | Atalho ${option.shortcut}"
         onclick="setMode('${option.id}')"
         aria-label="Ir para ${option.label}"
         ${disabled ? "disabled" : ""}
-      >${option.marker}<span class="map-marker-label">${escapeHtml(option.label)}</span></button>`;
+      ><span class="map-marker-label">${escapeHtml(option.label)}</span></button>`;
   }).join("");
   return `
     <div class="location-map-card">
@@ -6903,6 +6915,14 @@ function renderLevelUpPanel(){
     <button onclick="finishLevelUp()" ${levelUpPoints > 0 ? "disabled" : ""}>Terminar distribuicao e continuar</button>`;
 }
 
+function getLuckBattles(actor=player){return Math.max(0,Math.min(8,Math.floor(Number(actor?.luckBattles)||0)));}
+function getLuckDropMultiplier(actor=player){return !IS_DUNGEON_PAGE&&!IS_ARENA_PAGE&&getLuckBattles(actor)>0?1.4:1;}
+function consumeLuckBattle(target=enemy){
+  if(!target||target.luckCounted||target.region==='Dungeon'||IS_DUNGEON_PAGE||IS_ARENA_PAGE)return;
+  target.luckCounted=true;
+  player.luckBattles=Math.max(0,getLuckBattles()-1);
+}
+
 function getManaRegen(){
   const modifiers = getPassiveModifiers();
   const bonusPercent = playerEffects.manaRegenBuffTurns > 0 ? playerEffects.manaRegenBuffPercent : 0;
@@ -7144,7 +7164,7 @@ function handleEnemyDefeat(){
   if(player?.hp <= 0) { handleDeath(); return; }
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
-  if(enemy?.challengeTowerFloor!==undefined){advanceChallengeTower();return;}
+  if(enemy?.challengeTowerFloor!==undefined){consumeLuckBattle(enemy);advanceChallengeTower();return;}
   log("Inimigo derrotado!");
   if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.recordKill(enemy, player); }
   tryEnemyMaterialDrop(enemy);
@@ -7168,6 +7188,7 @@ function handleEnemyDefeat(){
     grantBossChest(defeatedRegion);
     tryBossAccessoryDrop(defeatedRegion);
   }
+  consumeLuckBattle(enemy);
   gainXP(baseXpEarned);
   enemy = null;
   needsNewEnemy = true;

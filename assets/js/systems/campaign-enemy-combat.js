@@ -135,7 +135,7 @@ const CampaignEnemyCombat = (() => {
   function heroStart(){
     if(!enabled(enemy))return false;const s=state(),h=s.hero;
     if(h.deathmark&&--h.deathmark===0){const r=applyIncomingDamage(player.hp,{ignoreFlatReduction:true,ignoreShield:true,ignorePreciousMana:true,ignorePercentReduction:true,ignoreDodge:true});log(`Marca da Morte: ${r.damage} de dano.`);}
-    if(h.haunt&&--h.haunt===0){log('Assombrar forcou a fuga.');enemy=null;resetCombatEffects();isProcessingTurn=false;needsNewEnemy=true;updateUI();queueCampaignSave();return true;}
+    if(h.haunt&&--h.haunt===0){log('Assombrar forcou a fuga.');consumeLuckBattle(enemy);enemy=null;resetCombatEffects();isProcessingTurn=false;needsNewEnemy=true;updateUI();queueCampaignSave();return true;}
     if(h.glare>0){if(Math.random()<.15)playerEffects.skipNextTurn=true;h.glare--;}
     heroCheck();if(player.hp<=0){handleDeath('Os efeitos do inimigo derrotaram seu heroi.');return true;}return false;
   }
