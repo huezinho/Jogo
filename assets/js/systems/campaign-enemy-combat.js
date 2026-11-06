@@ -145,7 +145,41 @@ const CampaignEnemyCombat = (() => {
   function choose(){
     const s=state();if(s.charge)return null;
     if(s.timers.dominion>0&&s.stolen.buffs?.forcedBasicTurns>0)return null;
-    return(enemy.bossAbilities||[]).filter(a=>enemy.mp>=a.cost&&!(a.doom&&s.hero.doom)&&!(a.reap&&s.hero.reap)&&!(a.haunt&&s.hero.haunt)&&!(a.deathmark&&s.hero.deathmark)&&!(a.unshielded&&playerEffects.shieldValue>0)&&!(a.fullHeal&&enemy.hp===enemy.maxHp)&&!(a.regen&&s.timers.regen>0)&&!(a.retaliation&&s.timers.retaliation>0)&&!(a.double&&s.timers.double>0)&&!(a.pact&&s.timers.pact>0)&&!(a.dominion&&s.timers.dominion>0)&&!(a.attackBonus&&s.timers.attack>0)).sort((a,b)=>(s.used[a.id]||0)-(s.used[b.id]||0)||a.cost-b.cost)[0]||null;
+    const caps=getCurrentCaps(),missing=Math.max(0,enemy.maxHp-enemy.hp);
+    const basic=Math.max(1,enemy.attack*damageMultiplier());
+    const heroShield=playerEffects.shieldValue||0;
+    const dots=['burn','poison','bleed'].reduce((sum,k)=>sum+(enemy[k+'Stacks']||[]).reduce((n,x)=>n+x.damage*Math.min(3,x.turns),0),0);
+    const score=a=>{
+      let damage=((a.basicAttack?enemy.attack:a.power||0)+(a.maxHpPercent||0)*caps.maxHp+(a.currentHpPercent||0)*player.hp)*damageMultiplier();
+      if(a.doubleShield&&heroShield>0)damage*=2;
+      if(playerEffects.invulnerableTurns>0)damage=0;
+      else if(!a.ignoreShield)damage=Math.max(0,damage-heroShield);
+      // Only public combat state is used; no knowledge of the next hero action.
+      let value=damage+(a.poison||0)*Math.min(3,a.turns||0)+(a.burn||0)*caps.maxHp*Math.min(3,a.turns||0)+(a.bleed||damage*(a.bleedPercent||0))*Math.min(3,a.turns||0)+(a.poisonMana||0)*player.mp*Math.min(3,a.turns||0);
+      if(damage>=player.hp&&player.hp>0)value+=basic*8;
+      if(a.fullHeal)value+=missing*(enemy.hp/enemy.maxHp<.35?2:1);
+      if(a.heal)value+=Math.min(missing,enemy.maxHp*a.heal);
+      if(a.regen)value+=Math.min(missing,enemy.maxHp*a.regen*Math.min(3,a.turns||1));
+      if(a.cleanse)value+=dots+(enemy.attackDownTurns>0?basic*(enemy.attackDownPercent||0)*2:0);
+      if(!(enemy.noShieldTurns>0))value+=Math.max(0,enemy.maxHp*(a.shield||0)+(a.shieldFlat||0)-(enemy.shieldValue||0))*.6;
+      if(a.attackBonus)value+=basic*a.attackBonus*Math.min(3,a.turns||1);
+      if(a.double)value+=basic*Math.min(3,a.double);
+      if(a.retaliation)value+=caps.maxHp*.03*2;
+      if(a.pact)value+=basic*(enemy.hp/enemy.maxHp<.4?3:.2);
+      if(a.dominion)value+=heroShield*.7+basic*(getActiveBuffs().length*.35+.5);
+      if(a.damageDown&&!(playerEffects.damageDownTurns>1&&playerEffects.damageDownPercent>=a.damageDown))value+=basic*a.damageDown*2;
+      if(a.healDown&&!(playerEffects.healReductionTurns>1))value+=basic*a.healDown;
+      if(a.drain)value+=Math.min(player.mp*a.drain,Math.max(0,enemy.maxMp-enemy.mp)+(a.drainShield?player.mp*a.drain*a.drainShield:0))*.5;
+      if(a.doom||a.deathmark||a.haunt)value+=basic*2;
+      if(a.reap)value+=basic*(player.hp/caps.maxHp<.5?3:1.2);
+      if(a.skip&&!(s.hero.glare>1))value+=basic*.8;
+      if(a.rewind)value+=Math.max(0,(s.lastAction?.hp||enemy.hp)-(s.lastAction?.after?.hp||enemy.hp));
+      value/=1+(a.charge||0)*.65;
+      return value/(1+(a.cost||0)/(Math.max(1,getBaseManaRegen(enemy.maxMp))*8));
+    };
+    const ranked=(enemy.bossAbilities||[]).filter(a=>enemy.mp>=a.cost&&!(a.doom&&s.hero.doom)&&!(a.reap&&s.hero.reap)&&!(a.haunt&&s.hero.haunt)&&!(a.deathmark&&s.hero.deathmark)&&!(a.unshielded&&heroShield>0)&&!(a.fullHeal&&missing<enemy.maxHp*.2)&&!(a.regen&&s.timers.regen>0)&&!(a.retaliation&&s.timers.retaliation>0)&&!(a.double&&s.timers.double>0)&&!(a.pact&&s.timers.pact>0)&&!(a.dominion&&s.timers.dominion>0)&&!(a.attackBonus&&s.timers.attack>0)).map(a=>({a,score:score(a)})).sort((a,b)=>b.score-a.score||(s.used[a.a.id]||0)-(s.used[b.a.id]||0)||a.a.cost-b.a.cost);
+    // Preserve mana when a skill contributes less than a basic attack.
+    return ranked[0]?.score>basic*.8?ranked[0].a:null;
   }
   function cast(a,charged=false){
     const s=state(),h=s.hero;if(!charged){enemy.mp-=a.cost;s.used[a.id]=(s.used[a.id]||0)+1;log(`${enemy.baseName} usou ${a.name}.`);}

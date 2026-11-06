@@ -917,7 +917,7 @@ function renderSceneVitalPlate(kind, stats){
       </div>`
     : "";
   const energyRow = stats.maxMp > 0
-    ? `<div class="scene-vital-bar scene-vital-energy" aria-label="Energia ${mpText}">
+    ? `<div class="scene-vital-bar scene-vital-energy" tabindex="0" data-hud-description="Regenera ${isEnemy ? getBaseManaRegen(stats.maxMp) : getManaRegen()} de mana por turno." aria-label="Energia ${mpText}">
         <div id="${mpId}" class="scene-vital-fill scene-mp-fill" style="width:${getBarPercent(stats.mp, stats.maxMp)}%"></div>
         <span class="scene-vital-text">${mpText}</span>
       </div>`
@@ -933,7 +933,7 @@ function renderSceneVitalPlate(kind, stats){
             <span class="scene-vital-text">${hpText}</span>
           </div>
           ${energyRow}
-          <div class="scene-vital-bar scene-vital-xp" aria-label="XP ${xpText}">
+          <div class="scene-vital-bar scene-vital-xp" tabindex="0" data-hud-description="${stats.level >= MAX_LEVEL ? 'Nível máximo atingido.' : 'Faltam '+Math.max(0,(stats.xpToNext||1)-(stats.xp||0))+' XP para subir de nível.'}" aria-label="XP ${xpText}">
             <div id="${xpId}" class="scene-vital-fill scene-xp-fill" style="width:${stats.level >= MAX_LEVEL ? 100 : getBarPercent(stats.xp || 0, stats.xpToNext || 1)}%"></div>
             <span class="scene-vital-text">${xpText}</span>
           </div>
@@ -2609,9 +2609,10 @@ function getSkillInfo(){
     }
     if(skill.type === "warrior_swift_strikes"){
       const hits = subclassState.tier60 === "ninja" && player.level >= 60 ? 3 : 2;
-      const bleedPercent = subclassState.tier60 === "samurai" && player.level >= 60 ? 0.15 : 0;
+      const bleedMaxHpPercent = subclassState.tier60 === "samurai" && player.level >= 60 ? 0.05 : 0;
+      const bleedPercent = 0;
       const cost = 44 + warriorExtraCost;
-      return { ...skill, cost, hits, bleedPercent, description: `${skill.name}: consome ${cost} MP e executa ${hits} ataques basicos.${bleedPercent ? " Tambem aplica sangramento por 3 turnos." : ""}` };
+      return { ...skill, cost, hits, bleedPercent, bleedMaxHpPercent, description: `${skill.name}: consome ${cost} MP e executa ${hits} ataques basicos.${bleedMaxHpPercent ? " Tambem aplica um sangramento de 5% da vida maxima do inimigo por turno durante 3 turnos." : ""}` };
     }
     if(skill.type === "warrior_warcry"){
       if(subclassState.tier60 === "berserker" && player.level >= 60){
@@ -2624,10 +2625,10 @@ function getSkillInfo(){
     }
     if(skill.type === "warrior_deep_cut"){
       const isNinja = subclassState.tier60 === "ninja" && player.level >= 60;
-      const damage = 70 + Math.floor((isNinja ? .9 : 1.1) * attack) + Math.floor((isNinja ? 1.1 : .8) * skillPower);
+      const damage = 70 + Math.floor((isNinja ? .9 : 1.1) * attack) + Math.floor((isNinja ? 1.1 : .8) * skillPower) + Math.floor(.08 * (enemy?.hp || 0));
       const bleedPercent = subclassState.tier60 === "ninja" && player.level >= 60 ? 0.3 : 0.15;
       const cost = 52 + warriorExtraCost;
-      return { ...skill, cost, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
+      return { ...skill, cost, damage, ignoreArmor: subclassState.tier60 === "samurai" && player.level >= 60, bleedPercent, bleedTurns: 3, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, incluindo 8% da vida atual do inimigo.${subclassState.tier60 === "samurai" && player.level >= 60 ? " Ignora armadura." : ""} Aplica sangramento equivalente a ${Math.floor(bleedPercent * 100)}% do dano causado por 3 turnos.` };
     }
     if(skill.type === "warrior_judgment"){
       const damage = 80 + Math.floor(0.4 * maxHp) + Math.floor(0.5 * attack) + Math.floor(0.8 * skillPower);
@@ -2654,7 +2655,7 @@ function getSkillInfo(){
     }
     if(skill.type === "warrior_unstoppable"){
       const cost = 100 + warriorExtraCost;
-      return { ...skill, cost, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 100, canBreakControl: true, description: `${skill.name}: consome ${cost} MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque em 100 por 4 turnos. Pode ser usada para impedir a perda do turno atual.` };
+      return { ...skill, cost, hpCostPercent: 0.3, turns: 4, attackBuffAmount: 40, totalDamagePercent: .2, canBreakControl: true, description: `${skill.name}: consome ${cost} MP e 30% da sua vida maxima, impede pulos de turno e aumenta o ataque em 40 e o dano total em 20% por 4 turnos. Pode ser usada para impedir a perda do turno atual.` };
     }
     if(skill.type === "warrior_ultrasonic_cuts"){
       const cost = 240 + 2 * warriorExtraCost;
@@ -2765,10 +2766,10 @@ function getSkillInfo(){
     }
     if(skill.type === "mage_demon_form"){
       const cost = clampMageSkillCost(Math.floor(maxMp * 0.3));
-      return { ...skill, cost, turns: 3, damagePercent: 1.6, vulnerabilityPercent: 0.4, description: `${skill.name}: consome ${cost} MP, concede 160% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.` };
+      return { ...skill, cost, turns: 3, damagePercent: 1.38, vulnerabilityPercent: 0.4, description: `${skill.name}: consome ${cost} MP, concede 138% de dano total adicional por 3 turnos e faz voce receber 40% de dano adicional pelo mesmo tempo.` };
     }
     if(skill.type === "mage_explode"){
-      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.5 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
+      const damage = 200 + Math.floor(1.3 * skillPower) + Math.floor(0.5 * maxHp) + Math.floor(0.38 * (enemy?.maxHp || 0)) + getUniversalDamageFlatBonus();
       const cost = clampMageSkillCost(500 + mageExtraCost);
       return { ...skill, cost, hpCostPercent: 0.5, damage, description: `${skill.name}: consome ${cost} MP, 50% da sua vida maxima e causa ${damage} de dano.` };
     }
@@ -3925,8 +3926,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       totalDamage += applyToTarget ? applyDamageToEnemy(hit) : hit;
     }
     damage = totalDamage;
-    if(applyToTarget && enemy && skillInfo.bleedPercent > 0){
-      applyBleeding(enemy, Math.floor((damage * skillInfo.bleedPercent) / 3), 3);
+    if(applyToTarget && enemy && damage > 0 && (skillInfo.bleedMaxHpPercent > 0 || skillInfo.bleedPercent > 0)){
+      applyBleeding(enemy, skillInfo.bleedMaxHpPercent > 0 ? Math.floor(enemy.maxHp * skillInfo.bleedMaxHpPercent) : Math.floor((damage * skillInfo.bleedPercent) / 3), 3);
     }
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano em ${skillInfo.hits} golpes.`;
   }
@@ -3969,6 +3970,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     playerEffects.skipNextTurn = false;
     playerEffects.attackBuffTurns = Math.max(playerEffects.attackBuffTurns, skillInfo.turns);
     playerEffects.attackBuffAmount = Math.max(playerEffects.attackBuffAmount, skillInfo.attackBuffAmount);
+    playerEffects.finalDamageBuffTurns = Math.max(playerEffects.finalDamageBuffTurns, skillInfo.turns);
+    playerEffects.finalDamageBuffPercent = Math.max(playerEffects.finalDamageBuffPercent, skillInfo.totalDamagePercent);
     message = `${actorName} usou ${skillInfo.name} e ficou imparavel por ${skillInfo.turns} turnos.`;
   }
   if(skillInfo.type === "warrior_ultrasonic_cuts"){
@@ -4312,7 +4315,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   const refreshed = {
     warrior_second_wind:["finalDamageBuffTurns"], warrior_warcry:["attackBuffTurns","finalDamageBuffTurns","percentReductionTurns","lifeStealTurns"],
     warrior_valhalla:["incomingDamageBonusTurns","enemyMaxHpBonusTurns"],warrior_faith_shield:["invulnerableTurns"],
-    warrior_unstoppable:["attackBuffTurns","controlImmuneTurns"],warrior_ultrasonic_cuts:["forcedBasicTurns","basicOnlyUntouchableTurns"],
+    warrior_unstoppable:["attackBuffTurns","controlImmuneTurns","finalDamageBuffTurns"],warrior_ultrasonic_cuts:["forcedBasicTurns","basicOnlyUntouchableTurns"],
     mage_concentration:["skillBuffTurns","finalDamageBuffTurns","manaRegenBuffTurns"],mage_demon_form:["finalDamageBuffTurns","incomingDamageBonusTurns","visualDemonTurns"],
     archer_focus:["attackBuffTurns","skillBuffTurns","guaranteedHitTurns"],archer_camouflage:["enemyMissBonusTurns"],
     nature_true_form:["natureTrueFormTurns","attackBuffTurns","percentReductionTurns"],nature_crown:["natureCrownedTurns"]

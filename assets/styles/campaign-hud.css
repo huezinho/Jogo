@@ -675,6 +675,7 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 }
 @media(max-width:760px){.rpg-campaign #campaignHud .rpg-village-interior.rpg-alchemy{background-position:left top}}
 /* Stable information panels and compact character selection. */
+.rpg-campaign .scene-vital-energy,.rpg-campaign .scene-vital-xp{pointer-events:auto;cursor:help}
 .rpg-campaign #campaignHud .rpg-vital-dock .rpg-expedition-note{position:absolute;right:0;bottom:0;width:48%;box-sizing:border-box}
 .rpg-campaign #campaignHud .rpg-contract-tracker{height:146px}
 .rpg-campaign #campaignHud .rpg-contract-tracker>button{height:100%;justify-content:center}

@@ -42,7 +42,7 @@ async function main(){
     const conditions = require('./skill-conditions.cjs');
     const lines = [
       '# Referência atual de habilidades', '',
-      'Catálogo gerado a partir do código executável atual em 05/11/2026. Não utiliza o documento antigo de balanceamento.', '',
+      'Catálogo gerado a partir do código executável atual em 06/11/2026. Não utiliza o documento antigo de balanceamento.', '',
       `São ${forms.length} formas de classe/subclasse e ${activeIds.size} nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.`, '',
       'Relatório geral: nenhuma vida, mana, ataque ou nível de herói é fixado nas fórmulas. L permanece uma incógnita. Os níveis indicados nas tabelas são somente requisitos de desbloqueio; cada regra vale após desbloquear a habilidade e escolher a classe correspondente.', '',
       'Cada classe tem sua fórmula própria. Custos, dano, cura e escudo são expressões matemáticas; condições de combate aparecem em linguagem natural. Não há colunas com resultados numéricos de uma build de exemplo.', '',

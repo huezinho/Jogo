@@ -1,6 +1,6 @@
 # Referência atual de habilidades
 
-Catálogo gerado a partir do código executável atual em 05/11/2026. Não utiliza o documento antigo de balanceamento.
+Catálogo gerado a partir do código executável atual em 06/11/2026. Não utiliza o documento antigo de balanceamento.
 
 São 28 formas de classe/subclasse e 59 nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.
 
@@ -91,7 +91,7 @@ Classe: **Guerreiro**. Rota: cavaleiro → berserker.
 | Contundir | 30 | C = 40 + W; D = 60 + 0,07H + 1,1A + 0,4P | Ver efeito | Dano direto. |
 | Ira | 50 | C = W MP + 0,5H de vida; dano final × 2,2; roubo de vida = 0,2V | Duração: 4 turno(s) | Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo. |
 | Vallhala | 60 | C = 100 + W; dano recebido × 2,5; adicional por dano causado = 0,15E | Duração: 5 turno(s) | O bônus usa a vida máxima do inimigo; também aumenta o dano recebido. |
-| Voce Ira Me Parar? | 80 | C = 100 + W MP + 0,3H de vida; A adicional = 100 | Duração: 4 turno(s) | Pode impedir a perda do turno atual e concede imunidade a esse controle durante o efeito. |
+| Voce Ira Me Parar? | 80 | C = 100 + W MP + 0,3H de vida; A adicional = 40; dano total +20% | Duração: 4 turno(s) | Pode impedir a perda do turno atual e concede imunidade a esse controle durante o efeito. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
@@ -110,7 +110,7 @@ Classe: **Guerreiro**. Rota: espadachim.
 | Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
 | Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r | Ver efeito | Cada golpe aplica sua própria mitigação. |
-| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
+| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
@@ -127,8 +127,8 @@ Classe: **Guerreiro**. Rota: espadachim → samurai.
 | --- | ---: | --- | --- | --- |
 | Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
-| Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r | Ver efeito | Os golpes aplicam sangramentos independentes por 3 turnos. |
-| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
+| Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r; sangramento = 0,05E por turno, 3 turnos | Ver efeito | Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, por uso que cause dano. Aplicações acumulam. |
+| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
 | Furar Blindagem | 60 | C = 82 + W; D = 80 + 1,1A + 1,1P; D × 3 se o alvo tiver escudo | Ver efeito | O multiplicador extra exige escudo ativo no alvo. |
 | Cortes Ultrasonicos | 80 | C = 240 + 2W; 3 turnos de ataques básicos e esquiva; intervalo de 1 ação para reativar | Duração: 3 turno(s) | Durante 3 turnos só permite ataques básicos; exige uma ação de intervalo antes de reativar. |
 
@@ -149,7 +149,7 @@ Classe: **Guerreiro**. Rota: espadachim → ninja.
 | Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
 | Golpes Velozes | 30 | C = 44 + W; 3 ataques básicos; cada golpe usa A + r | Ver efeito | Cada golpe aplica sua própria mitigação. |
-| Corte Profundo | 50 | C = 52 + W; D = 70 + 0,9A + 1,1P; sangramento por turno = Dₑ × 0,3 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
+| Corte Profundo | 50 | C = 52 + W; D = 70 + 0,9A + 1,1P + 0,08h; sangramento por turno = Dₑ × 0,3 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
 | Bomba de Fumaca | 60 | C = 40 + W; próximo dano × 1,3; esquiva garantida no próximo ataque | Duração: 1 turno(s) | Garante a próxima esquiva; fortalece apenas o próximo dano. |
 | Mata-Gigantes | 80 | C = 200 + W; D = 0,32h | Ver efeito | Usa a vida atual do alvo no momento da ação. |
 
@@ -202,7 +202,7 @@ Classe: **Mago**. Rota: elementalista → mago_incendiario.
 | Bola de Fogo | 30 | C = 40 + W + S; D = 50 + 0,18A + 1,25P + 0,03h + F | Queimadura: 3 turno(s) | Queimadura = 5% de E após desbloquear Fogo do Inferno; antes disso, 3% de E por turno, durante 3 turnos; cura recebida −30%. |
 | Bafo de Fogo | 50 | C = 40 + W + S; D = 60 + 0,08A + 0,9P + F | Queimadura: 6 turno(s) | Bafo de Fogo aplica queimadura por 6 turnos. |
 | Fenix Sagrada | 60 | C = 200 + P + S; D = 100 + 0,4A + 1,85P + F | Queimadura: 1 turno(s) | Aplica queimadura por 1 turno e reduz cura recebida em 30%. |
-| Explodir | 80 | C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,5E + F | Ver efeito | Também paga 50% da vida máxima; exige vida suficiente. |
+| Explodir | 80 | C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,38E + F | Ver efeito | Também paga 50% da vida máxima; exige vida suficiente. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
@@ -279,7 +279,7 @@ Classe: **Mago**. Rota: arcanista → corrompido.
 | Descarregar | 30 | C = 30Q + S; D = 60 + LQ + 0,3P + 0,045M + F | Ver efeito | Consome todas as cargas arcanas. |
 | Escudo de Mana | 50 | C = 0,15M + S; escudo = 40 + 0,3M | Duração: 2 turno(s) | Escudo por 2 turnos; não pode ser concedido se houver bloqueio de escudos. |
 | Corrupcao | 60 | C = 0,3M; D = 100 + 1,15P + 0,22M + F; armadura do alvo = 0 | Armadura removida: 5 turno(s); Sem escudo: 5 turno(s) | Remove toda a armadura do alvo e impede novos escudos por 5 turnos. |
-| Incorporar Demonio | 80 | C = 0,3M; dano final × 2,6; dano recebido × 1,4 | Duração: 3 turno(s) | +160% de dano total e +40% de dano recebido por 3 turnos. |
+| Incorporar Demonio | 80 | C = 0,3M; dano final × 2,38; dano recebido × 1,4 | Duração: 3 turno(s) | +138% de dano total e +40% de dano recebido por 3 turnos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |

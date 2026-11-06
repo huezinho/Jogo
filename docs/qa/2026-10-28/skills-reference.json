@@ -230,7 +230,7 @@
           "name": "Voce Ira Me Parar?",
           "type": "warrior_unstoppable",
           "unlockLevel": 80,
-          "formula": "C = 100 + W MP + 0,3H de vida; A adicional = 100",
+          "formula": "C = 100 + W MP + 0,3H de vida; A adicional = 40; dano total +20%",
           "conditions": "Pode impedir a perda do turno atual e concede imunidade a esse controle durante o efeito."
         }
       ],
@@ -291,7 +291,7 @@
           "name": "Corte Profundo",
           "type": "warrior_deep_cut",
           "unlockLevel": 50,
-          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3",
+          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3",
           "conditions": "Sangramento por 3 turnos; aplicações acumulam."
         }
       ],
@@ -339,14 +339,14 @@
           "name": "Golpes Velozes",
           "type": "warrior_swift_strikes",
           "unlockLevel": 30,
-          "formula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r",
-          "conditions": "Os golpes aplicam sangramentos independentes por 3 turnos."
+          "formula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r; sangramento = 0,05E por turno, 3 turnos",
+          "conditions": "Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, por uso que cause dano. Aplicações acumulam."
         },
         {
           "name": "Corte Profundo",
           "type": "warrior_deep_cut",
           "unlockLevel": 50,
-          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P; sangramento por turno = Dₑ × 0,15 ÷ 3",
+          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3",
           "conditions": "Sangramento por 3 turnos; aplicações acumulam."
         },
         {
@@ -421,7 +421,7 @@
           "name": "Corte Profundo",
           "type": "warrior_deep_cut",
           "unlockLevel": 50,
-          "formula": "C = 52 + W; D = 70 + 0,9A + 1,1P; sangramento por turno = Dₑ × 0,3 ÷ 3",
+          "formula": "C = 52 + W; D = 70 + 0,9A + 1,1P + 0,08h; sangramento por turno = Dₑ × 0,3 ÷ 3",
           "conditions": "Sangramento por 3 turnos; aplicações acumulam."
         },
         {
@@ -579,7 +579,7 @@
           "name": "Explodir",
           "type": "mage_explode",
           "unlockLevel": 80,
-          "formula": "C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,5E + F",
+          "formula": "C = 500 + S MP + 0,5H de vida; D = 200 + 1,3P + 0,5H + 0,38E + F",
           "conditions": "Também paga 50% da vida máxima; exige vida suficiente."
         }
       ],
@@ -831,8 +831,8 @@
           "name": "Incorporar Demonio",
           "type": "mage_demon_form",
           "unlockLevel": 80,
-          "formula": "C = 0,3M; dano final × 2,6; dano recebido × 1,4",
-          "conditions": "+160% de dano total e +40% de dano recebido por 3 turnos."
+          "formula": "C = 0,3M; dano final × 2,38; dano recebido × 1,4",
+          "conditions": "+138% de dano total e +40% de dano recebido por 3 turnos."
         }
       ],
       "passive": [
