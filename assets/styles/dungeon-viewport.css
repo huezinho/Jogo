@@ -27,9 +27,121 @@ html:has(.rogue-page),body.rogue-page{width:100%;height:100dvh;min-height:0;over
 .rogue-page .rogue-command{flex-shrink:0;padding:8px 12px;max-height:36dvh;overflow:auto}.rogue-command>header{display:none}.rogue-command-grid{display:grid!important;grid-template-columns:78px minmax(0,1fr) 88px!important;gap:10px!important;align-items:center!important}.rogue-page .rogue-skills{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px}.rogue-page button.rogue-skill,.rogue-page button.rogue-basic{width:clamp(48px,5.8vw,76px);aspect-ratio:1;height:auto;min-height:0;border:1px solid #907044;border-image:none;border-radius:2px;background:#17110b;padding:3px 3px 16px;position:relative;box-shadow:inset 0 0 0 3px #49331b}.rogue-basic>img{width:100%;height:100%;object-fit:contain}.rogue-basic>span{display:none}.rogue-basic small{position:absolute;bottom:0;left:0;right:0;background:#130e09dd;font-size:12px;line-height:1;padding:2px}.rogue-basic kbd{position:absolute;top:2px;left:3px;color:#f7d49c;font-size:10px;z-index:2}.rogue-potion-slot>button{display:flex;flex-direction:column;align-items:center;background:none;border:0;border-image:none;padding:0;font-size:12px;min-width:0}.rogue-potion-slot img{width:62px;height:62px;object-fit:contain}.rogue-utilities{grid-column:auto!important;display:flex;flex-direction:column;gap:6px}.rogue-page .rogue-utilities>button{font-size:10px;border:12px solid transparent;border-image:url('../visual/hud/button-normal.webp') 35 80 fill / 12px 22px / 0 stretch;background:none;padding:0;min-height:40px}.rogue-target-prompt{margin-top:5px;padding-top:4px;align-items:center}.rogue-target-prompt p{margin:3px 0;font-size:14px}.rogue-target-prompt strong{font-size:12px}.rogue-target-prompt button{min-height:32px;font-size:10px}.rogue-passives{margin-top:5px;padding-top:4px;gap:5px}.rogue-passives img{width:23px;height:23px}.rogue-passives>small{display:none}.rogue-passives:empty{display:none}
 .dungeon-recovery{display:flex;align-items:center;justify-content:center;gap:12px;min-height:105px;padding:8px;background:linear-gradient(#23170ee8,#1a110ce8);flex-shrink:0}.dungeon-recovery .dungeon-hunt>img{width:68px;height:68px}
 .journey-items{position:absolute;z-index:40;bottom:140px;left:12px;max-width:360px;max-height:min(350px,50dvh)}
-.rogue-page>.rogue-shell>.rogue-lobby{height:100dvh;overflow:hidden}.rogue-lobby-scene{height:100%;min-height:0}.rogue-lobby>.rogue-panel{max-height:100%;overflow:auto}.rogue-lobby .rogue-class-grid .rogue-character{width:50px;height:62.5px}.rogue-lobby label{margin:8px 0}
+.rogue-page>.rogue-shell>.rogue-lobby {
+  height:100dvh;
+  padding:12px;
+  grid-template-columns:minmax(0,1fr) clamp(320px,31vw,400px);
+  grid-template-rows:auto minmax(0,1fr);
+  gap:12px;
+  overflow:hidden;
+}
+.rogue-lobby-header {
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.rogue-lobby-header a {
+  display:inline-flex;
+  align-items:center;
+  min-height:42px;
+  padding:6px 12px;
+  border:1px solid #9c7d47;
+  border-radius:3px;
+  background:linear-gradient(#392b1e,#241a11);
+  color:#f1dfb7;
+  text-decoration:none;
+}
+.rogue-lobby-header a:hover {border-color:#ddbb76;background:#392b1e}
+.rogue-lobby-header a:focus-visible {outline:2px solid #ffe0a0;outline-offset:2px}
+.rogue-lobby-header h1 {margin:0;font-size:clamp(20px,3vw,32px)}
+.rogue-lobby-scene {
+  position:relative;
+  height:100%;
+  min-height:0;
+  background:linear-gradient(transparent 72%,#130e0aa6),url('../visual/backgrounds/scenes/dungeon-entrance-v1.webp') center bottom/cover;
+}
+.rogue-lobby-party {
+  position:absolute;
+  left:50%;
+  bottom:17%;
+  transform:translateX(-50%);
+  width:min(78%,640px);
+  grid-template-columns:none;
+  grid-auto-columns:minmax(0,1fr);
+  grid-auto-flow:column;
+  padding:0;
+}
+.rogue-lobby-party>div {position:relative}
+.rogue-lobby-party .rogue-character {
+  display:block;
+  width:min(100%,clamp(90px,23dvh,175px));
+  height:auto;
+  aspect-ratio:4/5;
+}
+.rogue-lobby-name {
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:100%;
+  padding:4px 8px;
+  background:#1b110cde;
+  border:1px solid #8c6c40;
+  color:#f1dfb7;
+  line-height:1.25;
+}
+.rogue-lobby-name small {color:#ddc599}
+.rogue-lobby>.rogue-panel {height:100%;min-height:0;overflow:auto}
+.rogue-lobby-section+.rogue-lobby-section {margin-top:14px;padding-top:14px;border-top:1px solid #987e56}
+.rogue-lobby-section h2 {margin:0 0 8px;font-size:20px}
+.rogue-lobby-section p {margin:8px 0}
+.rogue-lobby-section label {margin:8px 0}
+.rogue-lobby-section select {
+  display:block;
+  width:100%;
+  margin-top:4px;
+  padding:8px;
+  border:1px solid #8c6c40;
+  border-radius:2px;
+  background:#fff1d1;
+  color:#35251b;
+  font:inherit;
+}
+.rogue-lobby-buttons {display:flex;gap:6px;flex-wrap:wrap}
+.rogue-lobby-section>button+button {margin:6px 0 0}
+.rogue-lobby .rogue-class-grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+body.rogue-page .rogue-lobby .rogue-class-grid button {padding:6px 3px;font-size:10px}
+.rogue-lobby .rogue-class-grid .rogue-character {width:50px;height:62.5px}
+.rogue-room-join {display:flex;align-items:end;gap:8px;margin-top:8px}
+.rogue-room-join label {flex:1;min-width:0;margin:0}
+.rogue-room-join button {flex:none}
+.rogue-room-code code {display:block;overflow-wrap:anywhere;user-select:all}
+.rogue-resume-roster {list-style:none;padding:0;margin:8px 0 12px}
+.rogue-resume-roster li {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px 12px;
+  padding:8px 0;
+  border-bottom:1px solid #987e565e;
+  overflow-wrap:anywhere;
+}
+@media(max-width:760px){
+  .rogue-page>.rogue-shell>.rogue-lobby {
+    display:block;
+    padding:8px;
+    overflow:auto;
+  }
+  .rogue-lobby-header {gap:10px;margin-bottom:8px}
+  .rogue-lobby-scene {height:auto;aspect-ratio:3/2;margin-bottom:8px}
+  .rogue-lobby-party .rogue-character {width:min(100%,clamp(75px,23vw,130px))}
+  .rogue-lobby>.rogue-panel {height:auto;max-height:none;overflow:visible}
+}
 @media(max-height:700px) and (min-width:761px){.base-camp-sheet{padding:8px}.base-rest p{font-size:11px}.base-rest h2{font-size:15px}.base-rest button{min-height:28px;font-size:9px}.base-loadout{grid-template-columns:56px 56px;gap:5px}.rogue-page button.base-equipment-slot{height:67px;font-size:10px}.base-equipment-slot>img,.base-empty-slot>img{width:35px;height:35px}.base-own-figure{inset:90px 50px 0}.base-character-stats{border-width:18px;padding:5px}.base-investments{margin:5px 0}.base-stats>div{padding:4px;font-size:13px}.base-companions{max-height:113px}.base-companions .base-person-button .rogue-character{width:42px;height:52.5px}.base-hall-party .rogue-character{max-height:32dvh}.base-hall-controls .dungeon-hunt img{width:52px;height:52px}.base-rest{margin-inline:55px}}
-@media(max-width:760px){.base-layout{display:grid;grid-template-columns:minmax(0,1fr) 95px;grid-template-rows:96px minmax(0,1fr);height:100dvh}.base-locations{grid-column:1;grid-row:1;padding:3px 8px;height:96px;border-bottom:1px solid #765b36}.base-resources{grid-column:2;grid-row:1;padding:3px 6px;gap:3px;height:96px;border-bottom:1px solid #765b36}.base-main{grid-column:1/-1;grid-row:2;order:0}.base-map{width:60px;height:90px;aspect-ratio:2/3;margin:auto;max-height:none;justify-self:auto}.base-map-area>span{font-size:6px;padding:1px;max-width:90%}.base-resources .base-bag-button{height:40px;min-height:0}.base-resources .base-coins{min-height:42px;padding:6px;font-size:12px}.base-offer-alert{position:fixed;right:105px;top:5px;z-index:25;font-size:9px!important}.base-hall-party{padding:6px 10px;gap:8px}.base-hall-party .rogue-character{width:105px;max-width:100%;max-height:28dvh}.base-person-button>strong{font-size:10px;padding:3px}.base-person-button>small{font-size:10px}.base-presence{font-size:10px}.base-hall-controls{padding:5px 8px;gap:4px}.base-ready-group>span{font-size:11px}.base-hall-controls button{font-size:9px}.base-hall-controls .dungeon-hunt>img{width:50px;height:50px}.dungeon-hunt>span{font-size:11px}.base-exit>img{width:38px;height:38px}.base-hall-controls .base-exit{flex:0 0 38px;margin:0}.base-hall-controls>div:last-child{gap:8px}.base-camp-sheet{grid-template-columns:minmax(0,1fr) minmax(130px,.8fr);gap:6px;padding:6px}.base-rest{min-width:0;margin:0 0 7px}.base-rest h2{font-size:13px}.base-rest button{min-height:28px;font-size:8px;padding:0;border-width:10px}.base-rest p{font-size:10px;white-space:normal}.base-loadout{grid-template-columns:43px 43px;gap:5px}.rogue-page button.base-equipment-slot{height:61px;font-size:8px;padding:3px 0;gap:0}.base-equipment-slot>img,.base-empty-slot>img{width:33px;height:33px}.base-own-figure{inset:100px 25px 0}.base-own-figure .rogue-character{width:145px;max-width:none;max-height:90%;height:auto}.base-character-stats{border-width:13px;padding:5px}.base-character-stats h2{font-size:12px}.base-character-stats>p{font-size:11px}.base-investments{gap:3px;margin:6px 0}.base-investments>span{padding:3px 1px;border-width:1px}.base-investments small{font-size:8px}.base-investments strong{font-size:14px}.base-stats>div{font-size:11px;padding:5px 0;gap:3px}.base-companions{padding:5px 8px;max-height:105px}.base-companions h3{font-size:11px}.base-companions .base-person-button .rogue-character{width:38px;height:47.5px}.base-companions .base-person-button>strong{font-size:9px;padding:1px 5px}.base-companions .base-person-button>small{display:none}.base-forge{padding:8px}.base-workshop{grid-template-columns:45px minmax(0,1fr) minmax(130px,.85fr);gap:6px}.base-forge-rack{grid-auto-rows:47px;gap:5px}.base-item-slot{padding:3px!important}.base-anvil h2{font-size:12px;padding:6px}.base-anvil>p{font-size:10px}.base-anvil>img,.base-empty-anvil{height:130px;max-height:45%;margin:8px 0}.base-rarity-path{flex-wrap:wrap;gap:5px;padding:6px 3px}.base-rarity-path>span{font-size:7px}.base-rarity-path i{width:8px;height:8px}.base-forge-detail{grid-column:auto;border-width:12px;padding:4px}.base-forge-detail h2{font-size:12px}.base-forge-detail h3{font-size:11px;padding-top:5px;margin-top:6px}.base-forge-detail p{font-size:11px}.base-forge-detail button{font-size:8px;min-height:32px;border-width:10px;padding:0}.base-price{font-size:11px;flex-wrap:wrap;gap:4px;padding:7px 0;margin:7px 0}.base-encounter-scene{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);padding:8px;gap:8px}.base-encounter-title{justify-self:start;padding:5px 12px}.base-encounter-title h2{font-size:14px}.base-merchant-panel{width:min(350px,100%);justify-self:end;border-width:16px;padding:8px}.base-merchant-panel>h2{font-size:15px;margin-bottom:8px}.base-merchant-stock{margin:8px 0;gap:6px}.base-merchant-stock .base-item-slot{max-height:50px}.base-merchant-description{min-height:60px;max-height:20dvh}.base-merchant-description h3{font-size:13px}.base-merchant-description p{font-size:13px;margin-bottom:5px}.base-merchant-panel button.wide{font-size:9px;min-height:35px;margin-top:3px;border-width:12px}.base-merchant-panel label{font-size:13px;margin:5px 0}.base-merchant-panel input{min-height:32px;padding:4px}.base-gamble-coin{display:none}.base-merchant-panel p{font-size:13px}.rogue-page .rogue-battle-scene{padding:6px 10px}.rogue-enemies{gap:6px}.rogue-party{gap:6px}.rogue-battle-scene .rogue-character{width:80px;max-height:19dvh}.rogue-enemy-art{width:80px!important;max-height:19dvh}.rogue-enemy.boss .rogue-enemy-art{width:100px!important;max-height:23dvh}.rogue-unit-name strong{font-size:10px}.rogue-unit-name span{font-size:10px}.rogue-enemy strong{font-size:10px}.rogue-enemy small{font-size:10px}.rogue-bar{height:13px}.rogue-bar>span{font-size:10px}.rogue-intent{font-size:9px}.rogue-status>span{font-size:9px}.rogue-page .rogue-command{padding:6px;max-height:37dvh}.rogue-command-grid{grid-template-columns:40px minmax(0,1fr) 48px!important;gap:5px!important}.rogue-page .rogue-skills{gap:4px}.rogue-page button.rogue-skill,.rogue-page button.rogue-basic{width:43px;padding:2px 2px 11px}.rogue-page .rogue-skill small,.rogue-basic small{font-size:9px}.rogue-page .rogue-skill kbd,.rogue-basic kbd{font-size:8px}.rogue-potion-slot img{width:38px;height:38px}.rogue-potion-slot>button{font-size:10px}.rogue-page .rogue-utilities>button{font-size:8px;border-width:9px;min-height:35px}.rogue-target-prompt p{font-size:11px;margin:2px 0}.rogue-target-prompt strong{font-size:10px}.rogue-target-prompt button{font-size:8px;padding:0;min-height:28px;border-width:10px}.rogue-target-prompt>div{flex-basis:auto;min-width:0}.rogue-passives img{width:19px;height:19px}.dungeon-recovery{min-height:80px;gap:8px}.dungeon-recovery .dungeon-hunt>img{width:48px;height:48px}.base-main>.rogue-log{max-height:26px;padding:4px 10px}.rogue-log summary{font-size:10px}.rogue-lobby{grid-template-columns:minmax(0,1fr);gap:0}.rogue-lobby-scene{display:none}.rogue-lobby>.rogue-panel{padding:12px}.rogue-lobby .rogue-class-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.rogue-lobby .rogue-class-grid .rogue-character{width:45px;height:56.25px}.rogue-lobby .rogue-class-grid button{font-size:8px}.rogue-lobby p{font-size:13px}.rogue-lobby h2{font-size:18px}}
+@media(max-width:760px){.base-layout{display:grid;grid-template-columns:minmax(0,1fr) 95px;grid-template-rows:96px minmax(0,1fr);height:100dvh}.base-locations{grid-column:1;grid-row:1;padding:3px 8px;height:96px;border-bottom:1px solid #765b36}.base-resources{grid-column:2;grid-row:1;padding:3px 6px;gap:3px;height:96px;border-bottom:1px solid #765b36}.base-main{grid-column:1/-1;grid-row:2;order:0}.base-map{width:60px;height:90px;aspect-ratio:2/3;margin:auto;max-height:none;justify-self:auto}.base-map-area>span{font-size:6px;padding:1px;max-width:90%}.base-resources .base-bag-button{height:40px;min-height:0}.base-resources .base-coins{min-height:42px;padding:6px;font-size:12px}.base-offer-alert{position:fixed;right:105px;top:5px;z-index:25;font-size:9px!important}.base-hall-party{padding:6px 10px;gap:8px}.base-hall-party .rogue-character{width:105px;max-width:100%;max-height:28dvh}.base-person-button>strong{font-size:10px;padding:3px}.base-person-button>small{font-size:10px}.base-presence{font-size:10px}.base-hall-controls{padding:5px 8px;gap:4px}.base-ready-group>span{font-size:11px}.base-hall-controls button{font-size:9px}.base-hall-controls .dungeon-hunt>img{width:50px;height:50px}.dungeon-hunt>span{font-size:11px}.base-exit>img{width:38px;height:38px}.base-hall-controls .base-exit{flex:0 0 38px;margin:0}.base-hall-controls>div:last-child{gap:8px}.base-camp-sheet{grid-template-columns:minmax(0,1fr) minmax(130px,.8fr);gap:6px;padding:6px}.base-rest{min-width:0;margin:0 0 7px}.base-rest h2{font-size:13px}.base-rest button{min-height:28px;font-size:8px;padding:0;border-width:10px}.base-rest p{font-size:10px;white-space:normal}.base-loadout{grid-template-columns:43px 43px;gap:5px}.rogue-page button.base-equipment-slot{height:61px;font-size:8px;padding:3px 0;gap:0}.base-equipment-slot>img,.base-empty-slot>img{width:33px;height:33px}.base-own-figure{inset:100px 25px 0}.base-own-figure .rogue-character{width:145px;max-width:none;max-height:90%;height:auto}.base-character-stats{border-width:13px;padding:5px}.base-character-stats h2{font-size:12px}.base-character-stats>p{font-size:11px}.base-investments{gap:3px;margin:6px 0}.base-investments>span{padding:3px 1px;border-width:1px}.base-investments small{font-size:8px}.base-investments strong{font-size:14px}.base-stats>div{font-size:11px;padding:5px 0;gap:3px}.base-companions{padding:5px 8px;max-height:105px}.base-companions h3{font-size:11px}.base-companions .base-person-button .rogue-character{width:38px;height:47.5px}.base-companions .base-person-button>strong{font-size:9px;padding:1px 5px}.base-companions .base-person-button>small{display:none}.base-forge{padding:8px}.base-workshop{grid-template-columns:45px minmax(0,1fr) minmax(130px,.85fr);gap:6px}.base-forge-rack{grid-auto-rows:47px;gap:5px}.base-item-slot{padding:3px!important}.base-anvil h2{font-size:12px;padding:6px}.base-anvil>p{font-size:10px}.base-anvil>img,.base-empty-anvil{height:130px;max-height:45%;margin:8px 0}.base-rarity-path{flex-wrap:wrap;gap:5px;padding:6px 3px}.base-rarity-path>span{font-size:7px}.base-rarity-path i{width:8px;height:8px}.base-forge-detail{grid-column:auto;border-width:12px;padding:4px}.base-forge-detail h2{font-size:12px}.base-forge-detail h3{font-size:11px;padding-top:5px;margin-top:6px}.base-forge-detail p{font-size:11px}.base-forge-detail button{font-size:8px;min-height:32px;border-width:10px;padding:0}.base-price{font-size:11px;flex-wrap:wrap;gap:4px;padding:7px 0;margin:7px 0}.base-encounter-scene{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);padding:8px;gap:8px}.base-encounter-title{justify-self:start;padding:5px 12px}.base-encounter-title h2{font-size:14px}.base-merchant-panel{width:min(350px,100%);justify-self:end;border-width:16px;padding:8px}.base-merchant-panel>h2{font-size:15px;margin-bottom:8px}.base-merchant-stock{margin:8px 0;gap:6px}.base-merchant-stock .base-item-slot{max-height:50px}.base-merchant-description{min-height:60px;max-height:20dvh}.base-merchant-description h3{font-size:13px}.base-merchant-description p{font-size:13px;margin-bottom:5px}.base-merchant-panel button.wide{font-size:9px;min-height:35px;margin-top:3px;border-width:12px}.base-merchant-panel label{font-size:13px;margin:5px 0}.base-merchant-panel input{min-height:32px;padding:4px}.base-gamble-coin{display:none}.base-merchant-panel p{font-size:13px}.rogue-page .rogue-battle-scene{padding:6px 10px}.rogue-enemies{gap:6px}.rogue-party{gap:6px}.rogue-battle-scene .rogue-character{width:80px;max-height:19dvh}.rogue-enemy-art{width:80px!important;max-height:19dvh}.rogue-enemy.boss .rogue-enemy-art{width:100px!important;max-height:23dvh}.rogue-unit-name strong{font-size:10px}.rogue-unit-name span{font-size:10px}.rogue-enemy strong{font-size:10px}.rogue-enemy small{font-size:10px}.rogue-bar{height:13px}.rogue-bar>span{font-size:10px}.rogue-intent{font-size:9px}.rogue-status>span{font-size:9px}.rogue-page .rogue-command{padding:6px;max-height:37dvh}.rogue-command-grid{grid-template-columns:40px minmax(0,1fr) 48px!important;gap:5px!important}.rogue-page .rogue-skills{gap:4px}.rogue-page button.rogue-skill,.rogue-page button.rogue-basic{width:43px;padding:2px 2px 11px}.rogue-page .rogue-skill small,.rogue-basic small{font-size:9px}.rogue-page .rogue-skill kbd,.rogue-basic kbd{font-size:8px}.rogue-potion-slot img{width:38px;height:38px}.rogue-potion-slot>button{font-size:10px}.rogue-page .rogue-utilities>button{font-size:8px;border-width:9px;min-height:35px}.rogue-target-prompt p{font-size:11px;margin:2px 0}.rogue-target-prompt strong{font-size:10px}.rogue-target-prompt button{font-size:8px;padding:0;min-height:28px;border-width:10px}.rogue-target-prompt>div{flex-basis:auto;min-width:0}.rogue-passives img{width:19px;height:19px}.dungeon-recovery{min-height:80px;gap:8px}.dungeon-recovery .dungeon-hunt>img{width:48px;height:48px}.base-main>.rogue-log{max-height:26px;padding:4px 10px}.rogue-log summary{font-size:10px}.rogue-lobby>.rogue-panel{padding:12px}.rogue-lobby .rogue-class-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.rogue-lobby .rogue-class-grid .rogue-character{width:45px;height:56.25px}.rogue-lobby .rogue-class-grid button{font-size:8px}.rogue-lobby p{font-size:13px}.rogue-lobby h2{font-size:18px}}
 
 .base-character-stats{height:auto;max-height:100%;align-self:start}.base-own-figure .rogue-character{max-width:none}
 @media(max-width:760px){.base-character-stats{border-image-width:13px;padding:7px}.base-forge-detail{border-image-width:12px}.base-merchant-panel{border-image-width:16px}.base-own-figure .rogue-character{max-width:none}}
