@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "ordinary actions use CSS frames, not stretched bitmap borders",
+    "history is a modal opened from the campaign last-action strip",
+    "Escape closes history without moving the page",
+    "chronicle colors and reading font match computed campaign styles",
+    "history fits 1366x768",
+    "history fits 390x844",
+    "history fits 320x568"
+  ],
+  "chronicle": {
+    "background": "linear-gradient(90deg, rgb(21, 16, 12), rgb(42, 27, 17), rgb(21, 16, 12))",
+    "borderTop": "rgb(114, 81, 45)",
+    "borderBottom": "rgb(114, 81, 45)",
+    "font": "\"RPG Leitura\", Georgia, serif",
+    "fontSize": "17px"
+  },
+  "campaignReference": {
+    "background": "linear-gradient(90deg, rgb(21, 16, 12), rgb(42, 27, 17), rgb(21, 16, 12))",
+    "borderTop": "rgb(114, 81, 45)",
+    "borderBottom": "rgb(114, 81, 45)",
+    "font": "\"RPG Leitura\", Georgia, serif",
+    "fontSize": "17px"
+  },
+  "errors": []
+}

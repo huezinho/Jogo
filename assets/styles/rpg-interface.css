@@ -1,0 +1,46 @@
+/* Shared campaign components. Frames reserve their actual border area. */
+@font-face{font-family:'RPG Cinzel';src:url('../visual/fonts/cinzel-variable.ttf') format('truetype');font-weight:400 900;font-display:swap}
+/* Action controls follow the campaign's simple, metal-edged turn controls. */
+body.rogue-page button[data-ui=action]{position:relative;min-width:0;min-height:42px;padding:9px 15px;border:1px solid #9c7d47;border-image:none;border-radius:3px;background:linear-gradient(#392b1e,#241a11);color:#f1dfb7;font:650 14px/1.35 'RPG Cinzel',Georgia,serif;text-shadow:0 1px 2px #000;box-shadow:inset 0 1px #e6c47d20,inset 0 0 0 2px #17110b80,0 2px 4px #0004;white-space:normal;overflow-wrap:normal;transition:background .15s,border-color .15s}
+body.rogue-page button[data-ui=action]:hover:not(:disabled){border-color:#ddbb76;background:linear-gradient(#513b25,#302216);filter:none;transform:none}
+body.rogue-page button[data-ui=action]:is(.primary,.selected,[aria-pressed=true]){border-color:#d6ae64;background:linear-gradient(#594126,#342418);color:#fff0c9;box-shadow:inset 0 -2px #bc9148}
+body.rogue-page button[data-ui=action]:disabled{opacity:.55;filter:none;color:#c4b69e;border-color:#766448;background:#282119;box-shadow:none}
+body.rogue-page button[data-ui=action]:focus-visible{outline:2px solid #ffe0a0;outline-offset:3px}
+/* The chronicle is the same last-action strip in the campaign and dungeon. */
+.rpg-chronicle{display:flex;align-items:center;justify-content:center;gap:14px;min-width:0;min-height:43px;padding:5px 30px;background:linear-gradient(90deg,#15100c,#2a1b11,#15100c);border-top:1px solid #72512d;border-bottom:1px solid #72512d;color:#ecdbb7;flex-shrink:0}
+.rpg-chronicle>span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80%;font:550 17px/1.35 'RPG Leitura',Georgia,serif;color:#e7ddc6}
+.rpg-chronicle>button{flex:0 0 auto;width:auto}
+body.rogue-page .rpg-chronicle>button[data-ui=action]{min-height:30px;padding:4px 10px;font-size:12px}
+/* Skill cards, paintings and equipment slots keep their own independent frames. */
+body.rogue-page .rogue-command{background:linear-gradient(#23170e,#1a110c);border:0;box-shadow:inset 0 1px #977242,inset 0 -1px #070604}
+body.rogue-page .rogue-command .rogue-utilities>button[data-ui=action]{min-height:36px;padding:5px 2px;font-size:11px;border:1px solid #9c7d47;border-image:none}
+body.rogue-page .base-paper{background:#dec69a;border:23px solid transparent;border-image:url('../visual/hud/panel-parchment.webp') 70 75 fill;border-image-width:1;padding:10px 12px;color:#35251b;filter:drop-shadow(0 3px 5px #0004);text-shadow:none}
+.base-paper :is(h2,h3,p,small,dt,dd){text-shadow:none}
+.base-paper h2{font:650 20px/1.35 'RPG Cinzel',Georgia,serif}.base-paper h3{font:650 15px/1.4 'RPG Cinzel',Georgia,serif}.base-paper p{font:550 17px/1.45 'RPG Leitura',Georgia,serif}
+.base-forge-detail .base-item-description,.base-forge-detail .base-upgrade-preview{margin:12px 0;line-height:1.65}.base-forge-detail .base-upgrade-preview{color:#315325}
+.base-forge-detail .base-price{font-size:17px;padding:12px 0}.base-forge-detail>button[data-ui=action]{margin-top:5px}
+body.rogue-page .base-rest>button[data-ui=action]{font-size:13px;min-height:38px;padding:7px 12px}
+body.rogue-page .dungeon-hunt{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:12px;min-height:64px;min-width:0;padding:7px 16px;border:1px solid #9c7d47;border-image:none;border-radius:3px;background:linear-gradient(#392b1e,#241a11);box-shadow:inset 0 1px #e6c47d20,inset 0 0 0 2px #17110b80;color:#f1dfb7}
+.dungeon-hunt>img{width:48px;height:48px;object-fit:contain;flex-shrink:0}.dungeon-hunt>span{font:650 14px/1.35 'RPG Cinzel',Georgia,serif;text-align:left}
+body.rogue-page .dungeon-hunt:disabled{opacity:.5;filter:saturate(.4)}
+body.rogue-page .base-exit{display:grid;place-items:center;width:50px;height:50px;flex:0 0 50px;border:1px solid #765b36;border-image:none;border-radius:3px;background:#21180fc9;padding:5px;box-shadow:inset 0 0 0 2px #17110b80}
+.base-exit>img{width:38px;height:38px;object-fit:contain}
+.base-hall-controls{gap:10px;padding:12px 20px}.base-hall-controls>div:last-child{gap:12px}.base-hall-controls .base-exit{margin:0}
+/* History opens in the campaign-style dialog, instead of expanding the page. */
+#rogueDialog.base-dialog[data-kind=history]{width:min(720px,calc(100vw - 30px));height:fit-content;max-height:calc(100dvh - 40px);padding:26px;border:3px double #bb9456;border-radius:0;background:#22170f;color:#f1dfb7;box-shadow:0 20px 100px #000d;overflow:hidden}
+#rogueDialog[data-kind=history] .base-modal-header{gap:15px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid #98723d}
+#rogueDialog[data-kind=history] .base-modal-header h2{font:650 22px/1.35 'RPG Cinzel',Georgia,serif}
+#rogueDialog[data-kind=history] .base-modal-header>button[data-ui=action]{width:auto;min-width:0;min-height:34px;padding:5px 10px!important;font:650 12px/1.35 'RPG Cinzel',Georgia,serif!important;background:linear-gradient(#392b1e,#241a11)!important}
+.rpg-history-lines{min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#947143 #19120d;overscroll-behavior:contain}
+.rpg-history-lines p{border-bottom:1px solid #654b2e;padding:8px 0;margin:0;color:#e8d3aa;font:650 14px/1.5 'RPG Cinzel',Georgia,serif}
+@media(max-width:760px){
+ .rpg-chronicle{padding:5px 10px;gap:8px;justify-content:space-between;min-height:40px}.rpg-chronicle>span{flex:1;max-width:none;font-size:17px}body.rogue-page .rpg-chronicle>button[data-ui=action]{font-size:11px;min-height:28px;padding:4px 8px}
+ body.rogue-page button[data-ui=action]{min-height:34px;padding:6px 9px;font-size:11px}
+ body.rogue-page .base-paper{border-width:13px;padding:7px;filter:none}.base-paper h2{font-size:13px}.base-paper h3{font-size:12px}.base-paper p{font-size:13px;line-height:1.4}.base-forge-detail .base-price{font-size:12px;padding:8px 0}.base-forge-detail .base-item-description,.base-forge-detail .base-upgrade-preview{margin:8px 0;line-height:1.5}
+ body.rogue-page .base-rest>button[data-ui=action]{font-size:10px;min-height:30px;padding:5px 7px}
+ .base-hall-controls{padding:8px 10px;gap:6px}.base-hall-controls>div:last-child{gap:6px}.base-hall-controls button[data-ui=action]{flex:1}body.rogue-page .dungeon-hunt{min-height:46px;padding:5px 8px;gap:7px}.dungeon-hunt>img,.base-hall-controls .dungeon-hunt>img{width:36px;height:36px}.dungeon-hunt>span{font-size:11px}body.rogue-page .base-exit{width:40px;height:40px;flex:0 0 40px;padding:4px}.base-exit>img{width:30px;height:30px}
+ body.rogue-page .rogue-command .rogue-utilities>button[data-ui=action]{font-size:9px;padding:4px 2px;min-height:32px}
+ #rogueDialog.base-dialog[data-kind=history]{width:calc(100vw - 20px);max-height:calc(100dvh - 24px);padding:16px}#rogueDialog[data-kind=history] .base-modal-header{gap:8px}#rogueDialog[data-kind=history] .base-modal-header h2{font-size:18px}.rpg-history-lines p{font-size:14px}
+}
+
+#rogueDialog[data-kind=history]::backdrop{background:#080705ce;backdrop-filter:blur(3px)}

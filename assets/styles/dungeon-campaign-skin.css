@@ -1,9 +1,6 @@
 /* The campaign's fonts, frames and square ability presentation. */
 @font-face{font-family:'RPG Leitura';src:url('../visual/fonts/eb-garamond-variable.ttf') format('truetype');font-weight:400 800;font-display:swap}
 .rogue-page{--ink:#f6e6bf;--muted:#d1c09b;--gold:#d6ae64;--edge:#765b36;font-family:'RPG Leitura',Georgia,serif!important;font-size:17px!important;font-weight:550}
-.rogue-page button{font-family:RogueTitle,Georgia,serif;font-weight:650;background:#201711;border:16px solid transparent;border-image:url('../visual/hud/button-normal.webp') 35 80 fill / 16px 34px / 0 stretch;border-radius:0;box-shadow:none;padding:1px 8px;text-shadow:0 1px 2px #000;min-height:44px}
-.rogue-page button.primary,.rogue-page button.selected{border-image-source:url('../visual/hud/button-active.webp');box-shadow:none!important}
-.rogue-page button:disabled{border-image-source:url('../visual/hud/button-disabled.webp')}
 .rogue-shell{max-width:1600px;width:100%;min-height:100dvh;background:#17110d;margin:auto}
 .rogue-page .rogue-panel{background:#21170ff5;border:1px solid #765b36;border-radius:0;box-shadow:none}
 .rogue-page :is(p,small,label,input,select,#rogueTooltip){font-family:'RPG Leitura',Georgia,serif}
