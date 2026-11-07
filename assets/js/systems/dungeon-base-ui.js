@@ -13,7 +13,7 @@ const DungeonBaseUI=(()=>{
   const reserved=i=>state().trades.some(t=>t.status==='pending'&&t.uid===i.uid);
   const sellPrice=(h,i)=>E.withHero(state(),h,null,()=>getSellPrice(i));
   const nextItem=(h,i)=>i?.type==='equipment'?E.withHero(state(),h,null,()=>EquipmentSystem.upgradeItem(i)):null;
-  const upgradeCost=(h,i,next)=>Math.max(10,sellPrice(h,next)-sellPrice(h,i));
+  const upgradeCost=(h,i,next)=>E.upgradePrice(state(),h,i);
   function stats(h){const c=E.stats(state(),h);return `<dl class="base-stats">${[['Vida',c.maxHp],['Mana',c.maxMp],['Ataque',c.attack],['Poder de habilidade',c.power],['Resistência',c.armor],['Crítico',(c.crit*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%']].map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;}
   function itemSlot(i,action,data={},selected=false){return btn(`${imgFor(i)}${reserved(i)?'<span class="base-reserved">Reservado</span>':''}`,action,data,false,`class="base-item-slot rarity-${i.rarity||'comum'}" aria-label="${esc(i.name)}" aria-pressed="${selected}" data-tip="${esc(i.name+'\n'+itemText(i,hero()))}"`);}
   const imgFor=i=>`<img src="${esc(getItemSpritePath(i))}" alt="${esc(i.name)}" draggable="false">`;

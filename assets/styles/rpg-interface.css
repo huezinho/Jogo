@@ -44,3 +44,5 @@ body.rogue-page .base-exit{display:grid;place-items:center;width:50px;height:50p
 }
 
 #rogueDialog[data-kind=history]::backdrop{background:#080705ce;backdrop-filter:blur(3px)}
+
+.dungeon-allocation{flex-shrink:0;max-height:230px;overflow:auto;margin:0!important;padding:12px!important}.dungeon-allocation>div{display:flex;gap:12px}.dungeon-allocation label{flex:1;min-width:0;margin:4px 0}.dungeon-allocation input{min-height:30px;padding:4px}.dungeon-allocation h3{font-size:14px;margin:0}.dungeon-allocation button{margin-top:5px}

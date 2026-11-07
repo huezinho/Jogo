@@ -98,3 +98,7 @@ node scripts/test-dungeon-journey-network.cjs
 A rota/XP é verificada simulando vitórias em todas as 84 batalhas, para um, dois e três integrantes. Isso verifica progressão e estados, sem afirmar que todas as classes vencem todos os confrontos. As 129 habilidades são exercitadas separadamente, abrangendo as 28 classes e subclasses.
 
 Os efeitos usam o nome da habilidade e detalhes no popup. [Ajustes compartilhados de turnos, sangramento e interface](../qa/ajustes_combate_interface_v5.md).
+
+## Revisão de progressão e economia v8
+
+A distribuição automática foi substituída por um ponto livre por nível. O jogador escolhe força, vitalidade ou sabedoria entre encontros, e precisa concluir a distribuição antes de prosseguir. Investimentos existentes em jornadas salvas são preservados. O ouro de vitória é o dobro da fórmula anterior. Equipamentos continuam usando as definições e fórmulas da campanha, com normalização da mochila ao subir de nível e da oferta ao comprar. Aprimorar custa dez vezes o custo em moedas da melhoria correspondente na campanha; não exige materiais. A vida e o ataque dos inimigos usam a fórmula escalável de `getEnemyStats`, incluindo `template.hp + 18L` e `template.attack + 2L`, com os multiplicadores da região; o ajuste de vida para chefes em grupo permanece. Essas regras substituem os valores e a distribuição automática descritos nas seções históricas acima.
