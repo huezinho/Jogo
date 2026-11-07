@@ -1,0 +1,19 @@
+{
+  "transport": "real PeerJS WebRTC",
+  "players": 3,
+  "checks": [
+    "three real WebRTC peers connected",
+    "guest cannot start expedition",
+    "rejected intent does not change state",
+    "all peers receive paths and encounter",
+    "guest cannot act as another hero or inject stats",
+    "each owner can resolve its turn and all clients synchronize",
+    "replayed sequence never adds a guest action",
+    "host detects disconnected owner",
+    "reconnection restores existing hero without duplication",
+    "snapshot equality across peers",
+    "snapshot equality across peers",
+    "snapshot equality across peers"
+  ],
+  "errors": []
+}

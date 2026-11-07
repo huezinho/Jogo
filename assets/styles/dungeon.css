@@ -90,3 +90,35 @@
   font-size:13px;
   line-height:1.45;
 }
+
+/* Dungeon visual foundation: the same stone, leather, brass and typography as campaign. */
+@font-face{font-family:DungeonTitle;src:url('../visual/fonts/cinzel-variable.ttf') format('truetype');font-weight:100 900;font-display:swap}
+.dungeon-page{background:linear-gradient(#100d0ae8,#100d0aef),url('../visual/backgrounds/scenes/dungeon-entrance-v1.webp') center/cover fixed;color:#ead8b4;font-family:Georgia,serif}
+.dungeon-page .container{max-width:1460px;width:calc(100% - 40px);margin:auto}
+.dungeon-page :is(h1,h2,h3,button){font-family:DungeonTitle,Georgia,serif}
+.dungeon-page-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;border-bottom:1px solid #665035;margin-bottom:20px}
+.dungeon-page-header h1{margin:2px 0;color:#f4dfaf;font-size:30px}.dungeon-page-header span{color:#b79a65;font-size:12px;letter-spacing:2px;text-transform:uppercase}.dungeon-page-header p{color:#bfae90;max-width:240px;text-align:right;font-size:14px;line-height:1.5}.dungeon-page-header a{color:#ead6a8;text-decoration:none;border:1px solid #80643b;border-radius:3px;padding:10px 16px;background:#241a11}
+.dungeon-page[data-dungeon-phase=lobby] .game-layout{grid-template-columns:minmax(0,1fr) 330px;align-items:start;gap:18px}
+.dungeon-page[data-dungeon-phase=lobby] .game-layout>.side-column:first-child,.dungeon-page[data-dungeon-phase=lobby] #playerInfo{display:none}
+.dungeon-page[data-dungeon-phase=lobby] #enemyInfo{padding:0;overflow:hidden}
+.dungeon-entrance-scene{position:relative;min-height:680px;background:linear-gradient(#140f0750,transparent 45%,#130e09ec),url('../visual/backgrounds/scenes/dungeon-entrance-v1.webp') center/cover;display:flex;flex-direction:column;justify-content:space-between;border:1px solid #92713f}
+.dungeon-entrance-scene>header{padding:32px;text-align:center;text-shadow:0 2px 6px #000}
+.dungeon-entrance-scene h2{font-size:32px;margin:8px 0;color:#f9e3b7}.dungeon-entrance-scene header p{font-size:15px;color:#dfcaab}.dungeon-eyebrow{font:12px DungeonTitle,Georgia,serif;color:#d4ad67;letter-spacing:2px}
+.dungeon-party-dock{margin:20px;padding:18px;background:#18120de8;border:1px solid #755d3b;box-shadow:0 5px 18px #0006}
+.dungeon-party-dock h3{margin:0 0 12px;font-size:15px}.dungeon-party-dock h3 small{float:right;color:#bda374}.dungeon-party-invite{font-size:14px;color:#cab697;line-height:1.5}.dungeon-party-dock .party-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.dungeon-page .panel{border:1px solid #745b38;border-radius:3px;background:#1d160fee}.dungeon-page button{border:1px solid #95703e;border-image:url('../visual/hud/button-normal.webp') 40 80 fill / 15px 25px / 0 stretch;border-radius:3px;background:#2c2014;color:#f2dfb9;font-size:12px;min-height:42px;padding:10px 16px}.dungeon-page button:disabled{opacity:.45}.dungeon-page .text-input{box-sizing:border-box;width:100%;background:#120e0a;border:1px solid #7b603b;color:#f2dfb9;padding:11px}.dungeon-page :is(.inventory-item,.party-entry){border-radius:3px;border-color:#645034;background:#251b12}.dungeon-page .lock-note{font:14px/1.55 Georgia,serif;color:#c7b390}.dungeon-page .party-entry-head strong{font-size:13px}
+.dungeon-page #inventoryInfo{max-height:300px;overflow:auto}.dungeon-page .dungeon-enemy-tile,.dungeon-page .dungeon-battle-card,.dungeon-page .dungeon-rest-card{border-radius:3px;border-color:#7b613c;background:#20170fea}
+@media(max-width:900px){.dungeon-page[data-dungeon-phase=lobby] .game-layout{grid-template-columns:minmax(0,1fr)}.dungeon-page-header p{display:none}.dungeon-entrance-scene{min-height:580px}}
+@media(max-width:480px){.dungeon-page .container{width:calc(100% - 20px)}.dungeon-page-header{padding:16px 0}.dungeon-page-header h1{font-size:23px}.dungeon-entrance-scene{min-height:520px}.dungeon-entrance-scene>header{padding:24px 12px}.dungeon-entrance-scene h2{font-size:25px}.dungeon-party-dock{margin:12px;padding:12px}}
+
+.dungeon-page[data-dungeon-phase=lobby] #actions{display:none}
+
+.dungeon-page .container{padding:0;background:transparent;border-radius:0;box-shadow:none}
+.dungeon-page[data-dungeon-phase=lobby] .main-column{display:contents}
+.dungeon-page[data-dungeon-phase=lobby] #enemyInfo{order:1}
+.dungeon-page[data-dungeon-phase=lobby] .game-layout>.side-column:last-child{order:2}
+.dungeon-page[data-dungeon-phase=lobby] #logPanel{order:3;grid-column:1/-1;max-height:180px;overflow:auto}
+.dungeon-page[data-dungeon-phase=lobby] #log{min-height:0;max-height:90px}
+.dungeon-page[data-dungeon-phase=lobby] #regionInfo>.lock-note{display:none}
+.dungeon-page .dungeon-rules summary{cursor:pointer;color:#d8b77c;font:13px DungeonTitle,Georgia,serif;padding:5px 0}
+.dungeon-page[data-dungeon-phase=lobby] #settingsFab{position:static;display:block;margin:16px auto}

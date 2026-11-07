@@ -127,19 +127,19 @@ const CampaignEnemyCombat = (() => {
     player.hp=Math.max(0,player.hp-actual);EquipmentSystem.afterIncoming(player,playerEffects,enemy,{damage:actual,periodic:true,shieldAbsorbed:0});log(`${label}: ${actual} de dano.`);
   }
   function heroEnd(){
-    if(!enabled(enemy))return false;const s=state(),h=s.hero;
+    if(!enabled(enemy)||enemy.hp<=0)return false;const s=state(),h=s.hero;
     for(const kind of ['poison','bleed'])if(playerEffects[kind+'Stacks']?.length)trueDot(tickPeriodicStacks(playerEffects,kind),kind==='poison'?'Veneno':'Sangramento');
+    if(h.deathmark&&--h.deathmark===0){const r=applyIncomingDamage(player.hp,{ignoreFlatReduction:true,ignoreShield:true,ignorePreciousMana:true,ignorePercentReduction:true,ignoreDodge:true});log(`Marca da Morte: ${r.damage} de dano.`);}
+    if(h.haunt&&--h.haunt===0){log('Assombrar forcou a fuga.');consumeLuckBattle(enemy);enemy=null;resetCombatEffects();isProcessingTurn=false;needsNewEnemy=true;updateUI();queueCampaignSave();return true;}
     if(h.doom){trueDot(getCurrentCaps().maxHp*h.doom*.01,'Fim Inadiavel');h.doom++;}
+    if(h.glare>0){if(Math.random()<.15)playerEffects.skipNextTurn=true;h.glare--;}
     heroCheck();if(player.hp<=0){handleDeath('Os efeitos do inimigo derrotaram seu heroi.');return true;}return false;
   }
   function heroStart(){
     if(!enabled(enemy))return false;const s=state(),h=s.hero;
-    if(h.deathmark&&--h.deathmark===0){const r=applyIncomingDamage(player.hp,{ignoreFlatReduction:true,ignoreShield:true,ignorePreciousMana:true,ignorePercentReduction:true,ignoreDodge:true});log(`Marca da Morte: ${r.damage} de dano.`);}
-    if(h.haunt&&--h.haunt===0){log('Assombrar forcou a fuga.');consumeLuckBattle(enemy);enemy=null;resetCombatEffects();isProcessingTurn=false;needsNewEnemy=true;updateUI();queueCampaignSave();return true;}
-    if(h.glare>0){if(Math.random()<.15)playerEffects.skipNextTurn=true;h.glare--;}
     heroCheck();if(player.hp<=0){handleDeath('Os efeitos do inimigo derrotaram seu heroi.');return true;}return false;
   }
-  function status(e){if(!enabled(e))return[];const s=state(e),out=[];if(s.charge)out.push({kind:'buff',text:s.charge.ability.name,details:`Preparando: ${s.charge.left} turno(s) ate o impacto.`});for(const[k,name]of Object.entries({rest:'Renascido: sem atacar',retaliation:'Escamas Ardentes',pact:'Pacto Funebre',double:'Ataque Duplo',dominion:'Dominio Crepuscular',regen:'Regeneracao',attack:'Dano aumentado'}))if(s.timers[k]>0)out.push({kind:'buff',text:name,details:`${s.timers[k]} turno(s)`});if(passives[index(e.baseName)])out.push({kind:'buff',text:passives[index(e.baseName)],details:passiveDescriptions[index(e.baseName)]});return out;}
+  function status(e){if(!enabled(e))return[];const s=state(e),out=[];if(s.charge)out.push({kind:'buff',text:s.charge.ability.name,details:`Preparando: ${s.charge.left} turno(s) ate o impacto.`});for(const[k,name]of Object.entries({rest:'Renascido: sem atacar',retaliation:'Escamas Ardentes',pact:'Pacto Funebre',double:'Ataque Duplo',dominion:'Dominio Crepuscular',regen:'Regeneracao',attack:'Dano aumentado'}))if(s.timers[k]>0)out.push({kind:'buff',text:s.timerSources?.[k]||name,details:(kit(e.baseName).find(a=>a.name===s.timerSources?.[k])?.description||name)+'\n'+s.timers[k]+' turno(s)'});if(passives[index(e.baseName)])out.push({kind:'buff',text:passives[index(e.baseName)],details:passiveDescriptions[index(e.baseName)]});return out;}
   const passiveDescriptions={6:'Ao ser atacado, aplica veneno de 9 por 3 turnos.',18:'Uma vez por combate: ao sofrer dano fatal recupera 100% da vida e nao ataca por 3 turnos.',27:'Quando perde o turno ou o heroi esquiva, causa um ataque basico adicional.',35:'Dano total +1% por turno.',37:'Remove qualquer buff que o heroi receber.',39:'A cada turno cura 4% da vida maxima e acumula escudo de 6%.',41:'Comeca com escudo de 80% da vida maxima por 14 turnos.',43:'30% de esquiva; ao esquivar gera escudo de 15%. Executa o heroi com 5 ou mais debuffs/DOTs.',44:'Reduz o dano do heroi em 2 pontos percentuais por turno.',47:'Aumenta a armadura em 22 por turno.'};
   function heroStatus(){if(!enabled(enemy))return[];const s=state(),h=s.hero,out=[];for(const[k,name]of Object.entries({haunt:'Assombrar: fuga em',deathmark:'Marca da Morte:',glare:'Clarao Absoluto:'}))if(h[k])out.push(`${name} ${h[k]} turno(s)`);if(h.reap)out.push('Ceifar Alma: execucao em 30% de vida');if(s.timers.dominion>0)out.push(`Sob Dominio | ${s.timers.dominion} turno(s)`);if(h.doom)out.push(`Fim Inadiavel: ${h.doom}% da vida maxima na proxima rodada (irremovivel)`);for(const kind of ['poison','bleed'])if(playerEffects[kind+'Stacks']?.length)out.push(`${kind==='poison'?'Veneno':'Sangramento'}: `+playerEffects[kind+'Stacks'].map(x=>`${x.damage}/turno, ${x.turns} turnos`).join('; '));return out;}
   function choose(){
@@ -187,8 +187,9 @@ const CampaignEnemyCombat = (() => {
     if(charged)log(`${enemy.baseName} liberou ${a.name}.`);
     if(a.rewind)rewind();if(a.cleanse)purge();if(a.fullHeal)heal(enemy.maxHp);if(a.heal)heal(enemy.maxHp*a.heal);
     if(a.regen){s.regen=a.regen;s.timers.regen=a.turns;}if(a.attackBonus){s.attackBonus=a.attackBonus;s.timers.attack=a.turns;}
-    if(a.shield||a.shieldFlat)shield(enemy.maxHp*(a.shield||0)+(a.shieldFlat||0));
+    if(a.shield||a.shieldFlat){shield(enemy.maxHp*(a.shield||0)+(a.shieldFlat||0));(enemy.effectSources||={}).shieldValue=a.name;}
     for(const k of ['retaliation','pact','double','dominion'])if(a[k])s.timers[k]=a[k];
+    s.timerSources||={};for(const key of ['retaliation','pact','double','dominion'])if(a[key])s.timerSources[key]=a.name;if(a.regen)s.timerSources.regen=a.name;if(a.attackBonus)s.timerSources.attack=a.name;
     if(a.dominion){getPassiveModifiers();transferBuffs();}
     // Debuffs from non-damaging casts still require a successful hit check.
     const hostile=a.power!==undefined||a.poison||a.poisonMana||a.burn||a.bleed||a.deathmark||a.reap||a.doom||a.damageDown||a.skip||a.drain;
@@ -206,9 +207,9 @@ const CampaignEnemyCombat = (() => {
     if(a.poisonMana)addPeriodicStack(playerEffects,'poison',Math.floor(player.mp*a.poisonMana),a.turns,a.name);
     if(a.burn)applyBurning(playerEffects,Math.max(1,Math.floor(getCurrentCaps().maxHp*a.burn)),a.turns,a.name);
     if(a.bleed||a.bleedPercent)addPeriodicStack(playerEffects,'bleed',a.bleed||Math.floor(result.damage*a.bleedPercent),a.turns,a.name);
-    if(a.damageDown){playerEffects.damageDownPercent=Math.max(playerEffects.damageDownPercent||0,a.damageDown);playerEffects.damageDownTurns=Math.max(playerEffects.damageDownTurns||0,a.turns);}
-    if(a.healDown){playerEffects.healReductionPercent=Math.max(playerEffects.healReductionPercent||0,a.healDown);playerEffects.healReductionTurns=Math.max(playerEffects.healReductionTurns||0,a.turns);}
-    if(a.haunt)h.haunt=a.haunt+1; // Two complete player rounds before forced flight.
+    if(a.damageDown){(playerEffects.effectSources||={}).damageDownTurns=a.name;playerEffects.damageDownPercent=Math.max(playerEffects.damageDownPercent||0,a.damageDown);playerEffects.damageDownTurns=Math.max(playerEffects.damageDownTurns||0,a.turns);}
+    if(a.healDown){(playerEffects.effectSources||={}).healReductionTurns=a.name;playerEffects.healReductionPercent=Math.max(playerEffects.healReductionPercent||0,a.healDown);playerEffects.healReductionTurns=Math.max(playerEffects.healReductionTurns||0,a.turns);}
+    if(a.haunt)h.haunt=a.haunt; // Countdown resolves after each completed hero action.
     if(a.deathmark)h.deathmark=a.deathmark;
     if(a.reap)h.reap=true;if(a.doom&&!h.doom)h.doom=1;if(a.skip)h.glare=a.turns;
     if(a.drain&&(!a.unshielded||playerEffects.shieldValue<=0)){const amount=Math.floor(player.mp*a.drain);player.mp-=amount;if(a.drainShield)shield(amount*a.drainShield);else enemy.mp=Math.min(enemy.maxMp,enemy.mp+amount);}

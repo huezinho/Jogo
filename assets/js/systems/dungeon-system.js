@@ -964,6 +964,11 @@
       </div>`).join("")}</div>`;
   }
 
+  window.renderDungeonEntranceScene = function(){
+    const members=getDungeonRoomMembers();
+    return `<section class="dungeon-entrance-scene"><header><span class="dungeon-eyebrow">Incursão cooperativa</span><h2>Além dos portões</h2><p>Reúna seu grupo. A descida começa aqui.</p></header><div class="dungeon-entrance-path" aria-hidden="true"></div><footer class="dungeon-party-dock"><h3>Companheiros de expedição <small>${members.length} / 3</small></h3>${getDungeonPartyListMarkup()}${!members.length?'<p class="dungeon-party-invite">Crie uma sala ou entre com o código de um companheiro.</p>':''}</footer></section>`;
+  };
+
   function renderDungeonRoomControls(){
     const canManageRoom = !isDead && player.hp > 0;
     const canStart = isDungeonHost() && getDungeonRoomMembers().length >= 2 && !hasActiveDungeonRun();
@@ -985,16 +990,11 @@
           </div>
           ${isDungeonHost() ? `<div class="button-row"><button onclick="startDungeonRaid()" ${canStart ? "" : "disabled"}>Adentrar dungeon</button></div>` : ""}
         </div>
-        <div class="inventory-item">
-          <strong>Progressao da run</strong><br>
+        <details class="inventory-item dungeon-rules"><summary>Percurso da expedição</summary>
           <span class="lock-note">Cada regiao possui 6 batalhas antes do chefao.</span><br>
           <span class="lock-note">As batalhas 1 e 2 so enfrentam inimigos comuns. As 3 e 4 misturam comuns e incomuns. As 5 e 6 podem trazer qualquer raridade da regiao.</span><br>
           <span class="lock-note">Se houver menos inimigos que herois, o nivel dos monstros sobe proporcionalmente.</span>
-        </div>
-      <div class="inventory-item">
-        <strong>Equipe</strong>
-        ${getDungeonPartyListMarkup()}
-      </div>
+        </details>
       </div>`; 
   }
 
@@ -2608,6 +2608,7 @@
     if(!player){
       return baseUpdateUI();
     }
+    document.body.dataset.dungeonPhase=isDungeonRunMode()?"run":"lobby";
     if(!isDungeonRunMode()){
       return baseUpdateUI();
     }
@@ -2794,7 +2795,7 @@
   };
 
   if(window.IS_DUNGEON_PAGE){
-    if(localStorage.getItem("rpg_turnos_campaign_v1")){
+    if(getCharacterSaves().length > 0 || GameStorage.getItem("rpg_turnos_campaign_v1")){
       if(typeof player === "undefined" || !player){
         continueCampaign();
       }else{

@@ -1,0 +1,7 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "assets/visual/hud/icon-exit-adventure.webp",
+  "date": "2026-11-06",
+  "reference": "assets/visual/hud/icon-find-enemy.webp",
+  "prompt": "Use case: stylized-concept. Asset type: square medieval fantasy RPG UI button icon. Reference image is STYLE reference only: match the antique golden ornate square frame, tiny red gemstone top center, hand-painted realistic fantasy game item icon style, warm brown and gold, high readability at 64px. Subject: one small rustic oak doorway with a rounded stone arch, door half open revealing warm daylight and a short stone path going outside. The door is clearly an EXIT from the adventure. Fill the interior of the square icon with the doorway. No text, no letters, no arrows, no people. Transparent pixels outside the ornate square frame; interior painted warm scene, no black rectangular background outside the frame."
+}

@@ -92,7 +92,7 @@ window.startCampaignBalance = function(config){
   const valhalla=available.find(skill=>skill.type==='warrior_valhalla');if(valhalla&&!playerEffects.enemyMaxHpBonusTurns&&player.hp>incoming*3&&enemy.hp>basic*5)return{index:valhalla.index};
   const smoke=available.find(skill=>skill.type==='warrior_smoke_bomb');if(smoke&&!playerEffects.nextIncomingAutoMiss&&!playerEffects.nextDamageBonusPercent&&enemy.hp>basic*2&&player.hp<H*.8)return{index:smoke.index};
   let selected=-1,best=basic;
-  for(const skill of available){let value=skill.damage||0;if(skill.hits)value=basic*skill.hits;if(skill.bleedPercent)value*=1+skill.bleedPercent*.75;if(skill.enemyAttackDownPercent&&!enemy.attackDownTurns)value+=incoming*skill.enemyAttackDownPercent*1.5;if(skill.skipChance)value+=incoming*skill.skipChance;value-=Math.max(0,skill.cost-getManaRegen())*.10;if(value>best+1){best=value;selected=skill.index;}}
+  for(const skill of available){let value=skill.damage||0;if(skill.hits)value=basic*skill.hits;if(skill.bleedMaxHpPercent)value+=enemy.maxHp*skill.bleedMaxHpPercent*3*.75;if(skill.bleedPercent)value*=1+skill.bleedPercent*.75;if(skill.enemyAttackDownPercent&&!enemy.attackDownTurns)value+=incoming*skill.enemyAttackDownPercent*1.5;if(skill.skipChance)value+=incoming*skill.skipChance;value-=Math.max(0,skill.cost-getManaRegen())*.10;if(value>best+1){best=value;selected=skill.index;}}
   return{index:selected};
  }
  function avoidBuff(skill){

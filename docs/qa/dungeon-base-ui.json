@@ -1,0 +1,31 @@
+{
+  "checks": [
+    "left map, campaign bag and coin counter on right, no former header",
+    "companion → profile/trade → backpack → item and coins offered, not transferred",
+    "empty slot → filtered backpack → equip",
+    "fixed backpack size across filters",
+    "map hit area → forge → improve equipped item",
+    "forge sells selected backpack item",
+    "camp rest restores both resources",
+    "cancelled offer releases item and refunds coins",
+    "alchemist selected offer purchase uses individual wallet",
+    "vendor selected offer purchase uses individual wallet",
+    "gambler stake and completed choice",
+    "camp fits 1366",
+    "camp fits 768",
+    "camp fits 390",
+    "camp fits 320",
+    "hall fits 1366",
+    "hall fits 768",
+    "hall fits 390",
+    "hall fits 320",
+    "forge fits 1366",
+    "forge fits 768",
+    "forge fits 390",
+    "forge fits 320",
+    "mobile full-map hit area selects camp",
+    "mobile backpack fits viewport"
+  ],
+  "errors": [],
+  "missing": []
+}

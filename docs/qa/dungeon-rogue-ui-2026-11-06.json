@@ -1,0 +1,113 @@
+{
+  "viewports": [
+    {
+      "phase": "lobby",
+      "width": 1366
+    },
+    {
+      "phase": "lobby",
+      "width": 390
+    },
+    {
+      "phase": "lobby",
+      "width": 320
+    },
+    {
+      "phase": "battle",
+      "width": 1366
+    },
+    {
+      "phase": "battle",
+      "width": 390
+    },
+    {
+      "phase": "battle",
+      "width": 320
+    },
+    {
+      "phase": "reward",
+      "width": 1366
+    },
+    {
+      "phase": "reward",
+      "width": 390
+    },
+    {
+      "phase": "reward",
+      "width": 320
+    },
+    {
+      "phase": "rest",
+      "width": 1366
+    },
+    {
+      "phase": "rest",
+      "width": 390
+    },
+    {
+      "phase": "rest",
+      "width": 320
+    },
+    {
+      "phase": "merchant",
+      "width": 1366
+    },
+    {
+      "phase": "merchant",
+      "width": 390
+    },
+    {
+      "phase": "merchant",
+      "width": 320
+    },
+    {
+      "phase": "event",
+      "width": 1366
+    },
+    {
+      "phase": "event",
+      "width": 390
+    },
+    {
+      "phase": "event",
+      "width": 320
+    },
+    {
+      "phase": "treasure",
+      "width": 1366
+    },
+    {
+      "phase": "treasure",
+      "width": 390
+    },
+    {
+      "phase": "treasure",
+      "width": 320
+    },
+    {
+      "phase": "guardian",
+      "width": 1366
+    },
+    {
+      "phase": "guardian",
+      "width": 390
+    },
+    {
+      "phase": "guardian",
+      "width": 320
+    }
+  ],
+  "storage": true,
+  "targeting": true,
+  "resume": true,
+  "preview": {
+    "level": [
+      31,
+      31,
+      31
+    ],
+    "rooms": 6
+  },
+  "errors": [],
+  "bad": []
+}

@@ -1,0 +1,12 @@
+{
+  "players": 3,
+  "transport": "real WebRTC",
+  "trade": true,
+  "tradeThroughBackpackUI": true,
+  "itemTransferredAfterAcceptance": true,
+  "individualWallets": true,
+  "readiness": true,
+  "combat": true,
+  "synchronized": true,
+  "errors": []
+}

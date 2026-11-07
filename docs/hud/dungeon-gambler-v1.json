@@ -1,0 +1,6 @@
+{
+  "tool": "image_gen.imagegen",
+  "prompt": "Original scene asset for a medieval fantasy browser RPG, wide landscape 3:2, painterly detailed fantasy illustration matching rustic blacksmith and inn game interiors: natural stone walls, wood, aged brass, warm amber lantern light, deep brown and muted green palette. A travelling gambler inside an old dungeon wayside tavern, seated on the left behind a small wooden table with dice, coins and leather purse. Friendly roguish hooded human, believable anatomy. Right half is quiet darker stone wall for a game UI panel. Full environment, no text, no letters, no numbers, no UI, no border. No neon, no cartoon, no glossy mobile game look.",
+  "source": "C:/Users/pcvas/.codex/generated_images/01a18b16-d920-7e12-8010-023a2b1d9140/exec-061a1cb6-ed05-427f-bbf9-452462642fad.png",
+  "asset": "assets/visual/backgrounds/scenes/dungeon-gambler-v1.webp"
+}

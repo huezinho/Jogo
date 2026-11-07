@@ -1,0 +1,77 @@
+{
+  "checks": 1864,
+  "abilityCasts": 129,
+  "forms": 28,
+  "gamblingWins": 502,
+  "flows": [
+    {
+      "players": 1,
+      "battles": 84,
+      "bosses": 12,
+      "levelsBeforeGuardians": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110,
+        120
+      ],
+      "finalLevels": [
+        120
+      ]
+    },
+    {
+      "players": 2,
+      "battles": 84,
+      "bosses": 12,
+      "levelsBeforeGuardians": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110,
+        120
+      ],
+      "finalLevels": [
+        120,
+        120
+      ]
+    },
+    {
+      "players": 3,
+      "battles": 84,
+      "bosses": 12,
+      "levelsBeforeGuardians": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110,
+        120
+      ],
+      "finalLevels": [
+        120,
+        120,
+        120
+      ]
+    }
+  ]
+}

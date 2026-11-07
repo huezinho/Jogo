@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "assets/visual/backgrounds/scenes/dungeon-guildhall-v1.webp",
+  "prompt": "Use case: stylized-concept. Asset type: landscape 16:9 background for an adventurers' gathering courtyard in a medieval fantasy RPG. The reference image is STYLE ONLY: use the same detailed hand-painted game illustration, warm natural daylight, saturated but earthy wood and stone, orange lantern accents, crisp attractive readable scenery. NEW SCENE: intimate stone-and-timber adventurers guild courtyard, open gateway to a leafy medieval village on the left, guildhall facade with red hanging banners and a broad open wooden door to the rear, wooden benches and supply crates at sides. Leave the entire lower middle courtyard floor clean and open for three full-body hero sprites; no furniture or objects in foreground center. Eye-level view, theatrical composition suitable for RPG campaign screen. Welcoming daytime adventure, not a dungeon, no cavern, no huge throne, no purple magic, no corridors, no people, no UI, no text, no lettering, no map.",
+  "date": "2026-11-06"
+}

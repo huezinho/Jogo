@@ -1,0 +1,31 @@
+{
+  "checks": [
+    "real potion selection then ally target",
+    "hall 1366",
+    "hall 390",
+    "hall 320",
+    "forge 1366",
+    "forge 390",
+    "forge 320",
+    "camp 1366",
+    "camp 390",
+    "camp 320",
+    "battle 1366",
+    "battle 390",
+    "battle 320",
+    "gambler 1366",
+    "gambler 390",
+    "gambler 320",
+    "alchemist 1366",
+    "alchemist 390",
+    "alchemist 320",
+    "vendor 1366",
+    "vendor 390",
+    "vendor 320",
+    "cave_pause 1366",
+    "cave_pause 390",
+    "cave_pause 320"
+  ],
+  "errors": [],
+  "missing": []
+}

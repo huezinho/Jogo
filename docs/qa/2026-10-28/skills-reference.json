@@ -223,7 +223,7 @@
           "name": "Vallhala",
           "type": "warrior_valhalla",
           "unlockLevel": 60,
-          "formula": "C = 100 + W; dano recebido × 2,5; adicional por dano causado = 0,15E",
+          "formula": "C = 100 + W; dano recebido × 2,12; adicional por dano causado = 0,15E",
           "conditions": "O bônus usa a vida máxima do inimigo; também aumenta o dano recebido."
         },
         {
@@ -339,14 +339,14 @@
           "name": "Golpes Velozes",
           "type": "warrior_swift_strikes",
           "unlockLevel": 30,
-          "formula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r; sangramento = 0,05E por turno, 3 turnos",
-          "conditions": "Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, por uso que cause dano. Aplicações acumulam."
+          "formula": "C = 44 + W; 2 ataques básicos; cada golpe usa A + r; cada golpe aplica sangramento = 0,05E por turno, 3 turnos",
+          "conditions": "Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, para cada golpe que cause dano. Os dois golpes aplicam sangramentos independentes, que acumulam."
         },
         {
           "name": "Corte Profundo",
           "type": "warrior_deep_cut",
           "unlockLevel": 50,
-          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3",
+          "formula": "C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,3 ÷ 3",
           "conditions": "Sangramento por 3 turnos; aplicações acumulam."
         },
         {
@@ -975,7 +975,7 @@
           "name": "Headshot",
           "type": "archer_headshot",
           "unlockLevel": 30,
-          "formula": "C = 60 + W; D = 60 + 0,4A + 0,85P + 0,35M; com Mirar, D × 1,1",
+          "formula": "C = 60 + W; D = 60 + 0,4A + 0,85P + 0,26M; com Mirar, D × 1,1",
           "conditions": "Crítico base de 10%; se não critar, o próximo golpe contra o alvo causa +15%."
         },
         {
@@ -989,7 +989,7 @@
           "name": "Emergencia Arcana",
           "type": "archer_arcane_shot",
           "unlockLevel": 60,
-          "formula": "C = 500; D = 60 + P + 0,75(M − m)",
+          "formula": "C = 500; D = 60 + P + 0,61(M − m)",
           "conditions": "Quanto mais mana faltar ao herói, maior a parcela adicional de dano."
         },
         {
@@ -1316,7 +1316,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P",
           "conditions": "Marca por 3 turnos; habilita as sinergias naturais."
         },
         {
@@ -1351,7 +1351,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
           "conditions": "Marca por 4 turnos, com dano periódico."
         },
         {
@@ -1406,7 +1406,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
           "conditions": "Marca por 4 turnos, com dano periódico."
         },
         {
@@ -1434,7 +1434,7 @@
           "name": "Apodrecer",
           "type": "nature_decay",
           "unlockLevel": 60,
-          "formula": "C = 40 + 0,5L; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno",
+          "formula": "C = 40 + W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno",
           "conditions": "Apodrecimento por 5 turnos."
         },
         {
@@ -1481,7 +1481,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno",
           "conditions": "Marca por 4 turnos, com dano periódico."
         },
         {
@@ -1556,7 +1556,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
           "conditions": "Marca por 3 turnos; habilita as sinergias naturais."
         },
         {
@@ -1611,7 +1611,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
           "conditions": "Marca por 3 turnos; habilita as sinergias naturais."
         },
         {
@@ -1686,7 +1686,7 @@
           "name": "Semente Viva",
           "type": "nature_living_seed",
           "unlockLevel": 1,
-          "formula": "C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
+          "formula": "C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24%",
           "conditions": "Marca por 3 turnos; habilita as sinergias naturais."
         },
         {

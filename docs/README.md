@@ -9,6 +9,9 @@
 - [Análise do Mago](analise_mago_2026-11-04.md)
 - [Regras de inimigos e DOTs](balanceamento/inimigos_2026-11-04.md)
 - [Regras do Mago](balanceamento/mago_2026-11-04.md)
+- [Dungeon roguelite: sistema e progressão](dungeon/sistema_roguelite.md)
+- [Dungeon: habilidades, alvos e inimigos](dungeon/referencia_habilidades.md)
+- [Dungeon: validação da implementação](qa/dungeon-journey-validation.md)
 - [Testes e reprodução](qa/README.md)
 
 As referências atuais substituem as análises de versões anteriores. Evidências recentes e ferramentas ainda importadas pelos testes foram mantidas. O histórico removido continua disponível nos commits anteriores do Git.

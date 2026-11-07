@@ -24,7 +24,7 @@ function consumeQueuedPageMode(){
 }
 
 function navigateToGamePage(mode){
-  if(["dungeon", "dungeon_run", "arena", "arena_run"].includes(mode) && typeof blockCombatWhileResting === "function" && blockCombatWhileResting()){ return false; }
+  if(["arena", "arena_run"].includes(mode) && typeof blockCombatWhileResting === "function" && blockCombatWhileResting()){ return false; }
   queuePageMode(mode);
   if(["dungeon", "dungeon_run"].includes(mode)){
     location.href = DUNGEON_PAGE_PATH;

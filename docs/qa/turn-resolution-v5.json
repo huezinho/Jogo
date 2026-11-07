@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "swift returns two individual hits",
+    "each Samurai hit adds its own 5% maximum-HP bleed",
+    "enemy status uses skill name and detailed bleed tooltip",
+    "samurai deep cut includes 8% current HP",
+    "samurai deep cut uses 30% bleed",
+    "samurai actual bleed matches damage after mitigation",
+    "ninja deep cut includes 8% current HP",
+    "ninja deep cut uses 30% bleed",
+    "ninja actual bleed matches damage after mitigation",
+    "hero buff is labelled by granting skill",
+    "burn ticks after skipped enemy action",
+    "last burn tick deals damage before expiry",
+    "legacy burn summary is preserved and ticked",
+    "one-turn damage debuff applies to action before expiring",
+    "haunt does not force flight before action",
+    "killing attack resolves before haunt deadline",
+    "surviving haunt source forces flight after action",
+    "death mark waits until action ends",
+    "killing attack cancels death mark resolution",
+    "campaign plays two complete basic attack animations",
+    "campaign shows each impact HP sequentially"
+  ]
+}

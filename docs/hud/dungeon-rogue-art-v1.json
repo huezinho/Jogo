@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-06",
+  "tool": "image_gen.imagegen",
+  "reference": "assets/visual/backgrounds/scenes/dungeon-entrance-v1.webp",
+  "images": [
+    {
+      "id": "battle",
+      "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a18b16-d920-7e12-8010-023a2b1d9140\\exec-7243683d-1425-40b7-951e-e04ec1f11e4e.png",
+      "asset": "assets/visual/backgrounds/scenes/dungeon-battle-rogue-v1.webp",
+      "prompt": "New background for the same medieval fantasy RPG. Match reference art exactly in painterly realistic textured style, warm amber torches, aged stone and brass, subdued dark brown and deep green, no cartoon, no neon. Wide 3:2 illustration, no text, no UI, no frame, no people except when specifically requested. Composition leaves quiet darker edges for interface panels. An underground vaulted hall for a turn-based party battle. Broad open stone floor across the foreground, shallow staircase and shadowy arch at center background, two stone pillars and torch braziers at outer sides, drifting dust. Enemy silhouettes will be overlaid in the upper middle and heroes in the lower foreground; keep these clear. No creatures or characters."
+    },
+    {
+      "id": "sanctuary",
+      "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a18b16-d920-7e12-8010-023a2b1d9140\\exec-04798488-ba1a-4faf-85ad-a32359ae3ed9.png",
+      "asset": "assets/visual/backgrounds/scenes/dungeon-sanctuary-rogue-v1.webp",
+      "prompt": "New background for the same medieval fantasy RPG. Match reference art exactly in painterly realistic textured style, warm amber torches, aged stone and brass, subdued dark brown and deep green, no cartoon, no neon. Wide 3:2 illustration, no text, no UI, no frame, no people except when specifically requested. Composition leaves quiet darker edges for interface panels. A hidden sanctuary inside the dungeon, ancient round stone fountain with clear softly turquoise water, small overgrown roots and candles, carved tree relief behind the fountain, a stone bench and bedroll at the side. Safe and warm but consistent with a dark dungeon. No characters. Fountain in center-left, quiet stone wall to the right for a choices panel."
+    },
+    {
+      "id": "merchant",
+      "source": "C:\\Users\\pcvas\\.codex\\generated_images\\01a18b16-d920-7e12-8010-023a2b1d9140\\exec-e0f24ce8-1383-4e0a-9a50-e03d7e133ec6.png",
+      "asset": "assets/visual/backgrounds/scenes/dungeon-merchant-rogue-v1.webp",
+      "prompt": "New background for the same medieval fantasy RPG. Match reference art exactly in painterly realistic textured style, warm amber torches, aged stone and brass, subdued dark brown and deep green, no cartoon, no neon. Wide 3:2 illustration, no text, no UI, no frame, no people except when specifically requested. Composition leaves quiet darker edges for interface panels. A small travelling merchant stall inside an underground chamber: hooded elderly human merchant seated behind a rough wooden counter, shelves of unlabelled potion bottles, leather pouches, rolled scrolls and a few weapons, lantern and canvas awning. Full environment composition, not a portrait. Counter and merchant in center-left, clear darker quiet stone wall on right for shop controls. No text or written symbols."
+    }
+  ]
+}

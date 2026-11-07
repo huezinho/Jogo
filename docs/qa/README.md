@@ -39,3 +39,18 @@ python3 scripts/generate-progression-bottlenecks-report.py
 ```
 
 O coletor reutiliza os dois motores de progressão com `captureFights: true`; execuções normais mantêm o comportamento anterior. CSVs e critérios de classificação ficam junto ao [relatório](../analise_gargalos_progressao_2026-11-04.md).
+
+
+## Dungeon — jornada atual pelas 12 regiões
+
+- `node scripts/test-dungeon-journey.cjs`: regras da jornada, 28 formas e 129 habilidades; sete provocações e prioridade; trocas com consentimento; apostas; evolução e sequência das 84 batalhas.
+- `node scripts/qa-dungeon-journey-ui.cjs`: serviços, combate sem cabeçalho, molduras da campanha, seleção de alvo/poção, retomada e larguras de 320, 390 e 1366 px.
+- `node scripts/qa-dungeon-base-ui.cjs`: mapa clicável, perfil/troca pela bolsa, equipamentos, aprimoramento, venda, compras, aposta e descanso; 25 verificações em 320 a 1366 px.
+- `node scripts/test-dungeon-journey-network.cjs`: três navegadores via WebRTC real, carteiras individuais, oferta/aceite, prontidão e combate sincronizado.
+- `node scripts/generate-dungeon-reference.cjs`: referência dos alvos por classe e dos kits de inimigos.
+
+Os nomes antigos `test-dungeon-rogue.cjs`, `qa-dungeon-rogue-ui.cjs` e `test-dungeon-rogue-network.cjs` encaminham para essas suítes atuais. Resultados em `dungeon-journey-*.json`; capturas em `docs/hud/dungeon-journey-*.png`.
+
+A validação de percurso/XP registra vitórias para medir o ganho acumulado e não demonstra que todas as composições vencem todos os confrontos. Os arquivos de evidência `dungeon-rogue-*-2026-11-06` pertencem à estrutura anterior de quatro regiões, já substituída.
+
+Revisão de interface e resolução de efeitos: `node scripts/qa-dungeon-viewport.cjs` e `node scripts/test-turn-resolution-v5.cjs`. [Regras, imagens e evidências](ajustes_combate_interface_v5.md).

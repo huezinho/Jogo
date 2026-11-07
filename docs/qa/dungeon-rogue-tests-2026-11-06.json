@@ -1,0 +1,938 @@
+{
+  "date": "2026-11-06",
+  "assertions": 514,
+  "forms": 28,
+  "casts": 129,
+  "checks": [
+    "target registered Guerreiro warrior_second_wind",
+    "immutable Guerreiro warrior_second_wind",
+    "single revision Guerreiro warrior_second_wind",
+    "ally heal Guerreiro",
+    "target registered Guerreiro warrior_shove",
+    "immutable Guerreiro warrior_shove",
+    "single revision Guerreiro warrior_shove",
+    "single target Guerreiro warrior_shove",
+    "target registered cavaleiro warrior_second_wind",
+    "immutable cavaleiro warrior_second_wind",
+    "single revision cavaleiro warrior_second_wind",
+    "ally heal cavaleiro",
+    "target registered cavaleiro warrior_shove",
+    "immutable cavaleiro warrior_shove",
+    "single revision cavaleiro warrior_shove",
+    "single target cavaleiro warrior_shove",
+    "target registered cavaleiro warrior_stagger",
+    "immutable cavaleiro warrior_stagger",
+    "single revision cavaleiro warrior_stagger",
+    "single target cavaleiro warrior_stagger",
+    "target registered cavaleiro warrior_warcry",
+    "immutable cavaleiro warrior_warcry",
+    "single revision cavaleiro warrior_warcry",
+    "target registered paladino warrior_second_wind",
+    "immutable paladino warrior_second_wind",
+    "single revision paladino warrior_second_wind",
+    "ally heal paladino",
+    "target registered paladino warrior_shove",
+    "immutable paladino warrior_shove",
+    "single revision paladino warrior_shove",
+    "single target paladino warrior_shove",
+    "target registered paladino warrior_stagger",
+    "immutable paladino warrior_stagger",
+    "single revision paladino warrior_stagger",
+    "single target paladino warrior_stagger",
+    "target registered paladino warrior_warcry",
+    "immutable paladino warrior_warcry",
+    "single revision paladino warrior_warcry",
+    "target registered paladino warrior_judgment",
+    "immutable paladino warrior_judgment",
+    "single revision paladino warrior_judgment",
+    "single target paladino warrior_judgment",
+    "target registered paladino warrior_faith_shield",
+    "immutable paladino warrior_faith_shield",
+    "single revision paladino warrior_faith_shield",
+    "target registered berserker warrior_second_wind",
+    "immutable berserker warrior_second_wind",
+    "single revision berserker warrior_second_wind",
+    "ally heal berserker",
+    "target registered berserker warrior_shove",
+    "immutable berserker warrior_shove",
+    "single revision berserker warrior_shove",
+    "single target berserker warrior_shove",
+    "target registered berserker warrior_stagger",
+    "immutable berserker warrior_stagger",
+    "single revision berserker warrior_stagger",
+    "single target berserker warrior_stagger",
+    "target registered berserker warrior_warcry",
+    "immutable berserker warrior_warcry",
+    "single revision berserker warrior_warcry",
+    "target registered berserker warrior_valhalla",
+    "immutable berserker warrior_valhalla",
+    "single revision berserker warrior_valhalla",
+    "target registered berserker warrior_unstoppable",
+    "immutable berserker warrior_unstoppable",
+    "single revision berserker warrior_unstoppable",
+    "target registered espadachim warrior_second_wind",
+    "immutable espadachim warrior_second_wind",
+    "single revision espadachim warrior_second_wind",
+    "ally heal espadachim",
+    "target registered espadachim warrior_shove",
+    "immutable espadachim warrior_shove",
+    "single revision espadachim warrior_shove",
+    "single target espadachim warrior_shove",
+    "target registered espadachim warrior_swift_strikes",
+    "immutable espadachim warrior_swift_strikes",
+    "single revision espadachim warrior_swift_strikes",
+    "single target espadachim warrior_swift_strikes",
+    "target registered espadachim warrior_deep_cut",
+    "immutable espadachim warrior_deep_cut",
+    "single revision espadachim warrior_deep_cut",
+    "single target espadachim warrior_deep_cut",
+    "target registered samurai warrior_second_wind",
+    "immutable samurai warrior_second_wind",
+    "single revision samurai warrior_second_wind",
+    "ally heal samurai",
+    "target registered samurai warrior_shove",
+    "immutable samurai warrior_shove",
+    "single revision samurai warrior_shove",
+    "single target samurai warrior_shove",
+    "target registered samurai warrior_swift_strikes",
+    "immutable samurai warrior_swift_strikes",
+    "single revision samurai warrior_swift_strikes",
+    "single target samurai warrior_swift_strikes",
+    "target registered samurai warrior_deep_cut",
+    "immutable samurai warrior_deep_cut",
+    "single revision samurai warrior_deep_cut",
+    "single target samurai warrior_deep_cut",
+    "target registered samurai warrior_armor_piercer",
+    "immutable samurai warrior_armor_piercer",
+    "single revision samurai warrior_armor_piercer",
+    "single target samurai warrior_armor_piercer",
+    "target registered samurai warrior_ultrasonic_cuts",
+    "immutable samurai warrior_ultrasonic_cuts",
+    "single revision samurai warrior_ultrasonic_cuts",
+    "target registered ninja warrior_second_wind",
+    "immutable ninja warrior_second_wind",
+    "single revision ninja warrior_second_wind",
+    "ally heal ninja",
+    "target registered ninja warrior_shove",
+    "immutable ninja warrior_shove",
+    "single revision ninja warrior_shove",
+    "single target ninja warrior_shove",
+    "target registered ninja warrior_swift_strikes",
+    "immutable ninja warrior_swift_strikes",
+    "single revision ninja warrior_swift_strikes",
+    "single target ninja warrior_swift_strikes",
+    "target registered ninja warrior_deep_cut",
+    "immutable ninja warrior_deep_cut",
+    "single revision ninja warrior_deep_cut",
+    "single target ninja warrior_deep_cut",
+    "target registered ninja warrior_smoke_bomb",
+    "immutable ninja warrior_smoke_bomb",
+    "single revision ninja warrior_smoke_bomb",
+    "target registered ninja warrior_giant_slayer",
+    "immutable ninja warrior_giant_slayer",
+    "single revision ninja warrior_giant_slayer",
+    "single target ninja warrior_giant_slayer",
+    "target registered Mago mage_mana_burst",
+    "immutable Mago mage_mana_burst",
+    "single revision Mago mage_mana_burst",
+    "single target Mago mage_mana_burst",
+    "target registered elementalista mage_mana_burst",
+    "immutable elementalista mage_mana_burst",
+    "single revision elementalista mage_mana_burst",
+    "single target elementalista mage_mana_burst",
+    "target registered elementalista mage_fireball",
+    "immutable elementalista mage_fireball",
+    "single revision elementalista mage_fireball",
+    "single target elementalista mage_fireball",
+    "target registered elementalista mage_freeze",
+    "immutable elementalista mage_freeze",
+    "single revision elementalista mage_freeze",
+    "single target elementalista mage_freeze",
+    "target registered mago_incendiario mage_mana_burst",
+    "immutable mago_incendiario mage_mana_burst",
+    "single revision mago_incendiario mage_mana_burst",
+    "single target mago_incendiario mage_mana_burst",
+    "target registered mago_incendiario mage_fireball",
+    "immutable mago_incendiario mage_fireball",
+    "single revision mago_incendiario mage_fireball",
+    "single target mago_incendiario mage_fireball",
+    "target registered mago_incendiario mage_freeze",
+    "immutable mago_incendiario mage_freeze",
+    "single revision mago_incendiario mage_freeze",
+    "area targets mago_incendiario mage_freeze",
+    "target registered mago_incendiario mage_sacred_phoenix",
+    "immutable mago_incendiario mage_sacred_phoenix",
+    "single revision mago_incendiario mage_sacred_phoenix",
+    "area targets mago_incendiario mage_sacred_phoenix",
+    "target registered mago_incendiario mage_explode",
+    "immutable mago_incendiario mage_explode",
+    "single revision mago_incendiario mage_explode",
+    "area targets mago_incendiario mage_explode",
+    "target registered mago_frigido mage_mana_burst",
+    "immutable mago_frigido mage_mana_burst",
+    "single revision mago_frigido mage_mana_burst",
+    "single target mago_frigido mage_mana_burst",
+    "target registered mago_frigido mage_fireball",
+    "immutable mago_frigido mage_fireball",
+    "single revision mago_frigido mage_fireball",
+    "single target mago_frigido mage_fireball",
+    "target registered mago_frigido mage_freeze",
+    "immutable mago_frigido mage_freeze",
+    "single revision mago_frigido mage_freeze",
+    "single target mago_frigido mage_freeze",
+    "target registered mago_frigido mage_blizzard",
+    "immutable mago_frigido mage_blizzard",
+    "single revision mago_frigido mage_blizzard",
+    "target registered mago_frigido mage_avalanche",
+    "immutable mago_frigido mage_avalanche",
+    "single revision mago_frigido mage_avalanche",
+    "area targets mago_frigido mage_avalanche",
+    "target registered arcanista mage_mana_burst",
+    "immutable arcanista mage_mana_burst",
+    "single revision arcanista mage_mana_burst",
+    "single target arcanista mage_mana_burst",
+    "target registered arcanista mage_discharge",
+    "immutable arcanista mage_discharge",
+    "single revision arcanista mage_discharge",
+    "area targets arcanista mage_discharge",
+    "target registered arcanista mage_mana_shield",
+    "immutable arcanista mage_mana_shield",
+    "single revision arcanista mage_mana_shield",
+    "target registered arquimago mage_mana_burst",
+    "immutable arquimago mage_mana_burst",
+    "single revision arquimago mage_mana_burst",
+    "single target arquimago mage_mana_burst",
+    "target registered arquimago mage_discharge",
+    "immutable arquimago mage_discharge",
+    "single revision arquimago mage_discharge",
+    "area targets arquimago mage_discharge",
+    "target registered arquimago mage_mana_shield",
+    "immutable arquimago mage_mana_shield",
+    "single revision arquimago mage_mana_shield",
+    "target registered arquimago mage_concentration",
+    "immutable arquimago mage_concentration",
+    "single revision arquimago mage_concentration",
+    "target registered arquimago mage_overcharge",
+    "immutable arquimago mage_overcharge",
+    "single revision arquimago mage_overcharge",
+    "area targets arquimago mage_overcharge",
+    "target registered corrompido mage_mana_burst",
+    "immutable corrompido mage_mana_burst",
+    "single revision corrompido mage_mana_burst",
+    "single target corrompido mage_mana_burst",
+    "target registered corrompido mage_discharge",
+    "immutable corrompido mage_discharge",
+    "single revision corrompido mage_discharge",
+    "area targets corrompido mage_discharge",
+    "target registered corrompido mage_mana_shield",
+    "immutable corrompido mage_mana_shield",
+    "single revision corrompido mage_mana_shield",
+    "target registered corrompido mage_corruption",
+    "immutable corrompido mage_corruption",
+    "single revision corrompido mage_corruption",
+    "single target corrompido mage_corruption",
+    "target registered corrompido mage_demon_form",
+    "immutable corrompido mage_demon_form",
+    "single revision corrompido mage_demon_form",
+    "target registered Arqueiro archer_focus",
+    "immutable Arqueiro archer_focus",
+    "single revision Arqueiro archer_focus",
+    "target registered Arqueiro archer_camouflage",
+    "immutable Arqueiro archer_camouflage",
+    "single revision Arqueiro archer_camouflage",
+    "target registered atirador archer_focus",
+    "immutable atirador archer_focus",
+    "single revision atirador archer_focus",
+    "target registered atirador archer_camouflage",
+    "immutable atirador archer_camouflage",
+    "single revision atirador archer_camouflage",
+    "target registered atirador archer_headshot",
+    "immutable atirador archer_headshot",
+    "single revision atirador archer_headshot",
+    "single target atirador archer_headshot",
+    "target registered atirador archer_piercing_shot",
+    "immutable atirador archer_piercing_shot",
+    "single revision atirador archer_piercing_shot",
+    "single target atirador archer_piercing_shot",
+    "target registered atirador_arcano archer_focus",
+    "immutable atirador_arcano archer_focus",
+    "single revision atirador_arcano archer_focus",
+    "target registered atirador_arcano archer_camouflage",
+    "immutable atirador_arcano archer_camouflage",
+    "single revision atirador_arcano archer_camouflage",
+    "target registered atirador_arcano archer_headshot",
+    "immutable atirador_arcano archer_headshot",
+    "single revision atirador_arcano archer_headshot",
+    "single target atirador_arcano archer_headshot",
+    "target registered atirador_arcano archer_piercing_shot",
+    "immutable atirador_arcano archer_piercing_shot",
+    "single revision atirador_arcano archer_piercing_shot",
+    "single target atirador_arcano archer_piercing_shot",
+    "target registered atirador_arcano archer_arcane_shot",
+    "immutable atirador_arcano archer_arcane_shot",
+    "single revision atirador_arcano archer_arcane_shot",
+    "single target atirador_arcano archer_arcane_shot",
+    "target registered atirador_arcano archer_overcharge",
+    "immutable atirador_arcano archer_overcharge",
+    "single revision atirador_arcano archer_overcharge",
+    "area targets atirador_arcano archer_overcharge",
+    "target registered sniper archer_focus",
+    "immutable sniper archer_focus",
+    "single revision sniper archer_focus",
+    "target registered sniper archer_camouflage",
+    "immutable sniper archer_camouflage",
+    "single revision sniper archer_camouflage",
+    "target registered sniper archer_headshot",
+    "immutable sniper archer_headshot",
+    "single revision sniper archer_headshot",
+    "single target sniper archer_headshot",
+    "target registered sniper archer_piercing_shot",
+    "immutable sniper archer_piercing_shot",
+    "single revision sniper archer_piercing_shot",
+    "single target sniper archer_piercing_shot",
+    "target registered sniper archer_execute",
+    "immutable sniper archer_execute",
+    "single revision sniper archer_execute",
+    "single target sniper archer_execute",
+    "target registered sniper archer_weak_spot",
+    "immutable sniper archer_weak_spot",
+    "single revision sniper archer_weak_spot",
+    "single target sniper archer_weak_spot",
+    "target registered cacador archer_focus",
+    "immutable cacador archer_focus",
+    "single revision cacador archer_focus",
+    "target registered cacador archer_camouflage",
+    "immutable cacador archer_camouflage",
+    "single revision cacador archer_camouflage",
+    "target registered cacador archer_barrage",
+    "immutable cacador archer_barrage",
+    "single revision cacador archer_barrage",
+    "target registered cacador archer_trap",
+    "immutable cacador archer_trap",
+    "single revision cacador archer_trap",
+    "single target cacador archer_trap",
+    "target registered espreitador archer_focus",
+    "immutable espreitador archer_focus",
+    "single revision espreitador archer_focus",
+    "target registered espreitador archer_camouflage",
+    "immutable espreitador archer_camouflage",
+    "single revision espreitador archer_camouflage",
+    "target registered espreitador archer_barrage",
+    "immutable espreitador archer_barrage",
+    "single revision espreitador archer_barrage",
+    "target registered espreitador archer_trap",
+    "immutable espreitador archer_trap",
+    "single revision espreitador archer_trap",
+    "single target espreitador archer_trap",
+    "target registered espreitador archer_surprise",
+    "immutable espreitador archer_surprise",
+    "single revision espreitador archer_surprise",
+    "single target espreitador archer_surprise",
+    "target registered espreitador archer_aim_leg",
+    "immutable espreitador archer_aim_leg",
+    "single revision espreitador archer_aim_leg",
+    "single target espreitador archer_aim_leg",
+    "target registered guarda_florestal archer_focus",
+    "immutable guarda_florestal archer_focus",
+    "single revision guarda_florestal archer_focus",
+    "target registered guarda_florestal archer_camouflage",
+    "immutable guarda_florestal archer_camouflage",
+    "single revision guarda_florestal archer_camouflage",
+    "target registered guarda_florestal archer_barrage",
+    "immutable guarda_florestal archer_barrage",
+    "single revision guarda_florestal archer_barrage",
+    "target registered guarda_florestal archer_trap",
+    "immutable guarda_florestal archer_trap",
+    "single revision guarda_florestal archer_trap",
+    "single target guarda_florestal archer_trap",
+    "target registered guarda_florestal archer_tranquilizer",
+    "immutable guarda_florestal archer_tranquilizer",
+    "single revision guarda_florestal archer_tranquilizer",
+    "single target guarda_florestal archer_tranquilizer",
+    "target registered guarda_florestal archer_cutting_shot",
+    "immutable guarda_florestal archer_cutting_shot",
+    "single revision guarda_florestal archer_cutting_shot",
+    "single target guarda_florestal archer_cutting_shot",
+    "target registered Adepto da Natureza nature_living_seed",
+    "immutable Adepto da Natureza nature_living_seed",
+    "single revision Adepto da Natureza nature_living_seed",
+    "single target Adepto da Natureza nature_living_seed",
+    "target registered Adepto da Natureza nature_roots",
+    "immutable Adepto da Natureza nature_roots",
+    "single revision Adepto da Natureza nature_roots",
+    "area targets Adepto da Natureza nature_roots",
+    "target registered druida nature_living_seed",
+    "immutable druida nature_living_seed",
+    "single revision druida nature_living_seed",
+    "single target druida nature_living_seed",
+    "target registered druida nature_roots",
+    "immutable druida nature_roots",
+    "single revision druida nature_roots",
+    "area targets druida nature_roots",
+    "target registered druida nature_swamp_flower",
+    "immutable druida nature_swamp_flower",
+    "single revision druida nature_swamp_flower",
+    "single target druida nature_swamp_flower",
+    "target registered druida nature_harvest",
+    "immutable druida nature_harvest",
+    "single revision druida nature_harvest",
+    "single target druida nature_harvest",
+    "target registered druida_sombrio nature_living_seed",
+    "immutable druida_sombrio nature_living_seed",
+    "single revision druida_sombrio nature_living_seed",
+    "single target druida_sombrio nature_living_seed",
+    "target registered druida_sombrio nature_roots",
+    "immutable druida_sombrio nature_roots",
+    "single revision druida_sombrio nature_roots",
+    "area targets druida_sombrio nature_roots",
+    "target registered druida_sombrio nature_swamp_flower",
+    "immutable druida_sombrio nature_swamp_flower",
+    "single revision druida_sombrio nature_swamp_flower",
+    "single target druida_sombrio nature_swamp_flower",
+    "target registered druida_sombrio nature_harvest",
+    "immutable druida_sombrio nature_harvest",
+    "single revision druida_sombrio nature_harvest",
+    "single target druida_sombrio nature_harvest",
+    "target registered druida_sombrio nature_decay",
+    "immutable druida_sombrio nature_decay",
+    "single revision druida_sombrio nature_decay",
+    "single target druida_sombrio nature_decay",
+    "target registered druida_sombrio nature_swamp_collapse",
+    "immutable druida_sombrio nature_swamp_collapse",
+    "single revision druida_sombrio nature_swamp_collapse",
+    "area targets druida_sombrio nature_swamp_collapse",
+    "target registered avatar_da_natureza nature_living_seed",
+    "immutable avatar_da_natureza nature_living_seed",
+    "single revision avatar_da_natureza nature_living_seed",
+    "single target avatar_da_natureza nature_living_seed",
+    "target registered avatar_da_natureza nature_roots",
+    "immutable avatar_da_natureza nature_roots",
+    "single revision avatar_da_natureza nature_roots",
+    "area targets avatar_da_natureza nature_roots",
+    "target registered avatar_da_natureza nature_swamp_flower",
+    "immutable avatar_da_natureza nature_swamp_flower",
+    "single revision avatar_da_natureza nature_swamp_flower",
+    "single target avatar_da_natureza nature_swamp_flower",
+    "target registered avatar_da_natureza nature_harvest",
+    "immutable avatar_da_natureza nature_harvest",
+    "single revision avatar_da_natureza nature_harvest",
+    "single target avatar_da_natureza nature_harvest",
+    "target registered avatar_da_natureza nature_true_form",
+    "immutable avatar_da_natureza nature_true_form",
+    "single revision avatar_da_natureza nature_true_form",
+    "target registered avatar_da_natureza nature_crush_invader",
+    "immutable avatar_da_natureza nature_crush_invader",
+    "single revision avatar_da_natureza nature_crush_invader",
+    "single target avatar_da_natureza nature_crush_invader",
+    "target registered espirito_da_floresta nature_living_seed",
+    "immutable espirito_da_floresta nature_living_seed",
+    "single revision espirito_da_floresta nature_living_seed",
+    "single target espirito_da_floresta nature_living_seed",
+    "target registered espirito_da_floresta nature_roots",
+    "immutable espirito_da_floresta nature_roots",
+    "single revision espirito_da_floresta nature_roots",
+    "area targets espirito_da_floresta nature_roots",
+    "target registered espirito_da_floresta nature_breeze_charm",
+    "immutable espirito_da_floresta nature_breeze_charm",
+    "single revision espirito_da_floresta nature_breeze_charm",
+    "single target espirito_da_floresta nature_breeze_charm",
+    "target registered espirito_da_floresta nature_ancestral_song",
+    "immutable espirito_da_floresta nature_ancestral_song",
+    "single revision espirito_da_floresta nature_ancestral_song",
+    "target registered fada_monarca nature_living_seed",
+    "immutable fada_monarca nature_living_seed",
+    "single revision fada_monarca nature_living_seed",
+    "single target fada_monarca nature_living_seed",
+    "target registered fada_monarca nature_roots",
+    "immutable fada_monarca nature_roots",
+    "single revision fada_monarca nature_roots",
+    "area targets fada_monarca nature_roots",
+    "target registered fada_monarca nature_breeze_charm",
+    "immutable fada_monarca nature_breeze_charm",
+    "single revision fada_monarca nature_breeze_charm",
+    "single target fada_monarca nature_breeze_charm",
+    "target registered fada_monarca nature_ancestral_song",
+    "immutable fada_monarca nature_ancestral_song",
+    "single revision fada_monarca nature_ancestral_song",
+    "target registered fada_monarca nature_queen_decree",
+    "immutable fada_monarca nature_queen_decree",
+    "single revision fada_monarca nature_queen_decree",
+    "area targets fada_monarca nature_queen_decree",
+    "target registered fada_monarca nature_crown",
+    "immutable fada_monarca nature_crown",
+    "single revision fada_monarca nature_crown",
+    "target registered protetor_da_floresta nature_living_seed",
+    "immutable protetor_da_floresta nature_living_seed",
+    "single revision protetor_da_floresta nature_living_seed",
+    "single target protetor_da_floresta nature_living_seed",
+    "target registered protetor_da_floresta nature_roots",
+    "immutable protetor_da_floresta nature_roots",
+    "single revision protetor_da_floresta nature_roots",
+    "area targets protetor_da_floresta nature_roots",
+    "target registered protetor_da_floresta nature_breeze_charm",
+    "immutable protetor_da_floresta nature_breeze_charm",
+    "single revision protetor_da_floresta nature_breeze_charm",
+    "single target protetor_da_floresta nature_breeze_charm",
+    "target registered protetor_da_floresta nature_ancestral_song",
+    "immutable protetor_da_floresta nature_ancestral_song",
+    "single revision protetor_da_floresta nature_ancestral_song",
+    "target registered protetor_da_floresta nature_vine_cocoon",
+    "immutable protetor_da_floresta nature_vine_cocoon",
+    "single revision protetor_da_floresta nature_vine_cocoon",
+    "target registered protetor_da_floresta nature_throw_thorns",
+    "immutable protetor_da_floresta nature_throw_thorns",
+    "single revision protetor_da_floresta nature_throw_thorns",
+    "area targets protetor_da_floresta nature_throw_thorns",
+    "ally full buff duration",
+    "ally buff does not leak",
+    "ally cleanse strongest DOT",
+    "party damage buff",
+    "support consumes free cast",
+    "party healing",
+    "area spends mana once",
+    "area HP sacrifice paid once",
+    "guard remains active after action",
+    "samurai 5% max HP bleed",
+    "DOT source stamped",
+    "enemy DOT ticks after enemy action",
+    "kill ends encounter before hero DOT",
+    "taunt redirects single target",
+    "enemy area damages all",
+    "enemy heals wounded ally",
+    "enemy mana regenerates",
+    "enemy buffs entire line with full duration",
+    "targeted revival costs flask and turn",
+    "reject invalid {\"kind\":\"basic\",\"heroId\":\"h1\",\"targetId\":\"h2\"}",
+    "reject invalid {\"kind\":\"skill\",\"heroId\":\"h1\",\"skillType\":\"warrior_second_wind\",\"targetId\":\"foe0\"}",
+    "reject invalid {\"kind\":\"basic\",\"heroId\":\"h1\",\"targetId\":\"foe0\",\"revision\":0}",
+    "reject invalid {\"kind\":\"basic\",\"heroId\":\"h2\",\"targetId\":\"foe0\"}",
+    "reject foreign owner",
+    "edited seed controls generated journey",
+    "mana boons participate in class conversions",
+    "mana boons participate in overflow damage",
+    "mana shield replaces existing pool",
+    "cannot give shield to a blocked ally",
+    "basic-only posture rejects guard and consumables",
+    "control immunity clears latent interruption",
+    "safe treasure route grants no sealed equipment",
+    "guest class configuration stays canonical",
+    "invalid saved state rejected",
+    "native player not retained"
+  ],
+  "runs": [
+    {
+      "seed": "ember",
+      "party": [
+        "Guerreiro"
+      ],
+      "steps": 201,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "ninja"
+      ],
+      "lastLog": [
+        "Guerreiro recebeu Fio ancestral.",
+        "Guerreiro equipou Capuz - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "ember",
+      "party": [
+        "Mago"
+      ],
+      "steps": 178,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "corrompido"
+      ],
+      "lastLog": [
+        "Mago recebeu Vigor de pedra.",
+        "Mago equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "ember",
+      "party": [
+        "Arqueiro"
+      ],
+      "steps": 252,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "guarda_florestal"
+      ],
+      "lastLog": [
+        "Arqueiro recebeu Fio ancestral.",
+        "Arqueiro equipou Capuz - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "ember",
+      "party": [
+        "Adepto da Natureza"
+      ],
+      "steps": 295,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "protetor_da_floresta"
+      ],
+      "lastLog": [
+        "Adepto da Natureza recebeu Vigor de pedra.",
+        "Adepto da Natureza equipou Ramo Vivo - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "ember",
+      "party": [
+        "Guerreiro",
+        "Mago",
+        "Arqueiro"
+      ],
+      "steps": 410,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "ninja",
+        "corrompido",
+        "guarda_florestal"
+      ],
+      "lastLog": [
+        "Mago equipou Cajado - Furia Contida Lendaria.",
+        "Arqueiro equipou Perneiras - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "ember",
+      "party": [
+        "Guerreiro",
+        "Adepto da Natureza",
+        "Mago"
+      ],
+      "steps": 406,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "ninja",
+        "protetor_da_floresta",
+        "corrompido"
+      ],
+      "lastLog": [
+        "Adepto da Natureza equipou Capuz - Furia Contida Lendaria.",
+        "Mago equipou Perneiras - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Guerreiro"
+      ],
+      "steps": 211,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "ninja"
+      ],
+      "lastLog": [
+        "Guerreiro recebeu Fio ancestral.",
+        "Guerreiro equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Mago"
+      ],
+      "steps": 174,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "corrompido"
+      ],
+      "lastLog": [
+        "Mago recebeu Pele de ferro.",
+        "Mago equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Arqueiro"
+      ],
+      "steps": 57,
+      "phase": "ended",
+      "outcome": "defeat",
+      "rooms": 4,
+      "levels": [
+        21
+      ],
+      "forms": [
+        "Arqueiro"
+      ],
+      "lastLog": [
+        "Goblin → Arqueiro: 75 de dano (Golpe preciso).",
+        "Arqueiro caiu.",
+        "A expedição terminou. As memórias conquistadas permanecem neste modo."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Adepto da Natureza"
+      ],
+      "steps": 51,
+      "phase": "ended",
+      "outcome": "defeat",
+      "rooms": 3,
+      "levels": [
+        16
+      ],
+      "forms": [
+        "Adepto da Natureza"
+      ],
+      "lastLog": [
+        "Adepto da Natureza: 12 por veneno.",
+        "Adepto da Natureza caiu. Um aliado pode reanimá-lo com uma provisão.",
+        "A expedição terminou. As memórias conquistadas permanecem neste modo."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Guerreiro",
+        "Mago",
+        "Arqueiro"
+      ],
+      "steps": 403,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "ninja",
+        "corrompido",
+        "guarda_florestal"
+      ],
+      "lastLog": [
+        "Mago equipou Cajado - Furia Contida Lendaria.",
+        "Arqueiro equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "stone",
+      "party": [
+        "Guerreiro",
+        "Adepto da Natureza",
+        "Mago"
+      ],
+      "steps": 430,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "ninja",
+        "protetor_da_floresta",
+        "corrompido"
+      ],
+      "lastLog": [
+        "Adepto da Natureza equipou Armadura - Furia Contida Lendaria.",
+        "Mago equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Guerreiro"
+      ],
+      "steps": 213,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "paladino"
+      ],
+      "lastLog": [
+        "Guerreiro recebeu Voto de conquista.",
+        "Guerreiro equipou Armadura - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Mago"
+      ],
+      "steps": 177,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100
+      ],
+      "forms": [
+        "mago_incendiario"
+      ],
+      "lastLog": [
+        "Mago recebeu Vigor de pedra.",
+        "Mago equipou Botas - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Arqueiro"
+      ],
+      "steps": 73,
+      "phase": "ended",
+      "outcome": "defeat",
+      "rooms": 6,
+      "levels": [
+        31
+      ],
+      "forms": [
+        "atirador"
+      ],
+      "lastLog": [
+        "Ent Ancestral → Arqueiro: 181 de dano (Raizes Esmagadoras).",
+        "Arqueiro caiu.",
+        "A expedição terminou. As memórias conquistadas permanecem neste modo."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Adepto da Natureza"
+      ],
+      "steps": 83,
+      "phase": "ended",
+      "outcome": "defeat",
+      "rooms": 6,
+      "levels": [
+        31
+      ],
+      "forms": [
+        "druida"
+      ],
+      "lastLog": [
+        "Adepto da Natureza caiu.",
+        "Ent Ancestral: 122 por marca natural de Adepto da Natureza.",
+        "A expedição terminou. As memórias conquistadas permanecem neste modo."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Guerreiro",
+        "Mago",
+        "Arqueiro"
+      ],
+      "steps": 410,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "paladino",
+        "mago_incendiario",
+        "atirador_arcano"
+      ],
+      "lastLog": [
+        "Mago equipou Cajado - Furia Contida Lendaria.",
+        "Arqueiro equipou Arco - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    },
+    {
+      "seed": "leaf",
+      "party": [
+        "Guerreiro",
+        "Adepto da Natureza",
+        "Mago"
+      ],
+      "steps": 411,
+      "phase": "ended",
+      "outcome": "victory",
+      "rooms": 28,
+      "levels": [
+        100,
+        100,
+        100
+      ],
+      "forms": [
+        "paladino",
+        "druida_sombrio",
+        "mago_incendiario"
+      ],
+      "lastLog": [
+        "Adepto da Natureza equipou Botas - Furia Contida Lendaria.",
+        "Mago equipou Capuz - Furia Contida Lendaria.",
+        "Os quatro guardiões caíram. A expedição foi concluída."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2153 @@
+{
+  "heroes": [
+    {
+      "id": "Guerreiro",
+      "name": "Guerreiro",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Esbarrao",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Vontade de Ferro"
+      ]
+    },
+    {
+      "id": "cavaleiro",
+      "name": "Cavaleiro",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Esbarrao",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_stagger",
+          "name": "Contundir",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_warcry",
+          "name": "Brado",
+          "target": "party",
+          "provokePriority": 6
+        }
+      ],
+      "passives": [
+        "Vontade de Ferro",
+        "Refletir"
+      ]
+    },
+    {
+      "id": "paladino",
+      "name": "Paladino",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Esbarrao",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_stagger",
+          "name": "Contundir",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_warcry",
+          "name": "Brado",
+          "target": "party",
+          "provokePriority": 7
+        },
+        {
+          "type": "warrior_judgment",
+          "name": "Julgamento",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_faith_shield",
+          "name": "Escudo de Fe",
+          "target": "ally",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Vontade de Ferro",
+        "Refletir",
+        "Aura Divina"
+      ]
+    },
+    {
+      "id": "berserker",
+      "name": "Berserker",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Esbarrao",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_stagger",
+          "name": "Contundir",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_warcry",
+          "name": "Ira",
+          "target": "self",
+          "provokePriority": 2
+        },
+        {
+          "type": "warrior_valhalla",
+          "name": "Vallhala",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_unstoppable",
+          "name": "Voce Ira Me Parar?",
+          "target": "self",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Vontade de Ferro",
+        "Refletir",
+        "Voce Nao e Digno"
+      ]
+    },
+    {
+      "id": "espadachim",
+      "name": "Espadachim",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Investida",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_swift_strikes",
+          "name": "Golpes Velozes",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_deep_cut",
+          "name": "Corte Profundo",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Veloz",
+        "Contra-Ataque"
+      ]
+    },
+    {
+      "id": "samurai",
+      "name": "Samurai",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Investida",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_swift_strikes",
+          "name": "Golpes Velozes",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_deep_cut",
+          "name": "Corte Profundo",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_armor_piercer",
+          "name": "Furar Blindagem",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_ultrasonic_cuts",
+          "name": "Cortes Ultrasonicos",
+          "target": "self",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Veloz",
+        "Contra-Ataque",
+        "Mente Limpa"
+      ]
+    },
+    {
+      "id": "ninja",
+      "name": "Ninja",
+      "className": "Guerreiro",
+      "skills": [
+        {
+          "type": "warrior_second_wind",
+          "name": "Recuperar Folego",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_shove",
+          "name": "Investida",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_swift_strikes",
+          "name": "Golpes Velozes",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_deep_cut",
+          "name": "Corte Profundo",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_smoke_bomb",
+          "name": "Bomba de Fumaca",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "warrior_giant_slayer",
+          "name": "Mata-Gigantes",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Veloz",
+        "Contra-Ataque",
+        "Eliminar"
+      ]
+    },
+    {
+      "id": "Mago",
+      "name": "Mago",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso"
+      ]
+    },
+    {
+      "id": "elementalista",
+      "name": "Elementalista",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_fireball",
+          "name": "Bola de Fogo",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_freeze",
+          "name": "Congelar",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Mana e Vida"
+      ]
+    },
+    {
+      "id": "mago_incendiario",
+      "name": "Mago Incendiario",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_fireball",
+          "name": "Bola de Fogo",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_freeze",
+          "name": "Bafo de Fogo",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_sacred_phoenix",
+          "name": "Fenix Sagrada",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_explode",
+          "name": "Explodir",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Mana e Vida",
+        "Fogo do Inferno"
+      ]
+    },
+    {
+      "id": "mago_frigido",
+      "name": "Mago Frigido",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_fireball",
+          "name": "Bola de Neve",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_freeze",
+          "name": "Congelar",
+          "target": "enemy",
+          "provokePriority": 1
+        },
+        {
+          "type": "mage_blizzard",
+          "name": "Nevasca",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_avalanche",
+          "name": "Avalanche",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Mana e Vida",
+        "Gelo Queima"
+      ]
+    },
+    {
+      "id": "arcanista",
+      "name": "Arcanista",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_discharge",
+          "name": "Descarregar",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_mana_shield",
+          "name": "Escudo de Mana",
+          "target": "ally",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Transbordando"
+      ]
+    },
+    {
+      "id": "arquimago",
+      "name": "Arquimago",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_discharge",
+          "name": "Descarregar",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_mana_shield",
+          "name": "Escudo de Mana",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_concentration",
+          "name": "Concentracao",
+          "target": "party",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_overcharge",
+          "name": "Sobrecarregar",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Transbordando",
+        "Carregar"
+      ]
+    },
+    {
+      "id": "corrompido",
+      "name": "Corrompido",
+      "className": "Mago",
+      "skills": [
+        {
+          "type": "mage_mana_burst",
+          "name": "Explosao de Mana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_discharge",
+          "name": "Descarregar",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_mana_shield",
+          "name": "Escudo de Mana",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_corruption",
+          "name": "Corrupcao",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "mage_demon_form",
+          "name": "Incorporar Demonio",
+          "target": "self",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ultimo Recurso",
+        "Transbordando",
+        "Canhao de Vidro"
+      ]
+    },
+    {
+      "id": "Arqueiro",
+      "name": "Arqueiro",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves"
+      ]
+    },
+    {
+      "id": "atirador",
+      "name": "Atirador",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_headshot",
+          "name": "Headshot",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_piercing_shot",
+          "name": "Tiro Perfurante",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Pulso Firme"
+      ]
+    },
+    {
+      "id": "atirador_arcano",
+      "name": "Atirador Arcano",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_headshot",
+          "name": "Headshot",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_piercing_shot",
+          "name": "Tiro Perfurante",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_arcane_shot",
+          "name": "Emergencia Arcana",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_overcharge",
+          "name": "Sobreaquecer",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Pulso Firme",
+        "Cristalizar Mana"
+      ]
+    },
+    {
+      "id": "sniper",
+      "name": "Sniper",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_headshot",
+          "name": "Headshot",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_piercing_shot",
+          "name": "Tiro Perfurante",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_execute",
+          "name": "Executar",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_weak_spot",
+          "name": "Ponto Fraco",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Pulso Firme",
+        "Olhos de Falcao"
+      ]
+    },
+    {
+      "id": "cacador",
+      "name": "Cacador",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_barrage",
+          "name": "Rajada de Flechas",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_trap",
+          "name": "Armadilha",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Errou"
+      ]
+    },
+    {
+      "id": "espreitador",
+      "name": "Espreitador",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_barrage",
+          "name": "Rajada de Flechas",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_trap",
+          "name": "Armadilha",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_surprise",
+          "name": "Surpresa",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_aim_leg",
+          "name": "Mirar no Pe",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Errou",
+        "Passos Silenciosos"
+      ]
+    },
+    {
+      "id": "guarda_florestal",
+      "name": "Guarda Florestal",
+      "className": "Arqueiro",
+      "skills": [
+        {
+          "type": "archer_focus",
+          "name": "Mirar",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_camouflage",
+          "name": "Camuflagem",
+          "target": "self",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_barrage",
+          "name": "Rajada de Flechas",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_trap",
+          "name": "Armadilha",
+          "target": "enemy",
+          "provokePriority": 3
+        },
+        {
+          "type": "archer_tranquilizer",
+          "name": "Tranquilizante",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "archer_cutting_shot",
+          "name": "Tiro Cortante",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Passos Leves",
+        "Errou",
+        "Resistencia Florestal"
+      ]
+    },
+    {
+      "id": "Adepto da Natureza",
+      "name": "Adepto da Natureza",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural"
+      ]
+    },
+    {
+      "id": "druida",
+      "name": "Druida",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_swamp_flower",
+          "name": "Flor do Pantano",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_harvest",
+          "name": "Colheita",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Seiva"
+      ]
+    },
+    {
+      "id": "druida_sombrio",
+      "name": "Druida Sombrio",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_swamp_flower",
+          "name": "Flor do Pantano",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_harvest",
+          "name": "Colheita",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_decay",
+          "name": "Apodrecer",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_swamp_collapse",
+          "name": "Colapso do Brejo",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Seiva",
+        "Podridao"
+      ]
+    },
+    {
+      "id": "avatar_da_natureza",
+      "name": "Avatar da Natureza",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_swamp_flower",
+          "name": "Flor do Pantano",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_harvest",
+          "name": "Colheita",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_true_form",
+          "name": "Forma Verdadeira",
+          "target": "self",
+          "provokePriority": 5
+        },
+        {
+          "type": "nature_crush_invader",
+          "name": "Esmagar Invasor",
+          "target": "enemy",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Seiva",
+        "Casca Ancestral"
+      ]
+    },
+    {
+      "id": "espirito_da_floresta",
+      "name": "Espirito da Floresta",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_breeze_charm",
+          "name": "Encanto da Brisa",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_ancestral_song",
+          "name": "Cancao Ancestral",
+          "target": "party",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Aura Feerica"
+      ]
+    },
+    {
+      "id": "fada_monarca",
+      "name": "Fada Monarca",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_breeze_charm",
+          "name": "Encanto da Brisa",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_ancestral_song",
+          "name": "Cancao Ancestral",
+          "target": "party",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_queen_decree",
+          "name": "Decreto da Rainha",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_crown",
+          "name": "Coroar",
+          "target": "self",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Aura Feerica",
+        "Asas da Realeza"
+      ]
+    },
+    {
+      "id": "protetor_da_floresta",
+      "name": "Protetor da Floresta",
+      "className": "Adepto da Natureza",
+      "skills": [
+        {
+          "type": "nature_living_seed",
+          "name": "Semente Viva",
+          "target": "enemy",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_roots",
+          "name": "Raizes",
+          "target": "enemies",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_breeze_charm",
+          "name": "Encanto da Brisa",
+          "target": "enemy",
+          "provokePriority": 4
+        },
+        {
+          "type": "nature_ancestral_song",
+          "name": "Cancao Ancestral",
+          "target": "party",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_vine_cocoon",
+          "name": "Casulo de Vinhas",
+          "target": "ally",
+          "provokePriority": 0
+        },
+        {
+          "type": "nature_throw_thorns",
+          "name": "Jogar Espinhos",
+          "target": "enemies",
+          "provokePriority": 0
+        }
+      ],
+      "passives": [
+        "Ciclo Natural",
+        "Aura Feerica",
+        "Juramento do Bosque"
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "name": "Lobo Sombrio",
+      "region": "Floresta",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Goblin",
+      "region": "Floresta",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Aranha Gigante",
+      "region": "Floresta",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Presa Venenosa",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "poison",
+          "debuffs": {
+            "turns": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ent Ancestral",
+      "region": "Floresta",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Raizes Esmagadoras",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Raizes Esmagadoras · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Morcego de Pedra",
+      "region": "Caverna",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Esqueleto Mineiro",
+      "region": "Caverna",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Slime Toxico",
+      "region": "Caverna",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Presa venenosa",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": "poison",
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Troll das Profundezas",
+      "region": "Caverna",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Eco de Pedra",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Escudo de Pedra",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Eco de Pedra · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Sentinela Quebrada",
+      "region": "Ruinas",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Chama errante",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "burn",
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Cultista Perdido",
+      "region": "Ruinas",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Chama errante",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "burn",
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Fantasma Antigo",
+      "region": "Ruinas",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Assombrar",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "burn",
+          "debuffs": {
+            "haunt": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rei Espectral",
+      "region": "Ruinas",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Lamento Real",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": "burn",
+          "debuffs": {
+            "damageDown": 0.2,
+            "turns": 3
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Lamento Real · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Sapo Colossal",
+      "region": "Pantano",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Presa venenosa",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": "poison",
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Bruxa do Brejo",
+      "region": "Pantano",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Presa venenosa",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": "poison",
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Serpente do Lodo",
+      "region": "Pantano",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Presa venenosa",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "poison",
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Troca de Pele",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Hidra do Lodo",
+      "region": "Pantano",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Sopro Corrosivo",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": "poison",
+          "debuffs": {
+            "turns": 3
+          }
+        },
+        {
+          "kind": "heal",
+          "name": "Pele Viscosa",
+          "target": "ally",
+          "cost": 24
+        },
+        {
+          "kind": "buff",
+          "name": "Pele Viscosa",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Sopro Corrosivo · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Salamandra Rubra",
+      "region": "Vulcao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Chama errante",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "burn",
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Golem de Brasa",
+      "region": "Vulcao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Chama errante",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": "burn",
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Fenix Sombria",
+      "region": "Vulcao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Chama errante",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": "burn",
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Draco Magmatico",
+      "region": "Vulcao",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Explosao Vulcanica",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": "burn",
+          "debuffs": {
+            "healDown": 0.25,
+            "turns": 3
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Escamas Ardentes",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Explosao Vulcanica · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Cavaleiro Abissal",
+      "region": "Abismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Lamia do Eclipse",
+      "region": "Abismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Colosso do Vazio",
+      "region": "Abismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Arauto do Vazio",
+      "region": "Abismo",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Dilacerar Realidade",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Manto do Vazio",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Dilacerar Realidade · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Escudeiro de Ferro",
+      "region": "Fortaleza",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Maga da Muralha",
+      "region": "Fortaleza",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Carrasco de Guerra",
+      "region": "Fortaleza",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {
+            "deathmark": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "General de Aco",
+      "region": "Fortaleza",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Marcha de Ferro",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Marcha de Ferro · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Guardiao Funebre",
+      "region": "Necropole",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Feiticeira Morta",
+      "region": "Necropole",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Ceifador de Ossos",
+      "region": "Necropole",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Lorde da Cripta",
+      "region": "Necropole",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Sentenca Funebre",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {
+            "damageDown": 0.22,
+            "healDown": 0.3,
+            "turns": 5
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Sentenca Funebre · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Anjo Caido",
+      "region": "Citadela",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Drake Celeste",
+      "region": "Citadela",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Executor Astral",
+      "region": "Citadela",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Imperador do Eclipse",
+      "region": "Citadela",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Ruptura Estelar",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {
+            "turns": 3
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Ruptura Estelar · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Guardiao Aureo",
+      "region": "Panteao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Oraculo Radiante",
+      "region": "Panteao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Ritual restaurador",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Quimera Solar",
+      "region": "Panteao",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Fogo Solar",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": "burn",
+          "debuffs": {
+            "turns": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "Avatar do Zenith",
+      "region": "Panteao",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Julgamento Solar",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": "burn",
+          "debuffs": {
+            "turns": 3
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Julgamento Solar · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Arauto do Cataclismo",
+      "region": "Cataclismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Titan Rachado",
+      "region": "Cataclismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Serafim do Fim",
+      "region": "Cataclismo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Onda Vital",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Deus da Ruina",
+      "region": "Cataclismo",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Colapso Final",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": "burn",
+          "debuffs": {
+            "healDown": 0.2,
+            "turns": 2
+          }
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Colapso Final · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    },
+    {
+      "name": "Guardiao Temporal",
+      "region": "Paradoxo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Golpe preciso",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Clamor ancestral",
+          "target": "allies",
+          "cost": 22
+        }
+      ]
+    },
+    {
+      "name": "Oraculo do Zero",
+      "region": "Paradoxo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Golpe preciso",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.7,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "heal",
+          "name": "Zerar",
+          "target": "ally",
+          "cost": 24
+        }
+      ]
+    },
+    {
+      "name": "Devorador de Eras",
+      "region": "Paradoxo",
+      "boss": false,
+      "moves": [
+        {
+          "kind": "attack",
+          "name": "Devorar",
+          "target": "hero",
+          "cost": 20,
+          "multiplier": 1.1,
+          "dot": null,
+          "debuffs": {}
+        }
+      ]
+    },
+    {
+      "name": "Soberano do Paradoxo",
+      "region": "Paradoxo",
+      "boss": true,
+      "moves": [
+        {
+          "kind": "area",
+          "name": "Ruptura Temporal",
+          "target": "party",
+          "cost": 20,
+          "multiplier": 0.9,
+          "dot": null,
+          "debuffs": {}
+        },
+        {
+          "kind": "buff",
+          "name": "Colapso Zero",
+          "target": "allies",
+          "cost": 22
+        },
+        {
+          "kind": "charge",
+          "name": "Ruptura Temporal · ruptura",
+          "target": "party",
+          "cost": 30
+        }
+      ]
+    }
+  ]
+}

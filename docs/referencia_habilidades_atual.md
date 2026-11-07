@@ -12,7 +12,7 @@ Cada classe tem sua fórmula própria. Custos, dano, cura e escudo são express�
 
 Legenda: D = dano calculado pela habilidade; C = custo em mana (MP); L = nível do herói; A = ataque ativo; P = poder de habilidade ativo; H = vida máxima do herói; M = mana máxima do herói; m = mana atual do herói antes do custo; h = vida atual do inimigo; E = vida máxima do inimigo; mₑ = mana atual do inimigo; Q = cargas arcanas; Z = escudo atual do herói; X = dano acumulado que Escudo de Fé impediu; V = vida efetivamente retirada do inimigo; Vᵣ = dano recebido pelo herói após suas defesas; Dₑ = dano do golpe após as defesas; r = sorteio inteiro de 0 a 5; T = dano periódico total antes do rateio.
 
-W = piso(0,5L). F = dano fixo adicional de Transbordando; S = acréscimo de custo de Transbordando. Para Arcanista e Corrompido: F = piso(0,25M) e S = piso(0,11M). Para Arquimago: F = piso(0,4M) e S = piso(0,2M). Sem a passiva desbloqueada, F = S = 0.
+W = piso(1,4L). F = dano fixo adicional de Transbordando; S = acréscimo de custo de Transbordando. Para Arcanista e Corrompido: F = piso(0,25M) e S = piso(0,11M). Para Arquimago: F = piso(0,4M) e S = piso(0,2M). Sem a passiva desbloqueada, F = S = 0.
 
 Como ler: 0,06H significa 6% da vida máxima; 0,8A significa 80% do ataque. Exemplo: na linha do Espadachim, Investida tem D = 20 + 0,06H + 0,8A + 0,8P e C = 50 + W. As variações de classe já estão resolvidas em cada tabela. Piso significa arredondar para baixo. Nas somas, cada parcela fracionária é arredondada separadamente, exceto quando piso envolve a soma inteira. O custo final do Mago é limitado à sua mana máxima. As fórmulas representam a base: buffs, crítico, conjuntos, mitigação e demais efeitos descritos podem modificar o resultado.
 
@@ -92,7 +92,7 @@ Classe: **Guerreiro**. Rota: cavaleiro → berserker.
 | Esbarrao | 20 | C = 44 + W; D = 20 + 0,08H + 0,7A + 0,5P | Ataque reduzido: 3 turno(s) | Reduz o ataque inimigo em 30% por 3 turnos. |
 | Contundir | 30 | C = 40 + W; D = 60 + 0,07H + 1,1A + 0,4P | Ver efeito | Dano direto. |
 | Ira | 50 | C = W MP + 0,5H de vida; dano final × 2,2; roubo de vida = 0,2V | Duração: 4 turno(s) | Exige vida suficiente para pagar o sacrifício; roubo de vida usa o dano efetivamente perdido pelo alvo. |
-| Vallhala | 60 | C = 100 + W; dano recebido × 2,5; adicional por dano causado = 0,15E | Duração: 5 turno(s) | O bônus usa a vida máxima do inimigo; também aumenta o dano recebido. |
+| Vallhala | 60 | C = 100 + W; dano recebido × 2,12; adicional por dano causado = 0,15E | Duração: 5 turno(s) | O bônus usa a vida máxima do inimigo; também aumenta o dano recebido. |
 | Voce Ira Me Parar? | 80 | C = 100 + W MP + 0,3H de vida; A adicional = 40; dano total +20% | Duração: 4 turno(s) | Pode impedir a perda do turno atual e concede imunidade a esse controle durante o efeito. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -129,8 +129,8 @@ Classe: **Guerreiro**. Rota: espadachim → samurai.
 | --- | ---: | --- | --- | --- |
 | Recuperar Folego | 1 | C = 30 + W; cura = 5 + 0,12H | Duração: 3 turno(s) | +28% de dano final por 3 turnos. |
 | Investida | 20 | C = 50 + W; D = 20 + 0,06H + 0,8A + 0,8P | Ver efeito | Pode impedir a perda do turno atual. |
-| Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r; sangramento = 0,05E por turno, 3 turnos | Ver efeito | Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, por uso que cause dano. Aplicações acumulam. |
-| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,15 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
+| Golpes Velozes | 30 | C = 44 + W; 2 ataques básicos; cada golpe usa A + r; cada golpe aplica sangramento = 0,05E por turno, 3 turnos | Ver efeito | Aplica um sangramento de 5% da vida máxima do alvo por turno, durante 3 turnos, para cada golpe que cause dano. Os dois golpes aplicam sangramentos independentes, que acumulam. |
+| Corte Profundo | 50 | C = 52 + W; D = 70 + 1,1A + 0,8P + 0,08h; sangramento por turno = Dₑ × 0,3 ÷ 3 | Sangramento: 3 turno(s) | Sangramento por 3 turnos; aplicações acumulam. |
 | Furar Blindagem | 60 | C = 82 + W; D = 80 + 1,1A + 1,1P; D × 3 se o alvo tiver escudo | Ver efeito | O multiplicador extra exige escudo ativo no alvo. |
 | Cortes Ultrasonicos | 80 | C = 240 + 2W; 3 turnos de ataques básicos e esquiva; intervalo de 1 ação para reativar | Duração: 3 turno(s) | Durante 3 turnos só permite ataques básicos; exige uma ação de intervalo antes de reativar. |
 
@@ -332,9 +332,9 @@ Classe: **Arqueiro**. Rota: atirador → atirador_arcano.
 | --- | ---: | --- | --- | --- |
 | Mirar | 1 | C = 30 + L; A adicional = 5 + L; P adicional = 5 + L | Duração: 5 turno(s) | Acerto básico garantido por 5 turnos; Headshot ganha 10% de dano e 10 pontos percentuais de crítico. |
 | Camuflagem | 20 | C = 40 + W; esquiva adicional = 20%; próximo dano × 1,3 | Duração: 5 turno(s) | Esquiva adicional por 5 turnos. |
-| Headshot | 30 | C = 60 + W; D = 60 + 0,4A + 0,85P + 0,35M; com Mirar, D × 1,1 | Ver efeito | Crítico base de 10%; se não critar, o próximo golpe contra o alvo causa +15%. |
+| Headshot | 30 | C = 60 + W; D = 60 + 0,4A + 0,85P + 0,26M; com Mirar, D × 1,1 | Ver efeito | Crítico base de 10%; se não critar, o próximo golpe contra o alvo causa +15%. |
 | Tiro Perfurante | 50 | C = 80 + W; D = 50 + 0,8A + 1,2P | Ver efeito | Ignora armadura e escudo. |
-| Emergencia Arcana | 60 | C = 500; D = 60 + P + 0,75(M − m) | Ver efeito | Quanto mais mana faltar ao herói, maior a parcela adicional de dano. |
+| Emergencia Arcana | 60 | C = 500; D = 60 + P + 0,61(M − m) | Ver efeito | Quanto mais mana faltar ao herói, maior a parcela adicional de dano. |
 | Sobreaquecer | 80 | C = m; D = 80 + 1,6P + 0,6m | Ver efeito | Gasta toda a mana atual. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -432,7 +432,7 @@ Classe: **Adepto da Natureza**. Rota: base.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -447,7 +447,7 @@ Classe: **Adepto da Natureza**. Rota: druida.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
 | Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 4 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 4 turnos. |
 | Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
@@ -465,11 +465,11 @@ Classe: **Adepto da Natureza**. Rota: druida → druida_sombrio.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
 | Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 7 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 7 turnos. |
 | Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
-| Apodrecer | 60 | C = 40 + 0,5L; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno | Apodrecimento: 5 turno(s) | Apodrecimento por 5 turnos. |
+| Apodrecer | 60 | C = 40 + W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno | Apodrecimento: 5 turno(s) | Apodrecimento por 5 turnos. |
 | Colapso do Brejo | 80 | C = 0,85M; D = piso(1,8A + 1,8P) | Ver efeito | Se não houver DOT natural, aplica marca, veneno e apodrecimento por 4 turnos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -486,7 +486,7 @@ Classe: **Adepto da Natureza**. Rota: druida → avatar_da_natureza.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
 | Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 1,3A + 0,8P; veneno = 0,4P por turno | Veneno: 3 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 3 turnos. |
 | Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
@@ -507,7 +507,7 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
 | Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
 | Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |
@@ -525,7 +525,7 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta → fada_monarca.
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
 | Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
 | Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |
@@ -546,7 +546,7 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta → protetor_da_flore
 
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
-| Semente Viva | 1 | C = 20 + 0,5L; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
+| Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
 | Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
 | Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
 | Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado; escudo = 1,6P, ou 2,2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |

@@ -12,13 +12,13 @@ Execute `python -m http.server 8000` e abra http://localhost:8000.
 - A pousada recupera vida e mana juntas pela soma dos custos individuais. No acampamento, clicar num slot permite escolher e equipar uma peça compatível da bolsa.
 - Contratos do mercenário entregam a recompensa automaticamente no último abate necessário e mostram um aviso temporário de contrato concluído. Conquistas mantêm seu funcionamento anterior.
 - Ao fabricar, a peça pisca em verde; a indicação de peça já possuída tem fundo verde. O peitoral comum exige 7 materiais, incluindo componentes primários da criatura mais forte da região, e 18% mais moedas que as demais armaduras, antes do arredondamento.
-- No acampamento, Descansar recupera 1% da vida máxima a cada 3 segundos, arredondado para baixo e com mínimo de 1 HP, gratuitamente. O descanso continua ao navegar, fabricar, equipar e recarregar a página; o tempo decorrido é contabilizado. Encontros e entrada em arena/dungeon ficam bloqueados até voltar ao acampamento e clicar em Levantar. Vida cheia não encerra o descanso automaticamente.
+- No acampamento, Descansar recupera 1% da vida máxima a cada 3 segundos, arredondado para baixo e com mínimo de 1 HP, gratuitamente. O descanso continua ao navegar, fabricar, equipar e recarregar a página; o tempo decorrido é contabilizado. Encontros da campanha e entrada na arena ficam bloqueados até voltar ao acampamento e clicar em Levantar. Vida cheia não encerra o descanso automaticamente.
 - Em batalha, Itens abre um painel compacto de ícones acima do botão; passar o mouse mostra o efeito e clicar usa o consumível. Poções consomem turno e reduzem as durações dos buffs já ativos; um tônico recém-aplicado mantém sua duração inicial.
 - O treinador fica abaixo dos equipamentos no acampamento. Procurar inimigo mostra as chances reais dos encontros ao passar o mouse. O volume usa um slider nas configurações; o controle de velocidade da barra de vida foi removido da interface.
 - Todos os pontos já investidos usam o valor por ponto do nível atual, tanto nos atributos permanentes quanto no poder de habilidade de Força. Subir nível, carregar o save e redistribuir no treinador seguem a mesma regra; a migração guarda uma cópia do save anterior. Equipamentos mostra Força, Vitalidade e Sabedoria em três quadros coloridos com a quantidade de pontos.
 - Explodir aplica seu dano calculado ao inimigo, respeitando armadura/escudo e os custos de vida e mana.
 
-Arena e dungeon não fazem parte desta rodada de desenvolvimento.
+A dungeon é um roguelite independente: um herói por jogador, de um a três participantes, 12 regiões com sete encontros cada, 84 batalhas, serviços na base, carteiras individuais, trocas com aceite e evolução por XP. Não há bênçãos ou memórias permanentes. O botão está na seleção inicial e nos locais da campanha. [Regras e sistema](docs/dungeon/sistema_roguelite.md), [habilidades e alvos](docs/dungeon/referencia_habilidades.md). A arena mantém seu sistema anterior.
 
 ## Interface da campanha
 
@@ -46,3 +46,12 @@ A primeira opção valida regras, interface e habilidades da campanha. `--analys
 Análises com os inimigos reformulados: [Guerreiro e Arqueiro](docs/analise_guerreiro_arqueiro_inimigos_2026-11-04.md) e [Mago](docs/analise_mago_2026-11-04.md). As análises documentam a preparação artificial e as limitações das builds.
 
 [Equipamentos e custos](docs/equipamentos_balanceamento_2026-11-03.md). [Testes e reprodução](docs/qa/README.md).
+
+
+Testes da dungeon:
+
+```powershell
+node scripts/test-dungeon-rogue.cjs
+node scripts/qa-dungeon-rogue-ui.cjs
+node scripts/test-dungeon-rogue-network.cjs
+```

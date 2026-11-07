@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "assets/visual/maps/dungeon-locations-v1.webp",
+  "prompt": "Use case: stylized-concept. Asset type: selectable locations map for a medieval fantasy RPG. Reference image 1 is STYLE ONLY: match its hand-painted isometric parchment map, warm sepia ink, readable architecture, worn paper edges and earthy green landscape. Create a NEW portrait 2:3 map with EXACTLY THREE large recognizable destinations connected by dirt paths, no other buildings: TOP CENTER at x50% y23% a stone-and-timber adventurers' meeting hall with red banners and open courtyard; MIDDLE LEFT at x28% y52% a blacksmith workshop with orange glowing furnace, anvil and tools; BOTTOM RIGHT at x65% y78% a forest campsite with two tents, bedrolls and warm campfire. All three destinations must be spacious and distinct for clickable areas. Detailed painterly fantasy illustration matching reference. Full parchment sheet fits within frame. No text, letters, numbers, icons, UI, dots or pins. No purple portal, no arena, no extra destinations.",
+  "date": "2026-11-06"
+}

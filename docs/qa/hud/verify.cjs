@@ -7,6 +7,11 @@ async function screenshot(page,file){
   try{fs.writeFileSync(file,buffer);return;}catch(error){if(attempt===4)throw error;await new Promise(resolve=>setTimeout(resolve,600));}
  }
 }
+async function clickLocation(page,id){
+ const locator=page.locator('#modeTabs [data-value="'+id+'"]');
+ const point=await locator.evaluate(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {x:r.width*parseFloat(s.getPropertyValue('--x'))/100,y:r.height*parseFloat(s.getPropertyValue('--y'))/100};});
+ await locator.click({position:point});
+}
 
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -33,7 +38,8 @@ async function screenshot(page,file){
   results.flows.push('quick consumable HUD, keyboard isolation and Escape');
   await page.evaluate(()=>{enemy=null;currentMode='village';villageTab='artisan';updateUI();});
   await page.locator('[data-hud="craft-map"]').click();
-  assert(await page.locator('[data-hud="craft-region"][data-value="Caverna"]').isDisabled());
+  // Every set can be inspected; crafting still requires its unlocks and materials.
+  assert(await page.locator('[data-hud="craft-region"][data-value="Caverna"]').isEnabled());
   await page.keyboard.press('Escape');
   // Craft through the real UI; ingredients come from the canonical recipe.
   const recipe=await page.evaluate(()=>{const r=EquipmentSystem.getRecipes(player,{region:'Floresta',slot:'weapon'})[0];for(const[id,qty]of Object.entries(r.requirements))addInventoryItem({...EquipmentSystem.materialById(id),qty});updateUI();return r;});
@@ -43,7 +49,7 @@ async function screenshot(page,file){
   assert.equal(await page.evaluate(()=>player.coins),money-recipe.cost);
   const crafted=await page.evaluate(()=>player.inventory.find(i=>i.type==='equipment'));
   assert.equal(crafted.rarity,'comum');
-  results.flows.push('locked crafting region and common crafting with actual materials/cost');
+  results.flows.push('all set previews and common crafting with actual materials/cost');
   // Selection is inspection; only the explicit button equips.
   await page.locator('#rpgBagButton [data-value="bag"]').click();
   assert(await page.locator('#rpgDialog .rpg-bag').isVisible());
@@ -56,7 +62,7 @@ async function screenshot(page,file){
   assert.equal(await page.evaluate(()=>player.equipment.weapon?.uid),crafted.uid);
   await page.keyboard.press('Escape');
   results.flows.push('bag inspection does not mutate equipment; explicit equip works');
-  await page.locator('#modeTabs [data-value="village"]').click();
+  await clickLocation(page,'village');
   await page.locator('[data-hud="service"][data-value="forge"]').click();
   assert(await page.locator('[data-hud="upgrade"]').isDisabled());
   await page.evaluate(()=>{const u=EquipmentSystem.getUpgradeRequirements(player.equipment.weapon,player);for(const[id,qty]of Object.entries(u.requirements))addInventoryItem({...EquipmentSystem.materialById(id),qty});updateUI();});
@@ -66,7 +72,7 @@ async function screenshot(page,file){
   await page.locator('[data-hud="service"][data-value="mercenary"]').click();
   await page.locator('[data-hud="contract-tab"][data-value="offers"]').click();
   const offer=await page.evaluate(()=>EquipmentSystem.refreshContracts(player).offers[0]);
-  await page.locator('[data-hud="accept"]').click();
+  await page.locator('[data-hud="accept"][data-value="'+offer.id+'"]').click();
   await page.locator('[data-hud="contract-tab"][data-value="active"]').click();
   assert.equal(await page.locator('[data-hud="claim"]').count(),0);
   await page.evaluate(()=>{const q=player.mercenary.active[0];for(let i=0;i<q.count;i++)EquipmentSystem.recordKill({baseName:q.targetName,region:q.targetRegion},player);updateUI();});
@@ -144,10 +150,10 @@ async function screenshot(page,file){
   assert.equal(await page.locator('#campaignHud').count(),1);
   assert.equal(await page.evaluate(()=>player.equipment.weapon?.schemaVersion),2);
   results.flows.push('inn recovery and save/reload persistence');
-  await page.locator('#modeTabs [data-value="camp"]').click();assert.equal(await page.evaluate(()=>currentMode),'camp');
-  await page.locator('#modeTabs [data-value="trophies"]').click();assert.equal(await page.evaluate(()=>currentMode),'trophies');
-  await page.locator('#modeTabs [data-value="bestiary"]').click();assert.equal(await page.evaluate(()=>currentMode),'bestiary');
-  await page.locator('#modeTabs [data-value="battle"]').click();assert.equal(await page.evaluate(()=>currentMode),'battle');
+  await clickLocation(page,'camp');assert.equal(await page.evaluate(()=>currentMode),'camp');
+  await clickLocation(page,'trophies');assert.equal(await page.evaluate(()=>currentMode),'trophies');
+  await clickLocation(page,'bestiary');assert.equal(await page.evaluate(()=>currentMode),'bestiary');
+  await clickLocation(page,'battle');assert.equal(await page.evaluate(()=>currentMode),'battle');
   results.flows.push('location map navigates to character, trophies, bestiary and adventure');
 
   assert.equal(results.errors.length,0,results.errors.join('\n'));assert.equal(results.badResponses.length,0,JSON.stringify(results.badResponses));
