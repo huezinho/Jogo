@@ -238,7 +238,7 @@ const DungeonCombatKernel = (() => {
     if(k&&window.DungeonJourneyRules)window.DungeonJourneyRules.provoke(s,h,k);
     heroEnd(s,h,target||null);
   }
-  function enemyTarget(s,e){const heroes=s.party.filter(alive),entries=(e.provocations||[]).filter(x=>x.left>0&&heroes.some(h=>h.id===x.heroId)).sort((a,b)=>b.priority-a.priority||b.serial-a.serial);return entries.length?heroes.find(h=>h.id===entries[0].heroId):[...heroes].sort((a,b)=>(a.hp/stats(s,a).maxHp)-(b.hp/stats(s,b).maxHp))[0];}
+  function enemyTarget(s,e){const heroes=s.party.filter(alive),entries=(e.provocations||[]).filter(x=>x.left>0&&heroes.some(h=>h.id===x.heroId)).sort((a,b)=>b.priority-a.priority||b.serial-a.serial);return entries.length?heroes.find(h=>h.id===entries[0].heroId):heroes[Math.floor(random(s)*heroes.length)];}
   function enemyIntent(s,e){
     if(e.charge)return {kind:'release',name:e.charge.name,target:'party'};
     const allies=s.enemies.filter(alive),missing=allies.filter(x=>x.hp<x.maxHp*.55),moves=R.enemySkills(e).filter(x=>e.mp>=x.cost);
