@@ -172,7 +172,7 @@ Vida e ataque são valores base de combate antes de buffs/debuffs. Armadura do i
 | Serafim do Fim | Onda Vital | 30 | 1001 | 1001 de dano; cura o dano causado na vida do heroi. |
 | Deus da Ruina | Colapso Final | 204 | — | 3 turnos: queimadura de 4% da vida maxima, veneno de 4% da mana atual e sangramento de 100. |
 | Deus da Ruina | Aniquilacao Perfurante | 128 | 1280 | 1280 de dano; ignora resistencia e escudo; cura -20% por 2 turnos. |
-| Deus da Ruina | Manto da Ruina; Fim dos Fracos (passiva) | — | — | 30% de esquiva; ao esquivar gera escudo de 15%. Executa o heroi com 5 ou mais debuffs/DOTs. |
+| Deus da Ruina | Manto da Ruina; Fim dos Fracos (passiva) | — | — | 25% de esquiva; ao esquivar gera escudo de 15%. Executa o heroi com 5 ou mais debuffs/DOTs. |
 
 ## Paradoxo
 

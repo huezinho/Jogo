@@ -474,9 +474,9 @@ Classe: **Adepto da Natureza**. Rota: druida → druida_sombrio.
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,19; devolução de mana = 0,1C |
+| Ciclo Natural | 10 | Dano contra marcado × 1,19; devolução de mana = 0,15C |
 | Seiva | 40 | Cura = 0,08 × dano dos DOTs elegíveis |
-| Podridao | 70 | Dano dos DOTs naturais × 1,3 |
+| Podridao | 70 | Dano dos DOTs naturais × 1,45 |
 
 ## Avatar da Natureza
 
@@ -490,7 +490,7 @@ Classe: **Adepto da Natureza**. Rota: druida → avatar_da_natureza.
 | Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 60%. |
 | Flor do Pantano | 30 | C = 20 + W; D = 10 + 1,3A + 0,8P; veneno = 0,4P por turno | Veneno: 3 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 3 turnos. |
 | Colheita | 50 | C = 40 + 2W; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
-| Forma Verdadeira | 60 | C = M; A × 1,26; dano recebido × 0,82; ataque básico usa 1,7A + r | Duração: 5 turno(s) | Forma por 5 turnos; fortalece ataques básicos. |
+| Forma Verdadeira | 60 | C = piso(0,95M); A × 1,4; dano recebido × 0,82; ataque básico usa 1,7A + r | Duração: 5 turno(s) | Forma por 5 turnos; fortalece ataques básicos. |
 | Esmagar Invasor | 80 | C = 300 + 0,8L; D = 2A; +0,6A se o alvo estiver enraizado; +A durante Forma Verdadeira | Ver efeito | Os bônus por enraizamento e Forma Verdadeira podem somar. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
@@ -550,7 +550,7 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta → protetor_da_flore
 | Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 45%. Ao enraizar, reduz armadura em 50%. |
 | Encanto da Brisa | 30 | C = 30 + W; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
 | Cancao Ancestral | 50 | C = 40 + 2W; cura = P; escudo = 1,6P | Ver efeito | Cura e escudo independem de enraizamento. Protetor recebe escudo; Fada Monarca reduz dano inimigo em 12% por 3 turnos, multiplicativamente com outras reduções. |
-| Casulo de Vinhas | 60 | C = 60 + W; escudo = piso(1,4A + 1,4P) | Ver efeito | Concede escudo; respeita o bloqueio de escudos. |
+| Casulo de Vinhas | 60 | C = 60 + W; escudo = piso(1,7A + 1,7P) | Ver efeito | Concede escudo; respeita o bloqueio de escudos. |
 | Jogar Espinhos | 80 | C = 4L MP + 0,2H de vida + todo Z; D = 2,8Z | Ver efeito | Consome todo o escudo e 20% da vida máxima; ignora armadura e escudo inimigos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |

@@ -2385,7 +2385,7 @@ function hasUnlockedPassiveType(type){
 }
 
 function getNatureDotMultiplier(){
-  return player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_dot_mastery") ? 1.3 : 1;
+  return player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_dot_mastery") ? 1.45 : 1;
 }
 
 function noteEnemyDotApplication(...turnKeys){
@@ -2930,7 +2930,7 @@ function getSkillInfo(){
       return { ...skill, cost, damage, decayTurns: 5, decayDamage: enemy ? Math.max(1, Math.floor(enemy.maxHp * 0.015)) : 0, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica apodrecimento por 5 turnos.` };
     }
     if(skill.type === "nature_true_form"){
-      return { ...skill, cost: maxMp, turns: 5, attackPercent: 0.26, damageReductionPercent: 0.18, description: `${skill.name}: consome toda a mana maxima, aumenta ataque em 26%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.` };
+      return { ...skill, cost: Math.floor(maxMp * 0.95), turns: 5, attackPercent: 0.4, damageReductionPercent: 0.18, description: `${skill.name}: consome 95% da mana maxima, aumenta ataque em 40%, reduz dano sofrido em 18% e fortalece ataques basicos por 5 turnos.` };
     }
     if(skill.type === "nature_queen_decree"){
       const factor = (playerEffects.natureCadence || 0) >= 3 ? 2.9 : 2;
@@ -2939,7 +2939,7 @@ function getSkillInfo(){
     }
     if(skill.type === "nature_vine_cocoon"){
       const cost = 60 + natureLevelCost;
-      const shield = Math.floor(1.4 * attack + 1.4 * skillPower);
+      const shield = Math.floor(1.7 * attack + 1.7 * skillPower);
       return { ...skill, cost, shield, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo.` };
     }
     if(skill.type === "nature_swamp_collapse"){
@@ -3054,7 +3054,7 @@ function getActiveSkillPreviewDescription(skill){
     nature_harvest: "Consome efeitos naturais no inimigo para concentrar o dano restante.",
     nature_ancestral_song: "Cura principal do Espirito da Floresta, melhorada contra alvos enraizados.",
     nature_decay: "Aplica apodrecimento, um dano ao longo do tempo baseado na vida maxima do inimigo.",
-    nature_true_form: "Forma de combate que troca toda a mana por ataque, reducao de dano e ataques basicos fortalecidos.",
+    nature_true_form: "Forma de combate que consome 95% da mana maxima por ataque, reducao de dano e ataques basicos fortalecidos.",
     nature_queen_decree: "Dano de habilidade puro que cresce muito quando a Fada esta com Cadencia cheia.",
     nature_vine_cocoon: "Escudo direto baseado em ataque e poder de habilidade.",
     nature_swamp_collapse: "Explode o alvo e, se ele estiver limpo, aplica varios efeitos naturais de uma vez.",
@@ -3224,7 +3224,7 @@ function getPassiveStatusDescription(skill){
   if(skill.type === "nature_cycle"){
     const damageBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 19 : 13;
     const extra = getPlayerSubclassState().tier30 === "espirito_da_floresta" && player.level >= 30 ? " Tambem converte 30% do ataque basico em poder de habilidade." : "";
-    return `${skill.name}: alvos marcados recebem ${damageBonus}% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.${extra}`;
+    return `${skill.name}: alvos marcados recebem ${damageBonus}% a mais de dano e devolvem ${getPlayerSubclassState().tier60 === "druida_sombrio" && player.level >= 60 ? 15 : 10}% do custo da habilidade usada contra eles.${extra}`;
   }
   if(skill.type === "nature_sap"){
     return `${skill.name}: dano de marca e veneno cura 8% do dano causado.${getPlayerSubclassState().tier60 === "avatar_da_natureza" ? " Tambem aumenta sua vida maxima em 12%." : ""}${getPlayerSubclassState().tier60 === "druida_sombrio" ? " Tambem considera apodrecimento." : ""}`;
@@ -3235,7 +3235,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: curar ou ganhar escudo concede Cadencia. Cada acumulo da ${stackPower}% de poder de habilidade, ate 3. Com 3 acumulos, curas aumentam ${healBonus}%.`;
   }
   if(skill.type === "nature_dot_mastery"){
-    return `${skill.name}: aumenta marca, veneno e apodrecimento em 30%.`;
+    return `${skill.name}: aumenta marca, veneno e apodrecimento em 45%.`;
   }
   if(skill.type === "nature_ancestral_bark"){
     const reduction = Math.floor(10 + (playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5) * player.level);
@@ -3515,7 +3515,7 @@ function applyDamageToEnemy(rawDamage, options = {}){
       log(`Ciclo Natural adicionou ${bonusDamage} de dano contra o alvo marcado.`);
     }
     if(options.skillCost > 0){
-      const refund = Math.floor(options.skillCost * 0.1);
+      const refund = Math.floor(options.skillCost * (getPlayerSubclassState().tier60 === "druida_sombrio" && player.level >= 60 ? 0.15 : 0.1));
       if(refund > 0){
         player.mp = Math.min(getCurrentCaps().maxMp, player.mp + refund);
         log(`Ciclo Natural restaurou ${refund} de mana.`);

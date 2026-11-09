@@ -1450,7 +1450,7 @@
           "name": "Ciclo Natural",
           "type": "nature_cycle",
           "unlockLevel": 10,
-          "formula": "Dano contra marcado × 1,19; devolução de mana = 0,1C"
+          "formula": "Dano contra marcado × 1,19; devolução de mana = 0,15C"
         },
         {
           "name": "Seiva",
@@ -1462,7 +1462,7 @@
           "name": "Podridao",
           "type": "nature_dot_mastery",
           "unlockLevel": 70,
-          "formula": "Dano dos DOTs naturais × 1,3"
+          "formula": "Dano dos DOTs naturais × 1,45"
         }
       ]
     },
@@ -1509,7 +1509,7 @@
           "name": "Forma Verdadeira",
           "type": "nature_true_form",
           "unlockLevel": 60,
-          "formula": "C = M; A × 1,26; dano recebido × 0,82; ataque básico usa 1,7A + r",
+          "formula": "C = piso(0,95M); A × 1,4; dano recebido × 0,82; ataque básico usa 1,7A + r",
           "conditions": "Forma por 5 turnos; fortalece ataques básicos."
         },
         {
@@ -1714,7 +1714,7 @@
           "name": "Casulo de Vinhas",
           "type": "nature_vine_cocoon",
           "unlockLevel": 60,
-          "formula": "C = 60 + W; escudo = piso(1,4A + 1,4P)",
+          "formula": "C = 60 + W; escudo = piso(1,7A + 1,7P)",
           "conditions": "Concede escudo; respeita o bloqueio de escudos."
         },
         {

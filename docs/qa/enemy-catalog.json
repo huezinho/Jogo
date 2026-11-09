@@ -998,7 +998,7 @@
       {
         "boss": true,
         "passive": "Manto da Ruina; Fim dos Fracos",
-        "passiveDescription": "30% de esquiva; ao esquivar gera escudo de 15%. Executa o heroi com 5 ou mais debuffs/DOTs.",
+        "passiveDescription": "25% de esquiva; ao esquivar gera escudo de 15%. Executa o heroi com 5 ou mais debuffs/DOTs.",
         "name": "Deus da Ruina",
         "level": 110,
         "rarity": "Chefao",
