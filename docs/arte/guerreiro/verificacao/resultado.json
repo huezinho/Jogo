@@ -29,6 +29,38 @@
       "pose": "hurt"
     },
     {
+      "width": 320,
+      "pose": "ready"
+    },
+    {
+      "width": 320,
+      "pose": "swing"
+    },
+    {
+      "width": 320,
+      "pose": "follow"
+    },
+    {
+      "width": 320,
+      "pose": "settle"
+    },
+    {
+      "width": 320,
+      "pose": "shove-ready"
+    },
+    {
+      "width": 320,
+      "pose": "camp"
+    },
+    {
+      "width": 320,
+      "pose": "hurt-mid"
+    },
+    {
+      "width": 320,
+      "pose": "shove-return"
+    },
+    {
       "width": 390,
       "pose": "idle"
     },
@@ -57,6 +89,38 @@
       "pose": "hurt"
     },
     {
+      "width": 390,
+      "pose": "ready"
+    },
+    {
+      "width": 390,
+      "pose": "swing"
+    },
+    {
+      "width": 390,
+      "pose": "follow"
+    },
+    {
+      "width": 390,
+      "pose": "settle"
+    },
+    {
+      "width": 390,
+      "pose": "shove-ready"
+    },
+    {
+      "width": 390,
+      "pose": "camp"
+    },
+    {
+      "width": 390,
+      "pose": "hurt-mid"
+    },
+    {
+      "width": 390,
+      "pose": "shove-return"
+    },
+    {
       "width": 1366,
       "pose": "idle"
     },
@@ -83,6 +147,38 @@
     {
       "width": 1366,
       "pose": "hurt"
+    },
+    {
+      "width": 1366,
+      "pose": "ready"
+    },
+    {
+      "width": 1366,
+      "pose": "swing"
+    },
+    {
+      "width": 1366,
+      "pose": "follow"
+    },
+    {
+      "width": 1366,
+      "pose": "settle"
+    },
+    {
+      "width": 1366,
+      "pose": "shove-ready"
+    },
+    {
+      "width": 1366,
+      "pose": "camp"
+    },
+    {
+      "width": 1366,
+      "pose": "hurt-mid"
+    },
+    {
+      "width": 1366,
+      "pose": "shove-return"
     }
   ],
   "contacts": [

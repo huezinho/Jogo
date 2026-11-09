@@ -19,3 +19,6 @@
 @keyframes warriorBreathe{0%,100%{scale:1 1}50%{scale:1 1.006}}
 .rpg-campaign #heroSpriteBox .warrior-single[data-motion=idle]{animation:warriorBreathe 3s ease-in-out infinite!important}
 @media(prefers-reduced-motion:reduce){.rpg-campaign #heroSpriteBox .warrior-single{animation:none!important}}
+/* Breathing while actually resting; standing in camp keeps the regular image. */
+.rpg-campaign :is(.camp-scene,.rpg-character-figure) .hero-v2[style*="/camp.webp"]{animation:warriorBreathe 3.5s ease-in-out infinite!important}
+@media(prefers-reduced-motion:reduce){.rpg-campaign :is(.camp-scene,.rpg-character-figure) .hero-v2[style*="/camp.webp"]{animation:none!important}}

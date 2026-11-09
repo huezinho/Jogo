@@ -9,7 +9,7 @@ report={}
 for name,registration in meta.items():
  im=Image.open(src/(name+'.png')).convert('RGBA')
  head,ground=registration['head'],registration['ground']
- scale=230/(ground-head)
+ scale=registration.get('bodyHeight',230)/(ground-head)
  pivot=registration['pivot']
  out=Image.new('RGBA',(384,384))
  box=im.getchannel('A').point(lambda a:255 if a>24 else 0).getbbox()

@@ -10,12 +10,12 @@ const CharacterMotion=(()=>{
   if(key==='avatar-da-natureza'&&playerEffects.natureTrueFormTurns>0)return 'avatar-da-natureza-verdadeira';
   return key;
  }
- const heroPath=key=>key==='guerreiro'?posePath('idle'):`assets/visual/${forms.has(key)?'hero-forms':'heroes-v2'}/${key}.webp?v=20261104-forms`;
- const posePath=name=>`assets/visual/warrior-poses/${name}.webp?v=20261109-pilot`;
+ const heroPath=key=>key==='guerreiro-camp'?posePath('camp'):key==='guerreiro'?posePath('idle'):`assets/visual/${forms.has(key)?'hero-forms':'heroes-v2'}/${key}.webp?v=20261104-forms`;
+ const posePath=name=>`assets/visual/warrior-poses/${name}.webp?v=20261109-fluid-r2`;
  const warrior=el=>el?.dataset.warrior==='true'||(typeof getHeroCombatAssetKey==='function'&&getHeroCombatAssetKey()==='guerreiro');
  function setPose(el,name){if(!name)throw new Error('Missing warrior pose '+el.dataset.motion+' '+el.dataset.frame);el.classList.add('warrior-single');el.dataset.pose=name;el.style.backgroundImage=`url('${new URL(posePath(name),document.baseURI).href}')`;}
  function resetPose(el){if(warrior(el))setPose(el,'idle');el.dataset.motion='idle';el.dataset.frame='0';el.style.removeProperty('background-position');}
- function readyPoses(){if(!loaded.has('warrior-poses'))loaded.set('warrior-poses',Promise.all(['idle','windup','strike','recover','shove','support','hurt'].map(name=>{const im=new Image();im.src=posePath(name);return im.decode().catch(()=>false);})));return loaded.get('warrior-poses');}
+ function readyPoses(){if(!loaded.has('warrior-poses'))loaded.set('warrior-poses',Promise.all(['idle','windup','strike','recover','shove','support','hurt','ready','swing','follow','settle','shove-ready','shove-return','hurt-mid','camp'].map(name=>{const im=new Image();im.src=posePath(name);return im.decode().catch(()=>false);})));return loaded.get('warrior-poses');}
  function syncForm(){
   const el=document.querySelector('#heroSpriteBox .hero-v2');
   if(el&&warrior(el))setPose(el,'idle');
@@ -34,7 +34,7 @@ const CharacterMotion=(()=>{
   if(reduced()){resetPose(el);return pause(100);}
   return new Promise(resolve=>{const start=performance.now();const token={raf:0,finish};running.set(el,token);el.dataset.motion=row===3?'hurt':row===2?'cast':'attack';
    function finish(restore=true){if(running.get(el)===token){running.delete(el);if(restore)resetPose(el);}resolve();}
-   function step(now){if(!el.isConnected||running.get(el)!==token){finish();return;}const t=Math.max(0,Math.min(1,(now-start)/duration));const col=sequence[Math.min(sequence.length-1,Math.floor(t*sequence.length))];if(warrior(el)){const names=poseNames||(row===3?['hurt','hurt','recover','idle']:row===2?['support','support','recover','idle']:['windup','strike','recover','idle']);setPose(el,names[col]);}else el.style.backgroundPosition=`${col*100/3}% ${row*100/3}%`;el.dataset.frame=String(row*4+col);if(t>=1){finish();return;}token.raf=requestAnimationFrame(step);}
+   function step(now){if(!el.isConnected||running.get(el)!==token){finish();return;}const t=Math.max(0,Math.min(1,(now-start)/duration));const col=sequence[Math.min(sequence.length-1,Math.floor(t*sequence.length))];if(warrior(el)){const names=poseNames||(row===3?['hurt-mid','hurt','hurt','hurt-mid','settle','idle']:row===2?['idle','support','support','support','settle','idle']:['idle','ready','ready','windup','windup','swing','swing','strike','strike','follow','follow','recover','recover','settle','settle','idle']);setPose(el,names[Math.min(names.length-1,Math.floor(t*names.length))]);}else el.style.backgroundPosition=`${col*100/3}% ${row*100/3}%`;el.dataset.frame=String(row*4+col);if(t>=1){finish();return;}token.raf=requestAnimationFrame(step);}
    token.raf=requestAnimationFrame(step);
   });
  }
@@ -55,7 +55,7 @@ const CharacterMotion=(()=>{
   let sequence=warrior(el)?[0,0,0,0,1,1,2,2,2,2]:[0,1,2,3];if(p.pose==='attack'&&p.hits>1)sequence=[0,...Array.from({length:p.hits},()=>[1,2]).flat(),3];
   else if(repeats>1&&!reduced())sequence=[0,1,...Array.from({length:Math.max(2,Math.ceil(p.duration/225)-3)},()=>2),3];
   const bodyMotion=warrior(el)&&!reduced()?el.animate([{translate:'0px 0px',offset:0},{translate:p.target==='hero'?'0px 0px':'-3px 0px',offset:.35},{translate:p.target==='hero'?'0px 0px':'8px 0px',offset:.5},{translate:'0px 0px',offset:1}],{duration:p.duration,easing:'ease-in-out'}):null;
-  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence,skill?.type==='warrior_shove'?['idle','shove','recover','idle']:null),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit){if(typeof ZenithMotion!=='undefined')ZenithMotion.hurt();if(typeof EnemyMotion!=='undefined')EnemyMotion.hurt();pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}}})()]);}finally{bodyMotion?.cancel();box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
+  try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence,skill?.type==='warrior_shove'?['idle','shove-ready','shove-ready','shove-ready','shove-ready','shove-ready','shove-ready','shove','shove','shove-return','shove-return','recover','recover','settle','settle','idle']:null),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit){if(typeof ZenithMotion!=='undefined')ZenithMotion.hurt();if(typeof EnemyMotion!=='undefined')EnemyMotion.hurt();pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}}})()]);}finally{bodyMotion?.cancel();box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
  }
  return {profile,action,hurt,prepare,formKey,syncForm,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>key==='guerreiro'?-90:typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath};
 })();

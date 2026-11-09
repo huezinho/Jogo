@@ -2,7 +2,7 @@
 
 [Prévia interativa](index.html)
 
-O piloto do Guerreiro base usa sete imagens individuais: repouso, preparação, contato, recuperação, Esbarrão, Recuperar Fôlego e reação ao dano. Espada, escudo e capa ficam dentro de cada imagem; não há células vizinhas para invadir o recorte.
+O piloto do Guerreiro base usa 15 imagens individuais, incluindo poses intermediárias e descanso no acampamento. As poses originais incluem: repouso, preparação, contato, recuperação, Esbarrão, Recuperar Fôlego e reação ao dano. Espada, escudo e capa ficam dentro de cada imagem; não há células vizinhas para invadir o recorte.
 
 As poses são registradas em uma tela transparente de 384 × 384, com referência de apoio em (192, 376) e escala corporal consistente. O espaço superior e lateral reserva a extensão dos movimentos. O posicionamento no celular considera a ponta da arma e o escudo.
 
@@ -20,3 +20,9 @@ A prévia oferece câmera lenta e contorno da imagem com marcador de apoio. Esta
 - `node scripts/test-warrior-balance.cjs`: regressão das regras de combate.
 
 Para abrir a prévia, sirva a raiz do repositório com `python3 -m http.server 8000` e acesse `/docs/arte/guerreiro/index.html`.
+
+## Ampliação de fluidez e descanso
+
+O ataque de espada agora percorre oito poses diferentes; o Esbarrão percorre seis. Foram acrescentadas preparação, passagem da espada, continuidade do corte, retorno à guarda, preparação e retorno do escudo e reação intermediária ao dano. O instante do contato permanece sincronizado com o impacto.
+
+A imagem sentada aparece quando o descanso está ativo no acampamento e desaparece ao levantar. O estado é mantido pelos salvamentos existentes. A pose pode ser vista também pelo botão de descanso da prévia.

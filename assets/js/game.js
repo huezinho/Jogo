@@ -786,7 +786,9 @@ function renderSpriteSheetFigure(id, kind, assetKey, fallbackMarkup, label, extr
 
 function getHeroSpriteMarkup(targetPlayer = player){
   const heroClass = getHeroSpriteClass(targetPlayer);
-  return renderSpriteSheetFigure("heroSprite", "heroes", getHeroCombatAssetKey(targetPlayer), getHeroSpriteIcon(targetPlayer), getDisplayedClassName(targetPlayer), heroClass);
+  const key = getHeroCombatAssetKey(targetPlayer);
+  const restingWarrior = key === "guerreiro" && targetPlayer === player && currentMode === "camp" && isCampResting();
+  return renderSpriteSheetFigure("heroSprite", "heroes", restingWarrior ? "guerreiro-camp" : key, getHeroSpriteIcon(targetPlayer), getDisplayedClassName(targetPlayer), heroClass);
 }
 function renderCombatAvatar(kind, assetKey, fallbackMarkup, altText){
   const source = getVisualSpritePath(kind, assetKey);

@@ -33,5 +33,46 @@
     "head": 170,
     "ground": 1206,
     "pivot": 640
+  },
+  "ready": {
+    "head": 169,
+    "ground": 1175,
+    "pivot": 570
+  },
+  "swing": {
+    "head": 210,
+    "ground": 1158,
+    "pivot": 490
+  },
+  "follow": {
+    "head": 246,
+    "ground": 1154,
+    "pivot": 550
+  },
+  "settle": {
+    "head": 130,
+    "ground": 1209,
+    "pivot": 580
+  },
+  "shove-ready": {
+    "head": 200,
+    "ground": 1162,
+    "pivot": 600
+  },
+  "camp": {
+    "head": 102,
+    "ground": 947,
+    "pivot": 750,
+    "bodyHeight": 150
+  },
+  "hurt-mid": {
+    "head": 159,
+    "ground": 1170,
+    "pivot": 600
+  },
+  "shove-return": {
+    "head": 104,
+    "ground": 1193,
+    "pivot": 620
   }
 }
