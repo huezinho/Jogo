@@ -42,7 +42,7 @@ async function main(){
     const conditions = require('./skill-conditions.cjs');
     const lines = [
       '# Referência atual de habilidades', '',
-      'Catálogo gerado a partir do código executável atual em 06/11/2026. Não utiliza o documento antigo de balanceamento.', '',
+      'Catálogo gerado a partir do código executável atual em 09/11/2026. Não utiliza o documento antigo de balanceamento.', '',
       `São ${forms.length} formas de classe/subclasse e ${activeIds.size} nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.`, '',
       'Relatório geral: nenhuma vida, mana, ataque ou nível de herói é fixado nas fórmulas. L permanece uma incógnita. Os níveis indicados nas tabelas são somente requisitos de desbloqueio; cada regra vale após desbloquear a habilidade e escolher a classe correspondente.', '',
       'Crítico é um atributo universal: todos os heróis começam com 1%. Ataques e habilidades ofensivas podem critar; DOTs e efeitos adicionais dos equipamentos não fazem nova rolagem de crítico. Somam-se os bônus de equipamentos, conjuntos, passivas e da habilidade. O multiplicador básico é 2; o excesso de chance acima de 100% aumenta o dano crítico, preservando a regra anterior. Ataques múltiplos rolam por impacto. O acampamento mostra a chance geral, sem o bônus exclusivo de uma habilidade.', '',

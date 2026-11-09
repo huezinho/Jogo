@@ -1,6 +1,6 @@
 # Referência atual de habilidades
 
-Catálogo gerado a partir do código executável atual em 06/11/2026. Não utiliza o documento antigo de balanceamento.
+Catálogo gerado a partir do código executável atual em 09/11/2026. Não utiliza o documento antigo de balanceamento.
 
 São 28 formas de classe/subclasse e 59 nomes distintos de habilidades ativas. Habilidades herdadas aparecem em cada rota em que estão disponíveis.
 
@@ -433,11 +433,11 @@ Classe: **Adepto da Natureza**. Rota: base.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 45%. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,10; devolução de mana = 0,1C |
+| Ciclo Natural | 10 | Dano contra marcado × 1,13; devolução de mana = 0,1C |
 
 ## Druida
 
@@ -448,13 +448,13 @@ Classe: **Adepto da Natureza**. Rota: druida.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
-| Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 4 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 4 turnos. |
-| Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 60%. |
+| Flor do Pantano | 30 | C = 20 + W; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 4 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 4 turnos. |
+| Colheita | 50 | C = 40 + 2W; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,16; devolução de mana = 0,1C |
+| Ciclo Natural | 10 | Dano contra marcado × 1,19; devolução de mana = 0,1C |
 | Seiva | 40 | Cura = 0,08 × dano dos DOTs elegíveis |
 
 ## Druida Sombrio
@@ -466,15 +466,15 @@ Classe: **Adepto da Natureza**. Rota: druida → druida_sombrio.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
-| Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 7 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 7 turnos. |
-| Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
-| Apodrecer | 60 | C = 40 + W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno | Apodrecimento: 5 turno(s) | Apodrecimento por 5 turnos. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 60%. |
+| Flor do Pantano | 30 | C = 20 + W; D = 10 + 0,8A + 0,8P; veneno = 0,4P por turno | Veneno: 7 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 7 turnos. |
+| Colheita | 50 | C = 40 + 2W; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
+| Apodrecer | 60 | C = 40 + 2W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno | Apodrecimento: 5 turno(s) | Apodrecimento por 5 turnos. |
 | Colapso do Brejo | 80 | C = 0,85M; D = piso(1,8A + 1,8P) | Ver efeito | Se não houver DOT natural, aplica marca, veneno e apodrecimento por 4 turnos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,16; devolução de mana = 0,1C |
+| Ciclo Natural | 10 | Dano contra marcado × 1,19; devolução de mana = 0,1C |
 | Seiva | 40 | Cura = 0,08 × dano dos DOTs elegíveis |
 | Podridao | 70 | Dano dos DOTs naturais × 1,3 |
 
@@ -487,17 +487,17 @@ Classe: **Adepto da Natureza**. Rota: druida → avatar_da_natureza.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; marca = 0,2P × 4 por turno | Marca: 4 turno(s) | Marca por 4 turnos, com dano periódico. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 60%. |
-| Flor do Pantano | 30 | C = 20 + 0,4L; D = 10 + 1,3A + 0,8P; veneno = 0,4P por turno | Veneno: 3 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 3 turnos. |
-| Colheita | 50 | C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 60%. |
+| Flor do Pantano | 30 | C = 20 + W; D = 10 + 1,3A + 0,8P; veneno = 0,4P por turno | Veneno: 3 turno(s) | Só envenena se o alvo estiver enraizado; duração do veneno: 3 turnos. |
+| Colheita | 50 | C = 40 + 2W; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais | Ver efeito | Consome a marca; Druida Sombrio também consome venenos e apodrecimento. |
 | Forma Verdadeira | 60 | C = M; A × 1,26; dano recebido × 0,82; ataque básico usa 1,7A + r | Duração: 5 turno(s) | Forma por 5 turnos; fortalece ataques básicos. |
 | Esmagar Invasor | 80 | C = 300 + 0,8L; D = 2A; +0,6A se o alvo estiver enraizado; +A durante Forma Verdadeira | Ver efeito | Os bônus por enraizamento e Forma Verdadeira podem somar. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,16; devolução de mana = 0,1C |
+| Ciclo Natural | 10 | Dano contra marcado × 1,19; devolução de mana = 0,1C |
 | Seiva | 40 | Cura = 0,08 × dano dos DOTs elegíveis; vida máxima +12% |
-| Casca Ancestral | 70 | Redução fixa = piso(4 + 0,5L); durante Forma Verdadeira = piso(4 + 0,7L) |
+| Casca Ancestral | 70 | Redução fixa = piso(10 + 0,5L); durante Forma Verdadeira = piso(10 + 0,7L) |
 
 ## Espirito da Floresta
 
@@ -508,13 +508,13 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
-| Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
-| Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 45%. Ao enraizar, reduz armadura em 50%. |
+| Encanto da Brisa | 30 | C = 30 + W; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
+| Cancao Ancestral | 50 | C = 40 + 2W; cura = P | Ver efeito | Cura e escudo independem de enraizamento. Protetor recebe escudo; Fada Monarca reduz dano inimigo em 12% por 3 turnos, multiplicativamente com outras reduções. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A |
+| Ciclo Natural | 10 | Dano contra marcado × 1,13; devolução de mana = 0,1C; P adicional = 0,3A |
 | Aura Feerica | 40 | P adicional por Cadência = 4%; até 3 Cadências; com 3: curas × 1,05 |
 
 ## Fada Monarca
@@ -526,15 +526,15 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta → fada_monarca.
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
-| Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
-| Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |
-| Decreto da Rainha | 60 | C = 90; D = 2P; com 3 Cadências: D = 2,9P | Ver efeito | Com 3 Cadências usa o coeficiente maior. |
-| Coroar | 80 | C = 300 + 2L; P × 1,3; curas × 1,2; chances de controle +20 pontos percentuais | Duração: 5 turno(s) | Por 5 turnos, aumenta poder de habilidade, curas e chances de controle. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 45%. Ao enraizar, reduz armadura em 50%. |
+| Encanto da Brisa | 30 | C = 30 + W; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
+| Cancao Ancestral | 50 | C = 40 + 2W; cura = P | Ver efeito | Cura e escudo independem de enraizamento. Protetor recebe escudo; Fada Monarca reduz dano inimigo em 12% por 3 turnos, multiplicativamente com outras reduções. |
+| Decreto da Rainha | 60 | C = 90 + 2W; D = 2P; com 3 Cadências: D = 2,9P | Ver efeito | Com 3 Cadências usa o coeficiente maior. |
+| Coroar | 80 | C = 300 + 2W; P × 1,3; curas × 1,2; chances de controle +20 pontos percentuais | Duração: 5 turno(s) | Por 5 turnos, aumenta poder de habilidade, curas e chances de controle. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A |
+| Ciclo Natural | 10 | Dano contra marcado × 1,13; devolução de mana = 0,1C; P adicional = 0,3A |
 | Aura Feerica | 40 | P adicional por Cadência = 6%; até 3 Cadências; com 3: curas × 1,10 |
 | Asas da Realeza | 70 | Esquiva = 20%; enquanto coroada = 60% |
 
@@ -547,15 +547,15 @@ Classe: **Adepto da Natureza**. Rota: espirito_da_floresta → protetor_da_flore
 | Ativa | Desbloqueio | Fórmula geral de custo e efeito | Duração | Condições |
 | --- | ---: | --- | --- | --- |
 | Semente Viva | 1 | C = 20 + W; D = 10 + 0,7A + 0,3P; dano inimigo −24% | Marca: 3 turno(s) | Marca por 3 turnos; habilita as sinergias naturais. |
-| Raizes | 20 | C = 30 + 0,6L; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos: chance de 45%. Ao enraizar, reduz armadura em 50%. |
-| Encanto da Brisa | 30 | C = 30 + 0,3L; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
-| Cancao Ancestral | 50 | C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado; escudo = 1,6P, ou 2,2P contra alvo enraizado | Ver efeito | Alvo enraizado fortalece a cura; Protetor também recebe escudo. |
-| Casulo de Vinhas | 60 | C = 60 + 0,6L; escudo = piso(1,4A + 1,4P) | Ver efeito | Concede escudo; respeita o bloqueio de escudos. |
-| Jogar Espinhos | 80 | C = 4L MP + 0,2H de vida + todo Z; D = 2Z | Ver efeito | Consome todo o escudo e 20% da vida máxima; ignora armadura e escudo inimigos. |
+| Raizes | 20 | C = 30 + W; D = 20 + 0,8A + 0,8P | Ver efeito | Enraizamento por 3 turnos; 5% de perder cada acao, ou 25% com Coroada. Chance de aplicar de 45%. Ao enraizar, reduz armadura em 50%. |
+| Encanto da Brisa | 30 | C = 30 + W; D = 20 + 1,1P | Ver efeito | Pode impedir a ação; alvo marcado também pode ser enraizado. Coroação aumenta as chances em 20 pontos percentuais. |
+| Cancao Ancestral | 50 | C = 40 + 2W; cura = P; escudo = 1,6P | Ver efeito | Cura e escudo independem de enraizamento. Protetor recebe escudo; Fada Monarca reduz dano inimigo em 12% por 3 turnos, multiplicativamente com outras reduções. |
+| Casulo de Vinhas | 60 | C = 60 + W; escudo = piso(1,4A + 1,4P) | Ver efeito | Concede escudo; respeita o bloqueio de escudos. |
+| Jogar Espinhos | 80 | C = 4L MP + 0,2H de vida + todo Z; D = 2,8Z | Ver efeito | Consome todo o escudo e 20% da vida máxima; ignora armadura e escudo inimigos. |
 
 | Passiva | Desbloqueio | Fórmula / regra geral |
 | --- | ---: | --- |
-| Ciclo Natural | 10 | Dano contra marcado × 1,10; devolução de mana = 0,1C; P adicional = 0,3A |
+| Ciclo Natural | 10 | Dano contra marcado × 1,13; devolução de mana = 0,1C; P adicional = 0,3A |
 | Aura Feerica | 40 | P adicional por Cadência = 4%; até 3 Cadências; com 3: curas × 1,05 |
-| Juramento do Bosque | 70 | Escudos × 1,06; reflexão = 0,3 × dano absorvido pelo escudo |
+| Juramento do Bosque | 70 | Escudos × 1,11; reflexão = 0,3 × dano absorvido pelo escudo |
 

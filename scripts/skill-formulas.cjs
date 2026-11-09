@@ -44,19 +44,19 @@ archer_weak_spot:'C = 120; D = 100 + 0,65A + 0,4P + 0,2h',
 archer_aim_leg:'C = 100; D = 80 + 0,6P + 0,5A; ataque inimigo × 0,8; armadura inimiga × 0,5',
 archer_cutting_shot:'C = 80; T = 120 + 1,2A + 1,2P; DOT por turno = piso(T ÷ 3), durante 3 turnos',
 nature_living_seed:`C = 20 + W; D = 10 + 0,7A + 0,3P${t==='druida'?'; marca = 0,2P × 4 por turno':t==='espirito_da_floresta'?'; dano inimigo −24%':''}`,
-nature_roots:'C = 30 + 0,6L; D = 20 + 0,8A + 0,8P',
-nature_swamp_flower:`C = 20 + 0,4L; D = 10 + ${u==='avatar_da_natureza'?'1,3':'0,8'}A + 0,8P; veneno = 0,4P por turno`,
-nature_breeze_charm:'C = 30 + 0,3L; D = 20 + 1,1P',
-nature_harvest: u==='druida_sombrio' ? 'C = 40 + 0,3L; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais' : 'C = 40 + 0,3L; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais',
-nature_ancestral_song:`C = 40 + 0,4L; cura = 1,4P, ou 2P contra alvo enraizado${u==='protetor_da_floresta'?'; escudo = 1,6P, ou 2,2P contra alvo enraizado':''}`,
-nature_decay:'C = 40 + W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno',
+nature_roots:'C = 30 + W; D = 20 + 0,8A + 0,8P',
+nature_swamp_flower:`C = 20 + W; D = 10 + ${u==='avatar_da_natureza'?'1,3':'0,8'}A + 0,8P; veneno = 0,4P por turno`,
+nature_breeze_charm:'C = 30 + W; D = 20 + 1,1P',
+nature_harvest: u==='druida_sombrio' ? 'C = 40 + 2W; D = 30 + 1,2A + dano restante de marca, venenos e apodrecimento, com os bônus de DOTs naturais' : 'C = 40 + 2W; D = 30 + 1,2A + 0,3P × turnos restantes da marca; o adicional recebe os bônus de DOTs naturais',
+nature_ancestral_song:`C = 40 + 2W; cura = P${u==='protetor_da_floresta'?'; escudo = 1,6P':''}`,
+nature_decay:'C = 40 + 2W; D = 50 + 1,2A; apodrecimento = máximo(1; piso(0,015E)) por turno',
 nature_true_form:'C = M; A × 1,26; dano recebido × 0,82; ataque básico usa 1,7A + r',
-nature_queen_decree:'C = 90; D = 2P; com 3 Cadências: D = 2,9P',
-nature_vine_cocoon:'C = 60 + 0,6L; escudo = piso(1,4A + 1,4P)',
+nature_queen_decree:'C = 90 + 2W; D = 2P; com 3 Cadências: D = 2,9P',
+nature_vine_cocoon:'C = 60 + W; escudo = piso(1,4A + 1,4P)',
 nature_swamp_collapse:'C = 0,85M; D = piso(1,8A + 1,8P)',
 nature_crush_invader:'C = 300 + 0,8L; D = 2A; +0,6A se o alvo estiver enraizado; +A durante Forma Verdadeira',
-nature_crown:'C = 300 + 2L; P × 1,3; curas × 1,2; chances de controle +20 pontos percentuais',
-nature_throw_thorns:'C = 4L MP + 0,2H de vida + todo Z; D = 2Z',
+nature_crown:'C = 300 + 2W; P × 1,3; curas × 1,2; chances de controle +20 pontos percentuais',
+nature_throw_thorns:'C = 4L MP + 0,2H de vida + todo Z; D = 2,8Z',
 };
 if(!formulas[k])throw Error('Fórmula ausente: '+k);
 return formulas[k];
@@ -78,10 +78,10 @@ archer_dodge_level_scaling:'Esquiva = 5% + (0,5% × L)',archer_dodge_double_bonu
 archer_attack_level_bonus:`A adicional = piso(0,9L); P adicional = piso(${u==='atirador_arcano'?'1,3':'0,9'}L)`,
 archer_mana_to_skill_bonus:'P adicional = piso(0,05M)',archer_flat_reduction_level:'Redução fixa = piso(0,46L)',
 archer_dodge_damage_buff:u==='guarda_florestal'?'Cura ao esquivar = piso(0,13H)':u==='espreitador'?'Próximo dano após esquivar × 1,5':'Dano final × 1,12 por 2 turnos após esquivar',
-nature_cycle:`Dano contra marcado × ${t==='druida'?'1,16':'1,10'}; devolução de mana = 0,1C${t==='espirito_da_floresta'?'; P adicional = 0,3A':''}`,
+nature_cycle:`Dano contra marcado × ${t==='druida'?'1,19':'1,13'}; devolução de mana = 0,1C${t==='espirito_da_floresta'?'; P adicional = 0,3A':''}`,
 nature_sap:`Cura = 0,08 × dano dos DOTs elegíveis${u==='avatar_da_natureza'?'; vida máxima +12%':''}`,
-nature_dot_mastery:'Dano dos DOTs naturais × 1,3',nature_ancestral_bark:'Redução fixa = piso(4 + 0,5L); durante Forma Verdadeira = piso(4 + 0,7L)',
+nature_dot_mastery:'Dano dos DOTs naturais × 1,3',nature_ancestral_bark:'Redução fixa = piso(10 + 0,5L); durante Forma Verdadeira = piso(10 + 0,7L)',
 nature_fairy_aura:`P adicional por Cadência = ${u==='fada_monarca'?'6%':'4%'}; até 3 Cadências; com 3: curas × ${u==='fada_monarca'?'1,10':'1,05'}`,
-nature_royal_wings:'Esquiva = 20%; enquanto coroada = 60%',nature_forest_oath:'Escudos × 1,06; reflexão = 0,3 × dano absorvido pelo escudo'
+nature_royal_wings:'Esquiva = 20%; enquanto coroada = 60%',nature_forest_oath:'Escudos × 1,11; reflexão = 0,3 × dano absorvido pelo escudo'
 };return p[s.type]||s.description;
 };

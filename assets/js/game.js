@@ -1990,7 +1990,7 @@ function getPassiveModifiers(extraCombatBonuses = null){
     }
     if(passive.type === "nature_ancestral_bark"){
       const factor = playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5;
-      base.flatReduction += Math.floor(4 + factor * player.level);
+      base.flatReduction += Math.floor(10 + factor * player.level);
     }
     if(passive.type === "nature_royal_wings"){
       base.enemyMissChance += playerEffects.natureCrownedTurns > 0 ? 0.6 : 0.2;
@@ -2363,7 +2363,7 @@ function grantPlayerShield(amount, turns = 0, {skipEquipment = false} = {}){
   if(shield <= 0){ return 0; }
   let shieldBonus = 0;
   if(player?.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_forest_oath")){
-    shieldBonus += 0.06;
+    shieldBonus += 0.11;
   }
   if(player?.class === "Adepto da Natureza" && getPlayerSubclassState().tier60 === "protetor_da_floresta" && hasUnlockedPassiveType("nature_fairy_aura") && (playerEffects.natureCadence || 0) >= 3){
     shieldBonus += 0.1;
@@ -2578,6 +2578,7 @@ function getSkillInfo(){
   const attack = getActiveAttack();
   const skillPower = getSkillPowerBonus();
   const mageExtraCost = player.class === "Mago" ? passiveModifiers.skillCostIncrease || 0 : 0;
+  const natureLevelCost = Math.floor(1.4 * player.level);
   const mageLevelCost = Math.floor(1.4 * player.level);
   const warriorExtraCost = player.class === "Guerreiro" ? Math.floor(1.4 * player.level) : 0;
   const clampMageSkillCost = cost => player.class === "Mago" ? Math.min(maxMp, Math.max(0, Math.floor(cost))) : Math.max(0, Math.floor(cost));
@@ -2892,14 +2893,14 @@ function getSkillInfo(){
     if(skill.type === "nature_roots"){
       const rootChance = subclassState.tier30 === "druida" && player.level >= 30 ? 0.6 : 0.45;
       const armorDownPercent = subclassState.tier30 === "espirito_da_floresta" && player.level >= 30 ? 0.5 : 0;
-      const cost = 30 + Math.floor(0.6 * player.level);
+      const cost = 30 + natureLevelCost;
       const damage = 20 + Math.floor(0.8 * attack) + Math.floor(0.8 * skillPower);
       return { ...skill, cost, damage, rootChance, armorDownPercent, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem ${Math.floor(rootChance * 100)}% de chance de enraizar.${armorDownPercent ? " Se enraizar, tambem reduz 50% da armadura." : ""}` };
     }
     if(skill.type === "nature_swamp_flower"){
       const isAvatar = subclassState.tier60 === "avatar_da_natureza" && player.level >= 60;
       const poisonTurns = isAvatar ? 3 : subclassState.tier60 === "druida_sombrio" && player.level >= 60 ? 7 : 4;
-      const cost = 20 + Math.floor(0.4 * player.level);
+      const cost = 20 + natureLevelCost;
       const damage = 10 + Math.floor((isAvatar ? 1.3 : 0.8) * attack) + Math.floor(0.8 * skillPower);
       return { ...skill, cost, damage, poisonTurns, poisonDamage: Math.floor(0.4 * skillPower), description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano. Se o alvo estiver enraizado, aplica veneno de ${Math.floor(0.4 * skillPower)} por ${poisonTurns} turnos.` };
     }
@@ -2907,24 +2908,24 @@ function getSkillInfo(){
       const isMonarch = subclassState.tier60 === "fada_monarca" && player.level >= 60;
       const skipChance = (isMonarch ? 0.3 : 0.2) + (playerEffects.natureCrownedTurns > 0 ? 0.2 : 0);
       const rootChance = (isMonarch ? 0.3 : 0.2) + (playerEffects.natureCrownedTurns > 0 ? 0.2 : 0);
-      const cost = 30 + Math.floor(0.3 * player.level);
+      const cost = 30 + natureLevelCost;
       const damage = 20 + Math.floor(1.1 * skillPower);
       return { ...skill, cost, damage, skipChance, rootChance, shieldFromDamagePercent: subclassState.tier60 === "protetor_da_floresta" && player.level >= 60 ? 1 : 0, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e tem ${Math.floor(skipChance * 100)}% de chance de pular o turno do inimigo. Se o alvo estiver marcado, pode enraizar.` };
     }
     if(skill.type === "nature_harvest"){
-      const cost = 40 + Math.floor(0.3 * player.level);
+      const cost = 40 + 2 * natureLevelCost;
       const damage = 30 + Math.floor(1.2 * attack);
       return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e consome efeitos naturais ativos para explodir o dano restante.` };
     }
     if(skill.type === "nature_ancestral_song"){
       const rooted = enemy?.rootedTurns > 0;
-      const cost = 40 + Math.floor(0.4 * player.level);
-      const heal = Math.floor((rooted ? 2 : 1.4) * skillPower);
-      const shield = subclassState.tier60 === "protetor_da_floresta" && player.level >= 60 ? Math.floor((rooted ? 2.2 : 1.6) * skillPower) : 0;
+      const cost = 40 + 2 * natureLevelCost;
+      const heal = Math.floor(skillPower);
+      const shield = subclassState.tier60 === "protetor_da_floresta" && player.level >= 60 ? Math.floor(1.6 * skillPower) : 0;
       return { ...skill, cost, heal, shield, enemyDamageDownPercent: subclassState.tier60 === "fada_monarca" && player.level >= 60 ? 0.12 : 0, description: `${skill.name}: consome ${cost} MP e cura ${heal}.${shield ? ` Tambem concede ${shield} de escudo.` : ""}` };
     }
     if(skill.type === "nature_decay"){
-      const cost = 40 + Math.floor(1.4 * player.level);
+      const cost = 40 + 2 * natureLevelCost;
       const damage = 50 + Math.floor(1.2 * attack);
       return { ...skill, cost, damage, decayTurns: 5, decayDamage: enemy ? Math.max(1, Math.floor(enemy.maxHp * 0.015)) : 0, description: `${skill.name}: consome ${cost} MP, causa ${damage} de dano e aplica apodrecimento por 5 turnos.` };
     }
@@ -2934,10 +2935,10 @@ function getSkillInfo(){
     if(skill.type === "nature_queen_decree"){
       const factor = (playerEffects.natureCadence || 0) >= 3 ? 2.9 : 2;
       const damage = Math.floor(factor * skillPower);
-      return { ...skill, cost: 90, damage, description: `${skill.name}: consome 90 MP e causa ${damage} de dano. Com 3 Cadencias, o fator sobe para 2.9.` };
+      return { ...skill, cost: 90 + 2 * natureLevelCost, damage, description: `${skill.name}: consome ${90 + 2 * natureLevelCost} MP e causa ${damage} de dano. Com 3 Cadencias, o fator sobe para 2.9.` };
     }
     if(skill.type === "nature_vine_cocoon"){
-      const cost = 60 + Math.floor(0.6 * player.level);
+      const cost = 60 + natureLevelCost;
       const shield = Math.floor(1.4 * attack + 1.4 * skillPower);
       return { ...skill, cost, shield, description: `${skill.name}: consome ${cost} MP e concede ${shield} de escudo.` };
     }
@@ -2954,13 +2955,13 @@ function getSkillInfo(){
       return { ...skill, cost, damage, description: `${skill.name}: consome ${cost} MP e causa ${damage} de dano, com bonus contra alvo enraizado e na Forma Verdadeira.` };
     }
     if(skill.type === "nature_crown"){
-      const cost = 300 + Math.floor(2 * player.level);
+      const cost = 300 + 2 * natureLevelCost;
       return { ...skill, cost, turns: 5, skillPercent: 0.3, healPercent: 0.2, chanceBonus: 0.2, description: `${skill.name}: consome ${cost} MP e fica coroada por 5 turnos, com +30% poder de habilidade, +20% curas e +20% nas chances de controle.` };
     }
     if(skill.type === "nature_throw_thorns"){
       const cost = Math.floor(4 * player.level);
       const shield = playerEffects.shieldValue || 0;
-      const damage = Math.floor(shield * 2);
+      const damage = Math.floor(shield * 2.8);
       return { ...skill, cost, hpCostPercent: 0.2, damage, consumeShield: true, ignoreArmor: true, ignoreShield: true, description: `${skill.name}: consome ${cost} MP, 20% da vida maxima e todo seu escudo atual para causar ${damage} de dano ignorando armadura e escudo.` };
     }
     return { ...skill, cost: 0, description: skill.name };
@@ -3221,7 +3222,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: aumenta as moedas obtidas em 15%.`;
   }
   if(skill.type === "nature_cycle"){
-    const damageBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 16 : 10;
+    const damageBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 19 : 13;
     const extra = getPlayerSubclassState().tier30 === "espirito_da_floresta" && player.level >= 30 ? " Tambem converte 30% do ataque basico em poder de habilidade." : "";
     return `${skill.name}: alvos marcados recebem ${damageBonus}% a mais de dano e devolvem 10% do custo da habilidade usada contra eles.${extra}`;
   }
@@ -3237,14 +3238,14 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: aumenta marca, veneno e apodrecimento em 30%.`;
   }
   if(skill.type === "nature_ancestral_bark"){
-    const reduction = Math.floor(4 + (playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5) * player.level);
+    const reduction = Math.floor(10 + (playerEffects.natureTrueFormTurns > 0 ? 0.7 : 0.5) * player.level);
     return `${skill.name}: reduz ${reduction} de dano recebido por ataque${playerEffects.natureTrueFormTurns > 0 ? " durante a Forma Verdadeira" : ""}.`;
   }
   if(skill.type === "nature_royal_wings"){
     return `${skill.name}: concede ${playerEffects.natureCrownedTurns > 0 ? 60 : 20}% de chance de esquiva${playerEffects.natureCrownedTurns > 0 ? " enquanto coroada" : ""}.`;
   }
   if(skill.type === "nature_forest_oath"){
-    return `${skill.name}: aumenta escudos em 6% e reflete 30% do dano absorvido enquanto houver escudo.`;
+    return `${skill.name}: aumenta escudos em 11% e reflete 30% do dano absorvido enquanto houver escudo.`;
   }
   return skill.description;
 }
@@ -3506,8 +3507,8 @@ function applyDamageToEnemy(rawDamage, options = {}){
   const arenaTarget = currentMode === "arena_run" && enemy.arenaCombatant && typeof window.resolveArenaIncomingDamage === "function";
   let damage = arenaTarget ? Math.max(0, Math.floor(rawDamage)) : applyEnemyArmor(rawDamage, !!options.ignoreArmor);
   if(!options.equipmentProc){
-  if(damage > 0 && player.class === "Adepto da Natureza" && enemy.natureMarkTurns > 0){
-    const markBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 0.16 : 0.1;
+  if(damage > 0 && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_cycle") && enemy.natureMarkTurns > 0){
+    const markBonus = getPlayerSubclassState().tier30 === "druida" && player.level >= 30 ? 0.19 : 0.13;
     const bonusDamage = Math.floor(damage * markBonus);
     damage += bonusDamage;
     if(bonusDamage > 0){
@@ -3826,7 +3827,7 @@ function useSkillCost(skillInfo){
   return typeof EquipmentSystem !== "undefined" ? EquipmentSystem.modifySkillCost(player, playerEffects, skillInfo, cost) : cost;
 }
 
-const enemyDebuffFields = ["attackDownTurns", "armorDownTurns", "healReductionTurns", "noShieldTurns", "skipNextAttack", "rootedTurns", "natureMarkTurns", "naturePoisonTurns", "natureDecayTurns", "dotTurns", "frozenDamageBonusPercent", "blizzardTurns", "aimLegTurns"];
+const enemyDebuffFields = ["natureSongReductionTurns","attackDownTurns", "armorDownTurns", "healReductionTurns", "noShieldTurns", "skipNextAttack", "rootedTurns", "natureMarkTurns", "naturePoisonTurns", "natureDecayTurns", "dotTurns", "frozenDamageBonusPercent", "blizzardTurns", "aimLegTurns"];
 
 function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   const debuffBefore = applyToTarget && enemy ? Object.fromEntries(enemyDebuffFields.map(key => [key, enemy[key]])) : null;
@@ -4264,8 +4265,8 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       shield = grantPlayerShield(skillInfo.shield);
     }
     if(applyToTarget && enemy && skillInfo.enemyDamageDownPercent > 0){
-      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyDamageDownPercent);
-      enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, 3);
+      enemy.natureSongReductionPercent = skillInfo.enemyDamageDownPercent;
+      enemy.natureSongReductionTurns = Math.max(enemy.natureSongReductionTurns || 0, 3);
     }
     message = `${actorName} usou ${skillInfo.name} e recuperou ${healed} de vida.${shield ? ` Tambem recebeu ${shield} de escudo.` : ""}${skillInfo.enemyDamageDownPercent ? " O dano do inimigo foi reduzido por 3 turnos." : ""}`;
   }
@@ -4316,7 +4317,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "nature_throw_thorns"){
     const consumedShield = playerEffects.shieldValue || 0;
-    damage = applyFirstDamageSkillBonus(Math.floor(consumedShield * 2), true);
+    damage = applyFirstDamageSkillBonus(Math.floor(consumedShield * 2.8), true);
     playerEffects.shieldValue = 0;
     playerEffects.shieldTurns = 0;
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: true, ignoreShield: true, skillCost: cost }) : damage;
@@ -4659,8 +4660,9 @@ function getEnemyStatusEffects(targetEnemy){
   if(targetEnemy.skipNextAttack){
     effects.push({ field: "skipNextAttack", kind: "control", text: "Proximo turno bloqueado" });
   }
+  if(targetEnemy.natureSongReductionTurns>0)effects.push({field:'natureSongReductionTurns',kind:'debuff',text:`Cancao Ancestral | ${targetEnemy.natureSongReductionTurns} turno(s)`,details:'Dano -12%, combinado multiplicativamente com outras reducoes.'});
   if(targetEnemy.rootedTurns > 0){
-    effects.push({ field: "rootedTurns", kind: "control", text: `Enraizado | ${targetEnemy.rootedTurns} turno(s)` });
+    effects.push({ field: "rootedTurns", kind: "control", text: `Enraizado | ${targetEnemy.rootedTurns} turno(s)`, details: `5% de perder a acao por turno; 25% com a Fada Monarca coroada.` });
   }
   if(targetEnemy.natureMarkTurns > 0){
     effects.push({ field: "natureMarkTurns", kind: "debuff", text: `Marca | ${targetEnemy.natureMarkTurns} turno(s)` });
@@ -6066,6 +6068,8 @@ function continueCampaign(characterId = ""){
       rebuiltEnemy.aimLegSkipChance = rebuiltEnemy.aimLegTurns ? 0.1 : 0;
       rebuiltEnemy.shieldValue = enemy.shieldValue || 0;
       rebuiltEnemy.shieldTurns = enemy.shieldTurns || 0;
+      rebuiltEnemy.natureSongReductionTurns = Math.max(0, Math.min(3, Number(enemy.natureSongReductionTurns) || 0));
+      rebuiltEnemy.natureSongReductionPercent = rebuiltEnemy.natureSongReductionTurns ? .12 : 0;
       rebuiltEnemy.attackDownPercent = enemy.attackDownPercent || 0;
       rebuiltEnemy.effectSources=Object.fromEntries(Object.entries(enemy.effectSources||{}).filter(([,v])=>typeof v==="string").slice(0,50).map(([k,v])=>[k,v.slice(0,80)]));
       rebuiltEnemy.attackDownTurns = enemy.attackDownTurns || 0;
@@ -7567,7 +7571,7 @@ async function tickEnemyEndOfTurnDots(){
 }
 async function enemyTurn(){
   const target=enemy;if(!target)return;
-  const timers=['healReductionTurns','noShieldTurns','rootedTurns',...(!CampaignEnemyCombat.enabled(enemy)?['blizzardTurns']:[])],before=Object.fromEntries(timers.map(k=>[k,enemy[k]||0]));
+  const timers=['natureSongReductionTurns','healReductionTurns','noShieldTurns','rootedTurns',...(!CampaignEnemyCombat.enabled(enemy)?['blizzardTurns']:[])],before=Object.fromEntries(timers.map(k=>[k,enemy[k]||0]));
   await performEnemyTurn();
   if(enemy!==target || isDead || player.hp<=0)return;
   isProcessingTurn=true;
@@ -7577,7 +7581,13 @@ async function enemyTurn(){
   if(enemy===target && !isDead){for(const k of timers)if(enemy[k]>0&&enemy[k]<=before[k])enemy[k]--;if(!enemy.healReductionTurns)enemy.healReductionPercent=0;if(!enemy.blizzardTurns)enemy.blizzardSkipChance=0;isProcessingTurn=false;updateUI();}
 }
 
+function getNatureRootSkipChance(){
+  if(!(enemy?.rootedTurns > 0))return 0;
+  const crowned=player?.class==='Adepto da Natureza'&&getPlayerSubclassState().tier60==='fada_monarca'&&playerEffects.natureCrownedTurns>0;
+  return crowned ? 0.25 : 0.05;
+}
 async function performEnemyTurn(){
+  if(getNatureRootSkipChance()>0&&Math.random()<getNatureRootSkipChance())enemy.skipNextAttack=true;
   if(CampaignEnemyCombat.enabled(enemy)) return await CampaignEnemyCombat.turn();
   log(`${enemy.name} prepara um ataque!`);
   await wait(220);
@@ -7672,6 +7682,7 @@ async function performEnemyTurn(){
     if(enemy.attackDownTurns > 0){
       dmg = Math.floor(dmg * (1 - (enemy.attackDownPercent || 0)));
     }
+    if(enemy.natureSongReductionTurns>0)dmg=Math.floor(dmg*(1-enemy.natureSongReductionPercent));
     const result = applyIncomingDamage(dmg, incomingOptions);
     await playSpriteAttackAnimation("enemy", animationStyle, connectHit && !result.missed);
     if(result.missed){

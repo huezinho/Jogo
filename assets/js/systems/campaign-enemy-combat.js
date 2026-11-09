@@ -42,8 +42,8 @@ const CampaignEnemyCombat = (() => {
   function purge(){
     for(const key of ['burn','poison']){enemy[key+'Stacks']=[];syncPeriodicStacks(enemy,key);}
     enemy.bleedStacks=[];syncBleeding(enemy);
-    for(const key of ['attackDownTurns','armorDownTurns','healReductionTurns','noShieldTurns','rootedTurns','natureMarkTurns','naturePoisonTurns','natureDecayTurns','dotTurns','blizzardTurns','aimLegTurns'])enemy[key]=0;
-    for(const key of ['attackDownPercent','armorDownPercent','healReductionPercent','nextDamageTakenPercent','frozenDamageBonusPercent','blizzardSkipChance'])enemy[key]=0;
+    for(const key of ['natureSongReductionTurns','attackDownTurns','armorDownTurns','healReductionTurns','noShieldTurns','rootedTurns','natureMarkTurns','naturePoisonTurns','natureDecayTurns','dotTurns','blizzardTurns','aimLegTurns'])enemy[key]=0;
+    for(const key of ['natureSongReductionPercent','attackDownPercent','armorDownPercent','healReductionPercent','nextDamageTakenPercent','frozenDamageBonusPercent','blizzardSkipChance'])enemy[key]=0;
     enemy.skipNextAttack=false;enemy.debuffSources={};enemy.naturePoisonStacks=[];
   }
   const buffKeys=['visualDemonTurns','attackBuffTurns','attackBuffAmount','attackBuffPercent','skillBuffTurns','skillBuffAmount','skillBuffPercent','finalDamageBuffTurns','finalDamageBuffPercent','guaranteedHitTurns','enemyMissBonusTurns','enemyMissBonus','regenTurns','regenPercent','manaRegenBuffTurns','manaRegenBuffPercent','invulnerableTurns','controlImmuneTurns','lifeStealTurns','lifeStealPercent','natureCrownedTurns','natureTrueFormTurns','natureShieldBonusTurns','natureShieldBonusPercent','nextDamageBonusPercent','nextBarrageDamageBonusPercent','nextIncomingAutoMiss','basicOnlyUntouchableTurns','forcedBasicTurns','percentReductionTurns','percentReduction','enemyMaxHpBonusTurns','enemyMaxHpBonusDamagePercent','natureCadence','arcaneCharges','arcaneChargeTurns','firstAttackDoubleAvailable','samuraiEchoAvailable'];
@@ -82,7 +82,7 @@ const CampaignEnemyCombat = (() => {
   function modifiers(base){if(!enabled(enemy))return;const s=state();if(s.timers.dominion>0){s.stolen.flat=base.flatReduction;base.flatReduction=0;} }
   function snapshot(){
     if(!enabled(enemy))return;
-    state().lastAction={hp:enemy.hp,maxHp:enemy.maxHp,armor:enemy.armor,shieldValue:enemy.shieldValue,effects:Object.fromEntries(['burnStacks','poisonStacks','bleedStacks','naturePoisonStacks','debuffSources',...enemyDebuffFields,'attackDownPercent','armorDownPercent','healReductionPercent','dotDamagePerTurn','dotSourceName','natureMarkDamage','naturePoisonDamage','natureDecayDamage','bleedDamagePerTurn','bleedTurns','burnTurns','burnDamagePerTurn','poisonTurns','poisonDamagePerTurn','blizzardSkipChance','aimLegSkipChance','nextDamageTakenPercent'].map(k=>[k,structuredClone(enemy[k]??null)])),heroBuffs:Object.fromEntries(buffKeys.map(k=>[k,structuredClone(playerEffects[k]??0)]))};
+    state().lastAction={hp:enemy.hp,maxHp:enemy.maxHp,armor:enemy.armor,shieldValue:enemy.shieldValue,effects:Object.fromEntries(['burnStacks','poisonStacks','bleedStacks','naturePoisonStacks','debuffSources',...enemyDebuffFields,'natureSongReductionPercent','attackDownPercent','armorDownPercent','healReductionPercent','dotDamagePerTurn','dotSourceName','natureMarkDamage','naturePoisonDamage','natureDecayDamage','bleedDamagePerTurn','bleedTurns','burnTurns','burnDamagePerTurn','poisonTurns','poisonDamagePerTurn','blizzardSkipChance','aimLegSkipChance','nextDamageTakenPercent'].map(k=>[k,structuredClone(enemy[k]??null)])),heroBuffs:Object.fromEntries(buffKeys.map(k=>[k,structuredClone(playerEffects[k]??0)]))};
   }
   function finishAction(){
     if(!enabled(enemy)||!state().lastAction)return;
@@ -218,7 +218,7 @@ const CampaignEnemyCombat = (() => {
     if(a.leech)heal(hpDamage);if(a.grow){enemy.maxHp+=hpDamage;enemy.hp+=hpDamage;}
     heroCheck();
   }
-  function damageMultiplier(){const s=state();return 1+(index(enemy.baseName)===35?s.turn*.01:0)+(s.timers.attack>0?s.attackBonus||0:0)+(s.timers.dominion>0?s.stolen.damage||0:0);}
+  function damageMultiplier(){const s=state();return (enemy.natureSongReductionTurns>0?1-(enemy.natureSongReductionPercent||0):1)*(1+(index(enemy.baseName)===35?s.turn*.01:0)+(s.timers.attack>0?s.attackBonus||0:0)+(s.timers.dominion>0?s.stolen.damage||0:0));}
   function basic(unavoidable=false){const s=state();let d=enemy.attack+(s.timers.dominion>0?s.stolen.attackFlat||0:0);d+=Math.floor(getCurrentCaps().maxHp*(enemy.maxHpStrikePercent||0));d=Math.floor(d*damageMultiplier()*(1+(s.timers.dominion>0?s.stolen.attackPercent||0:0)));if(enemy.attackDownTurns>0)d=Math.floor(d*(1-(enemy.attackDownPercent||0)));if(s.timers.dominion>0){d+=Math.floor(getCurrentCaps().maxHp*(s.stolen.enemyHpBonus||0));if(s.stolen.nextDamage){d+=Math.floor(d*s.stolen.nextDamage);s.stolen.nextDamage=0;}}const hpBefore=player.hp;const r=applyIncomingDamage(d,{ignoreDodge:unavoidable||s.timers.dominion>0&&s.stolen.buffs?.guaranteedHitTurns>0});if(s.timers.dominion>0&&s.stolen.lifeSteal)heal(Math.min(hpBefore,r.damage)*s.stolen.lifeSteal);if(r.missed&&!unavoidable)march();heroCheck();}
   function march(){if(index(enemy.baseName)===27&&player.hp>0){log('Marcha de Ferro respondeu.');if(typeof EnemyMotion!=='undefined')EnemyMotion.passive('march');basic(true);}}
   async function turn(){
