@@ -63,7 +63,16 @@ const CampaignHUD = (() => {
     document.getElementById('rpgAccount').innerHTML=money()+(getLuckBattles()>0?`<span class="rpg-luck-status" tabindex="0" data-hud-description="Sorte: +40% de chance de drop. ${getLuckBattles()} batalha(s) restantes.">Sorte · ${getLuckBattles()} batalha(s)</span>`:'')+(player.expedition?button('Expedição: '+player.expedition.region+' - recolher','expedition-stop','', 'class="rpg-expedition-status"'):'')+(isDead?button(Math.max(0,Math.ceil((deadUntil-Date.now())/1000))?'Renascer em '+Math.max(0,Math.ceil((deadUntil-Date.now())/1000))+'s':'Renascer','respawn','',`class="rpg-death-return" ${Date.now()<deadUntil?'disabled':''}`):'')+(isCampResting()?button(`Descansando · ${Math.ceil(player.hp)} / ${getCurrentCaps().maxHp} vida`,'rest-camp','',`class="rpg-rest-indicator" data-hud-description="Volte ao acampamento e clique em Levantar antes de combater."`):'');
     const panel=document.getElementById('enemyInfo');
     panel.className='rpg-content';
+    const movingHero=currentMode==='battle'?panel.querySelector('#heroSpriteBox .hero-v2'):null;
+    const preserveHero=movingHero&&typeof CharacterMotion!=='undefined'&&CharacterMotion.isAnimating(movingHero);
+    const movingFx=preserveHero?[...panel.querySelectorAll('.painted-action-fx')]:[];
     panel.innerHTML=currentMode==='battle'?renderBattle():currentMode==='village'?renderVillage():currentMode==='camp'?renderCharacter():currentMode==='bestiary'?`<section class="rpg-journal rpg-bestiary"><aside class="rpg-bestiary-map"><h2>Regi&otilde;es</h2>${renderBestiaryRegionMapCard(getSelectedBestiaryRegion(),isBestiaryDevUnlocked())}</aside><div class="rpg-bestiary-entries">${renderBestiary()}</div></section>`:currentMode==='trophies'?`<section class="rpg-journal">${renderTrophySummaryPanel()}${renderTrophyGroups()}</section>`:renderPortal();
+    if(preserveHero){
+      const replacement=panel.querySelector('#heroSpriteBox .hero-v2');
+      if(replacement)replacement.replaceWith(movingHero);
+      const scene=panel.querySelector('.battle-scene');
+      if(scene)for(const fx of movingFx)scene.append(fx);
+    }
     if(currentMode==='battle'){refreshContractDock();dockVitals();if(typeof CharacterMotion!=='undefined')CharacterMotion.prepare(getSkillInfo());}
     document.getElementById('regionInfo').innerHTML=renderRegionMapCard().replace(/<p class="map-current-label">[\s\S]*?<\/p>/,`<p class="rpg-map-caption">${esc(currentRegion)}</p>`);
     const rack=root.querySelector('.rpg-upgrade-rack');if(rack)rack.scrollTop=state.rackScroll||0;

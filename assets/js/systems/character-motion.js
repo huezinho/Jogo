@@ -2,6 +2,7 @@
 const CharacterMotion=(()=>{
  'use strict';const running=new WeakMap();const events=[];const loaded=new Map();const pause=ms=>new Promise(r=>setTimeout(r,ms));
  const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const poseImages=new Map();
  const forms=new Set(['corrompido-demonio','fada-monarca-coroada','avatar-da-natureza-verdadeira']);
  function formKey(target,key){
   if(typeof player==='undefined'||target!==player||typeof playerEffects==='undefined')return key;
@@ -13,9 +14,9 @@ const CharacterMotion=(()=>{
  const heroPath=key=>key==='guerreiro-camp'?posePath('camp'):key==='guerreiro'?posePath('idle'):`assets/visual/${forms.has(key)?'hero-forms':'heroes-v2'}/${key}.webp?v=20261104-forms`;
  const posePath=name=>`assets/visual/warrior-poses/${name}.webp?v=20261109-fluid-r2`;
  const warrior=el=>el?.dataset.warrior==='true'||(typeof getHeroCombatAssetKey==='function'&&getHeroCombatAssetKey()==='guerreiro');
- function setPose(el,name){if(!name)throw new Error('Missing warrior pose '+el.dataset.motion+' '+el.dataset.frame);el.classList.add('warrior-single');el.dataset.pose=name;el.style.backgroundImage=`url('${new URL(posePath(name),document.baseURI).href}')`;}
+ function setPose(el,name){if(!name)throw new Error('Missing warrior pose '+el.dataset.motion+' '+el.dataset.frame);if(el.dataset.pose===name&&el.style.backgroundImage)return;el.classList.add('warrior-single');el.dataset.pose=name;el.style.backgroundImage=`url('${new URL(posePath(name),document.baseURI).href}')`;}
  function resetPose(el){if(warrior(el))setPose(el,'idle');el.dataset.motion='idle';el.dataset.frame='0';el.style.removeProperty('background-position');}
- function readyPoses(){if(!loaded.has('warrior-poses'))loaded.set('warrior-poses',Promise.all(['idle','windup','strike','recover','shove','support','hurt','ready','swing','follow','settle','shove-ready','shove-return','hurt-mid','camp'].map(name=>{const im=new Image();im.src=posePath(name);return im.decode().catch(()=>false);})));return loaded.get('warrior-poses');}
+ function readyPoses(){if(!loaded.has('warrior-poses'))loaded.set('warrior-poses',Promise.all(['idle','windup','strike','recover','shove','support','hurt','ready','swing','follow','settle','shove-ready','shove-return','hurt-mid','camp'].map(name=>{const im=new Image();poseImages.set(name,im);im.src=posePath(name);return im.decode().catch(()=>false);})));return loaded.get('warrior-poses');}
  function syncForm(){
   const el=document.querySelector('#heroSpriteBox .hero-v2');
   if(el&&warrior(el))setPose(el,'idle');
@@ -57,5 +58,5 @@ const CharacterMotion=(()=>{
   const bodyMotion=warrior(el)&&!reduced()?el.animate([{translate:'0px 0px',offset:0},{translate:p.target==='hero'?'0px 0px':'-3px 0px',offset:.35},{translate:p.target==='hero'?'0px 0px':'8px 0px',offset:.5},{translate:'0px 0px',offset:1}],{duration:p.duration,easing:'ease-in-out'}):null;
   try{await Promise.all([frames(el,p.pose==='cast'?2:1,p.duration,sequence,skill?.type==='warrior_shove'?['idle','shove-ready','shove-ready','shove-ready','shove-ready','shove-ready','shove-ready','shove','shove','shove-return','shove-return','recover','recover','settle','settle','idle']:null),effect(p),(async()=>{let marks;if(p.pose==='attack'&&p.hits>1)marks=sequence.flatMap((frame,i)=>frame===2?[p.duration*i/sequence.length]:[]);else marks=Array.from({length:Math.max(1,hitRepeats)},(_,i)=>(reduced()?30:hitDelay??Math.round(p.duration*.5))+i*(betweenHits??120));let elapsed=0;for(let i=0;i<marks.length;i++){await pause(Math.max(0,marks[i]-elapsed));elapsed=marks[i];emit('impact',{...p,hit:i});if(connectHit){if(typeof ZenithMotion!=='undefined')ZenithMotion.hurt();if(typeof EnemyMotion!=='undefined')EnemyMotion.hurt();pulseSpriteClass('enemySpriteBox','hit',reduced()?100:500);}}})()]);}finally{bodyMotion?.cancel();box.classList.remove(cls);delete box.dataset.ability;emit('end',p);}
  }
- return {profile,action,hurt,prepare,formKey,syncForm,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>key==='guerreiro'?-90:typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath};
+ return {isAnimating:el=>running.has(el),profile,action,hurt,prepare,formKey,syncForm,ready:(skill,style)=>preload(profile(skill,style).key),portraitTop:key=>key==='guerreiro'?-90:typeof HERO_ART_LAYOUT!=='undefined'?HERO_ART_LAYOUT[key]?.portraitTop??-24:-24,impactDelay:(skill,style)=>{const p=profile(skill,style);return p.duration*(p.pose==='attack'&&p.hits>1?1/(p.hits+1):.5);},history:()=>events.slice(),heroPath};
 })();
