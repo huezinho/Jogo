@@ -1,0 +1,37 @@
+{
+  "idle": {
+    "head": 140,
+    "ground": 1164,
+    "pivot": 605
+  },
+  "windup": {
+    "head": 288,
+    "ground": 1237,
+    "pivot": 600
+  },
+  "recover": {
+    "head": 190,
+    "ground": 1158,
+    "pivot": 580
+  },
+  "shove": {
+    "head": 180,
+    "ground": 1036,
+    "pivot": 680
+  },
+  "strike": {
+    "head": 170,
+    "ground": 1067,
+    "pivot": 560
+  },
+  "support": {
+    "head": 115,
+    "ground": 1241,
+    "pivot": 625
+  },
+  "hurt": {
+    "head": 170,
+    "ground": 1206,
+    "pivot": 640
+  }
+}

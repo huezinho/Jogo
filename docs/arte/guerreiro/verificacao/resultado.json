@@ -1,0 +1,94 @@
+{
+  "checks": [
+    {
+      "width": 320,
+      "pose": "idle"
+    },
+    {
+      "width": 320,
+      "pose": "windup"
+    },
+    {
+      "width": 320,
+      "pose": "recover"
+    },
+    {
+      "width": 320,
+      "pose": "shove"
+    },
+    {
+      "width": 320,
+      "pose": "strike"
+    },
+    {
+      "width": 320,
+      "pose": "support"
+    },
+    {
+      "width": 320,
+      "pose": "hurt"
+    },
+    {
+      "width": 390,
+      "pose": "idle"
+    },
+    {
+      "width": 390,
+      "pose": "windup"
+    },
+    {
+      "width": 390,
+      "pose": "recover"
+    },
+    {
+      "width": 390,
+      "pose": "shove"
+    },
+    {
+      "width": 390,
+      "pose": "strike"
+    },
+    {
+      "width": 390,
+      "pose": "support"
+    },
+    {
+      "width": 390,
+      "pose": "hurt"
+    },
+    {
+      "width": 1366,
+      "pose": "idle"
+    },
+    {
+      "width": 1366,
+      "pose": "windup"
+    },
+    {
+      "width": 1366,
+      "pose": "recover"
+    },
+    {
+      "width": 1366,
+      "pose": "shove"
+    },
+    {
+      "width": 1366,
+      "pose": "strike"
+    },
+    {
+      "width": 1366,
+      "pose": "support"
+    },
+    {
+      "width": 1366,
+      "pose": "hurt"
+    }
+  ],
+  "contacts": [
+    "strike",
+    "shove"
+  ],
+  "errors": [],
+  "bad": []
+}
