@@ -2497,6 +2497,7 @@ function applyNatureDotTick(label, damageKey, turnsKey, canTriggerSap = true){
 
 async function processNatureDotTicks(){
   if(!enemy){ return false; }
+  const hpBefore = enemy.hp;
   const decayTriggersSap = getPlayerSubclassState().tier60 === "druida_sombrio" && player.level >= 60;
   const total =
     applyNatureDotTick("Marca Natural", "natureMarkDamage", "natureMarkTurns", true) +
@@ -2506,6 +2507,7 @@ async function processNatureDotTicks(){
     enemy.natureMarkTurns--;
   }
   if(total > 0){
+    await animateEnemyBarTo(enemy.hp, hpBefore, 12, 4, 20, 0);
     updateUI();
     await wait(220);
     if(enemy.hp <= 0){
@@ -7592,20 +7594,25 @@ async function tickEnemyEndOfTurnDots(){
       if(enemy.hp<=0){handleEnemyDefeat();return;}
     }
   }
-  tickBleeding(enemy);
+  const hpBeforeBleeding = enemy.hp;
+  if(tickBleeding(enemy) > 0){
+    await animateEnemyBarTo(enemy.hp, hpBeforeBleeding, 12, 4, 20, 0);
+  }
   if(enemy.hp <= 0){ handleEnemyDefeat(); return; }
   if(enemy.dotTurns > 0 && enemy.dotDamagePerTurn > 0){
     const dotTick = CampaignEnemyCombat.temporalDamage(Math.floor(enemy.dotDamagePerTurn * (1 + (getActiveSetBonuses().bonuses.dotDamagePercent || 0))));
+    const hpBefore = enemy.hp;
     const hpLost = Math.min(Math.max(0, enemy.hp), dotTick);
     enemy.hp -= dotTick;
     applyLifeSteal(hpLost);
     if(typeof EquipmentSystem !== "undefined"){ EquipmentSystem.afterDamage(player, playerEffects, enemy, {damage:dotTick,rawDamage:dotTick,source:"dot"}); }
-    log(`${enemy.baseName} sofreu ${enemy.dotDamagePerTurn} de dano continuo${enemy.dotSourceName ? ` por ${enemy.dotSourceName}` : ""}.`);
+    log(`${enemy.baseName} sofreu ${dotTick} de dano continuo${enemy.dotSourceName ? ` por ${enemy.dotSourceName}` : ""}.`);
     enemy.dotTurns--;
     if(enemy.dotTurns <= 0){
       enemy.dotDamagePerTurn = 0;
       enemy.dotSourceName = "";
     }
+    await animateEnemyBarTo(enemy.hp, hpBefore, 12, 4, 20, 0);
     updateUI();
     await wait(220);
     if(enemy.hp <= 0){

@@ -18,6 +18,11 @@ const DungeonRogue=(()=>{
  function retreat(s,reason){s.phase='hub';s.afterBattle=false;s.enemies=[];s.order=[];s.cursor=0;for(const h of s.party){h.place='hall';h.ready=false;delete h.fled;h.effects=createDefaultPlayerEffects();}K.note(s,reason);}
  function end(s,outcome){s.phase='ended';s.outcome=outcome;K.note(s,outcome==='victory'?'O Soberano do Paradoxo foi vencido. A jornada terminou.':'O grupo encerrou a jornada.');}
  function useCampaignEnemy(e,partySize){
+  const uncommon=regions[e.region]?.enemies[1];
+  if(!e.isBoss&&e.baseName===uncommon?.name){
+   e.level=regionsList.indexOf(e.region)*10+3;
+   e.name=e.baseName+' Lv.'+e.level;
+  }
   if(e.dungeonCampaign)return;
   e.dungeonCampaign=true;
   e.bossAbilities=CampaignEnemyCombat.kit(e.baseName);
