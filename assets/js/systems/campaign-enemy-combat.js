@@ -265,7 +265,7 @@ const CampaignEnemyCombat = (() => {
     if(old.dominion>0){for(const[k,v]of Object.entries(s.stolen.buffs||{}))if(k.endsWith('Turns')&&v>0)s.stolen.buffs[k]--;refreshStolen(s);}
     for(const key of ['aimLegTurns','attackDownTurns','armorDownTurns','blizzardTurns'])if(enemy[key]>0)enemy[key]--;
     if(!(enemy.blizzardTurns>0))enemy.blizzardSkipChance=0;
-    if(!enemy.dungeonCampaign&&playerEffects.shieldTurns>0&&--playerEffects.shieldTurns===0)playerEffects.shieldValue=0;
+    if(!enemy.dungeonCampaign&&playerEffects.shieldTurns>0&&--playerEffects.shieldTurns===0)playerEffects.shieldValue=Math.min(playerEffects.shieldValue,playerEffects.samuraiOpeningShield||0);
     transferBuffs();heroCheck();
   }
   async function turn(){

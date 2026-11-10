@@ -11,7 +11,7 @@ const EquipmentData = Object.freeze({
     Ruinas:{skillPower:.50,bonusMp:.30,bonusHp:.20}, Pantano:{bonusMp:.35,skillPower:.35,bonusHp:.30},
     Vulcao:{skillPower:.55,bonusAttack:.30,bonusHp:.15}, Abismo:{bonusAttack:.40,skillPower:.40,bonusMp:.20},
     Fortaleza:{bonusHp:.45,flatReduction:.40,shieldPowerPercent:.15}, Necropole:{bonusMp:.30,skillPower:.40,bonusHp:.30},
-    Citadela:{bonusAttack:.50,skillPower:.20,bonusMp:.20,critChanceBonus:.10}, Panteao:{bonusMp:.35,bonusHp:.30,healPowerPercent:.20,shieldPowerPercent:.15},
+    Citadela:{bonusAttack:4/9,skillPower:8/45,bonusMp:8/45,critChanceBonus:.20}, Panteao:{bonusMp:.35,bonusHp:.30,healPowerPercent:.20,shieldPowerPercent:.15},
     Cataclismo:{bonusAttack:.55,bonusHp:.30,flatReduction:.15}, Paradoxo:{bonusAttack:.30,skillPower:.35,bonusMp:.35}
   },
   weaponFallback: { Guerreiro: { bonusAttack: 1 }, Arqueiro: { bonusAttack: 1 }, Mago: { skillPower: 1 }, "Adepto da Natureza": { skillPower: 1 } },

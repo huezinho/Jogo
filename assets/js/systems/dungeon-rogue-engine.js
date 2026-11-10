@@ -159,7 +159,7 @@ const DungeonCombatKernel = (() => {
     withHero(s,h,t,()=>{
       if(!alive(h)){endEquipmentAction();return;}
       applyTurnStartPassives();decayPlayerBuffs();applyEndOfTurnRecovery();
-      if(h.effects.shieldTurns>0&&!h.effects.rogueShieldFresh&&--h.effects.shieldTurns===0){h.effects.shieldValue=0;h.effects.shieldReactiveWeakening=false;}
+      if(h.effects.shieldTurns>0&&!h.effects.rogueShieldFresh&&--h.effects.shieldTurns===0){h.effects.shieldValue=Math.min(h.effects.shieldValue,h.effects.samuraiOpeningShield||0);h.effects.shieldReactiveWeakening=false;}
       h.effects.rogueShieldFresh=false;if(h.noShieldTurns>0)h.noShieldTurns--;
       if(victory)return;
       if(h.effects.burnTurns>0){const d=tickPeriodicStacks(h.effects,'burn',damage=>Math.floor(damage*(1-(getPassiveModifiers().burnDamageReductionPercent||0))));h.hp=Math.max(0,h.hp-d);EquipmentSystem.afterIncoming(h,h.effects,t,{damage:d,periodic:true,shieldAbsorbed:0});if(d)note(s,`${h.characterName}: ${d} por queimadura.`);}

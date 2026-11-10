@@ -174,7 +174,7 @@
     hero.shieldValue = hero.effects.shieldValue; hero.shieldTurns = hero.effects.shieldTurns;
   }
   function decayDefenderShield(hero){
-    if(hero.effects.shieldTurns > 0 && --hero.effects.shieldTurns === 0){ hero.effects.shieldValue = 0; }
+    if(hero.effects.shieldTurns > 0 && --hero.effects.shieldTurns === 0){ hero.effects.shieldValue = Math.min(hero.effects.shieldValue, hero.effects.samuraiOpeningShield || 0); }
     hero.shieldValue = hero.effects.shieldValue; hero.shieldTurns = hero.effects.shieldTurns;
   }
   function finishRound(messages){

@@ -75,7 +75,7 @@ const DungeonRogue=(()=>{
  function finishBattle(s){
   const stage=s.node%7,index=stage===0?0:stage===2?1:stage===4?2:3+s.caveWave,baseLevel=s.act*10,targetLevel=Math.min(120,baseLevel+[1.5,3,5,6.5,8,10,10.8][index]);
   const prevTarget=index===0?(s.act===0?1:baseLevel+.8):baseLevel+[1.5,3,5,6.5,8,10,10.8][index-1],xp=Math.max(1,Math.ceil(totalXp(targetLevel)-totalXp(prevTarget)));
-  for(const h of s.party){const wasDown=!alive(h);gain(s,h,xp);const caps=K.stats(s,h);delete h.fled;if(wasDown){h.hp=Math.max(1,Math.floor(caps.maxHp*.2));h.effects=createDefaultPlayerEffects();}
+  for(const h of s.party){const wasDown=!alive(h);K.withHero(s,h,null,clearSamuraiCounterVitality);gain(s,h,xp);const caps=K.stats(s,h);delete h.fled;if(wasDown){h.hp=Math.max(1,Math.floor(caps.maxHp*.2));h.effects=createDefaultPlayerEffects();}
    const bonus=K.withHero(s,h,null,()=>getPassiveModifiers().coinBonus||0),coins=Math.floor(2*s.enemies.reduce((n,e)=>n+(e.isBoss?18:5)+e.level*3,0)/s.party.length*(1+bonus));h.coins+=coins;
    if(rand(s)<.45*(h.luckBattles>0?1.4:1)){const item=EquipmentSystem.createItem(regionsList[s.act],pick(s,EquipmentData.slots),h.class,'comum',h);item.uid='loot'+(++s.serial);h.inventory.push(item);K.note(s,`${h.characterName} recebeu ${item.name}.`);}
    K.note(s,`${h.characterName}: +${xp} XP e ${coins} moedas.${wasDown?' Retornou com 20% da vida.':''}`);if(h.luckBattles>0)h.luckBattles--;

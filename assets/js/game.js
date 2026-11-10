@@ -156,6 +156,8 @@ function createDefaultPlayerEffects(){
     berserkerLastStandPending: false,
     accessoryFatalSaveUsed: false,
     samuraiEchoAvailable: false,
+    samuraiOpeningShield: 0,
+    samuraiCounterVitality: false,
     burnDamagePerTurn: 0,
     burnTurns: 0,
     healReductionPercent: 0,
@@ -1837,8 +1839,9 @@ function createDefaultInvestedStats(saved = {}){
 function getPreviewStats(){
   const passives = getPassiveModifiers();
   const pendingGains = getPendingAllocationGains();
+  const maxHp = player.maxHp + passives.bonusHp + pendingGains.hpGain;
   return {
-    maxHp: player.maxHp + passives.bonusHp + pendingGains.hpGain,
+    maxHp: maxHp + (playerEffects.samuraiCounterVitality ? Math.floor(maxHp * .15) : 0),
     maxMp: player.maxMp + passives.bonusMp + pendingGains.mpGain,
     attack: player.attack + passives.bonusAttack + pendingGains.attackGain
   };
@@ -3146,7 +3149,7 @@ function getPassiveStatusDescription(skill){
   }
   if(skill.type === "warrior_counter_on_dodge"){
     if(subclassState.tier60 === "samurai" && player.level >= 60){
-      return `${skill.name}: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria.`;
+      return `${skill.name}: ao desviar, executa um ataque basico de contra-ataque e recupera 30% do dano que o golpe causaria. O primeiro contra-ataque aumenta a vida maxima em 15% ate o fim do combate.`;
     }
     if(subclassState.tier60 === "ninja" && player.level >= 60){
       return `${skill.name}: ao desviar, executa um ataque basico de contra-ataque ignorando armadura e escudo.`;
@@ -3160,7 +3163,7 @@ function getPassiveStatusDescription(skill){
     return `${skill.name}: uma vez por combate, ao sofrer um golpe fatal, fica com 1 de vida e pode agir mais uma vez antes de morrer.`;
   }
   if(skill.type === "warrior_first_strike_echo"){
-    return `${skill.name}: o primeiro ataque do combate acerta duas vezes, com o segundo golpe causando 50% do dano, mas repetindo os efeitos.`;
+    return `${skill.name}: inicia o combate com um escudo persistente de 30% da vida maxima. O primeiro ataque basico ou Golpes Velozes adiciona um corte de 50% do dano bruto do primeiro golpe.`;
   }
   if(skill.type === "warrior_execute_bonus"){
     return `${skill.name}: causa 50% de dano total adicional contra inimigos abaixo de 50% da vida.`;
@@ -3392,7 +3395,14 @@ function restoreGlassCannonState(saved){
   playerEffects.firstAttackDoubleAvailable=false;
 }
 
+function clearSamuraiCounterVitality(){
+  if(!playerEffects.samuraiCounterVitality) return;
+  playerEffects.samuraiCounterVitality = false;
+  player.hp = Math.min(player.hp, getCurrentCaps().maxHp);
+}
+
 function resetCombatEffects(){
+  clearSamuraiCounterVitality();
   const subclassState = getPlayerSubclassState();
   playerEffects = createDefaultPlayerEffects();
   playerEffects.accessoryFatalSaveUsed = false;
@@ -3404,6 +3414,10 @@ function resetCombatEffects(){
   playerEffects.berserkerLastStandAvailable = player.class === "Guerreiro" && subclassState.tier60 === "berserker" && player.level >= 70;
   playerEffects.berserkerLastStandPending = false;
   playerEffects.samuraiEchoAvailable = player.class === "Guerreiro" && subclassState.tier60 === "samurai" && player.level >= 70;
+  if(playerEffects.samuraiEchoAvailable){
+    playerEffects.samuraiOpeningShield = Math.floor(getCurrentCaps().maxHp * .30);
+    playerEffects.shieldValue = playerEffects.samuraiOpeningShield;
+  }
   CampaignEnemyCombat.transferBuffs();
 }
 
@@ -3640,6 +3654,10 @@ function applyIncomingDamage(baseDamage, options = {}){
       }
       log(`Contra-Ataque respondeu com ${counterDamage} de dano.`);
       if(getPlayerSubclassState().tier60 === "samurai" && player.level >= 60){
+        if(!playerEffects.samuraiCounterVitality){
+          playerEffects.samuraiCounterVitality = true;
+          log("Contra-Ataque aumentou sua vida maxima em 15% ate o fim do combate.");
+        }
         const heal = Math.floor(wouldDeal * 0.3);
         const healed = healPlayer(heal);
         log(`Contra-Ataque restaurou ${healed} de vida.`);
@@ -3656,6 +3674,7 @@ function applyIncomingDamage(baseDamage, options = {}){
   if(playerEffects.shieldValue > 0 && damage > 0 && !options.ignoreShield){
     absorbed = Math.min(damage, playerEffects.shieldValue);
     playerEffects.shieldValue -= absorbed;
+    playerEffects.samuraiOpeningShield = Math.min(playerEffects.samuraiOpeningShield || 0, playerEffects.shieldValue);
     damage -= absorbed;
     if(absorbed > 0 && player.class === "Adepto da Natureza" && hasUnlockedPassiveType("nature_forest_oath") && enemy){
       const reflectDamage = Math.floor(absorbed * 0.3);
@@ -3817,14 +3836,19 @@ function getBasicAttackResult(namePrefix = "Voce", applyToTarget = true){
   }
   let finalDamage = applyToTarget ? applyDamageToEnemy(damage) : damage;
   let extraText = "";
-  if(player.class === "Guerreiro" && getPlayerSubclassState().tier60 === "samurai" && player.level >= 70 && playerEffects.samuraiEchoAvailable){
-    playerEffects.samuraiEchoAvailable = false;
-    const echoDamage = Math.floor((applyToTarget ? damage : finalDamage) * 0.5);
-    const dealtEcho = applyToTarget ? applyDamageToEnemy(echoDamage) : echoDamage;
-    finalDamage += dealtEcho;
-    extraText = ` Mente Limpa adicionou um segundo corte de ${dealtEcho} de dano.`;
+  const echo = consumeSamuraiEcho(damage, applyToTarget);
+  if(echo !== null){
+    finalDamage += echo;
+    extraText = ` Mente Limpa adicionou um segundo corte de ${echo} de dano.`;
   }
   return { damage: finalDamage, message: `${namePrefix} causou ${finalDamage} de dano.${criticalText}${extraText}` };
+}
+
+function consumeSamuraiEcho(rawDamage, applyToTarget){
+  if(!playerEffects.samuraiEchoAvailable) return null;
+  playerEffects.samuraiEchoAvailable = false;
+  const echoDamage = Math.floor(rawDamage * .5);
+  return applyToTarget ? applyDamageToEnemy(echoDamage) : echoDamage;
 }
 
 function applyFirstDamageSkillBonus(damage, isDamageSkill){
@@ -3947,17 +3971,23 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true, 
     message = `${actorName} usou ${skillInfo.name} e recuperou ${healed} de vida.${removedDot ? ` Removeu uma aplicacao de ${{burn:'queimadura',poison:'veneno',bleed:'sangramento'}[removedDot.kind]} (${removedDot.damage} por turno).` : ""}${skillInfo.damageBuff > 0 ? " O dano total aumentou por 3 turnos." : ""}`;
   }
   if(skillInfo.type === "warrior_swift_strikes"){
+    let firstRawDamage;
     for(let i = 0; i < skillInfo.hits; i++){
       if(applyToTarget && (!enemy || enemy.hp <= 0))break;
       const raw = getActiveAttack() + Math.floor(Math.random() * 6);
+      firstRawDamage ??= raw;
       const dealt = applyToTarget ? applyDamageToEnemy(raw) : raw;
       hitDamages.push(dealt);
       if(applyToTarget && enemy && dealt > 0 && (skillInfo.bleedMaxHpPercent > 0 || skillInfo.bleedPercent > 0)){
         applyBleeding(enemy, skillInfo.bleedMaxHpPercent > 0 ? Math.floor(enemy.maxHp * skillInfo.bleedMaxHpPercent) : Math.floor(dealt * skillInfo.bleedPercent / 3), 3, skillInfo.name);
       }
     }
+    if(firstRawDamage !== undefined && (!applyToTarget || enemy.hp > 0)){
+      const echo = consumeSamuraiEcho(firstRawDamage, applyToTarget);
+      if(echo !== null) hitDamages.push(echo);
+    }
     damage = hitDamages.reduce((sum, hit) => sum + hit, 0);
-    message = `${actorName} usou ${skillInfo.name}: ${hitDamages.map((hit,i)=>`golpe ${i+1}: ${hit} de dano`).join('; ')}.${skillInfo.bleedMaxHpPercent>0 ? " Cada golpe aplicou sangramento de 5% da vida maxima por turno durante 3 turnos." : ""}`;
+    message = `${actorName} usou ${skillInfo.name}: ${hitDamages.map((hit,i)=>`golpe ${i+1}: ${hit} de dano`).join('; ')}.${skillInfo.bleedMaxHpPercent>0 ? " Os golpes base que causaram dano aplicam sangramento de 5% da vida maxima por turno durante 3 turnos." : ""}`;
   }
   if(skillInfo.type === "warrior_warcry"){
     if(skillInfo.totalDamagePercent){
@@ -5902,6 +5932,7 @@ function getRespawnSeconds(){
 }
 
 function handleDeath(message = "Voce caiu em batalha."){
+  clearSamuraiCounterVitality();
   isProcessingTurn = false;
   if(currentMode === "dungeon" || isDungeonConnected()){
     leaveDungeonRoom(true);
@@ -7205,6 +7236,7 @@ async function passTurn(){
 function handleEnemyDefeat(){
   if(CampaignEnemyCombat.beforeDeath()) { isProcessingTurn=false; updateUI(); return; }
   if(player?.hp <= 0) { handleDeath(); return; }
+  clearSamuraiCounterVitality();
   const defeatedRegion = enemy?.region;
   const wasBoss = !!enemy?.isBoss;
   if(enemy?.challengeTowerFloor!==undefined){consumeLuckBattle(enemy);advanceChallengeTower();return;}
@@ -7633,7 +7665,7 @@ async function performEnemyTurn(){
       if(playerEffects.shieldTurns > 0){
         playerEffects.shieldTurns--;
         if(playerEffects.shieldTurns <= 0){
-          playerEffects.shieldValue = 0;
+          playerEffects.shieldValue = Math.min(playerEffects.shieldValue, playerEffects.samuraiOpeningShield || 0);
           playerEffects.shieldReactiveWeakening = false;
           log("Seu escudo se desfez.");
         }
@@ -7741,7 +7773,7 @@ async function performEnemyTurn(){
   if(playerEffects.shieldTurns > 0){
     playerEffects.shieldTurns--;
     if(playerEffects.shieldTurns <= 0){
-      playerEffects.shieldValue = 0;
+      playerEffects.shieldValue = Math.min(playerEffects.shieldValue, playerEffects.samuraiOpeningShield || 0);
       playerEffects.shieldReactiveWeakening = false;
       log("Seu escudo se desfez.");
     }
