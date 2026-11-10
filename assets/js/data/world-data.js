@@ -28,7 +28,7 @@ const regions = {
     boss: { name: "Ent Ancestral", level: 10, hp: 170, attack: 15, mp: 60, skillName: "Raizes Esmagadoras", skillDamage: 36, skillCost: 18 },
     enemies: [
       { name: "Lobo Sombrio", level: 1, weight: 78, hp: 70, attack: 8 },
-      { name: "Goblin", level: 3, weight: 16, hp: 82, attack: 9 },
+      { name: "Goblin", level: 4, weight: 16, hp: 82, attack: 9 },
       { name: "Aranha Gigante", level: 8, weight: 6, hp: 96, attack: 11 }
     ]
   },
@@ -38,7 +38,7 @@ const regions = {
     boss: { name: "Troll das Profundezas", level: 20, hp: 250, attack: 22, mp: 70, skillName: "Eco de Pedra", skillDamage: 54, skillCost: 22 },
     enemies: [
       { name: "Morcego de Pedra", level: 11, weight: 78, hp: 90, attack: 10 },
-      { name: "Esqueleto Mineiro", level: 13, weight: 16, hp: 102, attack: 11 },
+      { name: "Esqueleto Mineiro", level: 14, weight: 16, hp: 102, attack: 11 },
       { name: "Slime Toxico", level: 18, weight: 6, hp: 120, attack: 12 }
     ]
   },
@@ -48,7 +48,7 @@ const regions = {
     boss: { name: "Rei Espectral", level: 30, hp: 340, attack: 30, mp: 90, skillName: "Lamento Real", skillDamage: 78, skillCost: 28 },
     enemies: [
       { name: "Sentinela Quebrada", level: 21, weight: 78, hp: 128, attack: 13 },
-      { name: "Cultista Perdido", level: 23, weight: 16, hp: 140, attack: 15 },
+      { name: "Cultista Perdido", level: 24, weight: 16, hp: 140, attack: 15 },
       { name: "Fantasma Antigo", level: 28, weight: 6, hp: 165, attack: 16 }
     ]
   },
@@ -58,7 +58,7 @@ const regions = {
     boss: { name: "Hidra do Lodo", level: 40, hp: 470, attack: 36, mp: 120, skillName: "Sopro Corrosivo", skillDamage: 96, skillCost: 32 },
     enemies: [
       { name: "Sapo Colossal", level: 31, weight: 78, hp: 176, attack: 19 },
-      { name: "Bruxa do Brejo", level: 33, weight: 16, hp: 190, attack: 21 },
+      { name: "Bruxa do Brejo", level: 34, weight: 16, hp: 190, attack: 21 },
       { name: "Serpente do Lodo", level: 38, weight: 6, hp: 228, attack: 25 }
     ]
   },
@@ -68,7 +68,7 @@ const regions = {
     boss: { name: "Draco Magmatico", level: 50, hp: 610, attack: 48, mp: 150, skillName: "Explosao Vulcanica", skillDamage: 124, skillCost: 38 },
     enemies: [
       { name: "Salamandra Rubra", level: 41, weight: 78, hp: 236, attack: 27 },
-      { name: "Golem de Brasa", level: 43, weight: 16, hp: 255, attack: 30 },
+      { name: "Golem de Brasa", level: 44, weight: 16, hp: 255, attack: 30 },
       { name: "Fenix Sombria", level: 48, weight: 6, hp: 300, attack: 34 }
     ]
   },
@@ -78,7 +78,7 @@ const regions = {
     boss: { name: "Arauto do Vazio", level: 60, hp: 760, attack: 58, mp: 180, skillName: "Dilacerar Realidade", skillDamage: 156, skillCost: 44 },
     enemies: [
       { name: "Cavaleiro Abissal", level: 51, weight: 78, hp: 312, attack: 35 },
-      { name: "Lamia do Eclipse", level: 53, weight: 16, hp: 330, attack: 38 },
+      { name: "Lamia do Eclipse", level: 54, weight: 16, hp: 330, attack: 38 },
       { name: "Colosso do Vazio", level: 58, weight: 6, hp: 388, attack: 42 }
     ]
   },
@@ -88,7 +88,7 @@ const regions = {
     boss: { name: "General de Aco", level: 70, hp: 920, attack: 68, mp: 210, skillName: "Marcha de Ferro", skillDamage: 188, skillCost: 48 },
     enemies: [
       { name: "Escudeiro de Ferro", level: 61, weight: 78, hp: 390, attack: 45 },
-      { name: "Maga da Muralha", level: 63, weight: 16, hp: 410, attack: 48 },
+      { name: "Maga da Muralha", level: 64, weight: 16, hp: 410, attack: 48 },
       { name: "Carrasco de Guerra", level: 68, weight: 6, hp: 470, attack: 54 }
     ]
   },
@@ -98,7 +98,7 @@ const regions = {
     boss: { name: "Lorde da Cripta", level: 80, hp: 1100, attack: 79, mp: 240, skillName: "Sentenca Funebre", skillDamage: 220, skillCost: 52 },
     enemies: [
       { name: "Guardiao Funebre", level: 71, weight: 78, hp: 490, attack: 56 },
-      { name: "Feiticeira Morta", level: 73, weight: 16, hp: 520, attack: 59 },
+      { name: "Feiticeira Morta", level: 74, weight: 16, hp: 520, attack: 59 },
       { name: "Ceifador de Ossos", level: 78, weight: 6, hp: 590, attack: 65 }
     ]
   },
@@ -108,7 +108,7 @@ const regions = {
     boss: { name: "Imperador do Eclipse", level: 90, hp: 1320, attack: 92, mp: 280, skillName: "Ruptura Estelar", skillDamage: 260, skillCost: 60 },
     enemies: [
       { name: "Anjo Caido", level: 81, weight: 78, hp: 620, attack: 69 },
-      { name: "Drake Celeste", level: 83, weight: 16, hp: 655, attack: 72 },
+      { name: "Drake Celeste", level: 84, weight: 16, hp: 655, attack: 72 },
       { name: "Executor Astral", level: 88, weight: 6, hp: 735, attack: 79 }
     ]
   },
@@ -118,7 +118,7 @@ const regions = {
     boss: { name: "Avatar do Zenith", level: 100, hp: 1540, attack: 108, mp: 320, skillName: "Julgamento Solar", skillDamage: 305, skillCost: 66 },
     enemies: [
       { name: "Guardiao Aureo", level: 91, weight: 78, hp: 760, attack: 84 },
-      { name: "Oraculo Radiante", level: 93, weight: 16, hp: 805, attack: 88 },
+      { name: "Oraculo Radiante", level: 94, weight: 16, hp: 805, attack: 88 },
       { name: "Quimera Solar", level: 98, weight: 6, hp: 900, attack: 95 }
     ]
   },
@@ -128,7 +128,7 @@ const regions = {
     boss: { name: "Deus da Ruina", level: 110, hp: 1820, attack: 130, mp: 360, skillName: "Colapso Final", skillDamage: 360, skillCost: 74 },
     enemies: [
       { name: "Arauto do Cataclismo", level: 101, weight: 78, hp: 930, attack: 102 },
-      { name: "Titan Rachado", level: 103, weight: 16, hp: 980, attack: 107 },
+      { name: "Titan Rachado", level: 104, weight: 16, hp: 980, attack: 107 },
       { name: "Serafim do Fim", level: 108, weight: 6, hp: 1090, attack: 116 }
     ]
   },
@@ -138,7 +138,7 @@ const regions = {
     boss: { name: "Soberano do Paradoxo", level: 120, hp: 2120, attack: 148, mp: 410, skillName: "Ruptura Temporal", skillDamage: 398, skillCost: 82 },
     enemies: [
       { name: "Guardiao Temporal", level: 111, weight: 78, hp: 1120, attack: 124 },
-      { name: "Oraculo do Zero", level: 113, weight: 16, hp: 1180, attack: 129 },
+      { name: "Oraculo do Zero", level: 114, weight: 16, hp: 1180, attack: 129 },
       { name: "Devorador de Eras", level: 118, weight: 6, hp: 1310, attack: 139 }
     ]
   }
