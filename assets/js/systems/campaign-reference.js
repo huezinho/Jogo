@@ -11,14 +11,14 @@ function renderSkillNode(skill,description,status,passive=false){
 function renderCombatPassives(){
   return getUnlockedPassiveSkills().map(skill=>`<button type="button" class="rpg-passive-node" data-hud="skill-info" data-skill-name="${escapeHtml(skill.name)}" data-hud-description="${escapeHtml(getPassiveStatusDescription(skill))}" aria-label="Passiva: ${escapeHtml(skill.name)}"><img src="${getSkillSpritePath(skill)}" alt=""><span>${escapeHtml(skill.name)}</span></button>`).join('');
 }
-function renderSkillBook(){
+function renderSkillBook({describeActive=getSkillReadout}={}){
   const state=getPlayerSubclassState(),planned=getPlannedClassTrees(player.class,state.tier30,state.tier60);
   const active=new Map(getSkillInfo().map(s=>[s.type,s]));
   const passive=new Set(getUnlockedPassiveSkills().map(s=>s.type));
   const nodes=(tree,future=false)=>{
     return ['activeSkills','passiveSkills'].map(key=>`<section class="rpg-skill-category"><h3>${key==='activeSkills'?'Ativas':'Passivas'}</h3><div class="rpg-skill-grid">${tree[key].map(s=>{
       const isPassive=key==='passiveSkills',learned=!future&&(isPassive?passive.has(s.type):active.has(s.type));
-      const detail=learned?(isPassive?getPassiveStatusDescription(s):getSkillReadout(active.get(s.type))):(isPassive?getPassivePreviewDescription(s):getActiveSkillPreviewDescription(s));
+      const detail=learned?(isPassive?getPassiveStatusDescription(s):describeActive(active.get(s.type))):(isPassive?getPassivePreviewDescription(s):getActiveSkillPreviewDescription(s));
       return renderSkillNode(s,detail+(future?'\nDepende da escolha desta rota.':''),learned?'Desbloqueada · Nv. '+s.level:'Nv. '+Math.max(s.level,future?(state.tier30?60:30):0)+(future?' · nesta rota':' · futura'),isPassive);
     }).join('')}</div></section>`).join('');
   };

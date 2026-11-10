@@ -6,6 +6,7 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const slug=x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const pct=x=>(x*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%';
 let state=E.lobby(Date.now().toString(36)),selectedClass='Guerreiro',heroName='',selected=null,inspected='',modal='',enemyTimer=null,seq=0,activeHero='',itemMenu=false,statusMessage='',visualBusy=false;
+ let profileId='',allocationHero='',attributeDraft={};
  let resumeSetup=null,resumeCheckpoint=null,lobbyDraft=null,joinCode='';
  const token=DungeonStore.read('token','')||crypto.randomUUID();DungeonStore.write('token',token);
  const net=DungeonNetwork.create({
@@ -62,7 +63,7 @@ function persist(){if(state.phase!=='lobby')DungeonStore.write('run',state);}
   if(isOnlineSave(saved)){
    resumeSetup={saved,count:0,heroId:''};
    render();
-  }else commit(saved);
+  }else commit(E.upgradeCheckpoint(saved));
  }
  async function openResumeRoom(){
   if(!resumeSetup||net.info.mode!=='solo')return;
@@ -81,7 +82,7 @@ function persist(){if(state.phase!=='lobby')DungeonStore.write('run',state);}
  const canResume=()=>!!resumeCheckpoint&&isLeader()&&net.info.connected&&state.party.every(h=>!h.offline);
  function resumeOnline(){
   if(!canResume())throw Error('Aguarde todos os jogadores entrarem e escolherem seus aventureiros.');
-  const s=E.copy(resumeCheckpoint);
+  const s=E.upgradeCheckpoint(E.copy(resumeCheckpoint));
   s.leader=state.leader;
   s.revision=state.revision+1;
   for(const hero of s.party){
@@ -123,7 +124,26 @@ function animate(before,after){
  if(before.phase==='battle'&&after.phase!=='battle'){const own=after.party.find(h=>h.owner===localId());if(own){const lines=after.log.filter(t=>t.startsWith(own.characterName+': +'));if(lines.length)message(lines.at(-1));}return;}
  if(before.id!==after.id||before.phase!=='battle'||after.phase!=='battle'||before.revision===after.revision||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  const turn=E.current(before),unit=(turn?.side==='hero'?after.party:before.enemies).find(h=>h.id===turn?.id),node=root.querySelector(`[data-unit="${turn?.id}"]`);node?.classList.add('rogue-acting');
- if(unit){const rows=turn.side==='hero'?4:EnemyArt[slug(unit.baseName)]?.rows||1,row=Math.min(rows-1,turn.side==='hero'&&['Mago','Adepto da Natureza'].includes(unit.class)?2:1);node?.querySelector('.rogue-character,.rogue-enemy-art')?.animate([0,1,2,3].map((col,i)=>({backgroundPosition:`${col*100/3}% ${rows>1?row*100/(rows-1):0}%`,offset:i/3,easing:'steps(1,end)'})),{duration:480});}
+  if(unit){
+   const action=turn.side==='enemy'&&after.lastEnemyAction?.actorId===unit.id?after.lastEnemyAction:null;
+   const art=turn.side==='enemy'?EnemyArt[enemyArtKey(unit)]:null;
+   const rows=turn.side==='hero'?4:art?.rows||1;
+   const row=Math.min(rows-1,action&&unit.isBoss||turn.side==='hero'&&['Mago','Adepto da Natureza'].includes(unit.class)?2:1);
+   node?.querySelector('.rogue-character,.rogue-enemy-art')?.animate([0,1,2,3].map((col,i)=>({backgroundPosition:`${col*100/3}% ${rows>1?row*100/(rows-1):0}%`,offset:i/3,easing:'steps(1,end)'})),{duration:480});
+   const skill=art?.skills[action?.skillId];
+   if(skill){
+    const ids=action.phase==='charge'||skill.self?[unit.id]:action.target==='party'?before.party.filter(h=>h.hp>0&&!h.fled).map(h=>h.id):[action.heroId];
+    for(const id of ids){
+     const sprite=root.querySelector(`[data-unit="${id}"] .rogue-unit-sprite`);
+     if(!sprite)continue;
+     const fx=document.createElement('span');fx.className='dungeon-enemy-fx';fx.setAttribute('aria-hidden','true');
+     fx.style.backgroundImage=`url('assets/visual/enemy-fx/${skill.key}.webp')`;sprite.append(fx);
+     const frames=skill.charge?action.phase==='charge'?[0,1,2,3]:[4,5,6,7]:[0,1,2,3,4,5,6,7];
+     fx.animate(frames.map((frame,i)=>({backgroundPosition:`${frame%4*100/3}% ${Math.floor(frame/4)*100}%`,offset:i/(frames.length-1),easing:'steps(1,end)'})),{duration:650});
+     setTimeout(()=>fx.remove(),650);
+    }
+   }
+  }
  for(const u of [...after.party,...after.enemies]){const old=[...before.party,...before.enemies].find(h=>h.id===u.id),target=root.querySelector(`[data-unit="${u.id}"]`);if(!old||!target||old.hp===u.hp)continue;const value=Math.round(u.hp-old.hp),f=document.createElement('span');f.className='rogue-float'+(value>0?' heal':'');f.textContent=(value>0?'+':'')+value;target.classList.add(value>0?'rogue-recover':'rogue-impact');target.append(f);setTimeout(()=>f.remove(),950);}
 }
  function send(intent){try{if(state.resuming)throw Error('Aguarde a retomada pelo anfitrião.');if(visualBusy)throw Error('Aguarde a sequência de golpes.');const p={...intent,revision:state.revision};if(net.info.mode==='guest')net.send(p,++seq);else commit(E.transition(state,localId(),p));}catch(e){message(e.message);}}
@@ -131,39 +151,118 @@ function btn(label,action,data={},disabled=false,extra=''){const imageControl=ac
   function art(h){let key=slug(h.subclassChoices?.tier60||h.subclassChoices?.tier30||h.class),folder='heroes-v2';const f=h.effects||{};if(key==='corrompido'&&f.visualDemonTurns>0){key+='-demonio';folder='hero-forms';}if(key==='fada-monarca'&&f.natureCrownedTurns>0){key+='-coroada';folder='hero-forms';}if(key==='avatar-da-natureza'&&f.natureTrueFormTurns>0){key+='-verdadeira';folder='hero-forms';}return new URL('assets/visual/'+folder+'/'+key+'.webp',document.baseURI).href;}
   function figure(h){return `<span class="rogue-character" style="--hero-art:url('${art(h)}')" role="img" aria-label="${esc(heroTitle(h))}"></span>`;}
   function heroTitle(h){return E.withHero(state,h,null,()=>getDisplayedClassName(h));}
-  function bar(value,max,kind,label,tooltip){return `<div class="rogue-bar ${kind}" tabindex="0" role="meter" aria-label="${esc(label)}" aria-valuemin="0" aria-valuemax="${Math.ceil(max)}" aria-valuenow="${Math.max(0,Math.ceil(value))}" data-tip="${esc(tooltip||label)}"><i style="width:${Math.max(0,Math.min(100,value/Math.max(1,max)*100))}%"></i><span>${Math.ceil(value)} / ${Math.ceil(max)}</span></div>`;}
-  function statusChips(entries){return entries.map(e=>{const x=typeof e==='string'?{text:e.split('|')[0].trim(),details:e}:e;return '<span tabindex="0" data-tip="'+esc(x.details||x.text)+'">'+esc(x.text)+'</span>';}).join('');}
-  function statuses(h){const all=E.withHero(state,h,null,()=>getHeroStatusEffects());const active=state.enemies.flatMap(e=>(e.provocations||[]).filter(p=>p.heroId===h.id));if(active.length)all.unshift('Provocando: até '+Math.max(...active.map(p=>p.left))+' ações de cada inimigo.');if(h.effects.skipNextTurn)all.unshift('Interrompido: a próxima ação será perdida, exceto ao usar habilidade que rompe controle.');return statusChips(all);}
-  function enemyStatuses(e){const all=getEnemyStatusEffects(e);if(e.buffTurns>0)all.unshift({text:e.buffSource||'Fortalecimento',details:'Ataque +20% | '+e.buffTurns+' turno(s)'});return statusChips(all);}
-  function passives(h){return E.withHero(state,h,null,()=>getUnlockedPassiveSkills().map(k=>'<span tabindex="0" data-tip="'+esc(getPassiveStatusDescription(k))+'"><img src="'+getSkillSpritePath(k,h.class)+'" alt=""><span>'+esc(k.name)+'</span></span>').join(''));}
-  function heroCard(h,targetable=false){
-    const c=E.stats(state,h),turn=E.current(state),valid=selected&&(selected.side==='ally'&&h.hp>0||selected.side==='fallen'&&h.hp<=0);
-    return `<article data-unit="${h.id}" class="rogue-hero ${h.hp<=0?'fallen':''} ${turn?.id===h.id?'active-turn':''} ${valid?'valid-target':''}">${btn(`<div class="rogue-hero-art">${figure(h)}</div><div class="rogue-unit-name"><strong>${esc(h.characterName)}</strong><span>${esc(heroTitle(h))} · Nv.${h.level}${h.offline?' · Ausente':''}</span></div>`,'hero',{id:h.id},false,`class="rogue-entity-button" aria-label="${esc(valid?'Usar em '+h.characterName:'Inspecionar '+h.characterName)}"`)}<div class="rogue-vitals">${bar(h.hp,c.maxHp,'health','Vida de '+h.characterName)}${bar(h.mp,c.maxMp,'mana','Mana de '+h.characterName,'Regenera '+c.manaRegen+' MP por turno.')}<div class="rogue-status">${statuses(h)}</div></div></article>`;
+  function bar(value,max,kind,label,tooltip){return `<div class="rogue-bar scene-vital-bar ${kind}" tabindex="0" role="meter" aria-label="${esc(label)}" aria-valuemin="0" aria-valuemax="${Math.ceil(max)}" aria-valuenow="${Math.max(0,Math.ceil(value))}" data-tip="${esc(tooltip||label)}"><i class="scene-vital-fill ${kind==='health'?'scene-hp-fill':'scene-mp-fill'}" style="width:${Math.max(0,Math.min(100,value/Math.max(1,max)*100))}%"></i><span>${Math.ceil(value)} / ${Math.ceil(max)}</span></div>`;}
+  function shield(value,max){
+    return value>0?`<div class="rogue-bar scene-vital-bar scene-vital-shield shield" role="meter" aria-label="Escudo" aria-valuemin="0" aria-valuemax="${Math.max(max,value)}" aria-valuenow="${value}"><i class="scene-vital-fill scene-shield-fill" style="width:${Math.min(100,value/max*100)}%"></i><span>Escudo ${Math.floor(value)}</span></div>`:'';
+  }
+  function statusItems(items){
+    return items.map(e=>typeof e==='string'?{text:e.split('|')[0].trim(),details:e}:e);
+  }
+  function unitEffects(unit,side){
+    if(side==='enemy')return statusItems(getEnemyStatusEffects(unit));
+    const all=E.withHero(state,unit,null,()=>getHeroStatusEffects());
+    for(const e of state.enemies.filter(e=>e.hp>0)){
+      const turns=e.provocations?.find(p=>p.heroId===unit.id)?.left;
+      if(e.campaignState?.timers?.dominion>0&&e.campaignState.dominionHeroId===unit.id)all.push({text:'Sob domínio',details:`${e.name} · ${e.campaignState.timers.dominion} turno(s)`});
+      if(turns)all.push({text:'Provocação',details:`${e.name} · ${turns} ação(ões) restantes`});
+      for(const [field,label] of [['haunt','Assombrar'],['deathmark','Marca da Morte'],['glare','Clarão Absoluto'],['doom','Fim Inadiável'],['reap','Ceifar Alma']]){
+        const value=e.campaignState?.heroes?.[unit.id]?.[field];
+        if(value)all.push({text:label,details:`${e.name} · ${field==='doom'?value+'% da vida no próximo turno':field==='reap'?'Execução a 30% da vida':value+' turno(s)'}`});
+      }
+    }
+    if(unit.fled)all.push('Em retirada');
+    if(unit.effects.skipNextTurn)all.push('Interrompido | A próxima ação será perdida, exceto ao usar habilidade que rompe controle.');
+    return statusItems(all);
+  }
+  function statusChips(unit,side){
+    const all=unitEffects(unit,side);
+    return `<div class="rogue-status">${all.slice(0,2).map(x=>`<span tabindex="0" data-tip="${esc(x.details||x.text)}">${esc(x.text)}</span>`).join('')}${all.length>2?btn('+'+(all.length-2)+' efeitos','exam',{id:unit.id}):''}</div>`;
+  }
+  function enemyArtKey(e){return e.baseName==='Fenix Sombria'&&e.campaignState?.timers?.rest>0?'fenix-sombria-ovo':slug(e.baseName);}
+  function enemyFigure(e){
+    const key=enemyArtKey(e);
+    return `<span class="rogue-enemy-art" style="--enemy-art:url('${new URL('assets/visual/enemies-v3/'+key+'.webp',document.baseURI).href}');--enemy-rows:${(EnemyArt[key]?.rows||1)*100}%" role="img" aria-label="${esc(e.name)}"></span>`;
+  }
+  function heroCard(h){
+    const c=E.stats(state,h),valid=selected?.side==='ally'&&h.hp>0&&!h.fled;
+    return `<article data-unit="${esc(h.id)}" class="rogue-hero ${h.hp<=0||h.fled?'fallen':''} ${E.current(state)?.id===h.id?'active-turn':''} ${valid?'valid-target':''}">
+      ${btn(figure(h),'hero',{id:h.id},false,`class="rogue-entity-button rogue-unit-sprite" aria-label="${esc((valid?'Usar em ':'Inspecionar ')+h.characterName)}"`)}
+      <div class="rogue-unit-details dungeon-campaign-vitals"><div class="rogue-unit-name"><strong>${esc(h.characterName)}</strong><span>${esc(heroTitle(h))} · Nv.${h.level}${h.offline?' · Ausente':''}</span></div>
+      ${bar(h.hp,c.maxHp,'health','Vida de '+h.characterName)}${bar(h.mp,c.maxMp,'mana','Mana de '+h.characterName,'Regenera '+c.manaRegen+' MP por turno.')}
+      ${shield(h.effects.shieldValue,c.maxHp)}${statusChips(h,'hero')}</div></article>`;
+  }
+  function intentTarget(e,move){
+    return move.target==='party'?'Grupo de heróis':move.target==='self'?'Uso próprio':state.party.find(h=>h.id===move.heroId)?.characterName||'Herói';
   }
   function enemyCard(e){
-    const targetable=selected?.side==='enemy',move=E.enemyIntent(state,e),turn=E.current(state);
-    return `<article data-unit="${e.id}" class="rogue-enemy ${e.isBoss?'boss':''} ${targetable?'valid-target':''} ${turn?.id===e.id?'active-turn':''}">${btn(`<span class="rogue-enemy-art" style="--enemy-art:url('${new URL('assets/visual/enemies-v3/'+slug(e.baseName)+'.webp',document.baseURI).href}');--enemy-rows:${(EnemyArt[slug(e.baseName)]?.rows||1)*100}%" role="img" aria-label="${esc(e.name)}"></span><strong>${esc(e.name)}</strong><small>Nv.${e.level}${e.isBoss?' · Guardião':''}</small>`,'enemy',{id:e.id},false,'class="rogue-entity-button"')}${bar(e.hp,e.maxHp,'health','Vida de '+e.name)}${e.maxMp>0?bar(e.mp,e.maxMp,'mana','Mana de '+e.name,'Regenera '+(8+Math.floor(e.maxMp*.05))+' MP por turno.'):''}<p class="rogue-intent ${e.charge?'danger':''}" data-tip="${esc('Intenção atual: '+move.name+'. Alvo: '+(move.target==='party'?'todo o grupo':move.target==='allies'?'todos os inimigos':move.target==='ally'?'aliado ferido':'um aventureiro')+'. Pode mudar conforme a luta.')}">${esc(e.charge?'Preparando área!':move.name)} · ${move.target==='party'?'Área':move.target==='allies'?'Buff em área':move.target==='ally'?'Cura':'Alvo único'}</p><div class="rogue-status">${enemyStatuses(e)}</div></article>`;
-  }
-  function progress(){
-    if(state.phase==='lobby')return '';
-    return `<nav class="rogue-progress" aria-label="Percurso da expedição">${state.biomes.map((biome,i)=>`<div class="${state.act===i?'current':state.act>i?'complete':''}"><span>${i+1}. ${esc(biome)}</span><div>${Array.from({length:7},(_,n)=>{const index=i*7+n;return `<i class="${index<state.node?'done':index===state.node?'now':''} ${n===6?'guardian':''}" title="Sala ${index+1}${n===6?' · Guardião':''}"></i>`;}).join('')}</div></div>`).join('')}</nav>`;
+    const move=E.enemyIntent(state,e),valid=['enemy','enemies'].includes(selected?.side);
+    return `<article data-unit="${esc(e.id)}" class="rogue-enemy ${e.isBoss?'boss':''} ${valid?'valid-target':''} ${E.current(state)?.id===e.id?'active-turn':''}">
+      ${btn(enemyFigure(e),'enemy',{id:e.id},false,`class="rogue-entity-button rogue-unit-sprite" aria-label="${esc((valid?'Selecionar ':'Examinar ')+e.name)}"`)}
+      <div class="rogue-unit-details dungeon-campaign-vitals"><div class="rogue-unit-name"><strong>${esc(e.baseName)}</strong><span>Nv.${e.level}${e.isBoss?' · Guardião':''}</span></div>
+      ${bar(e.hp,e.maxHp,'health','Vida de '+e.name)}
+      ${e.maxMp>0?bar(e.mp,e.maxMp,'mana','Mana de '+e.name,'Regenera '+getBaseManaRegen(e.maxMp)+' MP por turno.'):''}
+      ${shield(e.shieldValue,e.maxHp)}
+      <div class="rogue-unit-meta"><span>Armadura ${getEnemyDisplayedArmor(e)}</span>${btn('Examinar','exam',{id:e.id})}</div>
+      <p class="rogue-intent ${move.left?'danger':''}" data-tip="${esc(move.name+' · '+intentTarget(e,move))}">${esc(move.name)} · ${esc(intentTarget(e,move))}${move.left?' · '+move.left+' em preparo':''}</p>
+      ${statusChips(e,'enemy')}</div></article>`;
   }
   function timeline(){
-    return `<div class="rogue-timeline" aria-label="Ordem dos turnos"><span>Rodada ${state.round}</span>${state.order.map((entry,i)=>{const u=(entry.side==='hero'?state.party:state.enemies).find(x=>x.id===entry.id);return u?.hp>0?`<span class="${i===state.cursor?'now':''} ${entry.side}">${esc(u.characterName||u.name)}</span>`:'';}).join('')}</div>`;
+    return `<nav class="dungeon-turn-order" aria-label="Ordem dos turnos"><strong>Turno ${state.cursor+1} · R${state.round}</strong><ol>${state.order.map((entry,i)=>{
+      const hero=entry.side==='hero',u=(hero?state.party:state.enemies).find(x=>x.id===entry.id);
+      if(!u||u.hp<=0||u.fled)return '';
+      return `<li class="${entry.side} ${i<state.cursor?'played':''}">${btn(hero?figure(u):enemyFigure(u),'exam',{id:u.id},false,`aria-label="${esc(u.characterName||u.name)}" ${i===state.cursor?'aria-current="step"':''} data-tip="${esc(u.characterName||u.name)}"`)}</li>`;
+    }).join('')}</ol></nav>`;
   }
   function huntButton(label,action,disabled=false){return btn(`<img src="assets/visual/hud/icon-find-enemy.webp" alt=""><span>${label}</span>`,action,{},disabled,'class="dungeon-hunt"');}
   function toolbar(){
     const entry=E.current(state),h=state.party.find(x=>x.id===entry?.id)||state.party.find(x=>x.id===state.lastAction?.actorId)||state.party.find(controls)||state.party[0];if(!h)return '';
-    const own=entry?.side==='hero'&&controls(h)&&!visualBusy,skills=E.available(state,h,state.enemies.find(e=>e.id===inspected&&e.hp>0)||state.enemies.find(e=>e.hp>0));
-    const targetText=selected?selected.side==='enemy'?'Escolha o inimigo.':selected.side==='ally'?'Escolha o aliado.':selected.side==='self'?'Usar no próprio herói.':selected.side==='party'?'Aplicar no grupo.':'Atingir todos os inimigos.':'Selecione uma ação e depois o alvo.';
+    const target=state.enemies.find(e=>e.id===inspected&&e.hp>0)||state.enemies.find(e=>e.hp>0);
+    const own=entry?.side==='hero'&&controls(h)&&!visualBusy,skills=E.available(state,h,target);
+    const targetText=selected?selected.side==='barrage'?'Escolha todos os disparos em um alvo ou um disparo por inimigo vivo.':selected.side==='enemy'?'Escolha o inimigo.':selected.areaPrimary?'Escolha o alvo principal da área.':selected.side==='ally'?'Escolha o aliado.':selected.side==='self'?'Usar no próprio herói.':selected.side==='party'?'Aplicar no grupo.':'Atingir todos os inimigos.':'Selecione uma ação e depois o alvo.';
     const restricted=h.effects.forcedBasicTurns>0,basicCost=h.class==='Mago'?Math.floor(3+.1*h.level)*3:0;
-    return `<section class="rogue-command"><div class="rogue-command-grid"><div class="rogue-potion-slot">${btn('<img src="assets/visual/hud/icon-potion.webp" alt=""><span>Itens</span>','items',{},!own||restricted)}</div><div class="rogue-skills">${btn(`<kbd>1</kbd><img src="${getSkillSpritePath(null,h.class)}" alt=""><span>Ataque básico</span><small>${basicCost} MP</small>`,'select',{kind:'basic'},!own||h.mp<basicCost,`class="rogue-basic ${selected?.kind==='basic'?'selected':''}" aria-label="Ataque básico" data-tip="${esc(E.withHero(state,h,state.enemies.find(e=>e.hp>0),()=>getBasicAttackTooltip()))}"`)}${skills.map((k,i)=>btn(`<kbd>${i+2<=9?i+2:''}</kbd><img src="${getSkillSpritePath(k,h.class)}" alt=""><span>${esc(k.name)}</span><small>${k.effectiveCost} MP</small>`,'select',{kind:'skill',skill:k.type},!own||!!k.blockedReason,`class="rogue-skill ${selected?.skillType===k.type?'selected':''}" data-tip="${esc(k.description+'\n'+R.targetDescription(k)+(k.blockedReason?'\n'+k.blockedReason:''))}" aria-label="${esc(k.name)}"`)).join('')}</div><div class="rogue-utilities">${btn('Encerrar turno','pass',{},!own||restricted)}</div></div><div class="rogue-passives">${passives(h)}</div><div class="rogue-target-prompt" role="status"><div>${selected?'<strong>'+esc(selected.label)+'</strong>':''}<p>${own?targetText:entry?.side==='enemy'?'Os inimigos estão agindo…':'Aguarde '+esc(h.characterName)+'.'}</p></div>${selected?btn('Cancelar','cancel'):''}${selected&&['self','party','enemies'].includes(selected.side)?btn('Confirmar','confirm'):''}</div></section>`;
+    const skillCard=(skill,index)=>{
+      const cost=skill?.effectiveCost??basicCost,name=skill?.name??E.withHero(state,h,null,getBasicAttackLabel);
+      const label=esc(name),active=skill?selected?.skillType===skill.type:selected?.kind==='basic';
+      const tip=skill?E.withHero(state,h,target,()=>getSkillReadout(skill))+'\n'+R.targetDescription(skill):E.withHero(state,h,state.enemies.find(e=>e.hp>0),getBasicAttackTooltip);
+      const classes=`rpg-ability ${skill?'rogue-skill':'rogue-basic'}`;
+      return btn(`<img src="${getSkillSpritePath(skill,h.class)}" alt="" draggable="false"><strong>${label}</strong><small>${cost} mana${skill?.hpCostPercent?' · vida':''}</small><span class="rpg-hotkey">${index<=9?index:''}</span>`,'select',skill?{kind:'skill',skill:skill.type}:{kind:'basic'},!own||(skill?!!skill.blockedReason:h.mp<cost),`class="${classes}" aria-label="${label}" aria-pressed="${active}" data-tip="${esc(tip)}"`);
+    };
+    const passiveDock=E.withHero(state,h,null,renderCombatPassives);
+    return `<section class="rogue-command dungeon-campaign-ui">
+     <div class="rpg-command-belt">
+      <div class="rpg-potion-slot rogue-potion-slot">${btn('<img src="assets/visual/hud/icon-potion.webp" alt=""><span>Itens</span>','items',{},!own||restricted,`aria-expanded="${itemMenu}"`)}</div>
+      <div class="rpg-ability-list rogue-skills">${skillCard(null,1)}${skills.map((k,i)=>skillCard(k,i+2)).join('')}</div>
+      <div class="rpg-turn-actions">${btn('Encerrar turno','pass',{},!own||restricted)}</div>
+     </div>
+     <div class="rpg-combat-passives">${passiveDock}</div>
+     <div class="rogue-target-prompt" role="status"><div>${selected?'<strong>'+esc(selected.label)+'</strong>':''}<p>${own?targetText:entry?.side==='enemy'?'Os inimigos estão agindo…':'Aguarde '+esc(h.characterName)+'.'}</p></div>
+      ${selected?.side==='barrage'?btn('Alvo único','barrageMode',{value:'single'})+btn('Em área','barrageMode',{value:'area'}):''}${selected?btn('Cancelar','cancel'):''}
+      ${selected&&!selected.areaPrimary&&['self','party','enemies'].includes(selected.side)?btn('Confirmar','confirm'):''}
+     </div>
+    </section>`;
   }
   function postBattle(){const cave=state.phase==='cave_pause',blocked=!isLeader()||state.party.some(h=>E.classChoices(h).length||(h.pendingAttributePoints||0)>0)||!cave&&state.party.some(h=>h.place!=='hunt');return `<div class="dungeon-recovery">${huntButton(cave?'Próximo combate':'Próxima caçada',cave?'caveNext':'nextHunt',blocked)}</div>${subclasses()}`;}
-  function battleView(){const fighting=state.phase==='battle',region=state.battleRegion||state.biomes[state.act];return `<section class="rogue-battle-scene" style="background-image:url('assets/visual/backgrounds/regions/${slug(region)}.webp')" aria-label="Campo de combate"><div class="rogue-enemies">${fighting?state.enemies.filter(e=>e.hp>0).map(enemyCard).join(''):''}</div><div class="rogue-party">${state.party.map(h=>heroCard(h,true)).join('')}</div></section>${chronicleView()}${fighting?toolbar():postBattle()}${itemMenu?itemPicker():''}`;}
+  function battleView(){const fighting=state.phase==='battle',region=state.battleRegion||state.biomes[state.act];return `${fighting?timeline():''}<section class="rogue-battle-scene" style="--battle-background:url('${new URL('assets/visual/backgrounds/regions/'+slug(region)+'.webp',document.baseURI).href}')" aria-label="Campo de combate"><div class="rogue-enemies">${fighting?state.enemies.filter(e=>e.hp>0).map(enemyCard).join(''):''}</div><div class="rogue-party">${state.party.map(h=>heroCard(h)).join('')}</div></section>${chronicleView()}${fighting?toolbar():postBattle()}${itemMenu?itemPicker():''}`;}
 
-function allocationView(){return state.party.filter(h=>controls(h)&&(h.pendingAttributePoints||0)>0).slice(0,1).map(h=>`<section class="rogue-panel dungeon-allocation"><h3>${esc(h.characterName)} · ${h.pendingAttributePoints} ponto(s) de atributo</h3><div>${[['strength','Força'],['vitality','Vitalidade'],['wisdom','Sabedoria']].map(([key,name])=>`<label>${name}<input data-allocation="${h.id}" data-attribute="${key}" type="number" min="0" max="${h.pendingAttributePoints}" value="0"></label>`).join('')}</div>${btn('Confirmar distribuição','allocate',{hero:h.id})}</section>`).join('');}
-function subclasses(){return allocationView()+state.party.filter(h=>E.classChoices(h).length).map(h=>`<section class="rogue-panel"><h3>${esc(h.characterName)} · Especialização</h3>${E.classChoices(h).map(c=>btn(esc(c.name),'subclass',{hero:h.id,id:c.id},!controls(h))).join('')}</section>`).join('');}
+const attributeLabels=[['vitality','Vitalidade','HP máxima'],['wisdom','Sabedoria','MP máxima'],['strength','Força','ataque e dano de habilidade']];
+function syncAllocation(){
+ const dialog=document.getElementById('dungeonAttributes');
+ const h=['hub','cave_pause'].includes(state.phase)&&state.party.find(h=>controls(h)&&h.pendingAttributePoints>0);
+ if(!h){if(dialog.open)dialog.close();allocationHero='';attributeDraft={};return;}
+ if(document.getElementById('rogueDialog').open)return;
+ if(allocationHero!==h.id){allocationHero=h.id;attributeDraft={};}
+ const points=h.pendingAttributePoints;
+ if(Object.values(attributeDraft).reduce((a,b)=>a+b,0)>points)attributeDraft={};
+ const left=points-Object.values(attributeDraft).reduce((a,b)=>a+b,0);
+ dialog.innerHTML=`<header class="base-modal-header"><h2>Distribuir atributos</h2></header><div class="dungeon-attribute-body"><p>${esc(h.characterName)} · Nível ${h.level} · ${left} ponto(s) disponíveis</p>
+  ${attributeLabels.map(([key,label,stat])=>{
+   const n=attributeDraft[key]||0,gain=getAttributePointGain(key,h.level);
+   return `<div class="dungeon-attribute-row"><div><strong>${label}</strong><small>+${gain} ${stat} por ponto · +${gain*n} nesta distribuição</small></div>
+    <div class="dungeon-attribute-controls">${[-5,-1,1,5].map((delta,i)=>(i===2?`<output>${n}</output>`:'')+btn(delta>0?'+'+delta:String(delta),'attributeStep',{key,delta},delta<0?n< -delta:left<delta,`aria-label="${delta>0?'+':''}${delta} ${label}"`)).join('')}</div></div>`;
+  }).join('')}${btn('Terminar distribuição','allocate',{hero:h.id},left>0)}</div>`;
+ if(!dialog.open)dialog.showModal();
+}
+function subclasses(){return state.party.filter(h=>E.classChoices(h).length).map(h=>`<section class="rogue-panel"><h3>${esc(h.characterName)} · Especialização</h3>${E.classChoices(h).map(c=>btn(esc(c.name),'subclass',{hero:h.id,id:c.id},!controls(h))).join('')}</section>`).join('');}
 function itemText(item,h){return item.type==='equipment'?E.withHero(state,h,null,()=>EquipmentSystem.describe(item,h)):item.description||item.name;}
 function itemCard(item,h,actions){return `<article class="journey-item"><img src="${getItemSpritePath(item)}" alt=""><div><strong>${esc(item.name)}</strong><p>${esc(itemText(item,h))}</p>${actions}</div></article>`;}
 function itemPicker(){const h=state.party.find(x=>x.id===E.current(state)?.id)||state.party.find(x=>x.id===activeHero);return `<section class="rogue-panel journey-items"><h3>Poções</h3>${h.inventory.filter(i=>i.type==='consumable').map(i=>itemCard(i,h,btn('Selecionar','potionSelect',{hero:h.id,uid:i.uid}))).join('')||'<p>Nenhuma poção disponível.</p>'}${btn('Fechar','closeItems')}</section>`;}
@@ -241,8 +340,10 @@ function itemPicker(){const h=state.party.find(x=>x.id===E.current(state)?.id)||
 function chronicleView(){const last=state.log.at(-1)||'A aventura aguarda.';return `<div class="rpg-chronicle" aria-label="Última ação"><span>${esc(last)}</span>${btn('Histórico','baseHistory')}</div>`;}
 function hubView(){const h=state.party.find(p=>p.id===activeHero&&controls(p))||state.party.find(controls);return h?.place==='hunt'?battleView():baseUI.view()+subclasses();}
 function encounterView(){return baseUI.encounter();}
-function render(){tip.hidden=true;const mode=state.phase;const body=`${mode==='lobby'?lobbyView():mode==='hub'?hubView():mode==='battle'?battleView():mode==='cave_pause'?battleView():mode==='ended'?`<section class="rogue-panel"><h1>${state.outcome==='victory'?'Jornada concluída':'Fim da jornada'}</h1><p>${state.battleNumber} batalhas · ${state.bosses} chefes vencidos.</p>${btn('Novo grupo','newRun')}</section>`:encounterView()}${mode!=='lobby'&&statusMessage?'<p role="status">'+esc(statusMessage)+'</p>':''}${mode!=='lobby'&&net.info.mode==='guest'&&!net.info.connected?btn('Reconectar','reconnect'):''}`;root.innerHTML=!['lobby','ended'].includes(mode)?baseUI.shell(body):body;baseUI.sync();}
-function selectAction(d){const h=state.party.find(p=>p.id===E.current(state)?.id);if(!controls(h)||visualBusy)return;if(d.kind==='skill'){const k=E.available(state,h).find(k=>k.type===d.skill);if(!k||k.blockedReason)return;selected={kind:'skill',heroId:h.id,skillType:k.type,side:k.target,label:k.name};}else selected={kind:'basic',heroId:h.id,side:'enemy',label:'Ataque básico'};render();}
+function render(){tip.hidden=true;const mode=state.phase;const body=`${mode==='lobby'?lobbyView():mode==='hub'?hubView():mode==='battle'?battleView():mode==='cave_pause'?battleView():mode==='ended'?`<section class="rogue-panel"><h1>${state.outcome==='victory'?'Jornada concluída':'Fim da jornada'}</h1><p>${state.battleNumber} batalhas · ${state.bosses} chefes vencidos.</p>${btn('Novo grupo','newRun')}</section>`:encounterView()}${mode!=='lobby'&&statusMessage?'<p role="status">'+esc(statusMessage)+'</p>':''}${mode!=='lobby'&&net.info.mode==='guest'&&!net.info.connected?btn('Reconectar','reconnect'):''}`;root.innerHTML=!['lobby','ended'].includes(mode)?baseUI.shell(body):body;const activeTurn=root.querySelector('.dungeon-turn-order [aria-current="step"]');
+if(activeTurn){const list=activeTurn.closest('ol');if(list.scrollWidth>list.clientWidth)activeTurn.scrollIntoView({block:'nearest',inline:'nearest'});}
+baseUI.sync();syncProfile();syncAllocation();}
+function selectAction(d){const h=state.party.find(p=>p.id===E.current(state)?.id);if(!controls(h)||visualBusy)return;if(d.kind==='skill'){const k=E.available(state,h).find(k=>k.type===d.skill);if(!k||k.blockedReason)return;selected={kind:'skill',heroId:h.id,skillType:k.type,side:k.type==='archer_barrage'?'barrage':k.target,areaPrimary:k.areaPrimary,label:k.name};}else selected={kind:'basic',heroId:h.id,side:'enemy',label:'Ataque básico'};render();}
 async function click(a,d){if(baseUI.handle(a,d))return;const hero=d.hero||E.current(state)?.id;switch(a){case 'class':selectedClass=d.value;render();break;case 'active':activeHero=d.hero;render();break;case 'addHero':send({kind:'addHero',className:selectedClass,name:heroName||selectedClass,owner:localId()});break;case 'configureHero':send({kind:'configureHero',heroId:state.party.find(h=>h.owner===localId())?.id,className:selectedClass,name:heroName||selectedClass});break;case 'start':send({kind:'start'});break;case 'resume':prepareResume();break;
 case 'cancelResume':resumeSetup=null;render();break;
 case 'openResume':await openResumeRoom();break;
@@ -259,9 +360,60 @@ case 'join':{
  break;
 }
 case 'reconnect':await net.join(net.info.code||DungeonStore.read('roomCode',''),{className:selectedClass,name:heroName||selectedClass,relicId:'none',token});break;
-case 'visit':baseUI.close();send({kind:a,heroId:hero,place:d.place});break;case 'allocate':{const points=Object.fromEntries([...document.querySelectorAll('[data-allocation="'+hero+'"]')].map(i=>[i.dataset.attribute,Number(i.value)]));send({kind:'allocate',heroId:hero,points});break;}case 'ready':case 'rest':case 'hunt':case 'nextHunt':case 'caveNext':case 'leaveEncounter':case 'pass':send({kind:a,heroId:hero});break;case 'equip':case 'sell':case 'upgrade':send({kind:a,heroId:hero,uid:d.uid});break;case 'unequip':send({kind:a,heroId:hero,slot:d.slot});break;case 'buy':send({kind:a,heroId:hero,offerId:d.id});break;case 'bet':case 'skipBet':send({kind:'bet',heroId:hero,amount:a==='skipBet'?0:Number(document.getElementById('betValue').value)});break;case 'subclass':send({kind:a,heroId:hero,choiceId:d.id});break;case 'offerTrade':send({kind:a,heroId:hero,targetId:document.getElementById('tradeTarget').value,uid:document.getElementById('tradeItem').value,coins:Number(document.getElementById('tradeCoins').value)});break;case 'acceptTrade':case 'rejectTrade':case 'cancelTrade':send({kind:a,heroId:hero,tradeId:d.id});break;case 'select':selectAction(d);break;case 'cancel':selected=null;render();break;case 'confirm':if(selected)send({...selected,targetId:selected.side==='self'?selected.heroId:undefined});break;case 'hero':case 'enemy':if(selected&&(a==='hero'&&selected.side==='ally'||a==='enemy'&&selected.side==='enemy'))send({...selected,targetId:d.id});else inspect(d.id,a);break;case 'inspect':inspect(d.id,'hero');break;case 'items':itemMenu=!itemMenu;render();break;case 'closeItems':itemMenu=false;render();break;case 'campItems':activeHero=hero;itemMenu=true;render();break;case 'potionSelect':{const h=state.party.find(p=>p.id===hero),i=h.inventory.find(i=>i.uid===d.uid);if(state.phase!=='battle')send({kind:'potion',heroId:hero,uid:i.uid,targetId:hero});else{selected={kind:'potion',heroId:hero,uid:i.uid,side:'ally',label:i.name};itemMenu=false;render();}break;}case 'potionSelf':send({kind:'potion',heroId:hero,uid:d.uid,targetId:hero});break;case 'closeModal':baseUI.close();document.getElementById('rogueDialog').close();break;case 'abandon':if(confirm('Encerrar esta jornada?'))send({kind:'abandon'});break;case 'newRun':net.close();clearTimeout(enemyTimer);enemyTimer=null;state=E.lobby(Date.now().toString(36));render();break;}}
-function inspect(id,side){baseUI.close();const h=state.party.find(p=>p.id===id),e=state.enemies.find(p=>p.id===id),dialog=document.getElementById('rogueDialog');dialog.innerHTML=btn('Fechar','closeModal')+(h?`<h2>${esc(h.characterName)}</h2><p>${esc(heroTitle(h))} · Nv.${h.level} · ${h.coins} moedas · XP ${h.xp}/${100+(h.level-1)*25+Math.floor(h.level*h.level*1.5)}</p><dl>${Object.entries(E.stats(state,h)).filter(([k])=>['maxHp','maxMp','attack','power','crit','manaRegen','armor'].includes(k)).map(([k,v])=>'<dt>'+esc({maxHp:'Vida',maxMp:'Mana',attack:'Ataque',power:'Poder',crit:'Crítico',manaRegen:'Mana por turno',armor:'Resistência'}[k])+'</dt><dd>'+esc(k==='crit'?pct(v):v)+'</dd>').join('')}</dl><div class="rogue-passives">${passives(h)}</div>`:e?`<h2>${esc(e.name)}</h2><p>${e.hp}/${e.maxHp} HP · ${e.attack} ataque</p><p>${esc(E.enemyIntent(state,e).name)}</p>`:'');dialog.showModal();}
-document.addEventListener('click',e=>{if(e.target.closest('a[href="index.html"]'))queuePageMode('resume');const b=e.target.closest('[data-action]');if(b&&!b.disabled)click(b.dataset.action,b.dataset).catch(e=>message(e.message));});document.addEventListener('input',e=>{
+case 'visit':baseUI.close();send({kind:a,heroId:hero,place:d.place});break;case 'attributeStep':{
+ const delta=Number(d.delta);
+ if(allocationHero&&attributeLabels.some(([key])=>key===d.key)&&[-5,-1,1,5].includes(delta)){
+  attributeDraft[d.key]=(attributeDraft[d.key]||0)+delta;syncAllocation();
+  document.querySelector(`[data-action="attributeStep"][data-key="${d.key}"][data-delta="${delta}"]:not(:disabled)`)?.focus();
+ }
+ break;
+}
+case 'allocate':send({kind:'allocate',heroId:hero,points:attributeDraft});break;
+case 'ready':case 'rest':case 'hunt':case 'nextHunt':case 'caveNext':case 'leaveEncounter':case 'pass':send({kind:a,heroId:hero});break;case 'equip':case 'sell':case 'upgrade':send({kind:a,heroId:hero,uid:d.uid});break;case 'unequip':send({kind:a,heroId:hero,slot:d.slot});break;case 'buy':send({kind:a,heroId:hero,offerId:d.id});break;case 'bet':case 'skipBet':send({kind:'bet',heroId:hero,amount:a==='skipBet'?0:Number(document.getElementById('betValue').value)});break;case 'subclass':send({kind:a,heroId:hero,choiceId:d.id});break;case 'offerTrade':send({kind:a,heroId:hero,targetId:document.getElementById('tradeTarget').value,uid:document.getElementById('tradeItem').value,coins:Number(document.getElementById('tradeCoins').value)});break;case 'acceptTrade':case 'rejectTrade':case 'cancelTrade':send({kind:a,heroId:hero,tradeId:d.id});break;case 'select':selectAction(d);break;case 'barrageMode':if(selected?.side==='barrage'){selected={...selected,barrageMode:d.value,side:d.value==='area'?'enemies':'enemy'};render();}break;case 'cancel':selected=null;render();break;case 'confirm':if(selected)send({...selected,targetId:selected.side==='self'?selected.heroId:undefined});break;case 'hero':case 'enemy':if(selected&&(a==='hero'&&selected.side==='ally'||a==='enemy'&&(selected.side==='enemy'||selected.areaPrimary)))send({...selected,targetId:d.id});else inspect(d.id,a);break;case 'inspect':case 'exam':inspect(d.id);break;case 'items':itemMenu=!itemMenu;render();break;case 'closeItems':itemMenu=false;render();break;case 'campItems':activeHero=hero;itemMenu=true;render();break;case 'potionSelect':{const h=state.party.find(p=>p.id===hero),i=h.inventory.find(i=>i.uid===d.uid);if(state.phase!=='battle')send({kind:'potion',heroId:hero,uid:i.uid,targetId:hero});else{selected={kind:'potion',heroId:hero,uid:i.uid,side:'ally',label:i.name};itemMenu=false;render();}break;}case 'potionSelf':send({kind:'potion',heroId:hero,uid:d.uid,targetId:hero});break;case 'closeModal':profileId='';baseUI.close();syncAllocation();break;case 'abandon':if(confirm('Encerrar esta jornada?'))send({kind:'abandon'});break;case 'newRun':net.close();clearTimeout(enemyTimer);enemyTimer=null;state=E.lobby(Date.now().toString(36));render();break;}}
+function profileContent(id){
+ const h=state.party.find(p=>p.id===id),e=state.enemies.find(p=>p.id===id);
+ if(h)return `<header class="base-modal-header"><h2>${esc(h.characterName)}</h2>${btn('Fechar','closeModal')}</header><div class="dungeon-hero-profile">${figure(h)}<section>${baseUI.profile(h)}</section></div>`;
+ if(!e)return '';
+ const move=E.enemyIntent(state,e),armor=getEnemyDisplayedArmor(e),base=e.baseArmor??e.armor??0;
+ const i=CampaignEnemyCombat.index(e.baseName),passive=CampaignEnemyCombat.passives[i];
+ const effects=[...unitEffects(e,'enemy'),...(e.provocations||[]).filter(p=>state.party.some(h=>h.id===p.heroId&&h.hp>0&&!h.fled)).map(p=>({text:'Provocação',details:`${state.party.find(h=>h.id===p.heroId).characterName} · ${p.left} ação(ões) restantes`}))];
+ return `<header class="base-modal-header"><h2>Examinar inimigo</h2>${btn('Fechar','closeModal')}</header>
+  <div class="dungeon-exam-grid"><section class="dungeon-exam-sheet">
+   <div class="dungeon-exam-art" style="background-image:url('assets/visual/backgrounds/regions/${slug(e.region)}.webp')">${enemyFigure(e)}</div>
+   <h3>${esc(e.baseName)}</h3><p>${e.isBoss?'Chefe · ':''}${esc(e.region)} · Nv.${e.level}</p>
+   <div class="dungeon-exam-vital"><strong>Vida</strong>${bar(e.hp,e.maxHp,'health','Vida')}</div>${e.maxMp?`<div class="dungeon-exam-vital"><strong>Mana</strong>${bar(e.mp,e.maxMp,'mana','Mana')}</div>`:''}
+   ${shield(e.shieldValue,e.maxHp)||'<p>Escudo 0</p>'}
+   <p class="dungeon-exam-armor"><strong>Armadura ${armor}</strong><small>${base} base · ${armor-base>=0?'+':''}${armor-base} de efeitos</small></p>
+  </section><section class="dungeon-exam-reading">
+   <h3>Próxima ação</h3><p><strong>${esc(move.name)}</strong><br>${esc(intentTarget(e,move))}${move.left?' · '+move.left+' ação(ões) em preparação':''}</p>
+   <h3>Efeitos ativos</h3><ul>${effects.map(x=>`<li><strong>${esc(x.text)}</strong>${x.details&&x.details!==x.text?`<br>${esc(x.details)}`:''}</li>`).join('')||'<li>Nenhum efeito ativo</li>'}</ul>
+   <h3>Habilidades e passivas</h3>
+   <details><summary>Habilidades</summary><ul><li>Ataque básico · alvo único</li>${CampaignEnemyCombat.kit(e.baseName).map(a=>`<li><strong>${esc(a.name)} · ${a.cost} MP · ${CampaignEnemyCombat.isDungeonArea(a)?'Área':'Conforme o efeito'}</strong><br>${esc(a.description)}</li>`).join('')}</ul></details>
+   <details><summary>Passivas</summary><p>${passive?esc(passive+' · '+CampaignEnemyCombat.passiveDescriptions[i]):'Nenhuma passiva especial'}</p></details>
+  </section></div>`;
+}
+function syncProfile(){
+ if(!profileId)return;
+ const dialog=document.getElementById('rogueDialog');
+ if(!dialog.open){profileId='';return;}
+ const body=profileContent(profileId);
+ if(!body){dialog.close();profileId='';return;}
+ const open=[...dialog.querySelectorAll('details')].map(d=>d.open);
+ const scroll=dialog.scrollTop;
+ dialog.innerHTML=body;
+ dialog.querySelectorAll('details').forEach((d,i)=>d.open=!!open[i]);
+ dialog.scrollTop=scroll;
+}
+function inspect(id){
+ baseUI.close();
+ const dialog=document.getElementById('rogueDialog'),body=profileContent(id);
+ if(!body)return;
+ profileId=id;dialog.dataset.kind='exam';dialog.innerHTML=body;dialog.showModal();
+}
+document.addEventListener('click',e=>{
+ const skill=e.target.closest('.dungeon-campaign-ui [data-hud="skill-info"]');
+ if(skill){baseUI.showSkill(skill.dataset.skillName,skill.dataset.hudDescription);return;}
+ if(e.target.closest('a[href="index.html"]'))queuePageMode('resume');const b=e.target.closest('[data-action]');if(b&&!b.disabled)click(b.dataset.action,b.dataset).catch(e=>message(e.message));});document.addEventListener('input',e=>{
  if(e.target.id==='journeyName'){
   heroName=e.target.value;
   if(!state.party.length)root.querySelector('.rogue-lobby-name strong').textContent=heroName||selectedClass;
@@ -274,8 +426,9 @@ document.addEventListener('change',e=>{
  resumeSetup.heroId=document.getElementById('resumeHero').value;
  root.querySelector('[data-action="openResume"]').disabled=resumeSetup.count!==resumeSetup.saved.party.length||!resumeSetup.heroId;
 });
-document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea')||document.getElementById('rogueDialog').open)return;if(e.key==='Escape'){selected=null;itemMenu=false;render();}if(/^[1-9]$/.test(e.key)&&state.phase==='battle'){const h=state.party.find(p=>p.id===E.current(state)?.id);if(h&&controls(h)){const k=E.available(state,h)[Number(e.key)-2];if(e.key==='1')selectAction({kind:'basic'});else if(k)selectAction({kind:'skill',skill:k.type});}}if(e.key==='Enter'&&selected&&['self','party','enemies'].includes(selected.side))click('confirm',{});});
-function showTip(e){const el=e.target.closest?.('[data-tip]');if(!el){tip.hidden=true;return;}tip.textContent=el.dataset.tip;tip.hidden=false;const r=el.getBoundingClientRect(),b=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-b.width-8,r.left))+'px';tip.style.top=Math.max(8,r.top-b.height-8)+'px';}document.addEventListener('pointerover',showTip);document.addEventListener('focusin',showTip);document.addEventListener('pointerout',()=>tip.hidden=true);window.addEventListener('beforeunload',persist);
+document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea')||document.getElementById('rogueDialog').open||document.getElementById('dungeonAttributes').open)return;if(e.key==='Escape'){selected=null;itemMenu=false;render();}if(/^[1-9]$/.test(e.key)&&state.phase==='battle'){const h=state.party.find(p=>p.id===E.current(state)?.id);if(h&&controls(h)){const k=E.available(state,h)[Number(e.key)-2];if(e.key==='1')selectAction({kind:'basic'});else if(k)selectAction({kind:'skill',skill:k.type});}}if(e.key==='Enter'&&selected&&!selected.areaPrimary&&['self','party','enemies'].includes(selected.side))click('confirm',{});});
+function showTip(e){const el=e.target.closest?.('[data-tip], .dungeon-campaign-ui [data-hud-description]');if(!el){tip.hidden=true;return;}tip.textContent=el.dataset.tip||el.dataset.hudDescription;tip.hidden=false;const r=el.getBoundingClientRect(),b=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-b.width-8,r.left))+'px';tip.style.top=Math.max(8,r.top-b.height-8)+'px';}document.addEventListener('pointerover',showTip);document.addEventListener('focusin',showTip);document.addEventListener('pointerout',()=>tip.hidden=true);window.addEventListener('beforeunload',persist);
+document.getElementById('dungeonAttributes').addEventListener('cancel',e=>e.preventDefault());
 const baseUI=DungeonBaseUI.create({state:()=>state,active:()=>activeHero,setActive:id=>activeHero=id,controls,isLeader,localId,esc,btn,figure,heroTitle,itemText,send,render,inspect,leave(){persist();queuePageMode('resume');net.close();window.location.href='index.html';},selectPotion(heroId,uid){selected={kind:'potion',heroId,uid,side:'ally',label:'Usar poção'};render();}});
-window.RogueApp={state:()=>E.copy(state),network:net,send,render,load(s){if(!E.validState(s))throw Error('Estado inválido');commit(E.copy(s));}};render();
+window.RogueApp={state:()=>E.copy(state),network:net,send,render,load(s){if(!E.validState(s))throw Error('Estado inválido');commit(E.upgradeCheckpoint(E.copy(s)));}};render();
 })();

@@ -7,13 +7,15 @@
 <link rel="stylesheet" href="assets/styles/dungeon-rogue.css?v=20261106-progression-v8">
 <link rel="stylesheet" href="assets/styles/dungeon-campaign-skin.css?v=20261106-progression-v8">
 <link rel="stylesheet" href="assets/styles/dungeon-base.css?v=20261106-progression-v8">
-<link rel="stylesheet" href="assets/styles/dungeon-viewport.css?v=20261107-lobby">
+<link rel="stylesheet" href="assets/styles/campaign-hud.css?v=20261107-shared-ui">
+<link rel="stylesheet" href="assets/styles/dungeon-viewport.css?v=20261107-shared-ui">
 <link rel="stylesheet" href="assets/styles/rpg-interface.css?v=20261106-progression-v8">
 </head>
 <body class="rogue-page">
 <script>window.IS_DUNGEON_PAGE=true;window.DUNGEON_ROGUELITE=true;</script>
 <main id="rogueApp" class="rogue-shell"><p>Acendendo as tochas…</p></main>
 <dialog id="rogueDialog" aria-label="Detalhes da expedição"></dialog>
+<dialog id="dungeonAttributes" aria-label="Distribuir atributos"></dialog>
 <div id="rogueTooltip" role="tooltip" hidden></div><div id="rogueToast" role="status" hidden></div>
 <noscript>Ative o JavaScript para preparar sua expedição.</noscript>
 <script src="assets/vendor/peerjs-1.5.4.min.js"></script>
@@ -29,12 +31,13 @@
 <script src="assets/js/systems/dungeon-shared.js"></script>
 <script src="assets/js/systems/page-navigation.js?v=20261106-progression-v8"></script>
 <script src="assets/js/systems/combat-status.js?v=20261106-progression-v8"></script>
-<script src="assets/js/systems/campaign-enemy-combat.js?v=20261106-formation-v9"></script>
-<script src="assets/js/game.js?v=20261106-progression-v8"></script>
-<script src="assets/js/data/dungeon-rogue-data.js?v=20261106-progression-v8"></script>
-<script src="assets/js/systems/dungeon-rogue-engine.js?v=20261106-progression-v8"></script>
-<script src="assets/js/systems/dungeon-journey.js?v=20261106-progression-v8"></script>
+<script src="assets/js/systems/campaign-enemy-combat.js?v=20261107-campaign-dungeon"></script>
+<script src="assets/js/game.js?v=20261107-barrage"></script>
+<script src="assets/js/systems/campaign-reference.js?v=20261107-shared-ui"></script>
+<script src="assets/js/data/dungeon-rogue-data.js?v=20261107-barrage"></script>
+<script src="assets/js/systems/dungeon-rogue-engine.js?v=20261107-barrage"></script>
+<script src="assets/js/systems/dungeon-journey.js?v=20261107-campaign-dungeon"></script>
 <script src="assets/js/systems/dungeon-rogue-network.js?v=20261107-lobby"></script>
-<script src="assets/js/systems/dungeon-base-ui.js?v=20261106-progression-v8"></script>
-<script src="assets/js/systems/dungeon-rogue-app.js?v=20261107-lobby"></script>
+<script src="assets/js/systems/dungeon-base-ui.js?v=20261107-shared-ui"></script>
+<script src="assets/js/systems/dungeon-rogue-app.js?v=20261107-shared-ui"></script>
 </body></html>

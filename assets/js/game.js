@@ -2329,7 +2329,7 @@ function getPlayerHealReductionPercent(){
   return playerEffects.healReductionTurns > 0 ? (playerEffects.healReductionPercent || 0) : 0;
 }
 
-function healPlayer(amount, {skipEquipment = false, skipEquipmentTracking = false} = {}){
+function getPlayerHealingAmount(amount, {skipEquipment = false, reduction = getPlayerHealReductionPercent(), canHeal} = {}){
   let healBonus = 0;
   if(player.class === "Adepto da Natureza" && getUnlockedPassiveSkills().some(passive => passive.type === "nature_fairy_aura") && (playerEffects.natureCadence || 0) >= 3){
     healBonus += getPlayerSubclassState().tier60 === "fada_monarca" && player.level >= 60 ? 0.1 : 0.05;
@@ -2337,8 +2337,12 @@ function healPlayer(amount, {skipEquipment = false, skipEquipmentTracking = fals
   if(player.class === "Adepto da Natureza" && playerEffects.natureCrownedTurns > 0){
     healBonus += 0.2;
   }
-  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyHealing(player, playerEffects, amount); }
-  const adjustedAmount = Math.max(0, Math.floor(amount * (1 + healBonus) * (1 - getPlayerHealReductionPercent())));
+  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyHealing(player, playerEffects, amount, {canHeal}); }
+  return Math.max(0, Math.floor(amount * (1 + healBonus) * (1 - reduction)));
+}
+
+function healPlayer(amount, {skipEquipment = false, skipEquipmentTracking = false} = {}){
+  const adjustedAmount = getPlayerHealingAmount(amount, {skipEquipment});
   const hpBefore = player.hp;
   player.hp = Math.min(getCurrentCaps().maxHp, player.hp + adjustedAmount);
   displayState.playerHp = player.hp;
@@ -2356,9 +2360,8 @@ function grantNatureCadence(){
   playerEffects.natureCadence = Math.min(3, (playerEffects.natureCadence || 0) + 1);
 }
 
-function grantPlayerShield(amount, turns = 0, {skipEquipment = false} = {}){
-  if((player?.noShieldTurns || 0) > 0){ log("O efeito de corrupcao impede novos escudos."); return 0; }
-  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyShield(player, playerEffects, amount); }
+function getPlayerShieldAmount(amount, {skipEquipment = false, track = true} = {}){
+  if(!skipEquipment && typeof EquipmentSystem !== "undefined"){ amount = EquipmentSystem.modifyShield(player, playerEffects, amount, {track}); }
   let shield = Math.max(0, Math.floor(amount));
   if(shield <= 0){ return 0; }
   let shieldBonus = 0;
@@ -2374,6 +2377,13 @@ function grantPlayerShield(amount, turns = 0, {skipEquipment = false} = {}){
   if(playerEffects.natureShieldBonusTurns > 0 && playerEffects.natureShieldBonusPercent > 0){
     shield += Math.floor(shield * playerEffects.natureShieldBonusPercent);
   }
+  return shield;
+}
+
+function grantPlayerShield(amount, turns = 0, {skipEquipment = false} = {}){
+  if((player?.noShieldTurns || 0) > 0){ log("O efeito de corrupcao impede novos escudos."); return 0; }
+  const shield = getPlayerShieldAmount(amount, {skipEquipment});
+  if(shield <= 0) return 0;
   playerEffects.shieldValue += shield;
   playerEffects.shieldTurns = Math.max(playerEffects.shieldTurns || 0, turns || 0);
   grantNatureCadence();
@@ -3706,7 +3716,7 @@ function applyIncomingDamage(baseDamage, options = {}){
       log(`Refletir desencadeou um contra-ataque de ${counterDamage} de dano.`);
     }
   }
-  if(getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60 && playerEffects.shieldReactiveWeakening && (absorbed > 0 || damage > 0) && enemy){
+  if((IS_DUNGEON_PAGE || getPlayerSubclassState().tier60 === "corrompido" && player.level >= 60) && playerEffects.shieldReactiveWeakening && (absorbed > 0 || damage > 0) && enemy){
     enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, 0.5);
     enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, 1);
   }
@@ -3829,7 +3839,7 @@ function useSkillCost(skillInfo){
 
 const enemyDebuffFields = ["natureSongReductionTurns","attackDownTurns", "armorDownTurns", "healReductionTurns", "noShieldTurns", "skipNextAttack", "rootedTurns", "natureMarkTurns", "naturePoisonTurns", "natureDecayTurns", "dotTurns", "frozenDamageBonusPercent", "blizzardTurns", "aimLegTurns"];
 
-function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
+function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true, {damageScale = 1, debuffScale = 1, primary = true, singleShot = false} = {}){
   const debuffBefore = applyToTarget && enemy ? Object.fromEntries(enemyDebuffFields.map(key => [key, enemy[key]])) : null;
   if((player?.noShieldTurns || 0) > 0 && ["mage_mana_shield", "nature_vine_cocoon"].includes(skillInfo.type)){ return {blocked:true,message:"A corrupcao impede ganhar escudo agora."}; }
   if(skillInfo.type === "warrior_ultrasonic_cuts" && (playerEffects.ultrasonicRecoveryTurns > 0 || playerEffects.forcedBasicTurns > 0)) return { blocked:true, message:"Cortes Ultrasonicos ainda nao pode ser reativado." };
@@ -3872,17 +3882,17 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     }
     if(skillInfo.type === "mage_fireball" && applyToTarget && enemy){
       if(skillInfo.appliesBurn){
-        applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
-        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
+        applyBurning(enemy, Math.floor((skillInfo.burnDamage || 0) * damageScale), skillInfo.burnTurns || 0, skillInfo.name);
+        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, (skillInfo.healReductionPercent || 0) * debuffScale);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O inimigo ficou queimando.";
       }
       if(skillInfo.appliesChill){
-        applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
+        applyEnemyChill((skillInfo.chillAttackDownPercent || 0) * debuffScale,skillInfo.chillTurns || 0);
         message += " O inimigo ficou resfriado.";
       }
     }
-    if(skillInfo.type === "mage_freeze" && Math.random() < skillInfo.freezeChance){
+    if(skillInfo.type === "mage_freeze" && primary && Math.random() < skillInfo.freezeChance){
       if(applyToTarget && enemy){
         enemy.skipNextAttack = true;
       }
@@ -3890,32 +3900,32 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
       message += " O inimigo foi congelado e pode perder o proximo ataque.";
     }else if(skillInfo.type === "mage_freeze" && applyToTarget && enemy){
       if(skillInfo.burnTurns > 0){
-        applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
-        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3);
+        applyBurning(enemy, Math.floor((skillInfo.burnDamage || 0) * damageScale), skillInfo.burnTurns || 0, skillInfo.name);
+        enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, 0.3 * debuffScale);
         enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
         message += " O alvo ficou incendiado.";
       }
       if(skillInfo.chillTurns > 0){
         const alreadyChilled = enemy.attackDownTurns > 0 && enemy.attackDownPercent > 0;
         if(skillInfo.freezeVulnerabilityPercent > 0 && alreadyChilled){
-          enemy.frozenDamageBonusPercent = Math.max(enemy.frozenDamageBonusPercent || 0, skillInfo.freezeVulnerabilityPercent);
+          enemy.frozenDamageBonusPercent = Math.max(enemy.frozenDamageBonusPercent || 0, skillInfo.freezeVulnerabilityPercent * debuffScale);
           message += " O inimigo ficou congelado e sofrera 50% a mais no proximo dano.";
         }else{
-          applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
+          applyEnemyChill((skillInfo.chillAttackDownPercent || 0) * debuffScale,skillInfo.chillTurns || 0);
           message += " O inimigo ficou resfriado.";
         }
       }
     }
     if(skillInfo.type === "mage_sacred_phoenix" && applyToTarget && enemy){
-      applyBurning(enemy, skillInfo.burnDamage || 0, skillInfo.burnTurns || 0, skillInfo.name);
-      enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, skillInfo.healReductionPercent || 0);
+      applyBurning(enemy, Math.floor((skillInfo.burnDamage || 0) * damageScale), skillInfo.burnTurns || 0, skillInfo.name);
+      enemy.healReductionPercent = Math.max(enemy.healReductionPercent || 0, (skillInfo.healReductionPercent || 0) * debuffScale);
       enemy.healReductionTurns = Math.max(enemy.healReductionTurns || 0, skillInfo.burnTurns || 0);
     }
     if(skillInfo.type === "mage_avalanche" && applyToTarget && enemy){
-      applyEnemyChill(skillInfo.chillAttackDownPercent || 0,skillInfo.chillTurns || 0);
+      applyEnemyChill((skillInfo.chillAttackDownPercent || 0) * debuffScale,skillInfo.chillTurns || 0);
     }
     if(["warrior_shove", "warrior_stagger"].includes(skillInfo.type) && applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
-      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent * debuffScale);
       enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
     }
     if(skillInfo.type === "warrior_stagger" && applyToTarget && enemy && skillInfo.skipChance > 0 && Math.random() < skillInfo.skipChance){
@@ -4012,9 +4022,11 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
   }
   if(skillInfo.type === "mage_blizzard"){
     if(applyToTarget && enemy){
-      enemy.blizzardSkipChance = Math.max(enemy.blizzardSkipChance || 0, skillInfo.enemySkipChance || 0);
-      enemy.blizzardTurns = Math.max(enemy.blizzardTurns || 0, skillInfo.turns || 0);
-      applyEnemyChill(skillInfo.chillAttackDownPercent,skillInfo.chillTurns);
+      if(primary){
+        enemy.blizzardSkipChance = Math.max(enemy.blizzardSkipChance || 0, skillInfo.enemySkipChance || 0);
+        enemy.blizzardTurns = Math.max(enemy.blizzardTurns || 0, skillInfo.turns || 0);
+      }
+      applyEnemyChill(skillInfo.chillAttackDownPercent * debuffScale,skillInfo.chillTurns);
     }
     message = `${actorName} usou ${skillInfo.name} e envolveu o inimigo em uma tempestade por ${skillInfo.turns} turnos.`;
   }
@@ -4064,7 +4076,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     let totalDamage = 0;
     let hits = 0;
     let missedShots = 0;
-    const totalShots = skillInfo.hits + (skillInfo.extraShotChance > 0 && Math.random() < skillInfo.extraShotChance ? 1 : 0);
+    const totalShots = singleShot ? 1 : skillInfo.hits + (skillInfo.extraShotChance > 0 && Math.random() < skillInfo.extraShotChance ? 1 : 0);
     const barrageBonusPercent = playerEffects.nextBarrageDamageBonusPercent || 0;
     if(barrageBonusPercent > 0){
       playerEffects.nextBarrageDamageBonusPercent = 0;
@@ -4094,12 +4106,12 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     const criticalHit = rollArcherCriticalOutcome(0);
     damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage, { ignoreArmor: !!skillInfo.ignoreArmor, ignoreShield: !!skillInfo.ignoreShield }) : damage;
-    if(applyToTarget && enemy && skillInfo.shattersShield){
+    if(applyToTarget && enemy && primary && skillInfo.shattersShield){
       enemy.shieldValue = 0;
       enemy.shieldTurns = 0;
     }
     if(applyToTarget && enemy && skillInfo.enemyAttackDownPercent){
-      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent * debuffScale);
       enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
     }
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${criticalHit.didCrit ? ` Critico com ${Math.floor(criticalHit.critDamageBonus * 100)}% de dano critico.` : ""}`;
@@ -4131,7 +4143,7 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     damage = Math.floor(damage * criticalHit.multiplier);
     damage = applyToTarget ? applyDamageToEnemy(damage) : damage;
     if(applyToTarget && enemy){
-      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent);
+      enemy.attackDownPercent = Math.max(enemy.attackDownPercent || 0, skillInfo.enemyAttackDownPercent * debuffScale);
       enemy.attackDownTurns = Math.max(enemy.attackDownTurns || 0, skillInfo.enemyAttackDownTurns || 0);
       enemy.armorDownPercent = Math.max(enemy.armorDownPercent || 0, skillInfo.enemyArmorDownPercent);
       enemy.armorDownTurns = Math.max(enemy.armorDownTurns || 0, skillInfo.enemyArmorDownTurns || 0);
@@ -4192,7 +4204,11 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
     damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
     if(applyToTarget && enemy && Math.random() < skillInfo.rootChance){
-      applyNatureRoot(3, skillInfo.armorDownPercent || 0);
+      if(primary) applyNatureRoot(3, (skillInfo.armorDownPercent || 0) * debuffScale);
+      else if(skillInfo.armorDownPercent > 0){
+        enemy.armorDownPercent = Math.max(enemy.armorDownPercent || 0, skillInfo.armorDownPercent * debuffScale);
+        enemy.armorDownTurns = Math.max(enemy.armorDownTurns || 0, 3);
+      }
       message = `${actorName} usou ${skillInfo.name}, causou ${damage} de dano e enraizou o inimigo.`;
     }else{
       message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.`;
@@ -4300,9 +4316,9 @@ function applySkillLocally(skillInfo, actorName = "Voce", applyToTarget = true){
     damage = applyFirstDamageSkillBonus(skillInfo.damage, true);
     damage = applyToTarget ? applyDamageToEnemy(damage, { skillCost: cost }) : damage;
     if(applyToTarget && enemy && !hadDot){
-      applyNatureMark(4, Math.floor(0.2 * getSkillPowerBonus() * 4), 0);
-      applyNaturePoison(Math.floor(0.4 * getSkillPowerBonus()), 4);
-      applyNatureDecay(Math.max(1, Math.floor(enemy.maxHp * 0.015)), 4);
+      applyNatureMark(4, Math.floor(0.2 * getSkillPowerBonus() * 4 * damageScale), 0);
+      applyNaturePoison(Math.floor(0.4 * getSkillPowerBonus() * damageScale), 4);
+      applyNatureDecay(Math.max(1, Math.floor(enemy.maxHp * 0.015 * damageScale)), 4);
     }
     message = `${actorName} usou ${skillInfo.name} e causou ${damage} de dano.${!hadDot ? " O alvo recebeu marca, veneno e apodrecimento." : ""}`;
   }

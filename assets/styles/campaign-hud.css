@@ -1,4 +1,4 @@
-/* Handcrafted campaign skin. Intentionally scoped away from arena/dungeon pages. */
+/* Campaign skin. The dungeon opts in to shared command, vitals and skill-book components. */
 body.rpg-campaign{--rpg-ink:#f6e6bf;--rpg-muted:#d1c09b;--rpg-gold:#d6ae64;--rpg-dark:#15100c;--rpg-line:#765b36;--rpg-paper-ink:#35251b;background:#100e0b url('../visual/backgrounds/regions/floresta.webp') center/cover fixed;color:var(--rpg-ink);padding:0;font:15px/1.5 Georgia,'Times New Roman',serif}
 body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db;pointer-events:none;z-index:-1}
 .rpg-campaign *{box-sizing:border-box}
@@ -59,13 +59,13 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-vital-dock .scene-vitals{position:static;transform:none;width:100%;top:auto;left:auto;filter:none;display:flex;gap:3px}
 .rpg-campaign .rpg-vital-dock .scene-level-badge{display:none}
 .rpg-campaign .rpg-vital-dock .scene-vital-stack{gap:4px;width:100%}
-.rpg-campaign .rpg-vital-dock .scene-vital-bar{height:23px;min-height:23px;border:2px solid #aa8550;border-radius:3px;box-shadow:0 0 0 2px #1b1007,inset 0 2px 5px #0009;background:#090d11}
-.rpg-campaign .rpg-vital-dock .scene-hp-fill{background:linear-gradient(#ff8d85 0,#d82a35 20%,#831321 65%,#b52835);border-top:1px solid #ffb0a8}
-.rpg-campaign .rpg-vital-dock .scene-mp-fill{background:linear-gradient(#91e1ff,#1268c4 40%,#173c7f 80%,#367cca)}
+:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-vital-bar{height:23px;min-height:23px;border:2px solid #aa8550;border-radius:3px;box-shadow:0 0 0 2px #1b1007,inset 0 2px 5px #0009;background:#090d11}
+:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-hp-fill{background:linear-gradient(#ff8d85 0,#d82a35 20%,#831321 65%,#b52835);border-top:1px solid #ffb0a8}
+:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-mp-fill{background:linear-gradient(#91e1ff,#1268c4 40%,#173c7f 80%,#367cca)}
 .rpg-campaign .rpg-vital-dock .scene-vital-text{font:600 12px/1 system-ui,sans-serif;text-shadow:0 1px 2px #000}
 .rpg-campaign .rpg-vital-dock .scene-vital-xp{height:5px;min-height:5px;border:0;box-shadow:none;background:#130d07}
 .rpg-campaign .rpg-vital-dock .scene-vital-xp .scene-vital-text{display:none}
-.rpg-campaign .rpg-vital-dock .scene-vital-shield{height:15px;min-height:15px}
+:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-vital-shield{height:15px;min-height:15px}
 .rpg-campaign .rpg-vital-dock .scene-effect-chip{font:11px/1.3 system-ui,sans-serif;padding:3px 6px;max-width:none;border-radius:2px}
 .rpg-campaign .rpg-vital-dock .enemy-rarity-gem{width:22px;height:24px;flex-basis:22px}
 .rpg-campaign .rpg-vital-dock .scene-armor-badge{height:26px;width:26px;flex-basis:26px;font-size:11px}
@@ -76,18 +76,18 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-chronicle>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80%}
 .rpg-campaign .rpg-chronicle>button{font-size:12px;min-height:30px;border-width:10px;padding:0 6px;border-image-width:12px 18px}
 .rpg-campaign .rpg-actions{display:block;position:relative;z-index:3}
-.rpg-campaign .rpg-command-belt{display:grid;grid-template-columns:112px minmax(0,1fr) 100px;align-items:center;gap:20px;padding:14px 24px 5px;background:linear-gradient(#23170ee8,#1a110ce8),url('../visual/hud/button-normal.webp') center/100% 100%;box-shadow:inset 0 2px 1px #977242,inset 0 -3px #070604}
-.rpg-campaign .rpg-ability-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,170px));justify-content:center;gap:8px;align-items:stretch}
-.rpg-campaign button.rpg-ability{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:2px 4px 8px;min-width:0;border:1px solid #907044;border-image:none;background:#17110b;border-radius:2px;box-shadow:0 0 0 2px #0e0905,inset 0 0 0 3px #49331b;overflow:hidden}
-.rpg-campaign .rpg-ability>img{width:100%;height:90px;object-fit:contain;object-position:center;filter:drop-shadow(0 2px 2px #0008)}
-.rpg-campaign .rpg-ability strong{font-size:14px;line-height:1.2;font-weight:500;min-height:17px;text-align:center}
-.rpg-campaign .rpg-ability small{font:11px/1.3 system-ui,sans-serif;color:#b9d8f3}
-.rpg-campaign .rpg-hotkey{position:absolute;top:5px;left:8px;background:#14100cd9;border:1px solid #8f6c35;color:#f7d49c;padding:0 4px;font:10px/1.5 system-ui,sans-serif}
-.rpg-campaign .rpg-ability:disabled{opacity:.55;background:#181714;border-image:none;border-color:#625b48}
-.rpg-campaign .rpg-turn-actions{display:flex;flex-direction:column;gap:3px}
-.rpg-campaign .rpg-turn-actions button{font-size:12px;padding:0 3px;min-height:36px;border-width:12px;border-image-width:13px 24px}
-.rpg-campaign .rpg-potion-slot button{padding:4px;background:none;border:0;border-image:none;display:flex;flex-direction:column;align-items:center;color:#e8d3a9;font-size:12px;gap:3px}
-.rpg-campaign .rpg-potion-slot img{width:90px;height:90px;object-fit:contain}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{display:grid;grid-template-columns:112px minmax(0,1fr) 100px;align-items:center;gap:20px;padding:14px 24px 5px;background:linear-gradient(#23170ee8,#1a110ce8),url('../visual/hud/button-normal.webp') center/100% 100%;box-shadow:inset 0 2px 1px #977242,inset 0 -3px #070604}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,170px));justify-content:center;gap:8px;align-items:stretch}
+:is(.rpg-campaign,.dungeon-campaign-ui) button.rpg-ability{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:2px 4px 8px;min-width:0;border:1px solid #907044;border-image:none;background:#17110b;border-radius:2px;box-shadow:0 0 0 2px #0e0905,inset 0 0 0 3px #49331b;overflow:hidden}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability>img{width:100%;height:90px;object-fit:contain;object-position:center;filter:drop-shadow(0 2px 2px #0008)}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability strong{font-size:14px;line-height:1.2;font-weight:500;min-height:17px;text-align:center}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability small{font:11px/1.3 system-ui,sans-serif;color:#b9d8f3}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-hotkey{position:absolute;top:5px;left:8px;background:#14100cd9;border:1px solid #8f6c35;color:#f7d49c;padding:0 4px;font:10px/1.5 system-ui,sans-serif}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability:disabled{opacity:.55;background:#181714;border-image:none;border-color:#625b48}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions{display:flex;flex-direction:column;gap:3px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions button{font-size:12px;padding:0 3px;min-height:36px;border-width:12px;border-image-width:13px 24px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot button{padding:4px;background:none;border:0;border-image:none;display:flex;flex-direction:column;align-items:center;color:#e8d3a9;font-size:12px;gap:3px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot img{width:90px;height:90px;object-fit:contain}
 .rpg-campaign .rpg-skill-hint{padding:7px 25px;background:#140f0b;color:#c7b691;font:12px/1.4 system-ui,sans-serif;text-align:center;min-height:31px}
 .rpg-campaign .rpg-recovery{padding:18px;display:flex;align-items:center;justify-content:center;gap:16px;background:#1b120d}
 .rpg-campaign .rpg-find{position:relative;display:flex;align-items:center;gap:12px;font-size:18px}
@@ -97,7 +97,7 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-mainnav img{width:30px;height:30px;object-fit:contain}
 .rpg-campaign .rpg-mainnav button[data-value=more]{min-width:80px;font-size:13px}
 .rpg-campaign .rpg-mainnav button[data-value=more] img{display:none}
-.rpg-campaign .rpg-service-nav,.rpg-campaign .rpg-character-tabs{display:flex;justify-content:center;gap:12px;padding:12px 20px;background:#1c140f;border-bottom:1px solid #705030;flex-wrap:wrap}
+.rpg-campaign .rpg-service-nav,:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-character-tabs{display:flex;justify-content:center;gap:12px;padding:12px 20px;background:#1c140f;border-bottom:1px solid #705030;flex-wrap:wrap}
 .rpg-campaign .rpg-service-nav button{min-width:140px}
 .rpg-campaign .rpg-paper{background:#dec69a;border:25px solid transparent;border-image:url('../visual/hud/panel-parchment.webp') 70 75 fill / 32px / 0 stretch;color:var(--rpg-paper-ink);padding:9px 13px;filter:drop-shadow(0 5px 6px #0006);min-width:0}
 .rpg-campaign .rpg-paper p,.rpg-campaign .rpg-paper .lock-note{color:#503b26}
@@ -211,22 +211,22 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-skill-entry{display:flex;gap:15px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #654b2e}.rpg-campaign .rpg-skill-entry>img{width:70px;height:70px;object-fit:contain}.rpg-campaign .rpg-skill-entry h3{margin:0 0 5px}.rpg-campaign .rpg-skill-entry p{font:14px/1.6 system-ui,sans-serif;margin:0;color:#ddc9a2}
 .rpg-campaign .rpg-consumable{padding:12px 0;border-bottom:1px solid #654b2e}.rpg-campaign .rpg-more{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 .rpg-campaign .rpg-item-art{object-fit:contain;max-width:100%}
-.rpg-campaign .rpg-vital-dock .scene-hp-fill{background:linear-gradient(#ff8d85 0,#d82a35 20%,#831321 65%,#b52835)!important}
+:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-hp-fill{background:linear-gradient(#ff8d85 0,#d82a35 20%,#831321 65%,#b52835)!important}
 .rpg-campaign .rpg-enemy-portrait .sheet-sprite{top:-60px}
-@media(min-width:761px) and (max-height:850px){.rpg-campaign .rpg-top{min-height:70px;padding-top:5px;padding-bottom:5px}.rpg-campaign .rpg-battle .battle-scene{height:410px;min-height:410px}.rpg-campaign .rpg-battle .battle-scene .combat-entity{--entity-scale:1;bottom:70px;height:250px}.rpg-campaign .rpg-battle .battle-scene .enemy-boss{--entity-scale:1.1}.rpg-campaign .rpg-ability>img{height:72px}.rpg-campaign .rpg-command-belt{padding-top:10px}.rpg-campaign .rpg-mainnav{padding-top:5px;padding-bottom:5px}.rpg-campaign .rpg-mainnav button{min-height:48px}}
-@media(min-width:1600px){.rpg-campaign .rpg-command-belt{grid-template-columns:130px minmax(0,1fr) 120px;padding-left:40px;padding-right:40px}.rpg-campaign .rpg-ability>img{height:96px}.rpg-campaign .rpg-workshop{grid-template-columns:250px 95px minmax(240px,1fr) 375px;padding:28px}}
-@media(max-width:1100px){.rpg-campaign .rpg-workshop{grid-template-columns:150px 65px minmax(160px,1fr) 290px;padding:18px 14px;gap:10px}.rpg-campaign .rpg-map-object{min-height:210px}.rpg-campaign .rpg-map-object>img{height:220px}.rpg-campaign .rpg-set-summary{padding:9px}.rpg-campaign .rpg-set-summary p{font-size:11px}.rpg-campaign .rpg-anvil h2{font-size:17px!important}.rpg-campaign .rpg-paper{border-width:23px;padding:4px 6px}.rpg-campaign .rpg-recipe{padding:3px}.rpg-campaign .rpg-character-sheet{grid-template-columns:minmax(0,1fr) 320px}.rpg-campaign .rpg-character-figure .sheet-sprite{transform:translateX(-50%) scale(1.2)}.rpg-campaign .rpg-contract-layout,.rpg-campaign .rpg-bag{grid-template-columns:minmax(0,1fr) 300px}.rpg-campaign .rpg-contract-list{grid-template-columns:1fr}.rpg-campaign .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}.rpg-campaign .rpg-command-belt{gap:10px;padding-left:15px;padding-right:15px;grid-template-columns:82px minmax(0,1fr) 78px}.rpg-campaign .rpg-potion-slot img{width:72px;height:72px}.rpg-campaign .rpg-turn-actions button{font-size:11px}}
+@media(min-width:761px) and (max-height:850px){.rpg-campaign .rpg-top{min-height:70px;padding-top:5px;padding-bottom:5px}.rpg-campaign .rpg-battle .battle-scene{height:410px;min-height:410px}.rpg-campaign .rpg-battle .battle-scene .combat-entity{--entity-scale:1;bottom:70px;height:250px}.rpg-campaign .rpg-battle .battle-scene .enemy-boss{--entity-scale:1.1}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability>img{height:72px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{padding-top:10px}.rpg-campaign .rpg-mainnav{padding-top:5px;padding-bottom:5px}.rpg-campaign .rpg-mainnav button{min-height:48px}}
+@media(min-width:1600px){:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{grid-template-columns:130px minmax(0,1fr) 120px;padding-left:40px;padding-right:40px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability>img{height:96px}.rpg-campaign .rpg-workshop{grid-template-columns:250px 95px minmax(240px,1fr) 375px;padding:28px}}
+@media(max-width:1100px){.rpg-campaign .rpg-workshop{grid-template-columns:150px 65px minmax(160px,1fr) 290px;padding:18px 14px;gap:10px}.rpg-campaign .rpg-map-object{min-height:210px}.rpg-campaign .rpg-map-object>img{height:220px}.rpg-campaign .rpg-set-summary{padding:9px}.rpg-campaign .rpg-set-summary p{font-size:11px}.rpg-campaign .rpg-anvil h2{font-size:17px!important}.rpg-campaign .rpg-paper{border-width:23px;padding:4px 6px}.rpg-campaign .rpg-recipe{padding:3px}.rpg-campaign .rpg-character-sheet{grid-template-columns:minmax(0,1fr) 320px}.rpg-campaign .rpg-character-figure .sheet-sprite{transform:translateX(-50%) scale(1.2)}.rpg-campaign .rpg-contract-layout,.rpg-campaign .rpg-bag{grid-template-columns:minmax(0,1fr) 300px}.rpg-campaign .rpg-contract-list{grid-template-columns:1fr}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{gap:10px;padding-left:15px;padding-right:15px;grid-template-columns:82px minmax(0,1fr) 78px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot img{width:72px;height:72px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions button{font-size:11px}}
 @media(max-width:760px){
  .rpg-campaign .container{width:100%;overflow-x:clip}.rpg-campaign .start-panel{padding:15px}.rpg-campaign .start-hero-copy h2{font-size:26px}
  .rpg-campaign .rpg-top{grid-template-columns:65px minmax(0,1fr) 75px;gap:8px;padding:8px 10px;min-height:73px}.rpg-campaign #rpgTitle{font-size:21px!important}.rpg-campaign .rpg-kicker{font-size:8px;letter-spacing:.1em}.rpg-campaign #rpgMapButton button{display:flex;flex-direction:column;font-size:10px;gap:0}.rpg-campaign #rpgMapButton img{width:37px;height:37px}.rpg-campaign #rpgAccount{flex-direction:column;gap:2px;font-size:11px}.rpg-campaign #rpgAccount button{min-height:26px;font-size:10px;border-width:9px;padding:0 4px;border-image-width:10px 18px}.rpg-campaign .rpg-coins small{display:inline;font-size:9px}
  .rpg-campaign .rpg-battle .battle-scene{height:320px;min-height:320px;background-position:center}.rpg-campaign .rpg-battle .battle-scene .combat-entity{left:25%;bottom:85px;--entity-scale:.68;width:150px;height:155px;margin-left:-75px}.rpg-campaign .rpg-battle .battle-scene .enemy-entity{left:77%;--entity-scale:.65}.rpg-campaign .rpg-battle .battle-scene .enemy-boss{--entity-scale:.8}
  .rpg-campaign .rpg-battle-banner{min-width:128px;font-size:15px;padding:8px 15px 14px;left:30%}.rpg-campaign .rpg-quest{right:8px;top:8px;max-width:138px;border-width:12px;border-image-width:17px;padding:1px 3px;gap:1px;font-size:11px}.rpg-campaign .rpg-quest span{font-size:14px}.rpg-campaign .rpg-quest button{font-size:10px;min-height:28px}
- .rpg-campaign .rpg-vital-dock{left:10px;right:10px;gap:12px;bottom:10px;align-items:flex-start}.rpg-campaign .rpg-hero-plate,.rpg-campaign .rpg-enemy-plate{width:50%;gap:5px}.rpg-campaign .rpg-portrait,.rpg-campaign .rpg-enemy-portrait{display:none}.rpg-campaign .rpg-hero-plate strong{font-size:11px;min-height:28px;display:flex;align-items:flex-end}.rpg-campaign .rpg-target-name{font-size:11px;min-height:28px;margin-bottom:4px;padding:0;text-align:right}.rpg-campaign .rpg-vital-dock .scene-vital-text{font-size:11px}.rpg-campaign .rpg-vital-dock .scene-vital-bar{height:21px;min-height:21px;border-width:1px}.rpg-campaign .rpg-vital-dock .scene-vital-xp{height:4px;min-height:4px}.rpg-campaign .rpg-vital-dock .scene-effect-chip{font-size:10px;padding:2px 4px}.rpg-campaign .rpg-vital-dock .enemy-rarity-gem{width:20px;flex-basis:20px}.rpg-campaign .rpg-vital-dock .scene-armor-badge{width:21px;flex-basis:21px;font-size:10px}.rpg-campaign .rpg-expedition-note{max-width:48%;font-size:11px;padding:8px}.rpg-campaign .rpg-expedition-note button{font-size:11px;padding:0 5px}.rpg-campaign .rpg-explore-note{top:21%;width:55%;font-size:12px;padding:9px}
+ .rpg-campaign .rpg-vital-dock{left:10px;right:10px;gap:12px;bottom:10px;align-items:flex-start}.rpg-campaign .rpg-hero-plate,.rpg-campaign .rpg-enemy-plate{width:50%;gap:5px}.rpg-campaign .rpg-portrait,.rpg-campaign .rpg-enemy-portrait{display:none}.rpg-campaign .rpg-hero-plate strong{font-size:11px;min-height:28px;display:flex;align-items:flex-end}.rpg-campaign .rpg-target-name{font-size:11px;min-height:28px;margin-bottom:4px;padding:0;text-align:right}.rpg-campaign .rpg-vital-dock .scene-vital-text{font-size:11px}:is(.rpg-campaign .rpg-vital-dock,.dungeon-campaign-vitals) .scene-vital-bar{height:21px;min-height:21px;border-width:1px}.rpg-campaign .rpg-vital-dock .scene-vital-xp{height:4px;min-height:4px}.rpg-campaign .rpg-vital-dock .scene-effect-chip{font-size:10px;padding:2px 4px}.rpg-campaign .rpg-vital-dock .enemy-rarity-gem{width:20px;flex-basis:20px}.rpg-campaign .rpg-vital-dock .scene-armor-badge{width:21px;flex-basis:21px;font-size:10px}.rpg-campaign .rpg-expedition-note{max-width:48%;font-size:11px;padding:8px}.rpg-campaign .rpg-expedition-note button{font-size:11px;padding:0 5px}.rpg-campaign .rpg-explore-note{top:21%;width:55%;font-size:12px;padding:9px}
  .rpg-campaign .rpg-chronicle{padding:5px 10px;gap:8px;justify-content:space-between;font-size:11px;min-height:40px}.rpg-campaign .rpg-chronicle>span{max-width:73%}.rpg-campaign .rpg-chronicle>button{font-size:11px;min-height:32px}
- .rpg-campaign .rpg-command-belt{grid-template-columns:1fr;padding:12px 12px 5px;gap:8px}.rpg-campaign .rpg-ability-list{grid-row:1;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rpg-campaign .rpg-ability>img{height:65px;object-fit:contain}.rpg-campaign .rpg-ability strong{font-size:12px;line-height:1.2}.rpg-campaign .rpg-ability small{font-size:10px}.rpg-campaign .rpg-ability{min-height:115px;padding:1px 3px 7px}.rpg-campaign .rpg-hotkey{display:none}
- .rpg-campaign .rpg-potion-slot{grid-row:2;max-width:45%}.rpg-campaign .rpg-potion-slot button{flex-direction:row;font-size:12px;min-height:44px;padding:0}.rpg-campaign .rpg-potion-slot img{width:34px;height:34px}.rpg-campaign .rpg-turn-actions{grid-row:2;flex-direction:row;justify-self:end;max-width:70%;gap:4px}.rpg-campaign .rpg-turn-actions button{min-height:44px;padding:0 2px;font-size:11px;border-width:10px;border-image-width:11px 18px}.rpg-campaign .rpg-skill-hint{font-size:11px;padding:7px 12px;min-height:42px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{grid-template-columns:1fr;padding:12px 12px 5px;gap:8px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{grid-row:1;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability>img{height:65px;object-fit:contain}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability strong{font-size:12px;line-height:1.2}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability small{font-size:10px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability{min-height:115px;padding:1px 3px 7px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-hotkey{display:none}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot{grid-row:2;max-width:45%}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot button{flex-direction:row;font-size:12px;min-height:44px;padding:0}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot img{width:34px;height:34px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions{grid-row:2;flex-direction:row;justify-self:end;max-width:70%;gap:4px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions button{min-height:44px;padding:0 2px;font-size:11px;border-width:10px;border-image-width:11px 18px}.rpg-campaign .rpg-skill-hint{font-size:11px;padding:7px 12px;min-height:42px}
  .rpg-campaign .rpg-mainnav{gap:3px;padding:7px 5px;justify-content:space-between}.rpg-campaign .rpg-mainnav button{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;font-size:11px;min-height:56px;border-width:10px;border-image-width:12px 18px;padding:0 2px}.rpg-campaign .rpg-mainnav img{width:22px;height:22px}.rpg-campaign .rpg-mainnav button[data-value=more]{min-width:0;flex:.65;font-size:11px}.rpg-campaign .rpg-mainnav button[data-value=more]::before{content:'···';font-size:20px;line-height:22px}
- .rpg-campaign .rpg-service-nav,.rpg-campaign .rpg-character-tabs{gap:5px;padding:10px 8px}.rpg-campaign .rpg-service-nav button,.rpg-campaign .rpg-character-tabs button{min-width:0;font-size:12px;padding:0 3px;flex:1;border-width:10px;border-image-width:12px 20px;min-height:44px}
+ .rpg-campaign .rpg-service-nav,:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-character-tabs{gap:5px;padding:10px 8px}.rpg-campaign .rpg-service-nav button,:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-character-tabs button{min-width:0;font-size:12px;padding:0 3px;flex:1;border-width:10px;border-image-width:12px 20px;min-height:44px}
  .rpg-campaign .rpg-workshop{display:grid;grid-template-columns:60px minmax(0,1fr);gap:12px;padding:14px 12px;background-position:50% 0;background-attachment:scroll}.rpg-campaign .rpg-workshop-map{grid-column:1/-1;display:contents}.rpg-campaign .rpg-map-object{grid-column:1/-1;min-height:60px;height:64px;border-width:3px;background:#1b120b}.rpg-campaign .rpg-map-object>img{height:100%;object-position:50% 25%;opacity:.6}.rpg-campaign .rpg-map-object>span{background:#17100cd9;bottom:10px;left:10px;right:10px;font-size:14px;padding:8px}.rpg-campaign .rpg-workshop-map .rpg-set-summary{grid-column:1/-1;grid-row:4;margin:0}.rpg-campaign .rpg-equipment-rack{grid-column:1;grid-row:2;gap:7px;padding:5px 0}.rpg-campaign .rpg-rack-slot{min-height:66px;padding:3px}.rpg-campaign .rpg-rack-slot img{width:34px;height:42px}.rpg-campaign .rpg-rack-slot>span{font-size:9px}.rpg-campaign .rpg-rack-slot small{font-size:8px}.rpg-campaign .rpg-anvil{grid-column:2;grid-row:2;min-height:385px}.rpg-campaign .rpg-anvil h2{font-size:16px!important;padding:9px}.rpg-campaign .rpg-anvil>p{font-size:11px}.rpg-campaign .rpg-anvil>img{height:235px;max-width:200px;margin:8px 0}.rpg-campaign .rpg-rarity-path{gap:5px;padding:10px 6px}.rpg-campaign .rpg-rarity-path>span{font-size:9px}.rpg-campaign .rpg-gem{width:12px;height:12px;margin-bottom:7px}.rpg-campaign .rpg-rarity-path b{font-size:16px;right:-5px}.rpg-campaign .rpg-recipe{grid-column:1/-1;grid-row:3;max-width:100%;padding:3px 7px}.rpg-campaign .rpg-paper{border-width:23px;border-image-width:29px;padding:7px}.rpg-campaign .rpg-forge-tabs{margin-bottom:12px}.rpg-campaign .rpg-forge-tabs button{font-size:15px}.rpg-campaign .rpg-materials li{font-size:13px;padding:9px 0}
  .rpg-campaign .rpg-village-interior{flex-direction:column;padding:20px 12px;gap:20px;min-height:620px}.rpg-campaign .rpg-service-copy{width:100%;padding:16px}.rpg-campaign .rpg-inn{width:100%}.rpg-campaign .rpg-shop{width:100%;padding:10px}.rpg-campaign .rpg-shop .inventory-item .panel-header{flex-wrap:wrap}
  .rpg-campaign .rpg-contract-board{padding:20px 12px}.rpg-campaign .rpg-board-intro h2{font-size:21px}.rpg-campaign .rpg-board-intro p{font-size:13px}.rpg-campaign .rpg-board-intro>span{font-size:13px}.rpg-campaign .rpg-contract-tabs{gap:5px}.rpg-campaign .rpg-contract-tabs button{flex:1;font-size:13px;padding:0 5px}.rpg-campaign .rpg-contract-layout{display:flex;flex-direction:column;gap:20px}.rpg-campaign .rpg-contract-list{width:100%;grid-template-columns:1fr}.rpg-campaign .rpg-contract-detail{width:100%;min-height:0}.rpg-campaign .rpg-contract{min-height:120px}.rpg-campaign .rpg-contract strong{font-size:16px}
@@ -235,7 +235,7 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign #rpgDialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px);padding:16px}.rpg-campaign #rpgDialog>header{gap:8px}.rpg-campaign #rpgDialog>header h2{font-size:20px}.rpg-campaign #rpgDialog>header button{font-size:11px;min-height:40px;border-width:10px;border-image-width:12px 18px}.rpg-campaign #rpgDialog .region-map-marker{width:32px;height:32px;min-height:32px;min-width:32px}.rpg-campaign .rpg-more{grid-template-columns:1fr}.rpg-campaign .rpg-skill-entry{gap:10px}.rpg-campaign .rpg-skill-entry>img{width:48px;height:48px}.rpg-campaign .rpg-skill-entry h3{font-size:16px!important}
  .rpg-campaign #levelUpPanel{padding:15px}.rpg-campaign .attribute-row{flex-wrap:wrap}.rpg-campaign .attribute-controls button{padding:0 3px;min-width:35px;border-width:10px;border-image-width:12px 18px}.rpg-campaign .attribute-controls{gap:4px}
 }
-@media(max-width:359px){.rpg-campaign .rpg-ability-list{grid-template-columns:repeat(2,minmax(0,1fr))}.rpg-campaign .rpg-turn-actions{max-width:75%}.rpg-campaign .rpg-mainnav button{font-size:10px}.rpg-campaign #rpgTitle{font-size:18px!important}.rpg-campaign .rpg-quest{max-width:125px}.rpg-campaign .rpg-battle-banner{left:26%;font-size:13px;min-width:112px}.rpg-campaign .rpg-hero-plate strong{font-size:10px}.rpg-campaign .rpg-rarity-path>span{font-size:8px}}
+@media(max-width:359px){:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{grid-template-columns:repeat(2,minmax(0,1fr))}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions{max-width:75%}.rpg-campaign .rpg-mainnav button{font-size:10px}.rpg-campaign #rpgTitle{font-size:18px!important}.rpg-campaign .rpg-quest{max-width:125px}.rpg-campaign .rpg-battle-banner{left:26%;font-size:13px;min-width:112px}.rpg-campaign .rpg-hero-plate strong{font-size:10px}.rpg-campaign .rpg-rarity-path>span{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.rpg-campaign *,.rpg-campaign *::before,.rpg-campaign *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .rpg-campaign button{background-color:transparent}
 .rpg-campaign.rpg-playing:has(#game[style*="none"]) #settingsFab{display:block}
@@ -244,12 +244,12 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-vital-dock .scene-vital-fill{position:absolute;top:0;left:0;height:100%}
 .rpg-campaign .rpg-vital-dock .scene-vital-stack>.scene-vital-bar{flex:none}
 .rpg-campaign .rpg-chronicle>button{flex:0 0 auto;width:auto}
-@media(max-width:760px){.rpg-campaign .rpg-ability-list,.rpg-campaign .rpg-potion-slot,.rpg-campaign .rpg-turn-actions{grid-column:1}.rpg-campaign .rpg-turn-actions{max-width:62%}.rpg-campaign .rpg-chronicle>span{min-width:0;flex:1;max-width:none}}
+@media(max-width:760px){:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list,:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot,:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions{grid-column:1}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions{max-width:62%}.rpg-campaign .rpg-chronicle>span{min-width:0;flex:1;max-width:none}}
 .rpg-campaign button{text-align:center;vertical-align:middle}
 .rpg-campaign button:not(.region-map-marker):not(.trophy-category-hotspot):not(.trophy-category-percent):not(.trophy-overall-percent){align-content:center}
 .rpg-campaign :is(.rpg-service-nav,.rpg-character-tabs,.rpg-forge-tabs,.rpg-contract-tabs,.rpg-bag-filters,.rpg-turn-actions,.rpg-recovery,.rpg-paper,.rpg-more) button{display:inline-flex;align-items:center;justify-content:center;text-align:center}
 .rpg-campaign .rpg-mainnav button>span{flex:0 1 auto;text-align:center;line-height:1.3}
-.rpg-campaign .rpg-ability :is(strong,small){width:100%;text-align:center}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability :is(strong,small){width:100%;text-align:center}
 .rpg-campaign .rpg-target-name{text-align:center}
 /* The illustration already contains its own frames: hotspots are transparent. */
 .rpg-campaign .trophy-category-map{border:0;border-radius:0;box-shadow:none;background:transparent}
@@ -307,11 +307,11 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign .rpg-paper{border-width:22px;padding:6px}
  .rpg-campaign .rpg-character-sheet{grid-template-columns:minmax(0,1fr) 290px;padding:18px 12px;gap:12px}
  .rpg-campaign .rpg-bag,.rpg-campaign .rpg-contract-layout{grid-template-columns:minmax(0,1fr) 280px}
- .rpg-campaign .rpg-command-belt{grid-template-columns:75px minmax(0,1fr) 76px;gap:8px;padding:10px}
- .rpg-campaign .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}
- .rpg-campaign .rpg-ability strong{font-size:12px}
- .rpg-campaign .rpg-turn-actions button{font-size:10px}
- .rpg-campaign .rpg-potion-slot img{width:65px;height:65px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-command-belt{grid-template-columns:75px minmax(0,1fr) 76px;gap:8px;padding:10px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability strong{font-size:12px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-turn-actions button{font-size:10px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot img{width:65px;height:65px}
 }
 @media(max-width:1100px){
  .rpg-campaign .rpg-top{min-height:60px;padding:4px 10px}
@@ -332,7 +332,7 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign #modeTabs .map-marker-label{font-size:7px;padding:1px 2px}
 }
 @media(max-width:760px){
- .rpg-campaign .rpg-ability-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-ability-list{grid-template-columns:repeat(2,minmax(0,1fr))}
  .rpg-campaign .rpg-battle .battle-scene{min-height:340px;height:360px}
  .rpg-campaign #rpgDialog .rpg-bag{display:flex;flex-direction:column;padding:0}
  .rpg-campaign #actions{position:relative;bottom:auto}
@@ -349,10 +349,10 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-kicker{display:block;line-height:1.2}
 .rpg-campaign #actions{position:relative;bottom:auto;flex-shrink:0}
 .rpg-campaign #rpgChronicle{flex-shrink:0}
-.rpg-campaign .rpg-potion-slot button{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
-.rpg-campaign .rpg-potion-slot span{max-width:100%;font-size:11px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot button{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot span{max-width:100%;font-size:11px}
 @media(max-width:1100px){.rpg-campaign .rpg-battle-banner{left:50%;min-width:0;width:calc(100% - 240px);max-width:180px;padding:8px 2px 14px;font-size:13px}}
-@media(min-width:1101px) and (max-width:1600px){.rpg-campaign .rpg-potion-slot span{font-size:9px;white-space:nowrap;overflow-wrap:normal}}
+@media(min-width:1101px) and (max-width:1600px){:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-potion-slot span{font-size:9px;white-space:nowrap;overflow-wrap:normal}}
 .rpg-campaign #rpgDialog .rpg-item-detail h2{font-size:20px;overflow-wrap:break-word}
 
 /* The location is already shown beside the map: no full-width title strip. */
@@ -518,13 +518,13 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 /* Compact controls and framed camp recovery. */
 .rpg-campaign #campaignHud #rpgBagButton button{width:100%;height:62px;aspect-ratio:auto;border:2px solid #ab8548;border-radius:6px;background:linear-gradient(110deg,#21140d,#654326 48%,#21140d);box-shadow:inset 0 0 0 3px #27170e,inset 0 0 14px #000,0 3px 5px #0008}
 .rpg-campaign #campaignHud #rpgBagButton img{height:100%;width:auto;max-width:100%;margin:auto;object-fit:contain;border-radius:4px}
-.rpg-campaign #campaignHud .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(64px,92px));gap:6px;align-content:start}
-.rpg-campaign #campaignHud button.rpg-ability{min-height:0;height:100px;gap:0;padding:3px;overflow:hidden;border:1px solid #ae8648;border-image:none}
-.rpg-campaign #campaignHud .rpg-ability>img{height:52px;width:100%;object-fit:contain;flex-shrink:0}
-.rpg-campaign #campaignHud .rpg-ability strong{font-size:11px;line-height:1.1;min-height:26px;padding:2px 0;overflow-wrap:anywhere}
-.rpg-campaign #campaignHud .rpg-ability small{font-size:11px;padding:0;line-height:1.1}
-.rpg-campaign #campaignHud .rpg-command-belt{padding:8px 12px;gap:8px;grid-template-columns:60px minmax(0,1fr) 100px}
-.rpg-campaign #campaignHud .rpg-potion-slot img{height:44px;width:44px}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability-list{grid-template-columns:repeat(auto-fit,minmax(64px,92px));gap:6px;align-content:start}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) button.rpg-ability{min-height:0;height:100px;gap:0;padding:3px;overflow:hidden;border:1px solid #ae8648;border-image:none}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability>img{height:52px;width:100%;object-fit:contain;flex-shrink:0}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability strong{font-size:11px;line-height:1.1;min-height:26px;padding:2px 0;overflow-wrap:anywhere}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability small{font-size:11px;padding:0;line-height:1.1}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt{padding:8px 12px;gap:8px;grid-template-columns:60px minmax(0,1fr) 100px}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-potion-slot img{height:44px;width:44px}
 .rpg-campaign #campaignHud .rpg-camp-rest{padding:10px 14px;max-width:330px;border:1px solid #a28a51;border-radius:9px;background:linear-gradient(145deg,#17251beF,#221b12ed);box-shadow:inset 0 0 0 3px #10180fd9,0 4px 12px #0008}
 .rpg-campaign #campaignHud .rpg-camp-rest button{border:1px solid #bd9d5d;border-image:none;border-radius:5px;background:linear-gradient(#42603b,#243b23);color:#f5e6b9;min-height:36px;font-size:15px;box-shadow:inset 0 0 0 2px #1a2a18}
 .rpg-campaign #campaignHud .rpg-camp-rest p{display:grid;gap:4px;margin:9px 0 0;font:15px/1.3 'RPG Leitura',Georgia,serif;font-variant-numeric:tabular-nums}
@@ -553,30 +553,30 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
  .rpg-campaign .rpg-bestiary-map{position:static;width:190px;max-width:100%;margin:auto}
 }
 @media(max-width:760px){
- .rpg-campaign #campaignHud .rpg-command-belt{grid-template-columns:44px minmax(0,1fr) 76px;padding:6px;gap:5px}
- .rpg-campaign #campaignHud .rpg-ability-list{grid-column:2;grid-row:1;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
- .rpg-campaign #campaignHud .rpg-potion-slot{grid-column:1;grid-row:1}
- .rpg-campaign #campaignHud .rpg-turn-actions{grid-column:3;grid-row:1;max-width:none}
- .rpg-campaign #campaignHud .rpg-turn-actions button{font-size:10px;min-height:32px;padding:4px;border:1px solid #9c7d47;border-image:none}
- .rpg-campaign #campaignHud button.rpg-ability{height:74px}
- .rpg-campaign #campaignHud .rpg-ability>img{height:32px}
- .rpg-campaign #campaignHud .rpg-ability strong{font-size:9px;min-height:24px}
- .rpg-campaign #campaignHud .rpg-ability small{font-size:9px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt{grid-template-columns:44px minmax(0,1fr) 76px;padding:6px;gap:5px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability-list{grid-column:2;grid-row:1;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-potion-slot{grid-column:1;grid-row:1}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-turn-actions{grid-column:3;grid-row:1;max-width:none}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-turn-actions button{font-size:10px;min-height:32px;padding:4px;border:1px solid #9c7d47;border-image:none}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) button.rpg-ability{height:74px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability>img{height:32px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability strong{font-size:9px;min-height:24px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-ability small{font-size:9px}
  .rpg-campaign #campaignHud[data-mode=battle] .rpg-battle .battle-scene{height:calc(100dvh - 240px);min-height:460px}
  .rpg-campaign #campaignHud .rpg-bestiary{padding:10px}
  .rpg-campaign .rpg-bestiary .simple-item-line{flex-wrap:wrap}
  .rpg-campaign .rpg-loadout{margin-top:210px}
 }
-.rpg-campaign #campaignHud .rpg-command-belt button.rpg-ability{height:auto;aspect-ratio:1;padding:3px 3px 16px;min-height:0}
-.rpg-campaign #campaignHud .rpg-command-belt .rpg-ability>img{height:100%;min-height:0;object-fit:contain}
-.rpg-campaign #campaignHud .rpg-command-belt .rpg-ability strong{position:absolute;width:1px;height:1px;min-height:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.rpg-campaign #campaignHud .rpg-command-belt .rpg-ability small{position:absolute;bottom:0;left:0;width:100%;padding:2px 0;font-size:11px;line-height:1;white-space:nowrap;background:#130e09dd}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt button.rpg-ability{height:auto;aspect-ratio:1;padding:3px 3px 16px;min-height:0}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-ability>img{height:100%;min-height:0;object-fit:contain}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-ability strong{position:absolute;width:1px;height:1px;min-height:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-ability small{position:absolute;bottom:0;left:0;width:100%;padding:2px 0;font-size:11px;line-height:1;white-space:nowrap;background:#130e09dd}
 @media(max-width:760px){
- .rpg-campaign #campaignHud .rpg-command-belt .rpg-ability small{font-size:9px}
- .rpg-campaign #campaignHud .rpg-command-belt .rpg-ability-list{grid-auto-rows:auto}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-ability small{font-size:9px}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-ability-list{grid-auto-rows:auto}
 }
-.rpg-campaign #campaignHud .rpg-command-belt .rpg-potion-slot button{border:1px solid #9c7d47;border-image:none;padding:3px;min-width:0;width:100%;font-size:10px}
-.rpg-campaign #campaignHud .rpg-command-belt .rpg-turn-actions button{border:1px solid #9c7d47;border-image:none;padding:5px 2px;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:11px}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-potion-slot button{border:1px solid #9c7d47;border-image:none;padding:3px;min-width:0;width:100%;font-size:10px}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-command-belt .rpg-turn-actions button{border:1px solid #9c7d47;border-image:none;padding:5px 2px;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:11px}
 .rpg-campaign #campaignHud #rpgBagButton button{border:0;padding:0;background:#28180d}
 .rpg-campaign #campaignHud #rpgBagButton img{width:100%;height:100%;max-width:none;object-fit:fill;border-radius:5px}
 .rpg-campaign #campaignHud .rpg-upgrade-rack{display:flex;flex-direction:column;gap:8px;padding:8px 2px;box-sizing:border-box;max-height:488px;overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#ad8950 #21160e;cursor:grab;touch-action:pan-y;user-select:none;align-self:start}
@@ -740,29 +740,29 @@ body.rpg-campaign::before{content:"";position:fixed;inset:0;background:#080a08db
 .rpg-campaign .rpg-paperdoll{min-height:740px}
 .rpg-campaign .rpg-character-caption{z-index:4}
 .rpg-campaign .rpg-loadout{margin-top:210px;padding-top:0}
-.rpg-campaign .rpg-combat-passives{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:#18120dd9}
-.rpg-campaign .rpg-combat-passives:empty{display:none}
-.rpg-campaign #campaignHud .rpg-passive-node{display:flex;align-items:center;gap:7px;max-width:180px;min-width:0;padding:5px 8px;border:1px solid #796645;border-image:none;border-radius:4px;background:#292117;color:#dfcda7;font-size:12px;line-height:1.2}
-.rpg-campaign .rpg-passive-node img{width:34px;height:34px;object-fit:contain}
-.rpg-campaign .rpg-skill-book{padding:24px;background:#20180f;color:#ecd9b6}
-.rpg-campaign .rpg-skill-book header p{font:15px/1.5 'RPG Leitura',Georgia,serif;color:#cdb995}
-.rpg-campaign .rpg-skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px;margin:12px 0 24px}
-.rpg-campaign .rpg-book-current{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.rpg-campaign .rpg-skill-category{min-width:0}
-.rpg-campaign #campaignHud .rpg-skill-node{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;min-height:135px;border:1px solid #856a42;border-image:none;border-radius:6px;background:linear-gradient(#352a1d,#21180f);padding:12px 7px;color:#f0ddb9;text-shadow:none;line-height:1.3}
-.rpg-campaign .rpg-skill-node img{width:52px;height:52px;object-fit:contain}
-.rpg-campaign .rpg-skill-node strong{font-size:14px}.rpg-campaign .rpg-skill-node small{font:12px/1.3 'RPG Leitura',Georgia,serif;color:#c2ac83}
-.rpg-campaign #campaignHud .rpg-skill-node.is-passive{border-color:#5f7b61}
-.rpg-campaign .rpg-future-route{border:1px solid #655034;border-radius:5px;padding:12px;margin:10px 0;background:#17120d}
-.rpg-campaign .rpg-future-route summary{cursor:pointer;color:#e2c38b}.rpg-campaign .rpg-future-route summary small{display:block;color:#b8a17f;margin-top:4px}
-.rpg-campaign .rpg-skill-description{white-space:pre-line;font:16px/1.55 'RPG Leitura',Georgia,serif}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-combat-passives{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:#18120dd9}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-combat-passives:empty{display:none}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-passive-node{display:flex;align-items:center;gap:7px;max-width:180px;min-width:0;padding:5px 8px;border:1px solid #796645;border-image:none;border-radius:4px;background:#292117;color:#dfcda7;font-size:12px;line-height:1.2}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-passive-node img{width:34px;height:34px;object-fit:contain}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-book{padding:24px;background:#20180f;color:#ecd9b6}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-book header p{font:15px/1.5 'RPG Leitura',Georgia,serif;color:#cdb995}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px;margin:12px 0 24px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-book-current{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-category{min-width:0}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-skill-node{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;min-height:135px;border:1px solid #856a42;border-image:none;border-radius:6px;background:linear-gradient(#352a1d,#21180f);padding:12px 7px;color:#f0ddb9;text-shadow:none;line-height:1.3}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-node img{width:52px;height:52px;object-fit:contain}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-node strong{font-size:14px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-node small{font:12px/1.3 'RPG Leitura',Georgia,serif;color:#c2ac83}
+:is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-skill-node.is-passive{border-color:#5f7b61}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-future-route{border:1px solid #655034;border-radius:5px;padding:12px;margin:10px 0;background:#17120d}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-future-route summary{cursor:pointer;color:#e2c38b}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-future-route summary small{display:block;color:#b8a17f;margin-top:4px}
+:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-description{white-space:pre-line;font:16px/1.55 'RPG Leitura',Georgia,serif}
 @media(max-width:760px){
  .rpg-campaign .rpg-world-map .region-map-boss-hud{display:grid;grid-template-columns:1fr 1fr;gap:3px}
  .rpg-campaign #campaignHud .region-map-boss-hud button{width:100%;box-sizing:border-box;min-width:0;min-height:26px;padding:3px 1px;font-size:8px!important;letter-spacing:0;white-space:nowrap}
- .rpg-campaign .rpg-book-current{grid-template-columns:1fr;gap:0}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-book-current{grid-template-columns:1fr;gap:0}
  .rpg-campaign #campaignHud #rpgAccount .rpg-coins{min-height:42px;padding:8px 12px;font-size:12px}
- .rpg-campaign .rpg-skill-book{padding:16px 12px}.rpg-campaign .rpg-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .rpg-campaign #campaignHud .rpg-passive-node{padding:4px;max-width:100px;font-size:10px}.rpg-campaign .rpg-passive-node img{width:28px;height:28px}
+ :is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-book{padding:16px 12px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ :is(.rpg-campaign #campaignHud,.dungeon-campaign-ui) .rpg-passive-node{padding:4px;max-width:100px;font-size:10px}:is(.rpg-campaign,.dungeon-campaign-ui) .rpg-passive-node img{width:28px;height:28px}
 }
 .rpg-campaign .rpg-contract-tracker{position:absolute;left:18px;top:18px;z-index:13;width:220px;max-width:calc(45% - 24px);border:1px solid #8c7042;border-radius:4px;background:#17120de8;color:#ecd7aa;box-shadow:0 3px 8px #0006;box-sizing:border-box}
 .rpg-campaign #campaignHud .rpg-contract-tracker>button{display:flex;flex-direction:column;align-items:center;gap:5px;box-sizing:border-box;width:100%;padding:12px 10px;border:0;border-image:none;border-radius:0;background:none;color:inherit;opacity:1;line-height:1.3;text-shadow:none;min-width:0;white-space:normal}

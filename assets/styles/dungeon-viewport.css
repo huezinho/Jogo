@@ -163,3 +163,217 @@ body.rogue-page .rogue-lobby .rogue-class-grid button {padding:6px 3px;font-size
 .rogue-battle-scene .rogue-vitals,.rogue-battle-scene .rogue-enemy>.rogue-bar,.rogue-battle-scene .rogue-intent,.rogue-battle-scene .rogue-status{width:100%;min-width:0}
 .rogue-battle-scene .rogue-unit-name{padding:3px;width:100%}.rogue-battle-scene .rogue-unit-name strong,.rogue-battle-scene .rogue-enemy strong{font-size:11px;overflow-wrap:anywhere}.rogue-battle-scene .rogue-unit-name span{font-size:10px}.rogue-battle-scene .rogue-intent{margin:0;overflow-wrap:anywhere}
 @media(max-width:760px){.rogue-page .rogue-battle-scene{gap:12px;padding:6px}.rogue-battle-scene .rogue-party,.rogue-battle-scene .rogue-enemies{gap:3px}.rogue-battle-scene .rogue-character{width:100%!important;height:auto!important}.rogue-battle-scene .rogue-enemy-art,.rogue-battle-scene .rogue-enemy.boss .rogue-enemy-art{width:100%!important;height:auto!important}.rogue-battle-scene .rogue-unit-name strong,.rogue-battle-scene .rogue-enemy strong{font-size:8px}.rogue-battle-scene .rogue-unit-name span,.rogue-battle-scene .rogue-enemy small{font-size:8px}.rogue-battle-scene .rogue-intent{font-size:8px}.rogue-battle-scene .rogue-bar>span{font-size:8px}.rogue-battle-scene .rogue-vitals{padding:0}}
+
+/* The formation's sprite row shares a ground line; the panels below it can grow. */
+.rogue-page .rogue-battle-scene {
+  --sprite-height:clamp(58px,25dvh,190px);
+  --unit-details:172px;
+  background-image:var(--battle-background);
+  background-position:center bottom;
+  grid-template-rows:minmax(var(--sprite-height),1fr) auto;
+  row-gap:0;
+  align-items:stretch;
+  overflow:auto;
+}
+.rogue-battle-scene .rogue-unit-details {
+  min-width:0;
+  min-height:var(--unit-details);
+  padding:4px;
+  background:#17100beb;
+  border:1px solid #745735;
+}
+.rogue-battle-scene .rogue-entity-button.rogue-unit-sprite {
+  position:relative;
+  height:var(--sprite-height);
+  align-self:end;
+  padding:0;
+  overflow:visible;
+}
+.dungeon-enemy-fx {
+  position:absolute;
+  z-index:1;
+  bottom:0;
+  left:50%;
+  width:min(145%,180px);
+  aspect-ratio:1;
+  transform:translateX(-50%);
+  background-size:400% 200%;
+  pointer-events:none;
+}
+.rogue-battle-scene .rogue-unit-sprite :is(.rogue-character,.rogue-enemy-art) {
+  max-width:calc(var(--sprite-height) * .8);
+  margin-bottom:-3%;
+}
+.rogue-battle-scene .rogue-party,.rogue-battle-scene .rogue-enemies {
+  display:grid;
+  grid-row:1 / span 2;
+  grid-template-rows:subgrid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(0,170px);
+  align-items:stretch;
+  row-gap:0;
+}
+.rogue-battle-scene .rogue-hero,.rogue-battle-scene .rogue-enemy {
+  display:grid;
+  grid-row:1 / span 2;
+  grid-template-rows:subgrid;
+  width:auto;
+  max-width:none;
+  row-gap:0;
+}
+.rogue-battle-scene .rogue-status {
+  display:flex;
+  flex-wrap:wrap;
+  max-height:none;
+  overflow:visible;
+  gap:3px;
+}
+.rogue-battle-scene .rogue-status>span {overflow-wrap:anywhere;white-space:normal}
+.rogue-unit-meta {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2px;font-size:11px}
+body.rogue-page .rogue-unit-meta button[data-ui=action],
+body.rogue-page .rogue-status button[data-ui=action] {min-height:22px;padding:2px 4px;font-size:9px}
+.rogue-bar.shield>i {background:linear-gradient(90deg,#a7b6c8,#eef4ff)}
+.rogue-bar.shield>span {color:#fff;text-shadow:0 1px 3px #000,0 0 2px #000}
+
+.dungeon-turn-order {
+  display:grid;
+  grid-template-columns:minmax(max-content,1fr) minmax(0,auto) 1fr;
+  align-items:center;
+  flex:none;
+  gap:10px;
+  padding:4px 10px;
+  border-bottom:1px solid #765b36;
+  background:#20160f;
+}
+.dungeon-turn-order>strong {font-size:12px}
+.dungeon-turn-order ol {display:flex;gap:5px;margin:0;padding:3px;list-style:none;overflow-x:auto}
+.dungeon-turn-order li {flex:none}
+.dungeon-turn-order .played {opacity:.5}
+body.rogue-page .dungeon-turn-order button[data-ui=action] {
+  display:grid;
+  place-items:end center;
+  width:40px;
+  height:44px;
+  min-height:0;
+  padding:0;
+  overflow:hidden;
+  border-color:#6d9bb5;
+}
+body.rogue-page .dungeon-turn-order .enemy button[data-ui=action] {border-color:#b7695c}
+body.rogue-page .dungeon-turn-order button[aria-current=step] {outline:2px solid #f2cb72;outline-offset:1px;background:#674822}
+.dungeon-turn-order button :is(.rogue-character,.rogue-enemy-art) {
+  width:38px!important;
+  height:47.5px!important;
+  max-height:none!important;
+}
+
+#rogueDialog[data-kind=exam],#dungeonAttributes {
+  padding:0;
+  width:min(900px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  overflow:auto;
+  border:3px double #bd9759;
+  border-radius:5px;
+  background:linear-gradient(145deg,#2a1b11,#19100b);
+  color:#f1dfb7;
+  box-shadow:0 15px 55px #000d,inset 0 0 0 3px #100a07;
+}
+#dungeonAttributes {width:min(610px,calc(100vw - 24px))}
+#dungeonAttributes::backdrop {background:#090604bc}
+#rogueDialog[data-kind=exam]>.base-modal-header,#dungeonAttributes>.base-modal-header {
+  position:sticky;
+  top:0;
+  z-index:1;
+  padding:12px 16px;
+  background:#24170f;
+}
+.dungeon-exam-grid,.dungeon-hero-profile {
+  display:grid;
+  grid-template-columns:minmax(0, .9fr) minmax(0,1.1fr);
+  gap:14px;
+  padding:14px;
+}
+.dungeon-exam-sheet,.dungeon-exam-reading,.dungeon-hero-profile>section {
+  min-width:0;
+  border:1px solid #765b36;
+  padding:10px;
+}
+.dungeon-exam-art {display:grid;place-items:center;max-height:195px;overflow:hidden;background-size:cover;background-position:center}
+.dungeon-exam-art .rogue-enemy-art {width:200px!important;height:250px!important;max-height:none!important}
+.dungeon-exam-grid h3 {margin:8px 0}
+.dungeon-exam-sheet>h3,.dungeon-exam-sheet>p {text-align:center}
+.dungeon-exam-sheet>h3 {padding:6px;color:#35251b;background:#dfc69a;border:1px solid #8d7044}
+.dungeon-exam-vital {display:grid;grid-template-columns:3.5em minmax(0,1fr);align-items:center;gap:8px}
+.dungeon-exam-vital .rogue-bar {height:20px}
+.dungeon-exam-reading>h3 {
+  background:linear-gradient(90deg,#523c25,#2c1d11);
+  padding:6px 8px;
+  border-bottom:1px solid #927043;
+}
+.dungeon-exam-reading li {margin:5px 0;overflow-wrap:anywhere}
+.dungeon-exam-reading details {padding:8px;margin-top:6px;border:1px solid #765b36}
+.dungeon-exam-armor>small,.dungeon-attribute-row small {display:block}
+.dungeon-hero-profile {grid-template-columns:auto minmax(0,1fr)}
+.dungeon-attribute-body {padding:12px 16px}
+.dungeon-attribute-row {display:flex;justify-content:space-between;gap:6px 15px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid #765b36}
+.dungeon-attribute-controls {display:flex;align-items:center;gap:5px}
+.dungeon-attribute-controls output {min-width:2ch;text-align:center}
+.dungeon-attribute-body>button {margin-top:12px}
+.dungeon-sets {margin-top:10px}
+.dungeon-sets .active {font-weight:bold}
+.base-merchant-stock.alchemist-stock {grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:760px) {
+  .rogue-page .rogue-battle-scene {
+    --sprite-height:clamp(48px,15dvh,105px);
+    --unit-details:112px;
+    background:#1c130d;
+  }
+  .rogue-battle-scene::before {
+    content:'';
+    grid-area:1 / 1 / 2 / -1;
+    margin:-6px -6px 0;
+    background:var(--battle-background) center bottom / cover;
+  }
+  .rogue-battle-scene .rogue-unit-details {padding:2px}
+  .rogue-unit-meta {font-size:8px}
+  body.rogue-page .rogue-unit-meta button[data-ui=action],
+  body.rogue-page .rogue-status button[data-ui=action] {max-width:100%;min-height:18px;padding:1px 2px;font-size:7px}
+  .dungeon-turn-order {grid-template-columns:max-content minmax(0,1fr);gap:4px}
+  body.rogue-page .dungeon-turn-order button[data-ui=action] {width:32px;height:36px}
+  .dungeon-turn-order button :is(.rogue-character,.rogue-enemy-art) {width:30px!important;height:38px!important}
+  .dungeon-exam-grid {grid-template-columns:minmax(0,1fr)}
+  .dungeon-hero-profile {grid-template-columns:minmax(0,1fr)}
+}
+
+
+/* Campaign components embedded in the party layout. */
+.base-camp.dungeon-campaign-ui {grid-template-rows:auto minmax(0,1fr) auto}
+.base-camp .rpg-skill-book {min-height:0;overflow:auto}
+.base-camp .rpg-character-tabs {padding:6px 10px}
+#rogueDialog[data-kind=skill] {max-height:calc(100dvh - 24px);overflow:auto}
+#rogueDialog[data-kind=skill] .rpg-skill-description {white-space:pre-line;line-height:1.55}
+.rogue-command.dungeon-campaign-ui {padding:0}
+#rogueApp .dungeon-campaign-ui .rpg-ability-list {display:grid}
+#rogueApp .dungeon-campaign-ui button.rpg-ability {width:100%;text-shadow:none}
+#rogueApp .dungeon-campaign-ui button.rpg-ability[aria-pressed=true] {border-color:#ffe0a0;box-shadow:inset 0 0 0 2px #bd9759}
+.rogue-command .rpg-potion-slot {max-width:none;min-width:0}
+.rogue-command .rpg-potion-slot button {flex-direction:column}
+.rogue-command .rpg-potion-slot img {max-width:100%}
+.rogue-command .rpg-combat-passives {padding:4px 10px}
+.rogue-command .rogue-target-prompt {margin:0;padding:4px 10px}
+.rogue-command .rpg-hotkey {z-index:1}
+.rogue-battle-scene .dungeon-campaign-vitals .scene-vital-bar {min-height:0;height:18px}
+.rogue-battle-scene .dungeon-campaign-vitals .scene-vital-shield {height:15px}
+
+@media(max-width:760px) {
+  .base-camp .rpg-book-current {grid-template-columns:1fr}
+  #rogueApp .dungeon-campaign-ui .rpg-ability-list {
+    grid-template-columns:none;
+    grid-auto-columns:minmax(42px,62px);
+    grid-auto-flow:column;
+    justify-content:safe center;
+    overflow-x:auto;
+    padding:3px;
+  }
+  .rogue-battle-scene .dungeon-campaign-vitals .scene-vital-bar {height:14px;border-width:1px}
+}
